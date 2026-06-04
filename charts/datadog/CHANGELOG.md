@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.218.0
+
+* [CONTP-1682] Include v1.0.5 GKE Autopilot Allowlist: operator and otelCollector feature gates support ([#2674](https://github.com/DataDog/helm-charts/pull/2674)).
+
 ## 3.217.3
 
 * Preserve the floating `latest` tag for the standalone DDOT Collector image when `datadog.otelCollector.useStandaloneImage=true` and the Agent image is configured as `latest`, `latest-jmx`, or `latest` with `agents.image.tagSuffix=jmx`.

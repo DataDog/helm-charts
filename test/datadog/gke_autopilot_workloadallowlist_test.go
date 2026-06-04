@@ -150,9 +150,9 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 }
 
 // Test_autopilotAllowlistSynchronizerPaths verifies the AllowlistSynchronizer references
-// the v1.0.4 exemption (which permits agent-data-plane) when ADP is enabled, and omits
-// it when ADP is disabled. Uses --api-versions to simulate a GKE cluster that supports
-// WorkloadAllowlist CRDs (>= 1.32.1-gke.1729000).
+// the latest exemption for WorkloadAllowlist-mode GKE Autopilot clusters. Uses
+// --api-versions to simulate a GKE cluster that supports WorkloadAllowlist CRDs
+// (>= 1.32.1-gke.1729000).
 func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
 	gkeCRDArgs := []string{
 		"--api-versions", "auto.gke.io/v1/AllowlistSynchronizer",
@@ -161,9 +161,8 @@ func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
 	}
 
 	tests := []struct {
-		name       string
-		overrides  map[string]string
-		expectV104 bool
+		name      string
+		overrides map[string]string
 	}{
 		{
 			name: "without ADP",
@@ -172,7 +171,6 @@ func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
 				"datadog.appKeyExistingSecret": "datadog-secret",
 				"providers.gke.autopilot":      "true",
 			},
-			expectV104: false,
 		},
 		{
 			name: "with ADP enabled",
@@ -183,7 +181,6 @@ func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
 				"datadog.dataPlane.enabled":           "true",
 				"datadog.dataPlane.dogstatsd.enabled": "true",
 			},
-			expectV104: true,
 		},
 	}
 
@@ -206,13 +203,8 @@ func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
 			}
 			assert.NoError(t, yaml.Unmarshal([]byte(manifest), &synchronizer))
 
-			const v104Path = "Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.4.yaml"
-			hasV104 := common.Contains(v104Path, synchronizer.Spec.AllowlistPaths)
-			if tt.expectV104 {
-				assert.True(t, hasV104, "expected v1.0.4 exemption path when ADP is enabled")
-			} else {
-				assert.False(t, hasV104, "v1.0.4 exemption path should not be present when ADP is disabled")
-			}
+			const v105Path = "Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.5.yaml"
+			assert.True(t, common.Contains(v105Path, synchronizer.Spec.AllowlistPaths), "expected v1.0.5 exemption path")
 		})
 	}
 }
