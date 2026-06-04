@@ -3,13 +3,15 @@ stages:
   - e2e
 
 variables:
-  TEST_INFRA_DEFINITIONS_BUILDIMAGES: 83c23398aae9
+  # Image version from datadog-agent-buildimages (same as datadog-agent main branch)
+  CI_IMAGE_LINUX: v102144341-64dad9f8
+  CI_IMAGE_LINUX_SUFFIX: ""
 
 noop:
   stage: test
   script:
     - echo "No op job to get merge queue working"
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
+  image: registry.ddbuild.io/ci/datadog-agent-buildimages/linux$CI_IMAGE_LINUX_SUFFIX:$CI_IMAGE_LINUX
   tags: ["arch:amd64"]
 
 e2e:
@@ -40,7 +42,7 @@ e2e:
           - test/e2e/**/*
       when: always
     - when: manual
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
+  image: registry.ddbuild.io/ci/datadog-agent-buildimages/linux$CI_IMAGE_LINUX_SUFFIX:$CI_IMAGE_LINUX
   tags: ["arch:amd64"]
   variables:
     E2E_GCP_PUBLIC_KEY_PATH: /tmp/agent-qa-gcp-ssh-key.pub
