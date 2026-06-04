@@ -4,7 +4,7 @@ kind: mergequeue
 gitlab_check_enable: true
 github_teams_restrictions:
   - action-platform
-  - agent-all
+  - agent-community-eng
   - container-app
   - container-ecosystems
   - container-helm-chart-maintainers
