@@ -1,13 +1,12 @@
-# Baseline test for GKE Autopilot WorkloadAllowlist with logs collection enabled.
-# Validates that datadogrun is a hostPath volume in WorkloadAllowlist mode.
+# Baseline test for GKE Autopilot WorkloadAllowlist with OTel collector feature gates.
 datadog:
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
   envDict:
     HELM_FORCE_RENDER: true  # workaround to force helm template rendering of GKE Autopilot WorkloadAllowlist-enabled resources
-  logs:
+  otelCollector:
     enabled: true
-    containerCollectAll: true
+    featureGates: "gate1,-gate2,+gate3"
 
 clusterAgent:
   enabled: true

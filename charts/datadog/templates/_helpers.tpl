@@ -781,10 +781,23 @@ Return true if the hostPid features should be enabled for the Agent pod.
 {{- define "should-enable-host-pid" -}}
 {{- if eq .Values.targetSystem "windows" -}}
 false
-{{- else if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
+{{- else if and (not .Values.providers.gke.gdc) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
 true
 {{- else -}}
 false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the volume name for /opt/datadog-agent/run.
+*/}}
+{{- define "datadog.agentRunVolumeName" -}}
+{{- if and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true") -}}
+datadogrun
+{{- else if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.providers.gke.autopilot .Values.providers.gke.gdc -}}
+pointerdir
+{{- else -}}
+datadogrun
 {{- end -}}
 {{- end -}}
 
