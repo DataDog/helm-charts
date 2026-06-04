@@ -60,6 +60,11 @@ e2e:
         E2E_AGENT_VERSION:
           - "7-rc"
   before_script:
+    # Install helm: the datadog-agent-buildimages/linux runner does not ship
+    # it, unlike the deprecated test-infra-definitions runner. The e2e tests
+    # shell out to the `helm` binary (directly and via terratest).
+    - curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | DESIRED_VERSION=v3.21.0 bash
+
     # Initial credentials setup with default build-stable AWS profile
     - echo "Starting setup for E2E testing..."
 
