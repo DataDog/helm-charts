@@ -40,15 +40,24 @@ datadog:
     enableTCPQueueLength: true
     enableOOMKill: true
 `
-	e2e.Run(t, &gkeAutopilotSystemProbeSuite{}, e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(
-		gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
-		gcpkubernetes.WithAgentOptions(
-			kubernetesagentparams.WithGKEAutopilot(),
-			kubernetesagentparams.WithHelmRepoURL(""),
-			kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
-			kubernetesagentparams.WithHelmValues(helmValues),
-		),
-		gcpkubernetes.WithExtraConfigParams(config))))
+	// Override the default stack name to keep the Pulumi stack name short enough
+	// (<= 63 chars) for GCP resource labels. e2e-framework's DefaultResourceTags
+	// adds a `stack` label valued with Ctx().Stack(), and GCP rejects label
+	// values > 63 bytes. The default `e2e-<TypeName>-<hash>` combined with the
+	// CI namePrefix `ci-${CI_PIPELINE_ID}-${CI_JOB_ID}-` overflows this limit
+	// for this suite. Remove this override once the upstream fix lands (cf.
+	// pending PR on DataDog/datadog-agent to truncate GCP label values).
+	e2e.Run(t, &gkeAutopilotSystemProbeSuite{},
+		e2e.WithStackName("gke-ap-sysprobe"),
+		e2e.WithProvisioner(gcpkubernetes.GKEProvisioner(
+			gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
+			gcpkubernetes.WithAgentOptions(
+				kubernetesagentparams.WithGKEAutopilot(),
+				kubernetesagentparams.WithHelmRepoURL(""),
+				kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+				kubernetesagentparams.WithHelmValues(helmValues),
+			),
+			gcpkubernetes.WithExtraConfigParams(config))))
 }
 
 func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {
