@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.219.0
+
+* Update `datadog-csi-driver` chart dependency from `0.13.0` to `0.15.0`:
+  * `0.14.0`: annotate `CSIDriver` with `csi.datadoghq.com/apm-enabled` for SSI injection gating.
+  * `0.15.0`: enable SSI on GKE Autopilot.
+
 ## 3.218.0
 
 * [CONTP-1682] Include v1.0.5 GKE Autopilot Allowlist: operator and otelCollector feature gates support ([#2674](https://github.com/DataDog/helm-charts/pull/2674)).
