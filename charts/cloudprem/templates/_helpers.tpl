@@ -204,6 +204,10 @@ Quickwit environment
   valueFrom:
     fieldRef:
       fieldPath: metadata.name
+- name: KUBERNETES_NODE_NAME
+  valueFrom:
+    fieldRef:
+      fieldPath: spec.nodeName
 - name: KUBERNETES_POD_IP
   valueFrom:
     fieldRef:
@@ -296,8 +300,6 @@ Quickwit environment
   value: {{ .Values.cloudprem.reverseConnection.enabled | quote }}
 - name: CP_MIN_SHARDS
   value: {{ .Values.cloudprem.index.minShards | quote }}
-- name: CP_RETENTION_PERIOD
-  value: {{ .Values.cloudprem.index.retention | quote }}
 - name: DD_SITE
   value: {{ .Values.datadog.site | quote }}
 {{- if or .Values.datadog.apiKey .Values.datadog.apiKeyExistingSecret }}
@@ -321,7 +323,7 @@ Quickwit environment
 - name: BYOC_TELEMETRY_ENABLED
   value: "true"
 - name: OTEL_RESOURCE_ATTRIBUTES
-  value: {{ printf "cluster_id=%s,node_id=$(QW_NODE_ID)" $clusterID | quote }}
+  value: {{ printf "cluster_id=%s,node_id=$(QW_NODE_ID),host.name=$(KUBERNETES_NODE_NAME)" $clusterID | quote }}
 - name: OTEL_EXPORTER_OTLP_LOGS_PROTOCOL
   value: "http/protobuf"
 - name: OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
