@@ -1107,6 +1107,12 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
     useClusterCheckRunners: false
 
+  kubeActions:
+    # datadog.kubeActions.enabled -- Set this to true to enable the Kubernetes Actions feature on the Cluster Agent.
+    # This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog
+    # Kubernetes Actions product can drive remediation.
+    enabled: false
+
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
     # This requires clusterAgent.enabled to be set to true

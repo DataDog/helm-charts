@@ -426,6 +426,10 @@ spec:
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
+          {{- if .Values.datadog.kubeActions.enabled }}
+          - name: DD_KUBEACTIONS_ENABLED
+            value: "true"
+          {{- end }}
           - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
             value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
           - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
