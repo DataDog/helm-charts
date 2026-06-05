@@ -1059,8 +1059,8 @@ helm install <RELEASE_NAME> \
 | kubeVersionOverride | string | `nil` | Override Kubernetes version detection. Useful for GitOps tools like FluxCD that don't expose the real cluster version to Helm |
 | nameOverride | string | `nil` | Override name of app |
 | operator.datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |
-| operator.datadogAgentInternal.enabled | bool | `false` | Enables the Datadog Agent Internal controller |
-| operator.datadogCRDs.crds.datadogAgentInternals | bool | `false` | Set to true to deploy the DatadogAgentInternals CRD |
+| operator.datadogAgentInternal.enabled | bool | `true` | Enables the Datadog Agent Internal controller |
+| operator.datadogCRDs.crds.datadogAgentInternals | bool | `true` | Set to true to deploy the DatadogAgentInternals CRD |
 | operator.datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
 | operator.datadogCRDs.crds.datadogCSIDrivers | bool | `false` | Set to true to deploy the DatadogCSIDriver CRD |
 | operator.datadogCRDs.crds.datadogDashboards | bool | `true` | Set to true to deploy the DatadogDashboard CRD |
