@@ -1,10 +1,9 @@
 module github.com/DataDog/helm-charts/test
 
-go 1.25.6
+go 1.25.0
 
 require (
-	github.com/DataDog/datadog-agent/pkg/util/testutil v0.72.2
-	github.com/DataDog/datadog-agent/test/e2e-framework v0.81.0-devel.0.20260604145753-f3062050f517
+	github.com/DataDog/datadog-agent/pkg/util/testutil v0.78.0
 	github.com/DataDog/datadog-agent/test/fakeintake v0.72.2
 	github.com/Masterminds/semver v1.5.0
 	github.com/google/go-cmp v0.7.0
@@ -257,7 +256,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	go.uber.org/multierr v1.11.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.4 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.52.0 // indirect
@@ -271,9 +269,6 @@ require (
 	golang.org/x/text v0.37.0 // indirect
 	golang.org/x/time v0.15.0 // indirect
 	golang.org/x/tools v0.45.0 // indirect
-	google.golang.org/api v0.279.0 // indirect
-	google.golang.org/genproto v0.0.0-20260319201613-d00831a3d3e7 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20260511170946-3700d4141b60 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260504160031-60b97b32f348 // indirect
 	google.golang.org/grpc v1.81.1 // indirect
 	google.golang.org/protobuf v1.36.12-0.20260116114154-8c4c4ae446ca // indirect
