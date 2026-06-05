@@ -809,8 +809,8 @@ datadog:
     enabled: false
     # datadog.hostProfiler.image -- Image the Host Profiler. This parameter is experimental and will be removed once official image is available.
     image: ""
-    # datadog.hostProfiler.seccomp -- Apply a seccomp profile to the host-profiler container (e.g. "localhost/host-profiler" or "runtime/default")
-    seccomp: localhost/host-profiler
+    # datadog.hostProfiler.imagePullPolicy -- Pull policy for the Host Profiler image. Defaults to agents.image.pullPolicy when unset.
+    imagePullPolicy: ""
     # datadog.hostProfiler.seccompRoot -- Specify the seccomp profile root directory
     seccompRoot: /var/lib/kubelet/seccomp
     # datadog.hostProfiler.apparmor -- Specify an AppArmor profile for the host-profiler container (e.g. "localhost/datadog-host-profiler").
@@ -2225,7 +2225,6 @@ agents:
     seccompProfiles:
       - "runtime/default"
       - "localhost/system-probe"
-      - "localhost/host-profiler"
 
     apparmor:
       # agents.podSecurity.apparmor.enabled -- If true, enable apparmor enforcement
@@ -2434,8 +2433,11 @@ agents:
       # agents.containers.hostProfiler.securityContext -- Allows you to overwrite the default container SecurityContext for the host-profiler container.
       securityContext:
         readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
         privileged: false
         capabilities:
+          drop:
+            - ALL
           add:
             - BPF
             - PERFMON
@@ -2444,6 +2446,7 @@ agents:
             - DAC_READ_SEARCH
             - SYSLOG
             - CHECKPOINT_RESTORE
+            - IPC_LOCK
 
       # agents.containers.hostProfiler.volumeMounts -- Specify additional volumes to mount in the host-profiler container
       volumeMounts: []

@@ -633,6 +633,11 @@ spec:
                           properties:
                             enabled:
                               type: boolean
+                            inPlaceVerticalScaling:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
                           type: object
                       type: object
                     clusterChecks:
@@ -5046,6 +5051,11 @@ spec:
                               properties:
                                 enabled:
                                   type: boolean
+                                inPlaceVerticalScaling:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
                               type: object
                           type: object
                         clusterChecks:
