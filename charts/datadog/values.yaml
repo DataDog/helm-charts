@@ -3045,7 +3045,7 @@ operator:
 
   datadogAgentInternal:
     # operator.datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
-    enabled: false
+    enabled: true
 
   datadogDashboard:
     # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard controller
@@ -3085,7 +3085,7 @@ operator:
       # operator.datadogCRDs.crds.datadogPodAutoscalerClusterProfile -- Set to false to deploy the DatadogPodAutoscalerClusterProfiles CRD
       datadogPodAutoscalerClusterProfiles: false
       # operator.datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
-      datadogAgentInternals: false
+      datadogAgentInternals: true
       # operator.datadogCRDs.crds.datadogCSIDrivers -- Set to true to deploy the DatadogCSIDriver CRD
       datadogCSIDrivers: false
 
