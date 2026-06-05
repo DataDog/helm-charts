@@ -1,4 +1,5 @@
-{{- if and .Values.datadog.kubeActions.enabled (eq (include "cluster-agent-enabled" .) "true") }}
+{{- $dcaImageTag := .Values.clusterAgent.image.tag | toString }}
+{{- if and .Values.datadog.kubeActions.enabled (eq (include "cluster-agent-enabled" .) "true") (or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.79.0-0" $dcaImageTag)) }}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
