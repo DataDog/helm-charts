@@ -43,7 +43,7 @@ cloudprem:
   index:
     # cloudprem.index.minShards -- The minimum number of ingestion shards to use for the index. Defaults to 12.
     minShards: 12
-    # cloudprem.index.retention -- The retention period for the index specified as a human-readable duration such as `30d`, `6m` or `1y`. Defaults to 30 days.
+    # cloudprem.index.retention -- DEPRECATED: This parameter is ignored and will be removed in a future release. The retention period for the index specified as a human-readable duration such as `30d`, `6m` or `1y`. Defaults to 30 days.
     retention: 30d
   # Reverse connection configuration
   reverseConnection:
