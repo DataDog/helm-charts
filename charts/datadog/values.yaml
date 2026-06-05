@@ -1110,7 +1110,7 @@ datadog:
   kubeActions:
     # datadog.kubeActions.enabled -- Set this to true to enable the Kubernetes Actions feature on the Cluster Agent.
     # This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog
-    # Kubernetes Actions product can drive remediation.
+    # Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater.
     enabled: false
 
   helmCheck:

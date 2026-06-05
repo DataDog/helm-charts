@@ -427,8 +427,11 @@ spec:
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
           {{- if .Values.datadog.kubeActions.enabled }}
+          {{- $dcaImageTag := .Values.clusterAgent.image.tag | toString }}
+          {{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.79.0-0" $dcaImageTag) }}
           - name: DD_KUBEACTIONS_ENABLED
             value: "true"
+          {{- end }}
           {{- end }}
           - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
             value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
