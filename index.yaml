@@ -30033,6 +30033,28 @@ entries:
   datadog-crds:
   - apiVersion: v1
     appVersion: "1"
+    created: "2026-06-05T19:25:58.210231171Z"
+    description: Datadog Kubernetes CRDs chart
+    digest: e73f9e8e66fd09ddbb36066269638979edb3294be9d6deb55c5446e3b00a4fe9
+    home: https://www.datadoghq.com
+    icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog-crds
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-operator
+    - https://docs.datadoghq.com/agent/cluster_agent/external_metrics
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-crds-2.22.0-dev.1/datadog-crds-2.22.0-dev.1.tgz
+    version: 2.22.0-dev.1
+  - apiVersion: v1
+    appVersion: "1"
     created: "2026-06-04T13:47:01.39413073Z"
     description: Datadog Kubernetes CRDs chart
     digest: c707ebf3463ea0718365f2383748a873665866661a65d9e188f53b6ad629f8f5
@@ -42836,4 +42858,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2026-06-05T18:13:18.387750413Z"
+generated: "2026-06-05T19:25:58.213125832Z"
