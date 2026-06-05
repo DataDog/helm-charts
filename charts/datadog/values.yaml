@@ -3040,7 +3040,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.26.0
+    tag: 1.27.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
@@ -3091,6 +3091,8 @@ operator:
       datadogAgentInternals: false
       # operator.datadogCRDs.crds.datadogCSIDrivers -- Set to true to deploy the DatadogCSIDriver CRD
       datadogCSIDrivers: false
+      # operator.datadogCRDs.crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
+      datadogInstrumentations: false
 
 datadog-crds:
   crds:

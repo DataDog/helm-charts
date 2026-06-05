@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.221.0
+
+* Bump Datadog Operator chart dependency to 2.23.0.
+* Bump Datadog CRD chart dependency to 2.21.0.
+* Bump Operator image tag to 1.27.0.
+
 ## 3.220.0
 
 * [Host Profiler] Remove seccomp configmap and use profile baked into image ([#2698](https://github.com/DataDog/helm-charts/pull/2698)).
