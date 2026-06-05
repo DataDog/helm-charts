@@ -1,3 +1,5 @@
+//go:build e2e || e2e_autopilot || e2e_autopilot_systemprobe || e2e_autopilot_csi
+
 package common
 
 import (
