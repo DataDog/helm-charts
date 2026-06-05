@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.220.0
+
+* [Host Profiler] Remove seccomp configmap and use profile baked into image ([#2698](https://github.com/DataDog/helm-charts/pull/2698)).
+
 ## 3.219.0
 
 * Update `datadog-csi-driver` chart dependency from `0.13.0` to `0.15.0`:
