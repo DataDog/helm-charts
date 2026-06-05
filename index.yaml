@@ -32502,6 +32502,35 @@ entries:
   datadog-operator:
   - apiVersion: v2
     appVersion: 1.27.0
+    created: "2026-06-05T17:01:05.849442988Z"
+    dependencies:
+    - alias: datadogCRDs
+      condition: installCRDs
+      name: datadog-crds
+      repository: https://helm.datadoghq.com
+      tags:
+      - install-crds
+      version: 2.21.0
+    description: Datadog Operator
+    digest: f30571f50e8054c9908b89bd867f2a1e8a7ce4d8e2d71bf70fee6c3e80aaf2f4
+    home: https://www.datadoghq.com
+    icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog-operator
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-agent
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-operator-2.23.1/datadog-operator-2.23.1.tgz
+    version: 2.23.1
+  - apiVersion: v2
+    appVersion: 1.27.0
     created: "2026-06-05T14:48:09.037788001Z"
     dependencies:
     - alias: datadogCRDs
@@ -42766,4 +42795,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2026-06-05T15:42:10.729575117Z"
+generated: "2026-06-05T17:01:05.852086248Z"
