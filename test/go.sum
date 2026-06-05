@@ -42,8 +42,8 @@ github.com/DataDog/datadog-agent/pkg/util/testutil v0.72.2 h1:05R9eLwsAqHoxxIBZh
 github.com/DataDog/datadog-agent/pkg/util/testutil v0.72.2/go.mod h1:+2wH1RZ6UWGNaYw5BLofYnbrGhcHv8OeCIjEnTopfss=
 github.com/DataDog/datadog-agent/pkg/version v0.76.0-rc.4 h1:PF7WZ0izV1CasPia3D7Nqbl12YTMMxNz+XdRM2M8/Pk=
 github.com/DataDog/datadog-agent/pkg/version v0.76.0-rc.4/go.mod h1:4I4x0IqhIr0fXr90G8Qauz9iID0xhonjUB2lAZH9qyI=
-github.com/DataDog/datadog-agent/test/e2e-framework v0.81.0-devel.0.20260603184509-8777b3e98e25 h1:n6QZcpfYjFKZmw+Ii9O0MnS+R38jnjFw2LpEhvUqaZk=
-github.com/DataDog/datadog-agent/test/e2e-framework v0.81.0-devel.0.20260603184509-8777b3e98e25/go.mod h1:JnpM2cRERcDjXo2HNzu363yEFtZQu7hVQcRbehfboOA=
+github.com/DataDog/datadog-agent/test/e2e-framework v0.81.0-devel.0.20260604145753-f3062050f517 h1:MinijtRLCmnekNslVK0aCkIp6QKZ0Q1SoL1pQRtL3/g=
+github.com/DataDog/datadog-agent/test/e2e-framework v0.81.0-devel.0.20260604145753-f3062050f517/go.mod h1:JnpM2cRERcDjXo2HNzu363yEFtZQu7hVQcRbehfboOA=
 github.com/DataDog/datadog-agent/test/fakeintake v0.72.2 h1:nnIdPVOgjzmccYuy34ftPV1qBcMf2kkP1LMswMaiFE0=
 github.com/DataDog/datadog-agent/test/fakeintake v0.72.2/go.mod h1:XNZc/fQ/lYjAGRzPKauZcJkAAdlUgGG5uwMtF8ZfeSA=
 github.com/DataDog/datadog-api-client-go/v2 v2.60.0 h1:YzEB2H42symyDlHzNo0wcjW1mfXSW1E1UCbThHx4xrc=

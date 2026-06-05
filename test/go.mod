@@ -4,7 +4,7 @@ go 1.25.6
 
 require (
 	github.com/DataDog/datadog-agent/pkg/util/testutil v0.72.2
-	github.com/DataDog/datadog-agent/test/e2e-framework v0.81.0-devel.0.20260603184509-8777b3e98e25
+	github.com/DataDog/datadog-agent/test/e2e-framework v0.81.0-devel.0.20260604145753-f3062050f517
 	github.com/DataDog/datadog-agent/test/fakeintake v0.72.2
 	github.com/Masterminds/semver v1.5.0
 	github.com/google/go-cmp v0.7.0
