@@ -664,6 +664,38 @@ rules:
   - apiGroups:
       - datadoghq.com
     resources:
+      - datadogagentinternals
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagentinternals/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagentinternals/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - datadoghq.com
+    resources:
       - datadogcsidrivers
       - datadogcsidrivers/finalizers
     verbs:
