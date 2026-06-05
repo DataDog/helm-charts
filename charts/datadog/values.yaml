@@ -2446,6 +2446,7 @@ agents:
             - DAC_READ_SEARCH
             - SYSLOG
             - CHECKPOINT_RESTORE
+            - IPC_LOCK
 
       # agents.containers.hostProfiler.volumeMounts -- Specify additional volumes to mount in the host-profiler container
       volumeMounts: []
