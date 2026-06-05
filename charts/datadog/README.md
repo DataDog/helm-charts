@@ -852,6 +852,7 @@ helm install <RELEASE_NAME> \
 | datadog.hostVolumeMountPropagation | string | `"None"` | Allow to specify the `mountPropagation` value on all volumeMounts using HostPath |
 | datadog.ignoreAutoConfig | list | `[]` | List of integration to ignore auto_conf.yaml. |
 | datadog.instrumentationCrd.enabled | string | `nil` | Enable the DatadogInstrumentation CRD controller and reconciliation platform. Requires version 7.80.0 or later of both cluster and node agent. |
+| datadog.kubeActions.enabled | bool | `false` | Set this to true to enable the Kubernetes Actions feature on the Cluster Agent. This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater. |
 | datadog.kubeStateMetricsCore.annotationsAsTags | object | `{}` | Extra annotations to collect from resources and to turn into datadog tag. |
 | datadog.kubeStateMetricsCore.collectApiServicesMetrics | bool | `false` | Enable watching apiservices objects and collecting their corresponding metrics kubernetes_state.apiservice.* (Requires Cluster Agent 7.45.0+) |
 | datadog.kubeStateMetricsCore.collectConfigMaps | bool | `true` | Enable watching configmap objects and collecting their corresponding metrics kubernetes_state.configmap.* |
