@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.2
+
+* Update Docker image to `v0.1.29`.
+* Add Kubernetes node name as an OpenTelemetry resource attribute (`host.name`).
+* Stop setting the `CP_RETENTION_PERIOD` environment variable. The `cloudprem.index.retention` value is now ignored and deprecated; it will be removed in a future release. Retention can now be set per index from the UI.
+
 ## 0.4.1
 
 * Update Docker image to `v0.1.28`.
