@@ -182,7 +182,7 @@ spec:
         {{- if eq .Values.targetSystem "linux" }}
           {{- include "containers-init-linux" . | nindent 6 -}}
         {{- end }}
-        {{- if and (eq (include "should-enable-host-profiler" .) "true") (eq .Values.datadog.hostProfiler.seccomp "localhost/host-profiler") }}
+        {{- if eq (include "should-enable-host-profiler" .) "true" }}
           {{ include "host-profiler-seccomp-init" . | nindent 6 }}
         {{- end }}
         {{- if and (eq (include "should-enable-system-probe" .) "true")  (eq .Values.datadog.systemProbe.seccomp "localhost/system-probe") }}

@@ -260,6 +260,14 @@ false
 {{- end -}}
 
 {{/*
+Return the seccomp profile filename for the host-profiler, scoped to the image ref
+to avoid races when multiple host-profiler versions coexist on the same node.
+*/}}
+{{- define "host-profiler-seccomp-name" -}}
+host-profiler-{{ include "ddot-ebpf-image" . | sha256sum | trunc 8 }}
+{{- end -}}
+
+{{/*
 Return true if Agent Data Plane needs to be deployed
 
 This considers both whether or not the Data Plane feature is enabled and whether or not there's at least one
