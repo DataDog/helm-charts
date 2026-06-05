@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.24.0-dev.1
+
+* Update Datadog Operator chart for 1.28.0-rc.1.
+
 ## 2.23.1
 
 * Install the DatadogInstrumentation CRD by default.
