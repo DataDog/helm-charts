@@ -112,6 +112,11 @@
   value: {{ .enabled | quote }}
 {{- end }}
 
+{{- with .Values.datadog.otlp.debug }}
+- name: DD_OTLP_CONFIG_DEBUG_VERBOSITY
+  value: {{ .verbosity | quote }}
+{{- end }}
+
 {{- end }}
 {{- if eq (include "agent-has-env-ad" .) "true" }}
 {{- if .Values.datadog.dockerSocketPath }}

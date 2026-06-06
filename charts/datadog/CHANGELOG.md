@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## Pending
+
+* Introduce `datadog.debug.verbosity` configuration to control OTLP exporter debug configuration
+
 ## 3.220.0
 
 * [Host Profiler] Remove seccomp configmap and use profile baked into image ([#2698](https://github.com/DataDog/helm-charts/pull/2698)).
