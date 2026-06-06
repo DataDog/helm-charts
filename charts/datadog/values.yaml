@@ -802,6 +802,14 @@ datadog:
     logs:
       # datadog.otlp.logs.enabled -- Enable logs support in the OTLP ingest endpoint
       enabled: false
+    debug:
+      # Controls OTLP exporter logging level.
+      # Valid values are `none`, `basic`, `normal` and `detailed`
+      # Datadog defaults to 'basic' which is very verbose logging into INFO despite it supposedly to be debug
+      # Reference: https://github.com/DataDog/datadog-agent/blob/da0e2341fa553e1fe56da9c9ad0e28ab52ab0ddf/pkg/config/config_template.yaml#L5088
+      #            https://github.com/open-telemetry/opentelemetry-collector/tree/main/exporter/debugexporter#getting-started
+      #            https://github.com/open-telemetry/opentelemetry-collector/blob/2008f48638ece04c23d7f7a7fdf6e0139a42ffaf/config/configtelemetry/configtelemetry.go#L22
+      verbosity: "none"
 
   ## Host Profiler related configuration for the host-profiler in Agent Daemonset. Note this is experimental and subject to change
   hostProfiler:

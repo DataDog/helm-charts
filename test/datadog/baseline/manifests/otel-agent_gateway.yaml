@@ -1361,6 +1361,8 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
+            - name: DD_OTLP_CONFIG_DEBUG_VERBOSITY
+              value: none
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
@@ -1564,6 +1566,8 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
+            - name: DD_OTLP_CONFIG_DEBUG_VERBOSITY
+              value: none
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "false"
             - name: DD_LOG_LEVEL
@@ -1666,6 +1670,8 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
+            - name: DD_OTLP_CONFIG_DEBUG_VERBOSITY
+              value: none
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_DOGSTATSD_PORT
@@ -1805,6 +1811,8 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
+            - name: DD_OTLP_CONFIG_DEBUG_VERBOSITY
+              value: none
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "false"
             - name: DD_AGENT_IPC_PORT
@@ -1909,6 +1917,8 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
+            - name: DD_OTLP_CONFIG_DEBUG_VERBOSITY
+              value: none
             - name: DD_LEADER_ELECTION
               value: "true"
             - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
