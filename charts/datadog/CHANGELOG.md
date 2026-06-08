@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.221.1
+
+* Document the impact of host CPU count on Agent memory usage on high-core-count nodes and recommend setting an explicit `agents.containers.agent.resources.limits.cpu`.
+
 ## 3.221.0
 
 * Bump Datadog Operator chart dependency to 2.23.0.

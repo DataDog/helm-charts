@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.221.0](https://img.shields.io/badge/Version-3.221.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.221.1](https://img.shields.io/badge/Version-3.221.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -426,6 +426,27 @@ Standard paths are:
 - Containerd socket: `/var/run/containerd/containerd.sock`
 - Cri-o socket: `/var/run/crio/crio.sock`
 
+### Resource limits on high-core-count nodes
+
+On nodes with a high logical CPU count (for example, large GPU or bare-metal hosts), the Agent's Go runtime sizes its scheduler to the host CPU count by default. This can drive memory usage proportionally and cause the Agent container to be OOM-killed even with otherwise modest workloads.
+
+Set an explicit CPU limit on the agent container so the runtime sizes to the limit rather than the host CPU count. Update your `datadog-values.yaml` file:
+
+```yaml
+agents:
+  containers:
+    agent:
+      resources:
+        requests:
+          cpu: "2"
+          memory: 512Mi
+        limits:
+          cpu: "2"
+          memory: 1Gi
+```
+
+Use an integer value for `limits.cpu` so the runtime can read it directly. If your cluster has node shapes with widely varying core counts, apply this chart per node group (with a `nodeSelector` and matching limits) rather than picking a single value that may be too low for small nodes or too high for large ones. Alternatively, deploy through the [Datadog Operator](https://docs.datadoghq.com/containers/datadog_operator/) and use [DatadogAgentProfiles](https://github.com/DataDog/datadog-operator/blob/main/docs/datadog_agent_profiles.md) to set different limits per node shape from a single install.
+
 ### Configuration required for Amazon Linux 2 based nodes
 
 Amazon Linux 2 does not support apparmor profile enforcement.
@@ -478,7 +499,7 @@ helm install <RELEASE_NAME> \
 | agents.containers.agent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
 | agents.containers.agent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.agent.readinessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent readiness probe settings |
-| agents.containers.agent.resources | object | `{}` | Resource requests and limits for the agent container. |
+| agents.containers.agent.resources | object | `{}` | Resource requests and limits for the agent container. On nodes with a high logical CPU count, set an explicit `limits.cpu` (integer) to prevent the Agent's Go runtime from sizing its scheduler to the host CPU count, which can otherwise cause OOM kills. |
 | agents.containers.agent.securityContext | object | `{"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the agent container. |
 | agents.containers.agent.startupProbe | object | Every 15s / 6 KO / 1 OK | Override default agent startup probe settings |
 | agents.containers.agentDataPlane.env | list | `[]` | Additional environment variables for the agent-data-plane container |

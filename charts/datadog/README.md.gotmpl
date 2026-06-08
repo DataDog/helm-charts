@@ -420,6 +420,27 @@ Standard paths are:
 - Containerd socket: `/var/run/containerd/containerd.sock`
 - Cri-o socket: `/var/run/crio/crio.sock`
 
+### Resource limits on high-core-count nodes
+
+On nodes with a high logical CPU count (for example, large GPU or bare-metal hosts), the Agent's Go runtime sizes its scheduler to the host CPU count by default. This can drive memory usage proportionally and cause the Agent container to be OOM-killed even with otherwise modest workloads.
+
+Set an explicit CPU limit on the agent container so the runtime sizes to the limit rather than the host CPU count. Update your `datadog-values.yaml` file:
+
+```yaml
+agents:
+  containers:
+    agent:
+      resources:
+        requests:
+          cpu: "2"
+          memory: 512Mi
+        limits:
+          cpu: "2"
+          memory: 1Gi
+```
+
+Use an integer value for `limits.cpu` so the runtime can read it directly. If your cluster has node shapes with widely varying core counts, apply this chart per node group (with a `nodeSelector` and matching limits) rather than picking a single value that may be too low for small nodes or too high for large ones. Alternatively, deploy through the [Datadog Operator](https://docs.datadoghq.com/containers/datadog_operator/) and use [DatadogAgentProfiles](https://github.com/DataDog/datadog-operator/blob/main/docs/datadog_agent_profiles.md) to set different limits per node shape from a single install.
+
 ### Configuration required for Amazon Linux 2 based nodes
 
 Amazon Linux 2 does not support apparmor profile enforcement.

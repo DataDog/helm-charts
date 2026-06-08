@@ -2260,7 +2260,7 @@ agents:
       # If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO
 
-      # agents.containers.agent.resources -- Resource requests and limits for the agent container.
+      # agents.containers.agent.resources -- Resource requests and limits for the agent container. On nodes with a high logical CPU count, set an explicit `limits.cpu` (integer) to prevent the Agent's Go runtime from sizing its scheduler to the host CPU count, which can otherwise cause OOM kills.
       resources: {}
       #  requests:
       #    cpu: 200m
