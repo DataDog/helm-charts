@@ -3090,7 +3090,7 @@ operator:
       # operator.datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
       datadogAgentInternals: true
       # operator.datadogCRDs.crds.datadogCSIDrivers -- Set to true to deploy the DatadogCSIDriver CRD
-      datadogCSIDrivers: false
+      datadogCSIDrivers: true
       # operator.datadogCRDs.crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
       datadogInstrumentations: false
 
