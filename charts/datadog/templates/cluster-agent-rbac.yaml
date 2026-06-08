@@ -50,6 +50,21 @@ rules:
   verbs:
   - list
   - watch
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "datadoginstrumentations"
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "datadoginstrumentations/status"
+  verbs:
+  - patch
+  - update
 {{- if .Values.datadog.collectEvents }}
 - apiGroups:
   - ""
