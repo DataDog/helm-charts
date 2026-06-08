@@ -33,7 +33,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.21.0 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.15.0 |
-| https://helm.datadoghq.com | operator(datadog-operator) | 2.23.0 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.23.1 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -744,6 +744,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.volumeMounts | list | `[]` | Specify additional volumes to mount in the cluster checks container |
 | clusterChecksRunner.volumes | list | `[]` | Specify additional volumes to mount in the cluster checks container |
 | commonLabels | object | `{}` | Labels to apply to all resources |
+| datadog-crds.crds.datadogInstrumentations | bool | `true` |  |
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogPodAutoscalerClusterProfiles | bool | `true` |  |
 | datadog-crds.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |

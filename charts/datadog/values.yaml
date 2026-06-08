@@ -3102,6 +3102,8 @@ datadog-crds:
     datadogPodAutoscalers: true
     # crds.datadogPodAutoscalerClusterProfile -- Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD
     datadogPodAutoscalerClusterProfiles: true
+    # crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
+    datadogInstrumentations: true
 
 kube-state-metrics:
   # kube-state-metrics.image.repository -- Default kube-state-metrics image repository.
