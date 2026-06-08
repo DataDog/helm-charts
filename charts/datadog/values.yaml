@@ -3040,7 +3040,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.26.0
+    tag: 1.27.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
@@ -3048,7 +3048,7 @@ operator:
 
   datadogAgentInternal:
     # operator.datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
-    enabled: false
+    enabled: true
 
   datadogDashboard:
     # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard controller
@@ -3088,9 +3088,11 @@ operator:
       # operator.datadogCRDs.crds.datadogPodAutoscalerClusterProfile -- Set to false to deploy the DatadogPodAutoscalerClusterProfiles CRD
       datadogPodAutoscalerClusterProfiles: false
       # operator.datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
-      datadogAgentInternals: false
+      datadogAgentInternals: true
       # operator.datadogCRDs.crds.datadogCSIDrivers -- Set to true to deploy the DatadogCSIDriver CRD
-      datadogCSIDrivers: false
+      datadogCSIDrivers: true
+      # operator.datadogCRDs.crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
+      datadogInstrumentations: false
 
 datadog-crds:
   crds:
@@ -3100,6 +3102,8 @@ datadog-crds:
     datadogPodAutoscalers: true
     # crds.datadogPodAutoscalerClusterProfile -- Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD
     datadogPodAutoscalerClusterProfiles: true
+    # crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
+    datadogInstrumentations: true
 
 kube-state-metrics:
   # kube-state-metrics.image.repository -- Default kube-state-metrics image repository.

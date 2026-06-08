@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.26.0
+    app.kubernetes.io/version: 1.27.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -148,7 +148,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.26.0
+    app.kubernetes.io/version: 1.27.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -429,6 +429,23 @@ rules:
   - apiGroups:
       - datadoghq.com
     resources:
+      - datadoginstrumentations
+      - extendeddaemonsetreplicasets
+      - watermarkpodautoscalers
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadoginstrumentations/status
+    verbs:
+      - patch
+      - update
+  - apiGroups:
+      - datadoghq.com
+    resources:
       - datadogmetrics
     verbs:
       - create
@@ -445,15 +462,6 @@ rules:
       - datadogpodautoscalers/status
     verbs:
       - '*'
-  - apiGroups:
-      - datadoghq.com
-    resources:
-      - extendeddaemonsetreplicasets
-      - watermarkpodautoscalers
-    verbs:
-      - get
-      - list
-      - watch
   - apiGroups:
       - datadoghq.com
       - karpenter.azure.com
@@ -638,6 +646,78 @@ rules:
       - get
       - list
       - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagentinternals
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagentinternals/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagentinternals/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogcsidrivers
+      - datadogcsidrivers/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogcsidrivers/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csidrivers
+    verbs:
+      - create
+      - list
+      - watch
+  - apiGroups:
+      - storage.k8s.io
+    resourceNames:
+      - k8s.csi.datadoghq.com
+    resources:
+      - csidrivers
+    verbs:
+      - delete
+      - get
+      - patch
+      - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1657,7 +1737,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.26.0
+    app.kubernetes.io/version: 1.27.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -1696,8 +1776,7 @@ spec:
             - -datadogDashboardEnabled=false
             - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
-            - -datadogAgentInternalEnabled=false
-            - -datadogCSIDriverEnabled=false
+            - -datadogCSIDriverEnabled=true
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -1723,7 +1802,7 @@ spec:
               value: "true"
             - name: DD_REGISTRY_OVERRIDE_DEFAULT
               value: "true"
-          image: registry.datadoghq.com/operator:1.26.0
+          image: registry.datadoghq.com/operator:1.27.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
