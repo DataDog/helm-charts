@@ -11,6 +11,7 @@ metadata:
 {{ include "datadog-operator.labels" . | indent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "datadog-operator.name" . }}
@@ -51,7 +52,7 @@ spec:
       serviceAccountName: {{ include "datadog-operator.serviceAccountName" . }}
       {{- if eq .Values.serviceAccount.automountServiceAccountToken false }}
       automountServiceAccountToken: false
-      {{- end }} 
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

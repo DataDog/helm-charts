@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.24.0-dev.2
+
+* Add `revisionHistoryLimit` parameter to configure the number of ReplicaSet revisions retained by the Datadog Operator deployment for rollback purposes.
+
 ## 2.24.0-dev.1
 
 * Update Datadog Operator chart for 1.28.0-rc.1.
