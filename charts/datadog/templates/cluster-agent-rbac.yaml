@@ -50,7 +50,7 @@ rules:
   verbs:
   - list
   - watch
-{{- if $.Values.datadog.instrumentationCrd.enabled }}
+{{- if .Values.datadog.instrumentationCrd.enabled }}
 - apiGroups:
   - "datadoghq.com"
   resources:
