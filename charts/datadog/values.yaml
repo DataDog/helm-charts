@@ -1096,6 +1096,11 @@ datadog:
     # datadog.orchestratorExplorer.rbac.create -- If true, create & use a dedicated ClusterRole and ClusterRoleBinding for orchestrator explorer permissions
       create: true
 
+    # datadog.orchestratorExplorer.networkCRDs.enabled -- Enable RBAC for Gateway API, service mesh, and ingress controller CRD collection.
+    # Set to true to add RBAC rules for these resources to the orchestrator explorer ClusterRole
+    networkCRDs:
+      enabled: false
+
     # datadog.orchestratorExplorer.useClusterCheckRunners -- For clusters where orchestrator explorer checks run on dedicated Cluster Checks Runners instead of the Cluster Agent.
 
     ## When enabled, the orchestrator explorer RBAC is bound to the Cluster Checks Runner ServiceAccount instead of the Cluster Agent.

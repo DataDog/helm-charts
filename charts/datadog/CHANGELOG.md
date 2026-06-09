@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.222.0
+
+* Add RBAC rules for Gateway API, service mesh, and ingress controller CRD collection, gated behind `datadog.orchestratorExplorer.networkCRDs.enabled`.
+
 ## 3.221.0
 
 * Bump Datadog Operator chart dependency to 2.23.0.
@@ -58,7 +62,7 @@
 
 ## 3.214.1
 
-* Update `fips.image.tag` to `1.1.25` fixing CVEs and updating packages.
+ * Update `fips.image.tag` to `1.1.25` fixing CVEs and updating packages.
 
 ## 3.214.0
 
