@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.221.0](https://img.shields.io/badge/Version-3.221.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.222.0](https://img.shields.io/badge/Version-3.222.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -917,6 +917,7 @@ helm install <RELEASE_NAME> \
 | datadog.orchestratorExplorer.customResources | list | `[]` | Defines custom resources for the orchestrator explorer to collect |
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
 | datadog.orchestratorExplorer.kubelet_configuration_check.enabled | bool | `true` | Enable the orchestrator kubelet configuration check |
+| datadog.orchestratorExplorer.networkCRDs.enabled | bool | `false` | Enable RBAC for Gateway API, service mesh, and ingress controller CRD collection. Set to true to add RBAC rules for these resources to the orchestrator explorer ClusterRole |
 | datadog.orchestratorExplorer.rbac.create | bool | `true` | If true, create & use a dedicated ClusterRole and ClusterRoleBinding for orchestrator explorer permissions |
 | datadog.orchestratorExplorer.useClusterCheckRunners | bool | `false` | For clusters where orchestrator explorer checks run on dedicated Cluster Checks Runners instead of the Cluster Agent. |
 | datadog.originDetectionUnified.enabled | bool | `false` | Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+). |
