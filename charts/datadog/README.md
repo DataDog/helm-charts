@@ -917,7 +917,7 @@ helm install <RELEASE_NAME> \
 | datadog.orchestratorExplorer.customResources | list | `[]` | Defines custom resources for the orchestrator explorer to collect |
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
 | datadog.orchestratorExplorer.kubelet_configuration_check.enabled | bool | `true` | Enable the orchestrator kubelet configuration check |
-| datadog.orchestratorExplorer.networkCRDs.enabled | bool | `false` | Enable RBAC for Gateway API, service mesh, and ingress controller CRD collection Set to true to add RBAC rules for these resources to the orchestrator explorer ClusterRole |
+| datadog.orchestratorExplorer.networkCRDs.enabled | bool | `false` | Enable RBAC for Gateway API, service mesh, and ingress controller CRD collection. Set to true to add RBAC rules for these resources to the orchestrator explorer ClusterRole |
 | datadog.orchestratorExplorer.rbac.create | bool | `true` | If true, create & use a dedicated ClusterRole and ClusterRoleBinding for orchestrator explorer permissions |
 | datadog.orchestratorExplorer.useClusterCheckRunners | bool | `false` | For clusters where orchestrator explorer checks run on dedicated Cluster Checks Runners instead of the Cluster Agent. |
 | datadog.originDetectionUnified.enabled | bool | `false` | Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+). |
