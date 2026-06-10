@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.23.2
+
+* Update Datadog Operator image tag to 1.27.1.
+
 ## 2.24.0-dev.1
 
 * Update Datadog Operator chart for 1.28.0-rc.1.
