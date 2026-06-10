@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.223.0
+
+* [CONTP-1710] Install DatadogInstrumentation CRD and add RBAC permissions when controller is enabled ([#2717](https://github.com/DataDog/helm-charts/pull/2717)).
+
 ## 3.222.0
 
 * Add RBAC rules for Gateway API, service mesh, and ingress controller CRD collection, gated behind `datadog.orchestratorExplorer.networkCRDs.enabled`.
