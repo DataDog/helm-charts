@@ -155,6 +155,8 @@ nodeSelector:
 tolerations: []
 # affinity -- Allows to specify affinity for Datadog Operator PODs
 affinity: {}
+# revisionHistoryLimit -- The number of ReplicaSet revisions to keep in the Deployment for rollback purposes
+revisionHistoryLimit: 10
 
 # dnsConfig -- Specify DNS configuration options for Datadog Operator PODs
 dnsConfig: {}
