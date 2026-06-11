@@ -1,0 +1,83 @@
+# This file contains a mapping of DataDog Github teams to slack channels.
+# Each team has a 'notification' channel (for CI/pipeline alerts) and a 'review' channel (for PR reviews).
+# The DEFAULT_SLACK_CHANNEL value is interpreted as '#agent-devx-ops'.
+# Note that the values must be quoted if they contain a '#' symbol, because
+# YAML interprets that as the beginning of a comment. Keys must also be quoted
+# because the '@' symbol is reserved in YAML.
+'@datadog/action-platform':
+  notification:
+    name: '#action-platform'
+    id: 'C037JEVR8S3'
+  review:
+    name: '#action-platform-reviews'
+    id: 'C0AG2UCHUKZ'
+'@datadog/agent-apm':
+  notification:
+    name: '#apm-agent'
+    id: 'CK4KK761W'
+  review:
+    name: '#apm-agent'
+    id: 'CK4KK761W'
+'@datadog/container-experiences':
+  notification:
+    name: '#process-agent-ops'
+    id: 'C0493DCUR6C'
+  review:
+    name: '#container-experiences'
+    id: 'C05404GL3R8'
+'@datadog/container-helm-chart-maintainers':
+  notification:
+    name: '#container-platform'
+    id: 'C0702JHC7G8'
+  review:
+    name: '#container-platform'
+    id: 'C0702JHC7G8'
+'@datadog/container-platform':
+  notification:
+    name: '#container-platform'
+    id: 'C0702JHC7G8'
+  review:
+    name: '#container-platform'
+    id: 'C0702JHC7G8'
+'@datadog/ebpf-platform':
+  notification:
+    name: '#ebpf-platform-ops'
+    id: 'C04NAC0JVMM'
+  review:
+    name: '#ebpf-platform'
+    id: 'C0424HA1SJK'
+'@datadog/logs-cloudprem':
+  notification:
+    name: '#logs-cloudprem-ops'
+    id: 'C0858DRD0LF'
+  review:
+    name: '#logs-cloudprem-ops'
+    id: 'C0858DRD0LF'
+'@datadog/observability-pipelines':
+  notification:
+    name: '#obs-pipelines'
+    id: 'C02JRE3DKMY'
+  review:
+    name: '#obs-pipelines'
+    id: 'C02JRE3DKMY'
+'@datadog/opentelemetry-agent':
+  notification:
+    name: '#opentelemetry-agent-ops'
+    id: 'C08R19TR3FS'
+  review:
+    name: '#opentelemetry-agent'
+    id: 'C086Z7E2A0Y'
+'@datadog/synthetics':
+  notification:
+    name: '#synthetics'
+    id: 'C8E85JEGH'
+  review:
+    name: '#synthetics'
+    id: 'C8E85JEGH'
+'@datadog/telemetry-onboarding':
+  notification:
+    name: '#telemetry-onboarding'
+    id: 'C0ACU5FGE3H'
+  review:
+    name: '#telemetry-onboarding'
+    id: 'C0ACU5FGE3H'

@@ -1444,6 +1444,11 @@ datadog:
     #   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts.
     enabled: false
 
+  instrumentationCrd:
+    # datadog.instrumentationCrd.enabled -- Enable the DatadogInstrumentation CRD controller and reconciliation platform.
+    # Requires version 7.80.0 or later of both cluster and node agent.
+    enabled:
+
   dataPlane:
     # datadog.dataPlane.enabled -- Whether or not the data plane is enabled
     #
