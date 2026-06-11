@@ -11,6 +11,6 @@ data:
   install_info: |
     ---
     install_method:
-      tool: helm
-      tool_version: {{ .Release.Service }}
+      tool: {{ .Values.datadog.installInfo.tool | default "helm" }}
+      tool_version: {{ .Values.datadog.installInfo.toolVersion | default .Release.Service }}
       installer_version: {{ .Chart.Name }}-{{ .Chart.Version }}
