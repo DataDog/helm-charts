@@ -7,7 +7,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.17.3
   name: datadogagents.datadoghq.com
   labels:
-    helm.sh/chart: 'datadogCRDs-2.21.0'
+    helm.sh/chart: 'datadogCRDs-2.22.0-dev.1'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'datadogCRDs'
     app.kubernetes.io/instance: 'datadog-operator'
@@ -643,6 +643,11 @@ spec:
                           properties:
                             enabled:
                               type: boolean
+                            inPlaceVerticalScaling:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
                           type: object
                       type: object
                     clusterChecks:
@@ -5113,6 +5118,11 @@ spec:
                               properties:
                                 enabled:
                                   type: boolean
+                                inPlaceVerticalScaling:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
                               type: object
                           type: object
                         clusterChecks:
