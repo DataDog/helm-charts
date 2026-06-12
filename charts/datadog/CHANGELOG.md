@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.223.2
+## 3.223.1
 
 * Update Default Agent Version to 7.80.1.
 
