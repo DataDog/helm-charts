@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.223.1
+
+* Update Default Agent Version to 7.80.1.
+
 ## 3.223.0
 
 * [CONTP-1710] Install DatadogInstrumentation CRD and add RBAC permissions when controller is enabled ([#2717](https://github.com/DataDog/helm-charts/pull/2717)).
