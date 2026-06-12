@@ -2,6 +2,7 @@
 
 ## 3.223.1
 
+* Update Default Agent Version to 7.80.1.
 * Clarify `datadog.env` and `datadog.envDict` that environment variables set with these options only propagate to the node Agent containers only.
 
 ## 3.223.0
