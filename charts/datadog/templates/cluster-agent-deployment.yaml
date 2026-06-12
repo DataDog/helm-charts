@@ -197,6 +197,10 @@ spec:
           {{- if .Values.clusterAgent.metricsProvider.enabled }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_ENABLED
             value: {{ .Values.clusterAgent.metricsProvider.enabled | quote }}
+          - name: DD_EXTERNAL_METRICS_PROVIDER_MAX_AGE
+            value: {{ .Values.clusterAgent.metricsProvider.maxAge | quote }}
+          - name: DD_EXTERNAL_METRICS_PROVIDER_BUCKET_SIZE
+            value: {{ .Values.clusterAgent.metricsProvider.bucketSize | quote }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_PORT
             value: {{ include "clusterAgent.metricsProvider.port" . | quote }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_WPA_CONTROLLER
