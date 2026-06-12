@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.223.1
+
+* Bump the default App & API Protection (AppSec) sidecar processor image tag (`datadog.appsec.injector.sidecar.imageTag`) from `v2.6.0` to `v2.8.2`.
+
 ## 3.223.0
 
 * [CONTP-1710] Install DatadogInstrumentation CRD and add RBAC permissions when controller is enabled ([#2717](https://github.com/DataDog/helm-charts/pull/2717)).
