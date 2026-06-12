@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.223.3
+
+* Bump the default App & API Protection (AppSec) sidecar processor image tag (`datadog.appsec.injector.sidecar.imageTag`) from `v2.6.0` to `v2.8.2`.
+
 ## 3.223.2
 
 * Clarify `datadog.env` and `datadog.envDict` that environment variables set with these options only propagate to the node Agent containers only.
