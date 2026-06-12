@@ -901,7 +901,7 @@ datadog:
   #   - secretRef:
   #       name: <SECRET_NAME>
 
-  # datadog.env -- Set environment variables for all Agents
+  # datadog.env -- Set environment variables for the node Agents containers only
 
   ## The Datadog Agent supports many environment variables.
   ## ref: https://docs.datadoghq.com/agent/docker/?tab=standard#environment-variables
@@ -909,7 +909,7 @@ datadog:
   #   - name: <ENV_VAR_NAME>
   #     value: <ENV_VAR_VALUE>
 
-  # datadog.envDict -- Set environment variables for all Agents defined in a dict
+  # datadog.envDict -- Set environment variables defined in a dict for node Agents containers only
   envDict: {}
   #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 

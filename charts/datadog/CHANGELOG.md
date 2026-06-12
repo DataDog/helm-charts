@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.223.1
+
+* Clarify `datadog.env` and `datadog.envDict` that environment variables set with these options only propagate to the node Agent containers only.
+
 ## 3.223.0
 
 * [CONTP-1710] Install DatadogInstrumentation CRD and add RBAC permissions when controller is enabled ([#2717](https://github.com/DataDog/helm-charts/pull/2717)).
