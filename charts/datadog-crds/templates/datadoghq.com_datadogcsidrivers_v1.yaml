@@ -48,6 +48,11 @@ spec:
               type: object
             spec:
               properties:
+                apm:
+                  properties:
+                    enabled:
+                      type: boolean
+                  type: object
                 apmSocketPath:
                   type: string
                 csiDriverImage:
