@@ -1110,8 +1110,6 @@ spec:
                       properties:
                         collectDNSStats:
                           type: boolean
-                        directSend:
-                          type: boolean
                         enableConntrack:
                           type: boolean
                         enabled:
@@ -1389,11 +1387,6 @@ spec:
                       properties:
                         enabled:
                           type: boolean
-                        networkStats:
-                          properties:
-                            enabled:
-                              type: boolean
-                          type: object
                       type: object
                     tcpQueueLength:
                       properties:
@@ -5528,8 +5521,6 @@ spec:
                           properties:
                             collectDNSStats:
                               type: boolean
-                            directSend:
-                              type: boolean
                             enableConntrack:
                               type: boolean
                             enabled:
@@ -5807,11 +5798,6 @@ spec:
                           properties:
                             enabled:
                               type: boolean
-                            networkStats:
-                              properties:
-                                enabled:
-                                  type: boolean
-                              type: object
                           type: object
                         tcpQueueLength:
                           properties:
