@@ -201,4 +201,3 @@ func Test_csi_driver_registryAllowList_envVar_only_when_explicitly_configured(t 
 		})
 	}
 }
-

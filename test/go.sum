@@ -44,8 +44,8 @@ github.com/DataDog/datadog-agent/pkg/version v0.80.1 h1:ppHlDUjZTXHTTO7voMYwbTqp
 github.com/DataDog/datadog-agent/pkg/version v0.80.1/go.mod h1:G3gsk0zVQboZMVG7RG7IWp55S5KjDjswcJb+vprR8L0=
 github.com/DataDog/datadog-agent/test/e2e-framework v0.82.0-devel.0.20260615184211-ddb946be2d36 h1:j8iKmwM59Lh5JnVMszKhiqZ2dHWXYCm0NeDbx08zHFg=
 github.com/DataDog/datadog-agent/test/e2e-framework v0.82.0-devel.0.20260615184211-ddb946be2d36/go.mod h1:4uvnd8XLI5TBmQ6sHeyj6zT30BMT6iEYYNEt5zDKBRs=
-github.com/DataDog/datadog-agent/test/fakeintake v0.80.1 h1:uXtqH4sqc2yYOt2BRRicyiBVCbCHiD+R92Oqu6xe3UA=
-github.com/DataDog/datadog-agent/test/fakeintake v0.80.1/go.mod h1:MflP+Tn3dAikcuKENJhQmviFmQnNCuSklTx6fR0hlfg=
+github.com/DataDog/datadog-agent/test/fakeintake v0.82.0-devel.0.20260615184211-ddb946be2d36 h1:JN0uaup8KZ1fES5rKC/vdAnFx27SpXD8+lQxHKe5eAM=
+github.com/DataDog/datadog-agent/test/fakeintake v0.82.0-devel.0.20260615184211-ddb946be2d36/go.mod h1:WQzqqN4kvh/3xFuxyOyVQZePqP0r0mu4yPtzJryrKTk=
 github.com/DataDog/datadog-api-client-go/v2 v2.60.0 h1:YzEB2H42symyDlHzNo0wcjW1mfXSW1E1UCbThHx4xrc=
 github.com/DataDog/datadog-api-client-go/v2 v2.60.0/go.mod h1:d3tOEgUd2kfsr9uuHQdY+nXrWp4uikgTgVCPdKNK30U=
 github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49 h1:EbzDX8HPk5uE2FsJYxD74QmMw0/3CqSKhEr6teh0ncQ=
@@ -471,8 +471,8 @@ github.com/prometheus/client_golang v1.23.3-0.20251103151724-a5ae20370e5e h1:VdO
 github.com/prometheus/client_golang v1.23.3-0.20251103151724-a5ae20370e5e/go.mod h1:Cd8aF6pZc1Z65dR58mjfsi9nymQTAgZFCiJYzDNsYDo=
 github.com/prometheus/client_model v0.6.2 h1:oBsgwpGs7iVziMvrGhE53c/GrLUsZdHnqNwqPLxwZyk=
 github.com/prometheus/client_model v0.6.2/go.mod h1:y3m2F6Gdpfy6Ut/GBsUqTWZqCUvMVzSfMLjcu6wAwpE=
-github.com/prometheus/common v0.67.5 h1:pIgK94WWlQt1WLwAC5j2ynLaBRDiinoAb86HZHTUGI4=
-github.com/prometheus/common v0.67.5/go.mod h1:SjE/0MzDEEAyrdr5Gqc6G+sXI67maCxzaT3A2+HqjUw=
+github.com/prometheus/common v0.68.0 h1:8rQJvQmYltsR2L7h8Zw0Iyj8WYNNmpwikoQTZXwfVeA=
+github.com/prometheus/common v0.68.0/go.mod h1:4soH+U8yJSROk7OJ//hmTiWKsxapv6zRGgTt3keN8gQ=
 github.com/prometheus/procfs v0.20.1 h1:XwbrGOIplXW/AU3YhIhLODXMJYyC1isLFfYCsTEycfc=
 github.com/prometheus/procfs v0.20.1/go.mod h1:o9EMBZGRyvDrSPH1RqdxhojkuXstoe4UlK79eF5TGGo=
 github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435cARxCW6q9gc0S/Yxz7Mkd38pOb0=

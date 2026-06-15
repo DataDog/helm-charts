@@ -9,9 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/DataDog/helm-charts/test/common"
 	"github.com/DataDog/datadog-agent/test/e2e-framework/components/datadog/kubernetesagentparams"
 	"github.com/DataDog/datadog-agent/test/e2e-framework/components/kubernetes/k8sapply"
+	"github.com/DataDog/helm-charts/test/common"
 	"github.com/stretchr/testify/require"
 
 	"github.com/stretchr/testify/assert"
