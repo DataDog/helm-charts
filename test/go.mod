@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/DataDog/datadog-agent/pkg/util/testutil v0.72.2
 	github.com/DataDog/datadog-agent/test/e2e-framework v0.82.0-devel.0.20260615184211-ddb946be2d36
-	github.com/DataDog/datadog-agent/test/fakeintake v0.72.2
+	github.com/DataDog/datadog-agent/test/fakeintake v0.80.1
 	github.com/Masterminds/semver v1.5.0
 	github.com/google/go-cmp v0.7.0
 	github.com/gruntwork-io/terratest v0.47.2
@@ -27,17 +27,17 @@ require (
 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
 	github.com/BurntSushi/toml v1.6.0 // indirect
 	github.com/DataDog/agent-payload/v5 v5.0.198 // indirect
-	github.com/DataDog/datadog-agent/comp/core/tagger/origindetection v0.76.0-rc.4 // indirect
-	github.com/DataDog/datadog-agent/comp/netflow/payload v0.72.2 // indirect
-	github.com/DataDog/datadog-agent/pkg/metrics v0.76.0-rc.4 // indirect
-	github.com/DataDog/datadog-agent/pkg/network/payload v0.72.2 // indirect
-	github.com/DataDog/datadog-agent/pkg/networkpath/payload v0.72.2 // indirect
-	github.com/DataDog/datadog-agent/pkg/proto v0.76.0-rc.4 // indirect
-	github.com/DataDog/datadog-agent/pkg/tagger/types v0.76.0-rc.4 // indirect
-	github.com/DataDog/datadog-agent/pkg/util/option v0.76.0-rc.4 // indirect
-	github.com/DataDog/datadog-agent/pkg/util/pointer v0.76.0-rc.4 // indirect
-	github.com/DataDog/datadog-agent/pkg/util/scrubber v0.76.0-rc.4 // indirect
-	github.com/DataDog/datadog-agent/pkg/version v0.76.0-rc.4 // indirect
+	github.com/DataDog/datadog-agent/comp/core/tagger/origindetection v0.80.1 // indirect
+	github.com/DataDog/datadog-agent/comp/netflow/payload v0.80.1 // indirect
+	github.com/DataDog/datadog-agent/pkg/metrics v0.80.1 // indirect
+	github.com/DataDog/datadog-agent/pkg/network/payload v0.80.1 // indirect
+	github.com/DataDog/datadog-agent/pkg/networkpath/payload v0.80.1 // indirect
+	github.com/DataDog/datadog-agent/pkg/proto v0.80.1 // indirect
+	github.com/DataDog/datadog-agent/pkg/tagger/types v0.80.1 // indirect
+	github.com/DataDog/datadog-agent/pkg/util/option v0.80.1 // indirect
+	github.com/DataDog/datadog-agent/pkg/util/pointer v0.80.1 // indirect
+	github.com/DataDog/datadog-agent/pkg/util/scrubber v0.80.1 // indirect
+	github.com/DataDog/datadog-agent/pkg/version v0.80.1 // indirect
 	github.com/DataDog/datadog-api-client-go/v2 v2.60.0 // indirect
 	github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49 // indirect
 	github.com/DataDog/zstd v1.5.8-0.20260421145859-31a7e515a571 // indirect
@@ -78,7 +78,6 @@ require (
 	github.com/blang/semver/v4 v4.0.0 // indirect
 	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
-	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chai2010/gettext-go v1.0.2 // indirect
