@@ -21,12 +21,14 @@
 {{- end }}
 {{- end }}
 {{- if not .Values.providers.gke.gdc }}
+{{- if not .Values.providers.aks.automatic }}
 - hostPath:
     path: /proc
   name: procdir
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
+{{- end }}
 {{- if eq (include "should-add-host-path-for-os-release-file" .) "true"}}
 - hostPath:
     path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
@@ -222,7 +224,7 @@
   name: runtimesocketdir
 {{- end }}
 {{- end }}
-{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.datadog.otelCollector.logs.enabled }}
+{{- if and (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.datadog.otelCollector.logs.enabled) (not .Values.providers.aks.automatic) }}
 - hostPath:
     path: {{ .Values.datadog.kubelet.podLogsPath | default "/var/log/pods" }}
   name: logpodpath
@@ -235,7 +237,7 @@
   name: logdockercontainerpath
 {{- end }}
 {{- end }}
-{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
+{{- if and (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.providers.gke.autopilot .Values.providers.gke.gdc) (not .Values.providers.aks.automatic) }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: {{ include "datadog.agentRunVolumeName" . }}

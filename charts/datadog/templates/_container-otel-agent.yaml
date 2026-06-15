@@ -104,7 +104,7 @@
       mountPath: {{ template "datadog.otelconfPath" . }}
       readOnly: true
     {{- if eq .Values.targetSystem "linux" }}
-    {{- if not .Values.providers.gke.autopilot }}
+    {{- if not (or .Values.providers.gke.autopilot .Values.providers.aks.automatic) }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

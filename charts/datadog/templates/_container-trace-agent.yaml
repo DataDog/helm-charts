@@ -25,7 +25,7 @@
 {{- end }}
   ports:
   - containerPort: {{ .Values.datadog.apm.port }}
-  {{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled }}
+  {{- if and (or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled) (not .Values.providers.aks.automatic) }}
     hostPort: {{ .Values.datadog.apm.port }}
   {{- end }}
     name: traceport
@@ -102,7 +102,7 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
-    {{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
+    {{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc .Values.providers.aks.automatic) }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

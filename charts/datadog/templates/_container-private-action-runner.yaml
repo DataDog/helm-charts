@@ -71,7 +71,7 @@
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false
     {{- end }}
-    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) (not .Values.providers.aks.automatic) }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

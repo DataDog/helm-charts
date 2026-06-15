@@ -96,6 +96,7 @@
       mountPath: /opt/datadog-agent/run
       readOnly: false
 {{- end }}
+{{- if not .Values.providers.aks.automatic }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -105,6 +106,7 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+{{- end }}
 {{- end }}
 {{- if .Values.datadog.securityAgent.runtime.enabled }}
 {{- if (eq (include "should-add-host-path-for-etc-passwd" .) "true") }}

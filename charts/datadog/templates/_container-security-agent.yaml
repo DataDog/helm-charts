@@ -100,9 +100,11 @@
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     {{- if eq (include "should-enable-compliance" .) "true" }}
+    {{- if not .Values.providers.aks.automatic }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       readOnly: true
+    {{- end }}
     {{- if (eq (include "should-add-host-path-for-etc-passwd" .) "true") }}
     - name: passwd
       mountPath: /etc/passwd
@@ -116,9 +118,11 @@
     - name: hostroot
       mountPath: /host/root
       readOnly: true
+    {{- if not .Values.providers.aks.automatic }}
     - name: procdir
       mountPath: /host/proc
       readOnly: true
+    {{- end }}
     {{- if .Values.datadog.kubelet.hostCAPath }}
 {{ include "datadog.kubelet.volumeMount" . | indent 4 }}
     {{- end }}

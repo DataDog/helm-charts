@@ -79,6 +79,7 @@
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false
+    {{- if not .Values.providers.aks.automatic }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -87,6 +88,7 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    {{- end }}
     {{- end }}
     {{- end }}
 {{- if .Values.agents.volumeMounts }}

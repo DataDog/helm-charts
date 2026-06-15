@@ -43,10 +43,12 @@
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
       readOnly: false # Need RW to write logs
+    {{- if not .Values.providers.aks.automatic }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- end }}
     {{- if eq (include "should-enable-system-probe" .) "true" }}

@@ -337,6 +337,7 @@
       subPath: system-probe.yaml
       readOnly: true
     {{- end }}
+    {{- if not .Values.providers.aks.automatic }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -345,13 +346,14 @@
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    {{- end }}
     {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (and (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true")) }}
     - name: passwd
       mountPath: /etc/passwd
       readOnly: true
     {{- end }}
     {{- end }}
-    {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+    {{- if and (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled) (not .Values.providers.aks.automatic) }}
     - name: {{ include "datadog.agentRunVolumeName" . }}
       mountPath: /opt/datadog-agent/run
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
