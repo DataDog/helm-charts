@@ -2176,7 +2176,9 @@ spec:
         - hostPath:
             path: /etc/os-release
           name: os-release-file
-        - emptyDir: {}
+        - hostPath:
+            path: /var/run/datadog
+            type: DirectoryOrCreate
           name: dsdsocket
         - configMap:
             name: datadog-system-probe-config

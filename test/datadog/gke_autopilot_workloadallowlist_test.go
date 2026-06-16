@@ -85,6 +85,7 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				var ds appsv1.DaemonSet
 				common.Unmarshal(t, manifest, &ds)
 				requireContainerNames(t, ds, "agent", "system-probe")
+				requireHostPathVolume(t, ds, "dsdsocket", "/var/run/datadog")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
 			},
 		},
@@ -108,6 +109,7 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				var ds appsv1.DaemonSet
 				common.Unmarshal(t, manifest, &ds)
 				requireContainerNames(t, ds, "agent", "system-probe", "agent-data-plane")
+				requireHostPathVolume(t, ds, "dsdsocket", "/var/run/datadog")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
 			},
 		},
@@ -135,6 +137,7 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				var ds appsv1.DaemonSet
 				common.Unmarshal(t, manifest, &ds)
 				requireContainerNames(t, ds, "agent", "process-agent", "system-probe")
+				requireHostPathVolume(t, ds, "dsdsocket", "/var/run/datadog")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
 			},
 		},
@@ -222,6 +225,32 @@ func requireContainerNames(t *testing.T, ds appsv1.DaemonSet, expected ...string
 	}
 	assert.Equal(t, len(expected), len(names),
 		fmt.Sprintf("unexpected containers present: %v", names))
+}
+
+func requireHostPathVolume(t *testing.T, ds appsv1.DaemonSet, name, path string) {
+	t.Helper()
+	for _, volume := range ds.Spec.Template.Spec.Volumes {
+		if volume.Name != name {
+			continue
+		}
+		if assert.NotNil(t, volume.HostPath, fmt.Sprintf("expected volume %q to be a hostPath", name)) {
+			assert.Equal(t, path, volume.HostPath.Path)
+		}
+		return
+	}
+	assert.Fail(t, fmt.Sprintf("expected volume %q to be present", name))
+}
+
+func requireEmptyDirVolume(t *testing.T, ds appsv1.DaemonSet, name string) {
+	t.Helper()
+	for _, volume := range ds.Spec.Template.Spec.Volumes {
+		if volume.Name != name {
+			continue
+		}
+		assert.NotNil(t, volume.EmptyDir, fmt.Sprintf("expected volume %q to be an emptyDir", name))
+		return
+	}
+	assert.Fail(t, fmt.Sprintf("expected volume %q to be present", name))
 }
 
 // verifyAutopilotWorkloadAllowlistConstraints checks that the rendered DaemonSet

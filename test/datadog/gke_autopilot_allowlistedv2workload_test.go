@@ -64,6 +64,7 @@ func verifyDaemonsetAutopilotAllowlistedV2WorkloadMinimal(t *testing.T, manifest
 
 	assert.Equal(t, 1, len(ds.Spec.Template.Spec.Containers))
 	assert.Equal(t, ds.Spec.Template.Spec.Containers[0].Name, "agent")
+	requireEmptyDirVolume(t, ds, "dsdsocket")
 
 	volumeNames := common.GetVolumeNames(ds)
 

@@ -64,6 +64,7 @@ func verifyDaemonsetGDCConstraints(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(ds.Spec.Template.Spec.Containers), "GDC only supports the core agent container")
 
 	volumeNames := common.GetVolumeNames(ds)
+	assert.False(t, common.Contains("dsdsocket", volumeNames), "GDC should not mount the DogStatsD socket volume")
 
 	for _, volume := range ds.Spec.Template.Spec.Volumes {
 		if volume.HostPath != nil {

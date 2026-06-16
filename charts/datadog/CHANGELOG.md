@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.223.3
+
+* On GKE Autopilot clusters using WorkloadAllowlist, render the DogStatsD socket volume as the allowlisted `/var/run/datadog` hostPath even when the Datadog CSI driver is disabled.
+
 ## 3.223.2
 
 * Clarify `datadog.env` and `datadog.envDict` that environment variables set with these options only propagate to the node Agent containers only.

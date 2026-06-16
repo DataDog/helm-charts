@@ -856,13 +856,15 @@ false
 {{- end -}}
 
 {{/*
-Return true hostPath should be use for DSD socket. Return always false on GKE Autopilot in case CSI driver is not enabled, and on GDC.
+Return true if hostPath should be used for DSD socket. On GKE Autopilot without CSI, only use hostPath when
+WorkloadAllowlists are enabled.
 */}}
 {{- define "should-mount-hostPath-for-dsd-socket" -}}
-{{- if or (and .Values.providers.gke.autopilot (not .Values.datadog.csi.enabled)) .Values.providers.gke.gdc (eq .Values.targetSystem "windows") -}}
+{{- if or .Values.providers.gke.gdc (eq .Values.targetSystem "windows") -}}
 false
-{{- end -}}
-{{- if .Values.datadog.dogstatsd.useSocketVolume -}}
+{{- else if and .Values.providers.gke.autopilot (not .Values.datadog.csi.enabled) (eq (include "gke-autopilot-workloadallowlists-enabled" .) "false") -}}
+false
+{{- else if .Values.datadog.dogstatsd.useSocketVolume -}}
 true
 {{- else -}}
 false

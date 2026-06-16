@@ -428,11 +428,21 @@ The option is overriden to avoid mounting volumes that are not allowed which wou
 
 {{- end }}
 
-{{- if and .Values.datadog.dogstatsd.useSocketVolume (not .Values.datadog.csi.enabled)}}
+{{- if and .Values.datadog.dogstatsd.useSocketVolume (not .Values.datadog.csi.enabled) }}
 
-##############################################################################################################################################
-####   WARNING: dogstatsd with Unix socket is not supported on GKE Autopilot if Datadog CSI Driver is inactive. See datadog.csi.enabled   ####
-##############################################################################################################################################
+{{- if eq (include "gke-autopilot-workloadallowlists-enabled" .) "true" }}
+
+################################################################################################################################################
+####   WARNING: dogstatsd with Unix socket on GKE Autopilot requires Datadog CSI Driver for application workloads. See datadog.csi.enabled   ####
+################################################################################################################################################
+
+{{- else }}
+
+#####################################################################################################################################
+####   WARNING: dogstatsd with Unix socket is not supported on legacy GKE Autopilot clusters using AllowlistedV2Workload.   ####
+#####################################################################################################################################
+
+{{- end }}
 
 {{- end }}
 
