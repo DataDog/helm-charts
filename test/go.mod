@@ -4,8 +4,8 @@ go 1.26.0
 
 require (
 	github.com/DataDog/datadog-agent/pkg/util/testutil v0.72.2
-	github.com/DataDog/datadog-agent/test/e2e-framework v0.82.0-devel.0.20260615184211-ddb946be2d36
-	github.com/DataDog/datadog-agent/test/fakeintake v0.82.0-devel.0.20260615184211-ddb946be2d36
+	github.com/DataDog/datadog-agent/test/e2e-framework v0.82.0-devel.0.20260616154732-f3c0a1d26ddb
+	github.com/DataDog/datadog-agent/test/fakeintake v0.82.0-devel.0.20260616154732-f3c0a1d26ddb
 	github.com/Masterminds/semver v1.5.0
 	github.com/google/go-cmp v0.7.0
 	github.com/gruntwork-io/terratest v0.47.2

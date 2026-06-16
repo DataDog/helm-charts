@@ -42,10 +42,10 @@ github.com/DataDog/datadog-agent/pkg/util/testutil v0.72.2 h1:05R9eLwsAqHoxxIBZh
 github.com/DataDog/datadog-agent/pkg/util/testutil v0.72.2/go.mod h1:+2wH1RZ6UWGNaYw5BLofYnbrGhcHv8OeCIjEnTopfss=
 github.com/DataDog/datadog-agent/pkg/version v0.80.1 h1:ppHlDUjZTXHTTO7voMYwbTqpYD7SVX2yCiYwFqcJ/cU=
 github.com/DataDog/datadog-agent/pkg/version v0.80.1/go.mod h1:G3gsk0zVQboZMVG7RG7IWp55S5KjDjswcJb+vprR8L0=
-github.com/DataDog/datadog-agent/test/e2e-framework v0.82.0-devel.0.20260615184211-ddb946be2d36 h1:j8iKmwM59Lh5JnVMszKhiqZ2dHWXYCm0NeDbx08zHFg=
-github.com/DataDog/datadog-agent/test/e2e-framework v0.82.0-devel.0.20260615184211-ddb946be2d36/go.mod h1:4uvnd8XLI5TBmQ6sHeyj6zT30BMT6iEYYNEt5zDKBRs=
-github.com/DataDog/datadog-agent/test/fakeintake v0.82.0-devel.0.20260615184211-ddb946be2d36 h1:JN0uaup8KZ1fES5rKC/vdAnFx27SpXD8+lQxHKe5eAM=
-github.com/DataDog/datadog-agent/test/fakeintake v0.82.0-devel.0.20260615184211-ddb946be2d36/go.mod h1:WQzqqN4kvh/3xFuxyOyVQZePqP0r0mu4yPtzJryrKTk=
+github.com/DataDog/datadog-agent/test/e2e-framework v0.82.0-devel.0.20260616154732-f3c0a1d26ddb h1:Fo7icruGGY8qfPbl3a4tqbpQDbPyw/q7pTf+eXb6NUA=
+github.com/DataDog/datadog-agent/test/e2e-framework v0.82.0-devel.0.20260616154732-f3c0a1d26ddb/go.mod h1:4uvnd8XLI5TBmQ6sHeyj6zT30BMT6iEYYNEt5zDKBRs=
+github.com/DataDog/datadog-agent/test/fakeintake v0.82.0-devel.0.20260616154732-f3c0a1d26ddb h1:TgTIA3oivMFvELyLgzk1Cp/K+aJHNC9biQaIkvoGvi4=
+github.com/DataDog/datadog-agent/test/fakeintake v0.82.0-devel.0.20260616154732-f3c0a1d26ddb/go.mod h1:WQzqqN4kvh/3xFuxyOyVQZePqP0r0mu4yPtzJryrKTk=
 github.com/DataDog/datadog-api-client-go/v2 v2.60.0 h1:YzEB2H42symyDlHzNo0wcjW1mfXSW1E1UCbThHx4xrc=
 github.com/DataDog/datadog-api-client-go/v2 v2.60.0/go.mod h1:d3tOEgUd2kfsr9uuHQdY+nXrWp4uikgTgVCPdKNK30U=
 github.com/DataDog/mmh3 v0.0.0-20210722141835-012dc69a9e49 h1:EbzDX8HPk5uE2FsJYxD74QmMw0/3CqSKhEr6teh0ncQ=
