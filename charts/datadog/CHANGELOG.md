@@ -2,7 +2,7 @@
 
 ## 3.224.0
 
-* Add `datadog.kubeActions.enabled` to enable the Kubernetes Actions feature on the Cluster Agent. When set to `true`, the chart sets `DD_KUBEACTIONS_ENABLED=true` on the Cluster Agent and creates a ClusterRole/ClusterRoleBinding granting permission to delete pods and patch deployments for remediation. Requires Cluster Agent version 7.79.0 or greater.
+* Add `datadog.kubernetesActions.enabled` to enable the Kubernetes Actions feature on the Cluster Agent. When set to `true`, the chart sets `DD_KUBEACTIONS_ENABLED=true` on the Cluster Agent and creates a ClusterRole/ClusterRoleBinding granting permission to delete pods and patch deployments for remediation. Requires Cluster Agent version 7.79.0 or greater.
 
 ## 3.223.4
 

@@ -1,11 +1,11 @@
 {{- $dcaImageTag := .Values.clusterAgent.image.tag | toString }}
-{{- if and .Values.datadog.kubeActions.enabled (eq (include "cluster-agent-enabled" .) "true") (or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.79.0-0" $dcaImageTag)) }}
+{{- if and .Values.datadog.kubernetesActions.enabled (eq (include "cluster-agent-enabled" .) "true") (or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.79.0-0" $dcaImageTag)) }}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
-  name: {{ template "datadog.fullname" . }}-kubeactions
+  name: {{ template "datadog.fullname" . }}-kubernetes-actions
 rules:
   - apiGroups:
       - ""
@@ -36,11 +36,11 @@ kind: ClusterRoleBinding
 metadata:
   labels:
 {{ include "datadog.labels" . | indent 4 }}
-  name: {{ template "datadog.fullname" . }}-kubeactions
+  name: {{ template "datadog.fullname" . }}-kubernetes-actions
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ template "datadog.fullname" . }}-kubeactions
+  name: {{ template "datadog.fullname" . }}-kubernetes-actions
 subjects:
   - kind: ServiceAccount
     name: {{ if .Values.clusterAgent.rbac.create }}{{ template "datadog.fullname" . }}-cluster-agent{{ else }}"{{ .Values.clusterAgent.rbac.serviceAccountName }}"{{ end }}
