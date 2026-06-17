@@ -178,7 +178,7 @@
 {{- end }}
 {{- if .Values.datadog.dynamicInstrumentationGo.enabled }}
     - name: dynamic-instrumentation-cache-dir
-      mountPath: /tmp/datadog-agent/system-probe/dynamic-instrumentation
+      mountPath: /opt/datadog-agent/run/system-probe/dynamic-instrumentation
 {{- end }}
 {{- if eq (include "runtime-compilation-enabled" .) "true" }}
     - name: runtime-compiler-output-dir

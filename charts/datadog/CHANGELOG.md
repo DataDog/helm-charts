@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.230.1
+
+* Update the Go Dynamic Instrumentation cache volume mount to `/opt/datadog-agent/run/system-probe/dynamic-instrumentation`, matching the Agent's relocation of that writable state out of `/tmp`, so the SymDB upload cache, probe tombstone, and decompressed debug info persist across container restarts again.
+
 ## 3.230.0
 
 * Bump Datadog Operator chart dependency to 2.24.0.
