@@ -18,6 +18,7 @@ github_teams_restrictions:
   - profiling-full-host
   - injection-platform
   - containers-tee
+  - asm-go
 github_users_restrictions:
   - cahillsf
   - clamoriniere

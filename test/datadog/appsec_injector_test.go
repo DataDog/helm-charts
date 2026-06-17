@@ -95,7 +95,7 @@ func Test_AppSecInjector_Enabled_RendersDefaultOptions(t *testing.T) {
 		ddAppsecProxyAutoDetectEnvVar:      "true",
 		ddAppsecInjectorEnabledEnvVar:      "true",
 		ddAppsecSidecarImageEnvVar:         "ghcr.io/datadog/dd-trace-go/service-extensions-callout",
-		ddAppsecSidecarImageTagEnvVar:      "v2.6.0",
+		ddAppsecSidecarImageTagEnvVar:      "v2.8.2",
 		ddAppsecSidecarPortEnvVar:          "8080",
 		ddAppsecSidecarHealthPortEnvVar:    "8081",
 		ddAppsecSidecarReqCPUEnvVar:        "10m",

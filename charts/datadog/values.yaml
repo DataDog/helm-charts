@@ -738,7 +738,7 @@ datadog:
         # datadog.appsec.injector.sidecar.image -- Container image for the AppSec sidecar processor
         image: "ghcr.io/datadog/dd-trace-go/service-extensions-callout"
         # datadog.appsec.injector.sidecar.imageTag -- Image tag for the AppSec sidecar processor
-        imageTag: "v2.6.0"
+        imageTag: "v2.8.2"
         # datadog.appsec.injector.sidecar.port -- Listening port for the AppSec sidecar processor
         port: 8080
         # datadog.appsec.injector.sidecar.healthPort -- Health check port for the AppSec sidecar processor
@@ -901,7 +901,7 @@ datadog:
   #   - secretRef:
   #       name: <SECRET_NAME>
 
-  # datadog.env -- Set environment variables for all Agents
+  # datadog.env -- Set environment variables for the node Agents containers only
 
   ## The Datadog Agent supports many environment variables.
   ## ref: https://docs.datadoghq.com/agent/docker/?tab=standard#environment-variables
@@ -909,7 +909,7 @@ datadog:
   #   - name: <ENV_VAR_NAME>
   #     value: <ENV_VAR_VALUE>
 
-  # datadog.envDict -- Set environment variables for all Agents defined in a dict
+  # datadog.envDict -- Set environment variables defined in a dict for node Agents containers only
   envDict: {}
   #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
@@ -1511,7 +1511,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.78.3
+    tag: 7.80.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2128,7 +2128,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.78.3
+    tag: 7.80.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2809,7 +2809,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.78.3
+    tag: 7.80.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
