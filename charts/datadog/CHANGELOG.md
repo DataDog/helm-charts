@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.223.4
+
+* Update `fips.image.tag` to `1.1.27` fixing CVEs and updating packages.
+
 ## 3.223.3
 
 * Bump the default App & API Protection (AppSec) sidecar processor image tag (`datadog.appsec.injector.sidecar.imageTag`) from `v2.6.0` to `v2.8.2`.
