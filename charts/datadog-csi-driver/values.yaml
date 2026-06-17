@@ -71,6 +71,10 @@ sockets:
   # Should correspond to `datadog.dsd.hostSocketPath`
   dsdHostSocketPath: /var/run/datadog/dsd.socket
 
+  # dsdStreamHostSocketPath -- Host path of the dsd stream socket.
+  # Should correspond to `dogstatsd_stream_socket` in the Datadog Agent config.
+  dsdStreamHostSocketPath: /var/run/datadog/dsd-stream.socket
+
 ## APM/Single Step Instrumentation (SSI) configuration for the CSI driver.
 ## Note: SSI is not supported on legacy GKE Autopilot clusters (< 1.32.1-gke.1729000)
 apm:
