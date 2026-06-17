@@ -2,7 +2,7 @@
 
 ## 3.223.3
 
-* On GKE Autopilot clusters using WorkloadAllowlist, render the DogStatsD socket volume as the allowlisted `/var/run/datadog` hostPath even when the Datadog CSI driver is disabled.
+* Omit the DogStatsD socket volume on GKE Autopilot when the Datadog CSI driver is disabled.
 
 ## 3.223.2
 

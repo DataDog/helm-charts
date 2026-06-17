@@ -75,10 +75,12 @@
       readOnly: true
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
-    {{- if not .Values.providers.gke.gdc }}
+    {{- if eq (include "should-render-dsd-socket-volume" .) "true" }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false
+    {{- end }}
+    {{- if not .Values.providers.gke.gdc }}
     - name: procdir
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}

@@ -49,6 +49,7 @@
 {{- if eq (include "should-enable-fips-proxy" . ) "true" }}
 {{ include "linux-container-fips-proxy-cfg-volume" . }}
 {{- end }}
+{{- if eq (include "should-render-dsd-socket-volume" .) "true" }}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.dogstatsd.hostSocketPath }}
@@ -57,6 +58,7 @@
 {{- else }}
 - emptyDir: {}
   name: dsdsocket
+{{- end }}
 {{- end }}
 {{- if .Values.providers.eks.ec2.useHostnameFromFile }}
 - hostPath:

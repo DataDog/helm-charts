@@ -41,7 +41,7 @@
           name: {{ .Values.datadog.privateActionRunner.identityFromExistingSecret }}
           key: private_key
     {{- end }}
-    {{- if eq .Values.targetSystem "linux" }}
+    {{- if eq (include "should-render-dsd-socket-volume" .) "true" }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
@@ -66,7 +66,7 @@
     - name: tmpdir
       mountPath: /tmp
       readOnly: false
-    {{- if not .Values.providers.gke.gdc }}
+    {{- if eq (include "should-render-dsd-socket-volume" .) "true" }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
       readOnly: false

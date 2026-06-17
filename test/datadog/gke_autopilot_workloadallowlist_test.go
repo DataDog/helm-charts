@@ -85,7 +85,8 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				var ds appsv1.DaemonSet
 				common.Unmarshal(t, manifest, &ds)
 				requireContainerNames(t, ds, "agent", "system-probe")
-				requireHostPathVolume(t, ds, "dsdsocket", "/var/run/datadog")
+				requireNoVolume(t, ds, "dsdsocket")
+				requireNoEnvVar(t, ds, "DD_DOGSTATSD_SOCKET")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
 			},
 		},
@@ -109,7 +110,8 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				var ds appsv1.DaemonSet
 				common.Unmarshal(t, manifest, &ds)
 				requireContainerNames(t, ds, "agent", "system-probe", "agent-data-plane")
-				requireHostPathVolume(t, ds, "dsdsocket", "/var/run/datadog")
+				requireNoVolume(t, ds, "dsdsocket")
+				requireNoEnvVar(t, ds, "DD_DOGSTATSD_SOCKET")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
 			},
 		},
@@ -137,7 +139,8 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				var ds appsv1.DaemonSet
 				common.Unmarshal(t, manifest, &ds)
 				requireContainerNames(t, ds, "agent", "process-agent", "system-probe")
-				requireHostPathVolume(t, ds, "dsdsocket", "/var/run/datadog")
+				requireNoVolume(t, ds, "dsdsocket")
+				requireNoEnvVar(t, ds, "DD_DOGSTATSD_SOCKET")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
 			},
 		},
@@ -251,6 +254,25 @@ func requireEmptyDirVolume(t *testing.T, ds appsv1.DaemonSet, name string) {
 		return
 	}
 	assert.Fail(t, fmt.Sprintf("expected volume %q to be present", name))
+}
+
+func requireNoVolume(t *testing.T, ds appsv1.DaemonSet, name string) {
+	t.Helper()
+	for _, volume := range ds.Spec.Template.Spec.Volumes {
+		assert.NotEqual(t, name, volume.Name, fmt.Sprintf("expected volume %q to be omitted", name))
+	}
+}
+
+func requireNoEnvVar(t *testing.T, ds appsv1.DaemonSet, name string) {
+	t.Helper()
+	for _, container := range ds.Spec.Template.Spec.Containers {
+		_, found := findEnvVar(container.Env, name)
+		assert.False(t, found, fmt.Sprintf("container %q should not set env var %q", container.Name, name))
+	}
+	for _, initContainer := range ds.Spec.Template.Spec.InitContainers {
+		_, found := findEnvVar(initContainer.Env, name)
+		assert.False(t, found, fmt.Sprintf("init container %q should not set env var %q", initContainer.Name, name))
+	}
 }
 
 // verifyAutopilotWorkloadAllowlistConstraints checks that the rendered DaemonSet

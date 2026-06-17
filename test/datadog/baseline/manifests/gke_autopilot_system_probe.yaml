@@ -1787,8 +1787,6 @@ spec:
               value: "true"
             - name: DD_DOGSTATSD_TAG_CARDINALITY
               value: low
-            - name: DD_DOGSTATSD_SOCKET
-              value: /var/run/datadog/dsd.socket
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -1891,9 +1889,6 @@ spec:
               mountPropagation: None
               name: runtimesocketdir
               readOnly: true
-            - mountPath: /var/run/datadog
-              name: dsdsocket
-              readOnly: false
             - mountPath: /var/run/sysprobe
               name: sysprobe-socket-dir
               readOnly: true
@@ -1975,8 +1970,6 @@ spec:
               value: "true"
             - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
               value: "true"
-            - name: DD_DOGSTATSD_SOCKET
-              value: /var/run/datadog/dsd.socket
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
           image: gcr.io/datadoghq/agent:7.80.1
@@ -2295,10 +2288,6 @@ spec:
         - hostPath:
             path: /etc/os-release
           name: os-release-file
-        - hostPath:
-            path: /var/run/datadog
-            type: DirectoryOrCreate
-          name: dsdsocket
         - configMap:
             name: datadog-system-probe-config
           name: sysprobe-config
