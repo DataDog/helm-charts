@@ -50,6 +50,9 @@ datadog:
   logs:
     enabled: true
     containerCollectAll: true
+providers:
+  gke:
+    cos: true
 clusterChecksRunner:
   enabled: false
 `)))))

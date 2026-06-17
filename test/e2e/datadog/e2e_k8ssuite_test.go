@@ -207,6 +207,9 @@ datadog:
     tlsVerify: false
   kubeStateMetricsCore:
     useClusterCheckRunners: true
+providers:
+  gke:
+    cos: true
 clusterChecksRunner:
   enabled: true`)}
 
