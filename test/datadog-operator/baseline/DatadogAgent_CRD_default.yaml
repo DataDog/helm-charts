@@ -7,7 +7,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.17.3
   name: datadogagents.datadoghq.com
   labels:
-    helm.sh/chart: 'datadogCRDs-2.22.0-dev.1'
+    helm.sh/chart: 'datadogCRDs-2.22.0-dev.2'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'datadogCRDs'
     app.kubernetes.io/instance: 'datadog-operator'
@@ -1108,8 +1108,6 @@ spec:
                       properties:
                         collectDNSStats:
                           type: boolean
-                        directSend:
-                          type: boolean
                         enableConntrack:
                           type: boolean
                         enabled:
@@ -1387,11 +1385,6 @@ spec:
                       properties:
                         enabled:
                           type: boolean
-                        networkStats:
-                          properties:
-                            enabled:
-                              type: boolean
-                          type: object
                       type: object
                     tcpQueueLength:
                       properties:
@@ -5583,8 +5576,6 @@ spec:
                           properties:
                             collectDNSStats:
                               type: boolean
-                            directSend:
-                              type: boolean
                             enableConntrack:
                               type: boolean
                             enabled:
@@ -5862,11 +5853,6 @@ spec:
                           properties:
                             enabled:
                               type: boolean
-                            networkStats:
-                              properties:
-                                enabled:
-                                  type: boolean
-                              type: object
                           type: object
                         tcpQueueLength:
                           properties:

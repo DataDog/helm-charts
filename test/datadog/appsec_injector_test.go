@@ -95,7 +95,7 @@ func Test_AppSecInjector_Enabled_RendersDefaultOptions(t *testing.T) {
 		ddAppsecProxyAutoDetectEnvVar:      "true",
 		ddAppsecInjectorEnabledEnvVar:      "true",
 		ddAppsecSidecarImageEnvVar:         "ghcr.io/datadog/dd-trace-go/service-extensions-callout",
-		ddAppsecSidecarImageTagEnvVar:      "v2.6.0",
+		ddAppsecSidecarImageTagEnvVar:      "v2.8.2",
 		ddAppsecSidecarPortEnvVar:          "8080",
 		ddAppsecSidecarHealthPortEnvVar:    "8081",
 		ddAppsecSidecarReqCPUEnvVar:        "10m",
@@ -227,6 +227,105 @@ func Test_AppSecInjector_RBAC_IncludesIstioGatewaysRule(t *testing.T) {
 	assert.True(t, hasGatewaysRule, "expected networking.istio.io/gateways rule")
 }
 
+func Test_AppSecInjector_RBAC_IncludesEnvoyGatewayBackendsRule(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-rbac.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":    "datadog-secret",
+			"datadog.appKeyExistingSecret":    "datadog-secret",
+			"datadog.appsec.injector.enabled": "true",
+		},
+	})
+	require.NoError(t, err, "failed to render cluster-agent-rbac.yaml")
+
+	var clusterRole rbacv1.ClusterRole
+	for _, doc := range strings.Split(manifest, "---") {
+		if strings.Contains(doc, "kind: ClusterRole") && strings.Contains(doc, "name: datadog-cluster-agent\n") {
+			common.Unmarshal(t, doc, &clusterRole)
+			break
+		}
+	}
+	require.NotEmpty(t, clusterRole.Rules, "cluster-agent ClusterRole should have rules")
+
+	var hasEnvoyExtensionPoliciesRule, hasBackendsRule bool
+	for _, rule := range clusterRole.Rules {
+		isEnvoyGatewayGroup := false
+		for _, apiGroup := range rule.APIGroups {
+			if apiGroup == "gateway.envoyproxy.io" {
+				isEnvoyGatewayGroup = true
+			}
+		}
+		if !isEnvoyGatewayGroup {
+			continue
+		}
+		for _, resource := range rule.Resources {
+			switch resource {
+			case "envoyextensionpolicies":
+				hasEnvoyExtensionPoliciesRule = true
+				assert.ElementsMatch(t, []string{"get", "delete", "create"}, rule.Verbs,
+					"gateway.envoyproxy.io/envoyextensionpolicies rule should have get/delete/create verbs")
+			case "backends":
+				hasBackendsRule = true
+				assert.ElementsMatch(t, []string{"get", "delete", "create"}, rule.Verbs,
+					"gateway.envoyproxy.io/backends rule should have get/delete/create verbs")
+			}
+		}
+	}
+	assert.True(t, hasEnvoyExtensionPoliciesRule, "expected gateway.envoyproxy.io/envoyextensionpolicies rule")
+	assert.True(t, hasBackendsRule, "expected gateway.envoyproxy.io/backends rule for Envoy Gateway UDS sidecar mode")
+}
+
+func Test_AppSecInjector_RBAC_Disabled_StillIncludesEnvoyGatewayRule(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-rbac.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret": "datadog-secret",
+			"datadog.appKeyExistingSecret": "datadog-secret",
+		},
+	})
+	require.NoError(t, err, "failed to render cluster-agent-rbac.yaml")
+
+	var clusterRole rbacv1.ClusterRole
+	for _, doc := range strings.Split(manifest, "---") {
+		if strings.Contains(doc, "kind: ClusterRole") && strings.Contains(doc, "name: datadog-cluster-agent\n") {
+			common.Unmarshal(t, doc, &clusterRole)
+			break
+		}
+	}
+	require.NotEmpty(t, clusterRole.Rules, "cluster-agent ClusterRole should have rules")
+
+	var hasEnvoyExtensionPoliciesRule, hasBackendsRule bool
+	for _, rule := range clusterRole.Rules {
+		isEnvoyGatewayGroup := false
+		for _, apiGroup := range rule.APIGroups {
+			if apiGroup == "gateway.envoyproxy.io" {
+				isEnvoyGatewayGroup = true
+			}
+		}
+		if !isEnvoyGatewayGroup {
+			continue
+		}
+		for _, resource := range rule.Resources {
+			switch resource {
+			case "envoyextensionpolicies":
+				hasEnvoyExtensionPoliciesRule = true
+			case "backends":
+				hasBackendsRule = true
+			}
+		}
+	}
+	assert.True(t, hasEnvoyExtensionPoliciesRule,
+		"AppSec gateway.envoyproxy.io/envoyextensionpolicies RBAC must remain present when the injector is disabled so the controller retains cleanup permissions for resources it created")
+	assert.True(t, hasBackendsRule,
+		"AppSec gateway.envoyproxy.io/backends RBAC must remain present when the injector is disabled so the controller retains cleanup permissions for resources it created")
+}
+
 func Test_AppSecInjector_RBAC_IncludesNginxRules(t *testing.T) {
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
@@ -280,7 +379,7 @@ func Test_AppSecInjector_RBAC_IncludesNginxRules(t *testing.T) {
 	assert.True(t, hasConfigMapsRule, "expected empty apiGroup/configmaps rule with 6 verbs for AppSec ingress-nginx")
 }
 
-func Test_AppSecInjector_RBAC_Disabled_OmitsNginxRules(t *testing.T) {
+func Test_AppSecInjector_RBAC_Disabled_StillIncludesNginxRules(t *testing.T) {
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
 		ChartPath:   "../../charts/datadog",
@@ -302,21 +401,31 @@ func Test_AppSecInjector_RBAC_Disabled_OmitsNginxRules(t *testing.T) {
 	}
 	require.NotEmpty(t, clusterRole.Rules, "cluster-agent ClusterRole should have rules")
 
+	var hasIngressClassesRule, hasConfigMapsRule bool
 	for _, rule := range clusterRole.Rules {
 		for _, apiGroup := range rule.APIGroups {
 			if apiGroup == "networking.k8s.io" {
 				for _, resource := range rule.Resources {
-					assert.NotEqual(t, "ingressclasses", resource,
-						"should not have networking.k8s.io/ingressclasses rule when AppSec injector is disabled")
+					if resource == "ingressclasses" {
+						hasIngressClassesRule = true
+						assert.ElementsMatch(t, []string{"get", "list", "watch"}, rule.Verbs,
+							"networking.k8s.io/ingressclasses rule should have get/list/watch verbs")
+					}
 				}
 			}
 			if apiGroup == "" {
 				for _, resource := range rule.Resources {
 					if resource == "configmaps" && len(rule.Verbs) == 6 {
-						assert.Fail(t, "should not have empty apiGroup/configmaps rule with 6 verbs when AppSec injector is disabled")
+						hasConfigMapsRule = true
+						assert.ElementsMatch(t, []string{"get", "list", "watch", "create", "update", "delete"}, rule.Verbs,
+							"empty apiGroup/configmaps appsec rule should have 6 verbs")
 					}
 				}
 			}
 		}
 	}
+	assert.True(t, hasIngressClassesRule,
+		"AppSec ingress-nginx RBAC must remain present when the injector is disabled so the controller retains cleanup permissions for resources it created")
+	assert.True(t, hasConfigMapsRule,
+		"AppSec configmaps RBAC must remain present when the injector is disabled so the controller retains cleanup permissions for resources it created")
 }

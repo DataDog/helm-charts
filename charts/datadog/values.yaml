@@ -738,7 +738,7 @@ datadog:
         # datadog.appsec.injector.sidecar.image -- Container image for the AppSec sidecar processor
         image: "ghcr.io/datadog/dd-trace-go/service-extensions-callout"
         # datadog.appsec.injector.sidecar.imageTag -- Image tag for the AppSec sidecar processor
-        imageTag: "v2.6.0"
+        imageTag: "v2.8.2"
         # datadog.appsec.injector.sidecar.port -- Listening port for the AppSec sidecar processor
         port: 8080
         # datadog.appsec.injector.sidecar.healthPort -- Health check port for the AppSec sidecar processor
@@ -1106,6 +1106,12 @@ datadog:
     ## When enabled, the orchestrator explorer RBAC is bound to the Cluster Checks Runner ServiceAccount instead of the Cluster Agent.
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
     useClusterCheckRunners: false
+
+  kubernetesActions:
+    # datadog.kubernetesActions.enabled -- Set this to true to enable the Kubernetes Actions feature on the Cluster Agent.
+    # This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog
+    # Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater.
+    enabled: false
 
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)

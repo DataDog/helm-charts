@@ -1,5 +1,21 @@
 # Datadog changelog
 
+## 3.225.0
+
+* Always render the App & API Protection (AppSec) injector cluster-agent RBAC, regardless of `datadog.appsec.injector.enabled`. This keeps the cluster-agent's permissions to clean up the resources its injector controller created (Envoy Gateway `Backend`/`EnvoyExtensionPolicy`, Istio `EnvoyFilter`, Gateway API `ReferenceGrant`, copied `ConfigMap`s, and `Gateway` patches) when the feature is disabled, preventing orphaned resources.
+
+## 3.224.0
+
+* Add `datadog.kubernetesActions.enabled` to enable the Kubernetes Actions feature on the Cluster Agent. When set to `true`, the chart sets `DD_KUBEACTIONS_ENABLED=true` on the Cluster Agent and creates a ClusterRole/ClusterRoleBinding granting permission to delete pods and patch deployments for remediation. Requires Cluster Agent version 7.79.0 or greater.
+
+## 3.223.4
+
+* Grant the Cluster Agent `backends` (`gateway.envoyproxy.io`) RBAC permissions (`get`, `create`, `delete`) when `datadog.appsec.injector.enabled` is set. This is required for the Envoy Gateway App & API Protection (AppSec) UDS sidecar mode, which creates and deletes a `Backend` resource for the ext_proc endpoint.
+
+## 3.223.3
+
+* Bump the default App & API Protection (AppSec) sidecar processor image tag (`datadog.appsec.injector.sidecar.imageTag`) from `v2.6.0` to `v2.8.2`.
+
 ## 3.223.2
 
 * Clarify `datadog.env` and `datadog.envDict` that environment variables set with these options only propagate to the node Agent containers only.
