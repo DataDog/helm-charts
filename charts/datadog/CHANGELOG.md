@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.223.4
+
+* Grant the Cluster Agent `backends` (`gateway.envoyproxy.io`) RBAC permissions (`get`, `create`, `delete`) when `datadog.appsec.injector.enabled` is set. This is required for the Envoy Gateway App & API Protection (AppSec) UDS sidecar mode, which creates and deletes a `Backend` resource for the ext_proc endpoint.
+
 ## 3.223.3
 
 * Bump the default App & API Protection (AppSec) sidecar processor image tag (`datadog.appsec.injector.sidecar.imageTag`) from `v2.6.0` to `v2.8.2`.
