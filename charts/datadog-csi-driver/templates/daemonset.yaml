@@ -57,7 +57,9 @@ spec:
           args:
             - --apm-host-socket-path={{ .Values.sockets.apmHostSocketPath }}
             - --dsd-host-socket-path={{ .Values.sockets.dsdHostSocketPath }}
+            {{- if .Values.sockets.dsdStreamEnabled }}
             - --dsd-stream-host-socket-path={{ .Values.sockets.dsdStreamHostSocketPath }}
+            {{- end }}
           volumeMounts:
             # plugin-dir stores the socket on which CSI node server service is exposed.
             # it is created by the node server and needs to be writeable.
@@ -80,7 +82,7 @@ spec:
               mountPath: {{ (dir .Values.sockets.dsdHostSocketPath) }}
               readOnly: true
             {{- end }}
-            {{- if and (ne (dir .Values.sockets.dsdStreamHostSocketPath) (dir .Values.sockets.apmHostSocketPath)) (ne (dir .Values.sockets.dsdStreamHostSocketPath) (dir .Values.sockets.dsdHostSocketPath)) }}
+            {{- if and .Values.sockets.dsdStreamEnabled (ne (dir .Values.sockets.dsdStreamHostSocketPath) (dir .Values.sockets.apmHostSocketPath)) (ne (dir .Values.sockets.dsdStreamHostSocketPath) (dir .Values.sockets.dsdHostSocketPath)) }}
             - name: dsd-stream-socket
               mountPath: {{ (dir .Values.sockets.dsdStreamHostSocketPath) }}
               readOnly: true
@@ -171,7 +173,7 @@ spec:
             path: {{ dir .Values.sockets.dsdHostSocketPath }}
             type: DirectoryOrCreate
           name: dsd-socket
-        {{- if and (ne (dir .Values.sockets.dsdStreamHostSocketPath) (dir .Values.sockets.apmHostSocketPath)) (ne (dir .Values.sockets.dsdStreamHostSocketPath) (dir .Values.sockets.dsdHostSocketPath)) }}
+        {{- if and .Values.sockets.dsdStreamEnabled (ne (dir .Values.sockets.dsdStreamHostSocketPath) (dir .Values.sockets.apmHostSocketPath)) (ne (dir .Values.sockets.dsdStreamHostSocketPath) (dir .Values.sockets.dsdHostSocketPath)) }}
         - hostPath:
             path: {{ dir .Values.sockets.dsdStreamHostSocketPath }}
             type: DirectoryOrCreate

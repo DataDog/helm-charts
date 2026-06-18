@@ -55,7 +55,6 @@ spec:
           args:
             - --apm-host-socket-path=/var/run/datadog/apm.socket
             - --dsd-host-socket-path=/var/run/datadog/dsd.socket
-            - --dsd-stream-host-socket-path=/var/run/datadog/dsd-stream.socket
           volumeMounts:
             # plugin-dir stores the socket on which CSI node server service is exposed.
             # it is created by the node server and needs to be writeable.

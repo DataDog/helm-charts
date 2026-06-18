@@ -71,6 +71,10 @@ sockets:
   # Should correspond to `datadog.dsd.hostSocketPath`
   dsdHostSocketPath: /var/run/datadog/dsd.socket
 
+  # dsdStreamEnabled -- Enable mounting of the DogStatsD stream socket.
+  # Should be set to true when `dogstatsd_stream_socket` is configured in the Datadog Agent.
+  dsdStreamEnabled: false
+
   # dsdStreamHostSocketPath -- Host path of the dsd stream socket.
   # Should correspond to `dogstatsd_stream_socket` in the Datadog Agent config.
   dsdStreamHostSocketPath: /var/run/datadog/dsd-stream.socket
