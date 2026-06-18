@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.224.1
+## 3.225.1
 
 * Update `fips.image.tag` to `1.1.27` fixing CVEs and updating packages.
+
+## 3.225.0
+
+* Always render the App & API Protection (AppSec) injector cluster-agent RBAC, regardless of `datadog.appsec.injector.enabled`. This keeps the cluster-agent's permissions to clean up the resources its injector controller created (Envoy Gateway `Backend`/`EnvoyExtensionPolicy`, Istio `EnvoyFilter`, Gateway API `ReferenceGrant`, copied `ConfigMap`s, and `Gateway` patches) when the feature is disabled, preventing orphaned resources.
 
 ## 3.224.0
 
