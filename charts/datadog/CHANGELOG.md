@@ -1,8 +1,16 @@
 # Datadog changelog
 
-## 3.223.4
+## 3.224.1
 
 * Update `fips.image.tag` to `1.1.27` fixing CVEs and updating packages.
+
+## 3.224.0
+
+* Add `datadog.kubernetesActions.enabled` to enable the Kubernetes Actions feature on the Cluster Agent. When set to `true`, the chart sets `DD_KUBEACTIONS_ENABLED=true` on the Cluster Agent and creates a ClusterRole/ClusterRoleBinding granting permission to delete pods and patch deployments for remediation. Requires Cluster Agent version 7.79.0 or greater.
+
+## 3.223.4
+
+* Grant the Cluster Agent `backends` (`gateway.envoyproxy.io`) RBAC permissions (`get`, `create`, `delete`) when `datadog.appsec.injector.enabled` is set. This is required for the Envoy Gateway App & API Protection (AppSec) UDS sidecar mode, which creates and deletes a `Backend` resource for the ext_proc endpoint.
 
 ## 3.223.3
 

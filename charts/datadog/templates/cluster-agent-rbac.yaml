@@ -293,6 +293,7 @@ rules:
     - "gateway.envoyproxy.io"
   resources:
     - envoyextensionpolicies
+    - backends
   verbs:
     - get
     - delete
