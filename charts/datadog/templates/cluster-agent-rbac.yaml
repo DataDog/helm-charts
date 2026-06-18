@@ -268,8 +268,13 @@ rules:
   resources: ["secrets"]
   verbs: ["get"]
 {{- end }}
-{{- if .Values.datadog.appsec.injector.enabled }}
-# Used by datadog.appsec.injector feature
+# Used by datadog.appsec.injector feature.
+# These rules are intentionally always present, not gated behind
+# `datadog.appsec.injector.enabled`: the cluster-agent injector controller
+# creates cluster resources (Backend / EnvoyExtensionPolicy / EnvoyFilter /
+# ReferenceGrant / ConfigMap copies) and patches user Gateways. Retaining
+# get/list/delete/patch when the feature is disabled lets the controller clean
+# up those resources instead of orphaning them.
 - apiGroups:
     - "gateway.networking.k8s.io"
   resources:
@@ -332,7 +337,6 @@ rules:
 - apiGroups: [""]
   resources: ["configmaps"]
   verbs: ["get", "list", "watch", "create", "update", "delete"]
-{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding

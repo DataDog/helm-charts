@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.225.0
+
+* Always render the App & API Protection (AppSec) injector cluster-agent RBAC, regardless of `datadog.appsec.injector.enabled`. This keeps the cluster-agent's permissions to clean up the resources its injector controller created (Envoy Gateway `Backend`/`EnvoyExtensionPolicy`, Istio `EnvoyFilter`, Gateway API `ReferenceGrant`, copied `ConfigMap`s, and `Gateway` patches) when the feature is disabled, preventing orphaned resources.
+
 ## 3.224.0
 
 * Add `datadog.kubernetesActions.enabled` to enable the Kubernetes Actions feature on the Cluster Agent. When set to `true`, the chart sets `DD_KUBEACTIONS_ENABLED=true` on the Cluster Agent and creates a ClusterRole/ClusterRoleBinding granting permission to delete pods and patch deployments for remediation. Requires Cluster Agent version 7.79.0 or greater.
