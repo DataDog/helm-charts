@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.17.0
+## 0.16.0
 
 * Add `sockets.dsdStreamEnabled` (default: `false`) and `sockets.dsdStreamHostSocketPath` to support mounting the DogStatsD stream socket (`dogstatsd_stream_socket`). When enabled, passes `--dsd-stream-host-socket-path` to the driver and mounts the socket directory if it differs from the existing APM/DSD socket directories.
 
