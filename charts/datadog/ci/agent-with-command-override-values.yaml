@@ -1,0 +1,10 @@
+datadog:
+  apiKey: "00000000000000000000000000000000"
+agents:
+  enabled: true
+  containers:
+    agent:
+      command:
+        - /bin/sh
+        - -c
+        - "exec agent run"
