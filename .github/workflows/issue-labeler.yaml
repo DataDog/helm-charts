@@ -1,0 +1,24 @@
+---
+name: "Set Pending Label at Issue Creation"
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  set_pending_label:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Set pending label
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ["pending"]
+            });

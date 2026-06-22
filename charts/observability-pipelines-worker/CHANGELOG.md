@@ -1,0 +1,290 @@
+# Changelog
+
+## 2.17.2
+
+* Official image `2.17.2`
+
+## 2.17.1
+
+* Official image `2.17.1`
+
+## 2.17.0
+
+* Official image `2.17.0`
+
+## 2.16.1
+
+* Official image `2.16.1`
+
+## 2.16.0
+
+* Official image `2.16.0`
+
+## 2.15.7
+
+* Set default resource requests on the Worker container (`requests.cpu: 2`, `requests.memory: 4Gi`); limits remain unset by default (commented example in `values.yaml`). Installs previously on `resources: {}` will now need nodes with 2 CPU / 4Gi available — override `resources` to opt out ([#2664](https://github.com/DataDog/helm-charts/pull/2664)).
+
+## 2.15.6
+
+* Adding PROXY and NOPROXY options to Observability Pipelines ([#2578](https://github.com/DataDog/helm-charts/pull/2578)).
+
+## 2.15.5
+
+* enable discovery by default on supported agent versions ([#2598](https://github.com/DataDog/helm-charts/pull/2598)).
+
+## 2.15.4
+
+- Official image `2.15.2`
+
+## 2.15.3
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 2.15.2
+
+- Switch default `livenessProbe`/`readinessProbe` from `httpGet` to `tcpSocket` on port 8686. Upstream Vector replaced the HTTP/GraphQL observability API with a gRPC server ([vectordotdev/vector#24364](https://github.com/vectordotdev/vector/pull/24364)), so the previous `httpGet :8686/health` probes were incompatible with the worker as of OPW 2.15.0+ and caused pods to enter a probe-failure restart loop. The default `tcpSocket :8686` handler is injected by the chart template only when the user has not provided their own probe handler (`httpGet`/`tcpSocket`/`exec`/`grpc`) — existing user overrides are preserved as-is and not coalesced with the default. The legacy broken `httpGet :8686/health` is also stripped if it appears in the rendered values (e.g., carried over by `helm upgrade --reuse-values` from chart 2.15.0/2.15.1).
+
+## 2.15.1
+
+- Official image `2.15.1`
+- Remove deprecated `datadog.workerAPI.playground` config (GraphQL API replaced by gRPC)
+
+## 2.15.0
+
+- Official image `2.15.0`
+
+## 2.14.1
+
+- Fixed `persistentVolumeClaimRetentionPolicy` placement and rendering in StatefulSet:
+  - Removed incorrect placement inside `volumeClaimTemplates[].spec.resources`; this is a StatefulSet `spec`-level field, not a PVC spec field.
+  - Gated the field behind the same condition as `volumeClaimTemplates` (`persistence.enabled=true` and no `persistence.existingClaim`), so it is never emitted when no chart-managed PVC template exists.
+
+## 2.14.0
+
+- Official image `2.14.0`
+
+## 2.13.4
+
+- Add support for Kubernetes `persistentVolumeClaimRetentionPolicy` in StatefulSet and values.yaml. Users can now configure PVC retention policy via `persistence.retentionPolicy`.
+
+## 2.13.3
+
+- Set service.ports to empty list to fix nil issue
+
+## 2.13.2
+
+- Official image `2.13.2`
+
+## 2.13.1
+
+- Official image `2.13.1`
+
+## 2.13.0
+
+- Official image `2.13.0`
+
+## 2.12.3
+
+- Change the default podManagementPolicy to Parallel
+  - See the [related PR](https://github.com/DataDog/helm-charts/pull/2311) for upgrade recommendations
+
+## 2.12.2
+
+- Add clarifying note to values.yaml configuration for custom secrets management
+
+## 2.12.1
+
+- Add support for custom secrets management via datadog.bootstrap in values.yaml
+
+## 2.12.0
+
+- Official image `2.12.0`
+
+## 2.11.1
+
+- Add support for custom annotations on PersistentVolumeClaims (PVCs) via `persistence.annotations` in `values.yaml`
+
+## 2.11.0
+
+- Official image `2.11.0`
+
+## 2.10.0
+
+- Official image `2.10.0`
+
+## 2.9.1
+
+- Official image `2.9.1`
+
+## 2.9.0
+
+- Official image `2.9.0`
+
+## 2.8.1
+
+- Official image `2.8.1`
+
+## 2.8.0
+
+- Official image `2.8.0`
+
+## 2.7.0
+
+- Official image `2.7.0`
+
+## 2.6.0
+
+- Official image `2.6.0`
+
+## 2.5.2
+
+- Official image `2.5.2`
+
+## 2.5.1
+
+- Official image `2.5.1`
+
+## 2.5.0
+
+- Official image `2.5.0`
+
+## 2.4.2
+
+- Official image `2.4.2`
+
+## 2.4.1
+
+- Official image `2.4.1`
+
+## 2.4.0
+
+- Official image `2.4.0`
+
+## 2.3.0
+
+- Official image `2.3.0`
+
+## 2.2.3
+
+- Official image `2.2.3`
+
+## 2.2.2
+
+- Official image `2.2.2`
+
+## 2.2.1
+
+- Official image `2.2.1`
+
+## 2.2.0
+
+- Official image `2.2.0`
+
+## 2.1.2
+
+- Official image `2.1.2`
+
+## 2.1.1
+
+- Official image `2.1.1`
+
+## 2.1.0
+
+- Official image `2.1.0`
+
+## 2.0.2
+
+- Official image `2.0.2`
+
+## 2.0.1
+
+- Official image `2.0.1`
+
+## 2.0.0
+
+- GA release of Observability Pipelines Worker v2
+- Removed `datadog.remoteConfigurationEnabled` and `pipelineConfig` values
+
+## 1.8.1
+
+- Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
+## 1.8.0
+
+- Official image `1.8.0`
+
+## 1.7.1
+
+- Official image `1.7.1`
+
+## 1.7.0
+
+- Official image `1.7.0`
+
+## 1.6.0
+
+- Official image `1.6.0`
+
+## 1.5.2
+
+- Dropped ArtifactHub license designation to avoid confusion
+
+## 1.5.1
+
+- Official image `1.5.1`
+
+## 1.5.0
+
+- Official image `1.5.0`
+
+## 1.4.0
+
+- Official image `1.4.0`
+
+## 1.4.0-rc.0
+
+- Nightly image representative of `1.4.0`
+- Add `datadog.workerAPI.enabled`, `datadog.workerAPI.playground`, `datadog.workerAPI.address` for Worker API configuration
+- Expose Worker API port in pod and through service if enabled
+- Remove deprecated `datadog.configKey`
+
+## 1.3.1
+
+- Official image `1.3.1`
+
+## 1.3.0
+
+- Official image `1.3.0`
+- Add AP1 Site Comment in `values.yaml`.
+
+## 1.2.1
+
+- Official image `1.2.1`
+
+## 1.2.0
+
+- Official image `1.2.0`
+
+## 1.2.0-rc.1
+
+- Nightly image `2023-05-04`
+
+## 1.2.0-rc.0
+
+- Rename `config` to `pipelineConfig` in values
+- Add `datadog.pipelineId` value to replace `datadog.configKey`. `configKey` is still supported for backwards compatability.
+- Add new `datadog.remoteConfigurationEnabled` and `datadog.dataDir` values
+
+## 1.1.1
+
+- Update `args` to use the `run` subcommand
+- Update default for `DATA_DIR`
+- `1.1.1` release
+
+## 1.0.0
+
+- GA release
+
+## 0.1.0
+
+- Initial version

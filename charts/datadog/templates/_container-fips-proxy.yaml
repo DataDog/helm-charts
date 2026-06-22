@@ -1,0 +1,52 @@
+{{- define "fips-proxy" -}}
+- name: fips-proxy
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.fips.image) }}"
+  imagePullPolicy: {{ .Values.fips.image.pullPolicy }}
+  ports:
+  {{- $portMax := add (.Values.fips.port | int) (.Values.fips.portRange | int) -}}
+  {{- $portRange :=  untilStep (.Values.fips.port | int) ($portMax | int) 1 }}
+  {{- range $index, $port := $portRange }}
+    - name: port-{{ $index }}
+      containerPort: {{ $port }}
+      protocol: TCP
+  {{- end }}
+  env:
+  - name: DD_FIPS_LOCAL_ADDRESS
+    value: {{ .Values.fips.local_address | quote }}
+  resources:
+{{ toYaml .Values.fips.resources | indent 4 }}
+    # TODO Add config to monitor journald
+{{- if eq (include "should-mount-fips-configmap" .) "true" }}
+  volumeMounts:
+    {{- include "linux-container-fips-proxy-cfg-volumemount" . | nindent 4 }}
+{{- end -}}
+{{- end -}}
+
+{{- define "fips-envvar" -}}
+{{- if eq  (include "should-enable-fips-proxy" .) "true" }}
+- name: DD_FIPS_ENABLED
+  value: {{ .Values.fips.enabled | quote }}
+- name: DD_FIPS_PORT_RANGE_START
+  value: {{ .Values.fips.port | quote }}
+- name: DD_FIPS_HTTPS
+  value: {{ .Values.fips.use_https | quote }}
+- name: DD_FIPS_LOCAL_ADDRESS
+  value: {{ .Values.fips.local_address | quote }}
+{{- end }}
+{{- end -}}
+
+{{- define "linux-container-fips-proxy-cfg-volumemount" -}}
+- name: fips-proxy-cfg
+  mountPath: /etc/datadog-fips-proxy/datadog-fips-proxy.cfg
+  subPath: datadog-fips-proxy.cfg
+  readOnly: true
+{{- end -}}
+
+{{- define "linux-container-fips-proxy-cfg-volume" -}}
+- name: fips-proxy-cfg
+  configMap:
+    name: {{ include "fips-useConfigMap-configmap-name" . }}
+    items:
+      - key: datadog-fips-proxy.cfg
+        path: datadog-fips-proxy.cfg
+{{- end -}}

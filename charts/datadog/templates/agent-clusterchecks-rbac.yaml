@@ -1,0 +1,35 @@
+{{- if or (eq (include "should-enable-cluster-check-workers" .) "true") .Values.clusterChecksRunner.rbac.dedicated -}}
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-checks
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-checks
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: {{ .Values.clusterChecksRunner.rbac.automountServiceAccountToken }}
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+    app: "{{ template "datadog.fullname" . }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+{{- if .Values.clusterChecksRunner.rbac.serviceAccountAdditionalLabels -}}
+{{ tpl (toYaml .Values.clusterChecksRunner.rbac.serviceAccountAdditionalLabels) . | nindent 4}}
+{{- end }}
+  name: {{ template "datadog.fullname" . }}-cluster-checks
+  namespace: {{ .Release.Namespace }}
+  {{- if .Values.clusterChecksRunner.rbac.serviceAccountAnnotations }}
+  annotations: {{ toYaml .Values.clusterChecksRunner.rbac.serviceAccountAnnotations | nindent 4 }}
+  {{- end }}
+{{- end -}}

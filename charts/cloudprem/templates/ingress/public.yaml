@@ -1,0 +1,61 @@
+{{- $fullname := include "quickwit.fullname" . }}
+{{- $labels := include "quickwit.labels" . }}
+{{- $ingress := .Values.ingress.public }}
+{{- $ingressClassName := $ingress.ingressClassName }}
+
+{{- if $ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullname }}-public
+  labels: {{- $labels | nindent 4 }}
+  annotations:
+    {{- if eq $ingressClassName "alb" }}
+    alb.ingress.kubernetes.io/backend-protocol-version: GRPC
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/mutual-authentication: '[{"port": 443, "mode": "passthrough"}]'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /grpc.health.v1.Health/Check
+    alb.ingress.kubernetes.io/success-codes: '0'
+    {{- else if regexMatch "nginx" $ingressClassName }}
+    nginx.ingress.kubernetes.io/backend-protocol: GRPC
+    nginx.ingress.kubernetes.io/grpc-backend: "true"
+    nginx.ingress.kubernetes.io/auth-tls-secret: "{{ .Release.Namespace }}/cloudprem-client-ca"
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: "optional_no_ca"
+    nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
+    {{- end }}
+  {{- with  $ingress.extraAnnotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ $ingressClassName }}
+  {{- with $ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+    - http:
+        paths:
+          {{- if eq $ingressClassName "alb" }}
+          - path: /cloudprem*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullname }}-searcher
+                port:
+                  name: cloudprem
+          {{- else if regexMatch "nginx" $ingressClassName }}
+          - path: /cloudprem.CloudPremService/
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullname }}-searcher
+                port:
+                  name: cloudprem
+          {{- end }}
+      {{- with $ingress.host }}
+      host: {{ . }}
+      {{- end }}
+{{- end }}

@@ -1,0 +1,283 @@
+{{- template "check-version" . }}
+{{- if .Values.agents.enabled }}
+{{- if (or (.Values.datadog.apiKeyExistingSecret) (.Values.datadog.apiKey)) }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ template "datadog.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.workload-labels" (list . "agent") | indent 4 }}
+    app.kubernetes.io/component: agent
+    agent.datadoghq.com/component: agent
+    {{- if .Values.agents.additionalLabels }}
+{{ toYaml .Values.agents.additionalLabels | indent 4 }}
+    {{- end }}
+{{ include "provider-labels" . | indent 4 }}
+  {{- if .Values.agents.daemonsetAnnotations }}
+  annotations: {{ toYaml .Values.agents.daemonsetAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  revisionHistoryLimit: {{ .Values.agents.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app: {{ template "datadog.fullname" . }}
+        {{- if .Values.agents.podLabels }}
+{{ toYaml .Values.agents.podLabels | indent 6 }}
+        {{- end }}
+  template:
+    metadata:
+      labels:
+{{ include "datadog.pod-template-labels" (list . "agent") | indent 8 }}
+        app.kubernetes.io/component: agent
+        admission.datadoghq.com/enabled: "false"
+        app: {{ template "datadog.fullname" . }}
+        agent.datadoghq.com/component: agent
+        {{- if .Values.agents.podLabels }}
+{{ toYaml .Values.agents.podLabels | indent 8 }}
+        {{- end }}
+        {{- if .Values.agents.additionalLabels }}
+{{ toYaml .Values.agents.additionalLabels | indent 8 }}
+        {{- end }}
+{{ (include "provider-labels" .) | indent 8 }}
+      name: {{ template "datadog.fullname" . }}
+      annotations:
+        checksum/clusteragent_token: {{ include (print $.Template.BasePath "/secret-cluster-agent-token.yaml") . | sha256sum }}
+        {{- if not .Values.datadog.apiKeyExistingSecret }}
+        checksum/api_key: {{ include (print $.Template.BasePath "/secret-api-key.yaml") . | sha256sum }}
+        {{- end }}
+        checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
+        checksum/autoconf-config: {{ tpl (toYaml .Values.datadog.autoconf) . | sha256sum }}
+        checksum/confd-config: {{ tpl (toYaml .Values.datadog.confd) . | sha256sum }}
+        checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}
+        {{- if eq (include "should-enable-otel-agent" .) "true" }}
+        checksum/otel-config: {{ include "otel-agent-config-configmap-content" . | sha256sum }}
+        {{- end }}
+        {{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "linux") }}
+        checksum/privateactionrunner-config: {{ include (print $.Template.BasePath "/private-action-runner-configmap.yaml") . | sha256sum }}
+        {{- end }}
+        {{- if .Values.agents.customAgentConfig }}
+        checksum/agent-config: {{ tpl (toYaml .Values.agents.customAgentConfig) . | sha256sum }}
+        {{- end }}
+        {{- if .Values.datadog.secretBackend.roles }}
+        checksum/secret-backend-roles: {{ tpl (toYaml .Values.datadog.secretBackend.roles) . | sha256sum }}
+        {{- end }}
+        {{- if eq (include "should-enable-host-profiler" .) "true" }}
+        {{- if and (.Values.agents.podSecurity.apparmor.enabled) (semverCompare "<1.30.0-0" .Capabilities.KubeVersion.Version) }}
+        container.apparmor.security.beta.kubernetes.io/host-profiler: {{ .Values.datadog.hostProfiler.apparmor }}
+        {{- end }}
+        {{- end }}
+        {{- if eq  (include "should-enable-system-probe" .) "true" }}
+        {{- if and (.Values.agents.podSecurity.apparmor.enabled) (semverCompare "<1.30.0-0" .Capabilities.KubeVersion.Version) }}
+        container.apparmor.security.beta.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.apparmor }}
+        {{- end }}
+        {{- if semverCompare "<1.19.0" .Capabilities.KubeVersion.Version }}
+        container.seccomp.security.alpha.kubernetes.io/system-probe: {{ .Values.datadog.systemProbe.seccomp }}
+        {{- end }}
+        {{- end }}
+        {{- if and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport (semverCompare "<1.30.0-0" .Capabilities.KubeVersion.Version) }}
+        container.apparmor.security.beta.kubernetes.io/agent: unconfined
+        {{- end }}
+        {{- if .Values.providers.gke.autopilot }}  # Workaround for GKE Autopilot bug in versions >= 1.32.2-gke.1182000 and < 1.32.2-gke.1652000.
+        autopilot.gke.io/no-connect: "true"
+        {{- end }}
+        {{- if eq (include "should-enable-data-plane" .) "true" }}
+        {{- $telemetryApiPort := .Values.agents.containers.agentDataPlane.telemetryApiPort }}
+        ad.datadoghq.com/agent-data-plane.check_names: '["openmetrics"]'
+        ad.datadoghq.com/agent-data-plane.init_configs: '[{}]'
+        ad.datadoghq.com/agent-data-plane.instances: |
+          [{
+            "prometheus_url":"http://127.0.0.1:{{ $telemetryApiPort }}/metrics",
+            "metrics":["*"],
+            "namespace": "datadog.agent",
+            "send_distribution_buckets": true,
+            "max_returned_metrics": 4000
+          }]
+        {{- end }}
+      {{- if .Values.agents.podAnnotations }}
+{{ tpl (toYaml .Values.agents.podAnnotations) . | indent 8 }}
+      {{- end }}
+    spec:
+      {{- if .Values.agents.shareProcessNamespace }}
+      shareProcessNamespace: {{ .Values.agents.shareProcessNamespace }}
+      {{- end }}
+      {{- if .Values.datadog.securityContext -}}
+      {{ include "generate-security-context" (dict "securityContext" .Values.datadog.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 6 }}
+      {{- else if or .Values.agents.podSecurity.podSecurityPolicy.create .Values.agents.podSecurity.securityContextConstraints.create -}}
+      {{- if .Values.agents.podSecurity.securityContext }}
+      {{- if .Values.agents.podSecurity.securityContext.seLinuxOptions }}
+      securityContext:
+        seLinuxOptions:
+{{ toYaml .Values.agents.podSecurity.securityContext.seLinuxOptions | indent 10 }}
+      {{- end }}
+      {{- else if .Values.agents.podSecurity.seLinuxContext }}
+      {{- if .Values.agents.podSecurity.seLinuxContext.seLinuxOptions }}
+      securityContext:
+        seLinuxOptions:
+{{ toYaml .Values.agents.podSecurity.seLinuxContext.seLinuxOptions | indent 10 }}
+      {{- end }}
+      {{- end }}
+      {{- else if eq  (include "is-openshift" .) "true"}}
+      securityContext:
+        seLinuxOptions:
+          user: "system_u"
+          role: "system_r"
+          type: "spc_t"
+          level: "s0"
+      {{- end }}
+      {{- if .Values.agents.useHostNetwork }}
+      hostNetwork: {{ .Values.agents.useHostNetwork }}
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
+      {{- if .Values.agents.dnsConfig }}
+      dnsConfig:
+{{ toYaml .Values.agents.dnsConfig | indent 8 }}
+      {{- end }}
+      {{- if (eq  (include "should-enable-host-pid" .) "true") }}
+      hostPID: true
+      {{- end }}
+      {{- if .Values.agents.image.pullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.agents.image.pullSecrets | indent 8 }}
+      {{- end }}
+      {{- if or .Values.agents.priorityClassCreate .Values.agents.priorityClassName }}
+      priorityClassName: {{ .Values.agents.priorityClassName | default (include "datadog.fullname" . ) }}
+      {{- end }}
+      {{- if and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.runtimeClassName }}
+      runtimeClassName: {{ .Values.datadog.gpuMonitoring.runtimeClassName }}
+      {{- end }}
+      containers:
+        {{- include "container-agent" . | nindent 6 }}
+        {{- if eq (include "should-enable-trace-agent" .) "true" }}
+          {{- include "container-trace-agent" . | nindent 6 }}
+        {{- end }}
+        {{- if eq  (include "should-enable-fips-proxy" .) "true" }}
+          {{- include "fips-proxy" . | nindent 6 }}
+        {{- end }}
+        {{- if eq  (include "should-enable-process-agent" .) "true" }}
+          {{- include "container-process-agent" . | nindent 6 }}
+        {{- end }}
+        {{- if eq (include "should-enable-system-probe" .) "true" }}
+          {{- include "container-system-probe" . | nindent 6 }}
+        {{- end }}
+        {{- if eq  (include "should-enable-security-agent" .) "true" }}
+          {{- include "container-security-agent" . | nindent 6 }}
+        {{- end }}
+        {{- if eq (include "should-enable-otel-agent" .) "true" }}
+          {{- include "container-otel-agent" . | nindent 6 }}
+        {{- end }}
+        {{- if eq (include "should-enable-host-profiler" .) "true" }}
+          {{- include "container-host-profiler" . | nindent 6 }}
+        {{- end }}
+        {{- if eq (include "should-enable-data-plane" .) "true" }}
+          {{- include "container-agent-data-plane" . | nindent 6 }}
+        {{- end }}
+        {{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "linux") }}
+          {{- include "container-private-action-runner" . | nindent 6 }}
+        {{- end }}
+      initContainers:
+        {{- if eq .Values.targetSystem "windows" }}
+          {{ include "containers-init-windows" . | nindent 6 }}
+        {{- end }}
+        {{- if eq .Values.targetSystem "linux" }}
+          {{- include "containers-init-linux" . | nindent 6 -}}
+        {{- end }}
+        {{- if eq (include "should-enable-host-profiler" .) "true" }}
+          {{ include "host-profiler-seccomp-init" . | nindent 6 }}
+        {{- end }}
+        {{- if and (eq (include "should-enable-system-probe" .) "true")  (eq .Values.datadog.systemProbe.seccomp "localhost/system-probe") }}
+          {{ include "system-probe-init" . | nindent 6 }}
+        {{- end }}
+      volumes:
+      {{- if (not .Values.providers.gke.autopilot) }}
+      - name: auth-token
+        emptyDir: {}
+      {{- end }}
+      - name: installinfo
+        configMap:
+          name: {{ include "agents-install-info-configmap-name" . }}
+      - name: config
+        emptyDir: {}
+      {{- if and .Values.datadog.privateActionRunner.enabled (eq .Values.targetSystem "linux") }}
+      - name: {{ template "datadog.fullname" . }}-privateactionrunner-config
+        configMap:
+          name: {{ template "datadog.fullname" . }}-privateactionrunner
+      {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+      - name: host-osrelease
+        hostPath:
+          path: /etc/os-release
+      - name: host-varlog
+        hostPath:
+          path: /var/log
+      {{- end }}
+      {{- end }}
+      {{- if .Values.datadog.checksd }}
+      - name: checksd
+        configMap:
+          name: {{ include "datadog-checksd-configmap-name" . }}
+      {{- end }}
+      {{- if .Values.agents.useConfigMap }}
+      - name: datadog-yaml
+        configMap:
+          name: {{ include "agents-useConfigMap-configmap-name" . }}
+      {{- end }}
+      {{- if eq .Values.targetSystem "windows" }}
+        {{ include "daemonset-volumes-windows" . | nindent 6 }}
+      {{- end }}
+      {{- if eq .Values.targetSystem "linux" }}
+        {{ include "daemonset-volumes-linux" . | nindent 6 }}
+      {{- end }}
+      {{- if eq (include "should-enable-otel-agent" .) "true" }}
+      - name: otelconfig
+        configMap:
+          {{- if .Values.datadog.otelCollector.configMap.name }}
+          name: {{ .Values.datadog.otelCollector.configMap.name }}
+          {{- if .Values.datadog.otelCollector.configMap.items }}
+          items:
+            {{- range .Values.datadog.otelCollector.configMap.items }}
+            - key: {{ .key }}
+              path: {{ .path }}
+            {{- end }}
+          {{- else if .Values.datadog.otelCollector.configMap.key }}
+          items:
+            - key: {{ .Values.datadog.otelCollector.configMap.key }}
+              path: otel-config.yaml
+          {{- end }}
+          {{- else }}
+          name: {{ include "agents-install-otel-configmap-name" . }}
+          items:
+            - key: otel-config.yaml
+              path: otel-config.yaml
+          {{- end }}
+      {{- end }}
+{{- if .Values.agents.volumes }}
+{{ toYaml .Values.agents.volumes | indent 6 }}
+{{- end }}
+      {{- if .Values.agents.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.agents.terminationGracePeriodSeconds }}
+      {{- end }}
+      tolerations:
+      {{- if eq .Values.targetSystem "windows" }}
+      - effect: NoSchedule
+        key: node.kubernetes.io/os
+        value: windows
+        operator: Equal
+      {{- end }}
+      {{- if .Values.agents.tolerations }}
+{{ toYaml .Values.agents.tolerations | indent 6 }}
+      {{- end }}
+      affinity:
+{{ toYaml .Values.agents.affinity | indent 8 }}
+      serviceAccountName: {{ include "agents.serviceAccountName" . | quote }}
+      {{- if .Values.agents.rbac.create }}
+      automountServiceAccountToken: {{.Values.agents.rbac.automountServiceAccountToken }}
+      {{- end }}
+      nodeSelector:
+        {{ template "label.os" . }}: {{ .Values.targetSystem }}
+      {{- if .Values.agents.nodeSelector }}
+{{ toYaml .Values.agents.nodeSelector | indent 8 }}
+      {{- end }}
+  updateStrategy:
+{{ toYaml .Values.agents.updateStrategy | indent 4 }}
+{{ end }}
+{{ end }}

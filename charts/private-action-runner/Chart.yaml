@@ -1,0 +1,18 @@
+apiVersion: v2
+name: private-action-runner
+description: Datadog Private Action Runner
+
+type: application
+version: 1.28.1
+appVersion: "v1.21.0"
+keywords:
+    - app builder
+    - workflow automation
+home: https://www.datadoghq.com
+icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+sources:
+    - https://docs.datadoghq.com/service_management/workflows/private_actions
+    - https://app.datadoghq.com/app-builder/private-action-runners
+maintainers:
+    - name: Datadog
+      email: support@datadoghq.com

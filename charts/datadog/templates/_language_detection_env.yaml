@@ -1,0 +1,8 @@
+# The purpose of this template is to define a minimal set of environment
+# variables to enable language detection
+{{- define "language-detection-common-env" -}}
+- name: DD_LANGUAGE_DETECTION_ENABLED
+  value: {{ include "language-detection-enabled" .  | quote }}
+- name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+  value: {{ include "language-detection-enabled" .  | quote }}
+{{- end -}}

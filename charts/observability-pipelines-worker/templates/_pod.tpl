@@ -1,0 +1,174 @@
+{{/*
+Defines the PodSpec for Observability Pipelines Worker.
+*/}}
+{{- define "opw.pod" -}}
+serviceAccountName: {{ include "opw.serviceAccountName" . }}
+{{- if .Values.podHostNetwork }}
+hostNetwork: {{ .Values.podHostNetwork }}
+{{- end }}
+{{- if .Values.podSecurityContext }}
+securityContext: {{ toYaml .Values.podSecurityContext | nindent 2 }}
+{{- end }}
+{{- if .Values.podPriorityClassName }}
+priorityClassName: {{ .Values.podPriorityClassName }}
+{{- end }}
+{{- if .Values.dnsPolicy }}
+dnsPolicy: {{ .Values.dnsPolicy }}
+{{- end }}
+{{- if .Values.dnsConfig }}
+dnsConfig: {{ toYaml .Values.dnsConfig | nindent 2 }}
+{{- end }}
+{{- if .Values.image.pullSecrets }}
+imagePullSecrets: {{ toYaml .Values.image.pullSecrets | nindent 2 }}
+{{- end }}
+{{- if .Values.initContainers }}
+initContainers: {{ toYaml .Values.initContainers | nindent 2 }}
+{{- end }}
+containers:
+  - name: worker
+{{- if .Values.securityContext }}
+    securityContext: {{ toYaml .Values.securityContext | nindent 6 }}
+{{- end }}
+{{- if .Values.image.digest }}
+    image: "{{ .Values.image.repository }}/{{ .Values.image.name }}@{{ .Values.image.digest }}"
+{{- else }}
+    image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+{{- end }}
+    imagePullPolicy: {{ .Values.image.pullPolicy }}
+{{- if .Values.command }}
+    command: {{ toYaml .Values.command | nindent 6 }}
+{{- end }}
+{{- if .Values.args }}
+    args: {{ toYaml .Values.args | nindent 6 }}
+{{- end }}
+    env:
+      - name: DD_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: {{ template "opw.apiSecretName" . }}
+            key: api-key
+      - name: DD_OP_PIPELINE_ID
+        value: {{ .Values.datadog.pipelineId | quote }}
+      {{- with .Values.datadog.site }}
+      - name: DD_SITE
+        value: {{ . | quote }}
+      {{- end }}
+      {{- with .Values.datadog.dataDir }}
+      - name: DD_OP_DATA_DIR
+        value: {{ . | quote }}
+      {{- end }}
+      - name: DD_OP_API_ENABLED
+        value: {{ .Values.datadog.workerAPI.enabled | quote }}
+      - name: DD_OP_API_ADDRESS
+        value: {{ .Values.datadog.workerAPI.address | quote }}
+      {{- with .Values.datadog.proxy.http }}
+      - name: DD_PROXY_HTTP
+        value: {{ . | quote }}
+      {{- end }}
+      {{- with .Values.datadog.proxy.https }}
+      - name: DD_PROXY_HTTPS
+        value: {{ . | quote }}
+      {{- end }}
+      {{- if .Values.datadog.proxy.noProxy }}
+      - name: DD_PROXY_NO_PROXY
+        value: {{ .Values.datadog.proxy.noProxy | join "," | quote }}
+      {{- end }}
+{{- if .Values.env }}
+{{ toYaml .Values.env | indent 6 }}
+{{- end }}
+{{- if .Values.envFrom }}
+    envFrom: {{ toYaml .Values.envFrom | nindent 6 }}
+{{- end }}
+    ports:
+{{- if .Values.containerPorts }}
+{{ toYaml .Values.containerPorts | indent 6 }}
+{{- end }}
+{{- if .Values.datadog.workerAPI.enabled }}
+{{ include "opw.api.containerPort" . | indent 6 }}
+{{- end }}
+{{- if .Values.livenessProbe }}
+{{- $liveness := deepCopy .Values.livenessProbe }}
+{{- /* Strip the legacy broken `httpGet :8686/health` default carried over from
+     chart 2.15.0/2.15.1 by `helm upgrade --reuse-values`. The Worker API on
+     8686 is gRPC since OPW 2.15.0, so this exact handler is guaranteed broken. */}}
+{{- if and $liveness.httpGet (eq (toString $liveness.httpGet.port) "8686") (eq $liveness.httpGet.path "/health") }}
+{{- $_ := unset $liveness "httpGet" }}
+{{- end }}
+{{- if not (or $liveness.httpGet $liveness.tcpSocket $liveness.exec $liveness.grpc) }}
+{{- $_ := set $liveness "tcpSocket" (dict "port" 8686) }}
+{{- end }}
+    livenessProbe: {{ toYaml $liveness | trim | nindent 6 }}
+{{- end }}
+{{- if .Values.readinessProbe }}
+{{- $readiness := deepCopy .Values.readinessProbe }}
+{{- if and $readiness.httpGet (eq (toString $readiness.httpGet.port) "8686") (eq $readiness.httpGet.path "/health") }}
+{{- $_ := unset $readiness "httpGet" }}
+{{- end }}
+{{- if not (or $readiness.httpGet $readiness.tcpSocket $readiness.exec $readiness.grpc) }}
+{{- $_ := set $readiness "tcpSocket" (dict "port" 8686) }}
+{{- end }}
+    readinessProbe: {{ toYaml $readiness | trim | nindent 6 }}
+{{- end }}
+{{- if .Values.resources }}
+    resources: {{ toYaml .Values.resources | nindent 6 }}
+{{- end }}
+{{- if .Values.lifecycle }}
+    lifecycle: {{ toYaml .Values.lifecycle | nindent 6 }}
+{{- end }}
+    volumeMounts:
+      - name: data
+        mountPath: "{{ .Values.datadog.dataDir | default "/var/lib/observability-pipelines-worker" }}"
+{{- if or .Values.datadog.bootstrap.config .Values.datadog.bootstrap.secretFileContents }}
+      - name: bootstrap
+        mountPath: /etc/observability-pipelines-worker
+        readOnly: true
+{{- end }}
+{{- if .Values.datadog.bootstrap.secretFileContents }}
+      - name: secret-file-backend
+        mountPath: /etc/observability-pipelines-secrets
+        readOnly: true
+{{- end }}
+{{- if .Values.extraVolumeMounts }}
+{{ toYaml .Values.extraVolumeMounts | indent 6 }}
+{{- end }}
+{{- if .Values.extraContainers }}
+{{ toYaml .Values.extraContainers | indent 2 }}
+{{- end }}
+terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+{{- if .Values.nodeSelector }}
+nodeSelector: {{ toYaml .Values.nodeSelector | nindent 2 }}
+{{- end }}
+{{- if .Values.affinity }}
+affinity: {{ toYaml .Values.affinity | nindent 2 }}
+{{- end }}
+{{- if .Values.tolerations }}
+tolerations: {{ toYaml .Values.tolerations | nindent 2 }}
+{{- end }}
+{{- if  .Values.topologySpreadConstraints }}
+topologySpreadConstraints: {{ toYaml .Values.topologySpreadConstraints | nindent 2 }}
+{{- end }}
+volumes:
+{{- if .Values.persistence.enabled }}
+{{- if .Values.persistence.existingClaim }}
+  - name: data
+    persistentVolumeClaim:
+      claimName: {{ .Values.persistence.existingClaim }}
+{{- end }}
+{{- else }}
+  - name: data
+    emptyDir: {}
+{{- end }}
+{{- if or .Values.datadog.bootstrap.config .Values.datadog.bootstrap.secretFileContents }}
+  - name: bootstrap
+    configMap:
+      name: {{ include "opw.fullname" $ }}-bootstrap
+{{- end }}
+{{- if .Values.datadog.bootstrap.secretFileContents }}
+  - name: secret-file-backend
+    secret:
+      secretName: {{ include "opw.fullname" $ }}-secret-file-backend
+{{- end }}
+{{- if .Values.extraVolumes }}
+{{ toYaml .Values.extraVolumes | indent 2 }}
+{{- end }}
+{{- end }}

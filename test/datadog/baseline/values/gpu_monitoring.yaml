@@ -1,0 +1,8 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  gpuMonitoring:
+    enabled: true
+    privilegedMode: true
+    configureCgroupPerms: true
+    runtimeClassName: "nvidia"

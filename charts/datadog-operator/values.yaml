@@ -1,0 +1,326 @@
+# Default values for datadog-operator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# replicaCount -- Number of instances of Datadog Operator
+replicaCount: 1
+
+# apiKey -- Your Datadog API key
+apiKey:  # <DATADOG_API_KEY>
+
+# apiKeyExistingSecret -- Use existing Secret which stores API key instead of creating a new one
+
+## If set, this parameter takes precedence over "apiKey".
+apiKeyExistingSecret:  # <DATADOG_API_KEY_SECRET>
+
+# appKey -- Your Datadog APP key
+appKey:  # <DATADOG_APP_KEY>
+
+
+# clusterName -- Set a unique cluster name reporting from the Datadog Operator.
+clusterName:
+
+# site -- The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/)
+
+## Set to 'datadoghq.com' to send data to the US1 site (default).
+## Set to 'datadoghq.eu' to send data to the EU site.
+## Set to 'us3.datadoghq.com' to send data to the US3 site.
+## Set to 'us5.datadoghq.com' to send data to the US5 site.
+## Set to 'ddog-gov.com' to send data to the US1-FED site.
+## Set to 'ap1.datadoghq.com' to send data to the AP1 site.
+site:  # datadoghq.com
+
+# dd_url -- The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL
+
+## Overrides the site setting defined in "site".
+dd_url:  # <DATADOG_API_ENDPOINT>
+
+# env -- Define any environment variables to be passed to the operator.
+env: []
+
+# appKeyExistingSecret -- Use existing Secret which stores APP key instead of creating a new one
+
+## If set, this parameter takes precedence over "appKey".
+appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
+
+image:
+  # image.repository -- Repository to use for Datadog Operator image
+  repository: registry.datadoghq.com/operator
+  # image.tag -- Define the Datadog Operator version to use
+  tag: 1.28.0-rc.3
+  # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
+  pullPolicy: IfNotPresent
+  # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
+  doNotCheckTag: false
+# imagePullSecrets -- Datadog Operator repository pullSecret (ex: specify docker registry credentials)
+imagePullSecrets: []
+# nameOverride -- Override name of app
+nameOverride: ""
+# fullNameOverride -- Override the full qualified app name
+fullnameOverride: ""
+# logLevel -- Set Datadog Operator log level (debug, info, error, panic, fatal)
+logLevel: "info"
+# maximumGoroutines -- Override default goroutines threshold for the health check failure.
+maximumGoroutines:
+
+
+introspection:
+# introspection.enabled -- If true, enables introspection feature (beta). Requires v1.4.0+
+  enabled: false
+datadogAgentProfile:
+# datadogAgentProfile.enabled -- If true, enables DatadogAgentProfile controller (beta). Requires v1.5.0+
+  enabled: false
+# supportExtendedDaemonset -- If true, supports using ExtendedDaemonSet CRD
+supportExtendedDaemonset: "false"
+# operatorMetricsEnabled -- Enable forwarding of Datadog Operator metrics and events to Datadog.
+operatorMetricsEnabled: "true"
+# metricsPort -- Port used for OpenMetrics endpoint
+metricsPort: 8383
+secretBackend:
+  # secretBackend.command -- Specifies the path to the command that implements the secret backend api
+  command: ""
+  # secretBackend.arguments -- Specifies the space-separated arguments passed to the command that implements the secret backend api
+  arguments: ""
+  # secretBackend.refreshInterval -- Specifies the secret backend refresh interval in seconds.
+  refreshInterval:  # 0s
+datadogAgent:
+  # datadogAgent.enabled -- Enables Datadog Agent controller
+  enabled: true
+datadogAgentInternal:
+  # datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
+  enabled: true
+datadogCSIDriver:
+  # datadogCSIDriver.enabled -- Enables the Datadog CSI Driver controller
+  enabled: true
+datadogDashboard:
+  # datadogDashboard.enabled -- Enables the Datadog Dashboard controller
+  enabled: false
+datadogGenericResource:
+  # datadogGenericResource.enabled -- Enables the Datadog Generic Resource controller
+  enabled: false
+datadogMonitor:
+  # datadogMonitor.enabled -- Enables the Datadog Monitor controller
+  enabled: false
+datadogSLO:
+  # datadogSLO.enabled -- Enables the Datadog SLO controller
+  enabled: false
+remoteConfiguration:
+  # remoteConfiguration.enabled -- If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set.
+  enabled: false
+# registryMigrationMode -- Controls gradual migration of Agent image pulls to
+# registry.datadoghq.com. When enabled, DD_REGISTRY_OVERRIDE_* environment variables
+# are added to the Datadog Operator deployment to pull Agent images from the global
+# CDN-backed registry.datadoghq.com based on the global.site setting, unless
+# global.registry is specified in the DatadogAgent custom resource (which takes precedence).
+# This has no effect on sites not covered by the active overrides.
+# More sites will be enabled by default in future helm-chart releases.
+# "auto" (default): enable overrides for sites where migration is rolled out.
+#   Currently enabled: AP1 (ap1.datadoghq.com), EU1 (datadoghq.eu), US1 (datadoghq.com), US5 (us5.datadoghq.com).
+# "all": enable all per-site overrides (AP1, US1, EU1, US3, US5).
+# "" or unset: disable all overrides.
+registryMigrationMode: "auto"
+
+deployment:
+  # deployment.annotations -- Allows setting additional annotations for the deployment resource
+  annotations: {}
+rbac:
+  # rbac.create -- Specifies whether the RBAC resources should be created
+  create: true
+serviceAccount:
+  # serviceAccount.create -- Specifies whether a service account should be created
+  create: true
+  # serviceAccount.name -- The name of the service account to use. If not set name is generated using the fullname template
+  name:
+  # serviceAccount.annotations -- Allows setting additional annotations for service account
+  annotations: {}
+  # serviceAccount.automountServiceAccountToken -- Specifies whether the service account token should be automatically mounted
+  automountServiceAccountToken: true
+# resources -- Set resources requests/limits for Datadog Operator PODs
+resources: {}
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#   cpu: 100m
+#   memory: 128Mi
+# requests:
+#   cpu: 100m
+#   memory: 128Mi
+
+# nodeSelector -- Allows to schedule Datadog Operator on specific nodes
+nodeSelector:
+  kubernetes.io/os: linux
+# tolerations -- Allows to schedule Datadog Operator on tainted nodes
+tolerations: []
+# affinity -- Allows to specify affinity for Datadog Operator PODs
+affinity: {}
+
+# dnsConfig -- Specify DNS configuration options for Datadog Operator PODs
+dnsConfig: {}
+#  options:
+#    - name: ndots
+#      value: "1"
+
+# installCRDs -- Set to true to deploy the Datadog's CRDs
+installCRDs: true
+
+datadogCRDs:
+  crds:
+    # datadogCRDs.crds.datadogAgents -- Set to true to deploy the DatadogAgents CRD
+    datadogAgents: true
+    # datadogCRDs.crds.datadogMetrics -- Set to true to deploy the DatadogMetrics CRD
+    datadogMetrics: true
+    # datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
+    datadogPodAutoscalers: true
+    # datadogCRDs.crds.datadogPodAutoscalerClusterProfiles -- Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD
+    datadogPodAutoscalerClusterProfiles: true
+    # datadogCRDs.crds.datadogMonitors -- Set to true to deploy the DatadogMonitors CRD
+    datadogMonitors: true
+    # datadogCRDs.crds.datadogSLOs -- Set to true to deploy the DatadogSLO CRD
+    datadogSLOs: false
+    # datadogCRDs.crds.datadogCSIDrivers -- Set to true to deploy the DatadogCSIDriver CRD
+    datadogCSIDrivers: true
+    # datadogCRDs.crds.datadogDashboards -- Set to true to deploy the DatadogDashboard CRD
+    datadogDashboards: false
+    # datadogCRDs.crds.datadogGenericResources -- Set to true to deploy the DatadogGenericResource CRD
+    datadogGenericResources: false
+    # datadogCRDs.crds.datadogAgentProfiles -- Set to true to deploy the DatadogAgentProfile CRD
+    datadogAgentProfiles: false
+    # datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
+    datadogAgentInternals: true
+    # datadogCRDs.crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
+    datadogInstrumentations: true
+
+# podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
+podAnnotations: {}
+# podLabels -- Allows setting additional labels for for Datadog Operator PODs
+podLabels: {}
+
+# collectOperatorMetrics -- Configures an openmetrics check to collect operator metrics
+collectOperatorMetrics: true
+
+# watchNamespaces -- Restricts the Operator to watch its managed resources on specific namespaces
+# unless CRD-specific watchNamespaces properties are set
+watchNamespaces: []
+# example: watch only two namespaces:
+# watchNamespaces:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespaces:
+# - ""
+
+# watchNamespacesAgent -- Restricts the Operator to watch DatadogAgent resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesAgent: []
+# example: watch only two namespaces:
+# watchNamespacesAgent:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesAgent:
+# - ""
+
+# watchNamespacesMonitor -- Restricts the Operator to watch DatadogMonitor resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesMonitor: []
+# example: watch only two namespaces:
+# watchNamespacesMonitor:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesMonitor:
+# - ""
+
+# watchNamespacesSLO -- Restricts the Operator to watch DatadogSLO resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesSLO: []
+# example: watch only two namespaces:
+# watchNamespacesSLO:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesSLO:
+# - ""
+
+# watchNamespacesAgentProfile -- Restricts the Operator to watch DatadogAgentProfile resources on specific namespaces.
+# Requires v1.8.0+
+watchNamespacesAgentProfile: []
+# example: watch only two namespaces:
+# watchNamespacesAgentProfile:
+# - "default"
+# - "datadog"
+#
+# to watch all namespaces
+# watchNamespacesAgentProfile:
+# - ""
+
+# watchNamespacesDashboard -- Restricts the Operator to watch DatadogDashboard resources on specific namespaces.
+# Requires v1.13.0+
+watchNamespacesDashboard: []
+# example: watch only two namespaces:
+# watchNamespacesDashboard:
+# - "default"
+# - "datadog"
+
+# to watch all namespaces
+# watchNamespacesDashboard:
+# - ""
+
+# watchNamespacesGenericResource -- Restricts the Operator to watch DatadogGenericResource resources on specific namespaces.
+# Requires v1.13.0+
+watchNamespacesGenericResource: []
+# example: watch only two namespaces:
+# watchNamespacesGenericResource:
+# - "default"
+# - "datadog"
+
+# to watch all namespaces
+# watchNamespacesGenericResource:
+# - ""
+
+# containerSecurityContext -- A security context defines privileges and access control settings for a container.
+containerSecurityContext: {}
+
+# volumes -- Specify additional volumes to mount in the container
+volumes: []
+#   - hostPath:
+#       path: <HOST_PATH>
+#     name: <VOLUME_NAME>
+
+# volumeMounts -- Specify additional volumes to mount in the container
+volumeMounts: []
+#   - name: <VOLUME_NAME>
+#     mountPath: <CONTAINER_PATH>
+#     readOnly: true
+
+# livenessProbe -- Add default livenessProbe settings. HTTP GET is not configurable as it is hardcoded in the Operator.
+livenessProbe:
+  periodSeconds: 10
+  initialDelaySeconds: 15
+  # Example fields of livenessProbe that are also configurable:
+  # timeoutSeconds: 1
+  # successThreshold: 1
+  # failureThreshold: 3
+
+# clusterRole -- Set specific configuration for the cluster role
+clusterRole:
+  # allowReadAllResources is required to allow the operator to view all custom resources.
+  # If collecting CRDs in the Kubernetes Explorer this is required
+  allowReadAllResources: false
+
+  # allowCreatePodsExec is required for `remote_copy` mode of the CWS Instrumentation feature.
+  allowCreatePodsExec: false
+
+  # kubeletFineGrainedAuthorization -- When set to true, the operator cluster role will not include the nodes/proxy resource.
+  # WARNING: The following requirements must be met:
+  # - the Kubernetes feature gate `KubeletFineGrainedAuthz` (false in 1.32, true in 1.33+ by default)
+  # - Datadog Operator version 1.20.0 or later
+  # - adding the annotation `agent.datadoghq.com/fine-grained-kubelet-authorization-enabled: "true"` on your `DatadogAgent` resource. (ref: https://github.com/DataDog/datadog-operator/pull/2188)
+  # Without any of these requirements, your Datadog Agent will not function properly.
+  kubeletFineGrainedAuthorization: false

@@ -1,0 +1,23 @@
+{{- if or .Values.clusterChecksRunner.createPodDisruptionBudget .Values.clusterChecksRunner.pdb.create -}}
+apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "datadog.fullname" . }}-clusterchecks
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+spec:
+  {{- if and .Values.clusterChecksRunner.pdb.minAvailable .Values.clusterChecksRunner.pdb.maxUnavailable }}
+  {{- fail "clusterChecksRunner.pdb: set only one of minAvailable or maxUnavailable" }}
+  {{- end }}
+  {{- if .Values.clusterChecksRunner.pdb.minAvailable }}
+  minAvailable: {{ .Values.clusterChecksRunner.pdb.minAvailable }}
+  {{- else if .Values.clusterChecksRunner.pdb.maxUnavailable }}
+  maxUnavailable: {{ .Values.clusterChecksRunner.pdb.maxUnavailable }}
+  {{- else }}
+  maxUnavailable: 1
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ template "datadog.fullname" . }}-clusterchecks
+{{- end -}}

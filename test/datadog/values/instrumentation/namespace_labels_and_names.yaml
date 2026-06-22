@@ -1,0 +1,15 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
+      targets:
+        - name: "billing-service"
+          namespaceSelector:
+            matchLabels:
+              app: "billing-service"
+            matchNames:
+              - "foo"
+              - "bar"
+          ddTraceVersions:
+            python: "v2"

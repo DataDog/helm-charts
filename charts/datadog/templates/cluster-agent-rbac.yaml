@@ -1,0 +1,710 @@
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create -}}
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - endpoints
+  - pods
+  - nodes
+  - namespaces
+  - componentstatuses
+  - limitranges
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+- apiGroups:
+  - "discovery.k8s.io"
+  resources:
+  - endpointslices
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups: ["quota.openshift.io"]
+  resources:
+  - clusterresourcequotas
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - "autoscaling"
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - list
+  - watch
+{{- if .Values.datadog.instrumentationCrd.enabled }}
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "datadoginstrumentations"
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "datadoginstrumentations/status"
+  verbs:
+  - patch
+  - update
+{{- end }}
+{{- if .Values.datadog.collectEvents }}
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - {{ template "datadog.fullname" . }}token  # Kubernetes event collection state
+  - datadogtoken  # Kept for backward compatibility with agent <7.37.0
+  verbs:
+  - get
+  - update
+{{- end }}
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
+  - datadog-leader-election  # Kept for backward compatibility with agent <7.37.0
+{{- if .Values.clusterAgent.metricsProvider.enabled }}
+  - datadog-custom-metrics
+{{- end }}
+  verbs:
+  - get
+  - update
+- apiGroups:
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  resourceNames:
+  - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
+  verbs:
+  - get
+  - update
+- apiGroups:
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  verbs:
+  - create
+{{- if .Values.clusterAgent.metricsProvider.enabled }}
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - extension-apiserver-authentication
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}
+- apiGroups:  # To create the leader election token and hpa events
+  - ""
+  resources:
+  - configmaps
+  - events
+  verbs:
+  - create
+- nonResourceURLs:
+  - "/version"
+  - "/healthz"
+  - "/metrics"
+  verbs:
+  - get
+{{- if and .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.wpaController }}
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "watermarkpodautoscalers"
+  verbs:
+  - "list"
+  - "get"
+  - "watch"
+{{- end }}
+{{- if and .Values.datadog.apm.instrumentation.enabled .Values.datadog.apm.instrumentation.language_detection.enabled }}
+- apiGroups:
+  - "apps"
+  resources:
+  - deployments
+  verbs:
+  - list
+  - get
+  - watch
+  - patch
+{{- end }}
+{{- if and .Values.clusterAgent.metricsProvider.enabled .Values.clusterAgent.metricsProvider.useDatadogMetrics }}
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "datadogmetrics"
+  verbs:
+  - "list"
+  - "create"
+  - "delete"
+  - "watch"
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "datadogmetrics/status"
+  verbs:
+  - "update"
+{{- end }}
+{{- if .Values.clusterAgent.admissionController.enabled }}
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - validatingwebhookconfigurations
+  - mutatingwebhookconfigurations
+  resourceNames:
+    - {{ .Values.clusterAgent.admissionController.webhookName | quote }}
+  verbs: ["get", "list", "watch", "update", "delete"]
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - validatingwebhookconfigurations
+  - mutatingwebhookconfigurations
+  verbs: ["create"]
+- apiGroups: ["batch"]
+  resources: ["jobs", "cronjobs"]
+  verbs: ["get"]
+- apiGroups: ["apps"]
+  resources: ["statefulsets", "replicasets", "deployments", "daemonsets"]
+  verbs: ["get"]
+{{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
+- apiGroups: ["apps"]
+  resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
+  verbs: ["patch"]
+{{- end }}
+- apiGroups: [""]
+  resources: ["replicationcontrollers"]
+  verbs: ["get"]
+- apiGroups: ["storage.k8s.io"]
+  resources: ["csidrivers"]
+  verbs: ["get", "list", "watch"]
+{{- if and .Values.clusterAgent.admissionController.cwsInstrumentation.enabled (eq .Values.clusterAgent.admissionController.cwsInstrumentation.mode "remote_copy") }}
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+{{- end }}
+{{- end }}
+{{- if eq  (include "should-enable-security-agent" .) "true" }}
+{{- if .Values.datadog.securityAgent.compliance.enabled }}
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  - namespaces
+  verbs:
+  - list
+- apiGroups:
+  - "policy"
+  resources:
+  - poddisruptionbudgets
+  {{- if and .Values.clusterAgent.podSecurity.podSecurityPolicy.create (.Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy") }}
+  - podsecuritypolicies
+  {{- end }}
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - rolebindings
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - networkpolicies
+  verbs:
+  - list
+{{- end }}
+{{- end }}
+{{- if and .Values.clusterAgent.podSecurity.podSecurityPolicy.create (.Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy") }}
+- apiGroups:
+  - policy
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+  resourceNames:
+  - {{ template "datadog.fullname" . }}-cluster-agent
+{{- end }}
+- apiGroups:
+  - "security.openshift.io"
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+  resourceNames:
+  - {{ template "datadog.fullname" . }}-cluster-agent
+  - hostnetwork
+{{- if eq (include "need-secret-permissions" .) "true" }}
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+{{- end }}
+# Used by datadog.appsec.injector feature.
+# These rules are intentionally always present, not gated behind
+# `datadog.appsec.injector.enabled`: the cluster-agent injector controller
+# creates cluster resources (Backend / EnvoyExtensionPolicy / EnvoyFilter /
+# ReferenceGrant / ConfigMap copies) and patches user Gateways. Retaining
+# get/list/delete/patch when the feature is disabled lets the controller clean
+# up those resources instead of orphaning them.
+- apiGroups:
+    - "gateway.networking.k8s.io"
+  resources:
+    - gateways
+    - gatewayclasses
+  verbs:
+    - get
+    - list
+    - watch
+    - patch
+- apiGroups:
+    - "gateway.networking.k8s.io"
+  resources:
+    - referencegrants
+  verbs:
+    - get
+    - delete
+    - create
+    - patch
+- apiGroups:
+    - "gateway.envoyproxy.io"
+  resources:
+    - envoyextensionpolicies
+    - backends
+  verbs:
+    - get
+    - delete
+    - create
+- apiGroups:
+    - "networking.istio.io"
+  resources:
+    - envoyfilters
+  verbs:
+    - get
+    - create
+    - delete
+- apiGroups:
+    - "networking.istio.io"
+  resources:
+    - gateways
+  verbs:
+    - get
+    - list
+    - watch
+# AppSec proxy injection - ingress-nginx
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingressclasses"]
+  verbs: ["get", "list", "watch"]
+
+# AppSec proxy injection - ingress-nginx ConfigMap management
+# SECURITY CONSIDERATION: These permissions are cluster-wide and unscoped.
+# ConfigMap names are derived dynamically from the controller's --configmap arg
+# (e.g. datadog-appsec-<original-name>) and cannot be predicted at RBAC
+# definition time. The watch verb is needed for the ConfigMap reconciler that
+# keeps DD copies in sync with originals. In practice, the code only operates
+# on ConfigMaps with the labels
+#   appsec.datadoghq.com/watched-configmap=true       (reconciler)
+#   app.kubernetes.io/component=datadog-appsec-injector (cleanup)
+# Consider namespace-scoped Roles if the blast radius needs to be reduced.
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "list", "watch", "create", "update", "delete"]
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-cluster-agent
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: {{ .Values.clusterAgent.rbac.automountServiceAccountToken }}
+metadata:
+  labels:
+    app: "{{ template "datadog.fullname" . }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+{{ include "datadog.labels" . | indent 4 }}
+{{- if .Values.clusterAgent.rbac.serviceAccountAdditionalLabels -}}
+{{ tpl (toYaml .Values.clusterAgent.rbac.serviceAccountAdditionalLabels) . | nindent 4 -}}
+{{ end }}
+{{- if .Values.clusterAgent.rbac.serviceAccountAnnotations }}
+  annotations: {{ tpl (toYaml .Values.clusterAgent.rbac.serviceAccountAnnotations) . | nindent 4}}
+{{- end }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent
+  namespace: {{ .Release.Namespace }}
+{{- if .Values.clusterAgent.admissionController.enabled }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: Role
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent-main
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list", "watch", "update", "create"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["get", "update", "create"]
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: RoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: "{{ template "datadog.fullname" . }}-cluster-agent-main"
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ template "datadog.fullname" . }}-cluster-agent-main
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: Role
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-private-action-runner
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames:
+    - {{ .Values.clusterAgent.privateActionRunner.identitySecretName | quote }}
+  verbs: ["get", "update", "create"]
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: RoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: "{{ template "datadog.fullname" . }}-private-action-runner"
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ template "datadog.fullname" . }}-private-action-runner
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+{{- if and .Values.clusterAgent.privateActionRunner.enabled .Values.clusterAgent.privateActionRunner.k8sRemediationEnabled }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-private-action-runner
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments", "daemonsets", "statefulsets", "replicasets"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["pods", "events", "configmaps"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["patch"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["patch"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["create", "update", "patch"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create", "patch"]
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-private-action-runner
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-private-action-runner
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+{{- end }}
+
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") .Values.clusterAgent.rbac.create .Values.clusterAgent.metricsProvider.enabled }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: "{{ template "datadog.fullname" . }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent-system-auth-delegator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:auth-delegator
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: RoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: "{{ template "datadog.fullname" . }}-cluster-agent-apiserver"
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: extension-apiserver-authentication-reader
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+{{- end -}}
+
+{{- if or (((.Values.datadog.autoscaling).workload).enabled) (((.Values.datadog.autoscaling).cluster).enabled) ((((.Values.datadog.autoscaling).cluster).spot).enabled) }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent-autoscaling
+rules:
+# Ability to generate events
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+{{- if (((.Values.datadog.autoscaling).workload).enabled) }}
+# Access to own CRDs
+- apiGroups:
+  - "datadoghq.com"
+  resources:
+  - "datadogpodautoscalers"
+  - "datadogpodautoscalers/status"
+  - "datadogpodautoscalerclusterprofiles"
+  - "datadogpodautoscalerclusterprofiles/status"
+  verbs:
+  - "*"
+# Scale subresource for all resources
+- apiGroups:
+  - "*"
+  resources:
+  - "*/scale"
+  verbs:
+  - get
+  - update
+# Patching POD to add annotations. TODO: Remove when we have a better way to generate single event
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - patch
+# In-place resize: patching pod resources via resize subresource (K8s 1.33+)
+- apiGroups:
+  - ""
+  resources:
+  - pods/resize
+  verbs:
+  - patch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - rollouts
+  verbs:
+  - get
+  - list
+  - watch
+  - patch
+# List/watch namespaces for cluster profiles
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+{{- end}}
+{{- if or (((.Values.datadog.autoscaling).workload).enabled) ((((.Values.datadog.autoscaling).cluster).spot).enabled) }}
+# Read and patch workloads for autoscaling and spot on-demand fallback
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+  - patch
+# Evict pods during in-place resize or spot-to-on-demand fallback
+- apiGroups:
+  - ""
+  resources:
+  - pods/eviction
+  verbs:
+  - create
+{{- end}}
+{{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
+- apiGroups:
+  - karpenter.sh
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - patch
+  - update
+  - delete
+- apiGroups:
+  - karpenter.k8s.aws
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - eks.amazonaws.com
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+{{- end}}
+
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent-autoscaling
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-cluster-agent-autoscaling
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+{{- end}}
+
+{{- if or .Values.datadog.kubernetesResourcesAnnotationsAsTags .Values.datadog.kubernetesResourcesLabelsAsTags}}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent-annotations-and-labels-as-tags
+
+{{- $groupedResources := dict }}
+{{- $mergedResources := mergeOverwrite (deepCopy (default dict .Values.datadog.kubernetesResourcesAnnotationsAsTags)) (deepCopy (default dict .Values.datadog.kubernetesResourcesLabelsAsTags))}}
+{{- range $resource, $labels := $mergedResources }}
+  {{- $parts := splitList "." $resource }}
+  {{- $apiGroup := "" }}
+  {{- $resourceName := mustFirst $parts }}
+  {{- if gt (len $parts) 1 }}
+    {{- $apiGroup = join "." (mustRest $parts) }}
+  {{- end }}
+  {{- $existing := index $groupedResources $apiGroup | default (list) }}
+  {{- $groupedResources = set $groupedResources $apiGroup (append $existing $resourceName) }}
+{{- end }}
+
+rules:
+
+# Iterate through the apiGroups and create rules for each resource
+{{- range $apiGroup, $resources := $groupedResources }}
+- apiGroups:
+  - "{{ $apiGroup }}"
+  resources:
+  {{- range $resource := $resources }}
+  - {{ $resource }}
+  {{- end }}
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}
+
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-cluster-agent-annotations-and-labels-as-tags
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-cluster-agent-annotations-and-labels-as-tags
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-cluster-agent
+    namespace: {{ .Release.Namespace }}
+{{- end -}}

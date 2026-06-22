@@ -1,0 +1,238 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "datadog-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+{{- if .Values.deployment.annotations }}
+  annotations:
+{{ toYaml .Values.deployment.annotations | indent 4 }}
+{{- end }}
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "datadog-operator.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "datadog-operator.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- if .Values.podLabels }}
+{{ toYaml .Values.podLabels | indent 8 }}
+        {{- end }}
+      annotations:
+        {{- if or .Values.apiKey .Values.apiKeyExistingSecret }}
+        checksum/api_key: {{ include (print $.Template.BasePath "/secret_api_key.yaml") . | sha256sum }}
+        {{- end }}
+        {{- if or .Values.appKey .Values.appKeyExistingSecret }}
+        checksum/application_key: {{ include (print $.Template.BasePath "/secret_application_key.yaml") . | sha256sum }}
+        {{- end }}
+        {{- if .Values.collectOperatorMetrics }}
+        ad.datadoghq.com/{{ .Chart.Name }}.check_names: '["openmetrics"]'
+        ad.datadoghq.com/{{ .Chart.Name }}.init_configs: '[{}]'
+        ad.datadoghq.com/{{ .Chart.Name }}.instances: |
+          [{
+            "prometheus_url": "http://%%host%%:{{ .Values.metricsPort }}/metrics",
+            "namespace": "datadog.operator",
+            "metrics": ["*"]
+          }]
+        {{- end }}
+        {{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
+        {{- end }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "datadog-operator.serviceAccountName" . }}
+      {{- if eq .Values.serviceAccount.automountServiceAccountToken false }}
+      automountServiceAccountToken: false
+      {{- end }} 
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: WATCH_NAMESPACE
+            {{- if .Values.watchNamespaces }}
+              value: {{ .Values.watchNamespaces | join "," }}
+            {{- else }}
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            {{- end }}
+            {{- if .Values.watchNamespacesAgent }}
+            - name: DD_AGENT_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesAgent | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesMonitor }}
+            - name: DD_MONITOR_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesMonitor | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesSLO }}
+            - name: DD_SLO_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesSLO | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesAgentProfile }}
+            - name: DD_AGENT_PROFILE_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesAgentProfile | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesDashboard }}
+            - name: DD_DASHBOARD_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesDashboard | join "," }}
+            {{- end }}
+            {{- if .Values.watchNamespacesGenericResource }}
+            - name: DD_GENERIC_RESOURCE_WATCH_NAMESPACE
+              value: {{ .Values.watchNamespacesGenericResource | join "," }}
+            {{- end }}
+            - name: DD_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            {{- $version := include "check-image-tag" . }}
+            {{- if (semverCompare ">=1.7.0-0" $version) }}
+            - name: DD_TOOL_VERSION
+              value: {{ .Values.toolVersion | default "helm" }}
+            {{- end }}
+            {{- if .Values.clusterName }}
+            - name: DD_CLUSTER_NAME
+              value: {{ .Values.clusterName }}
+            {{- end }}
+            {{- if eq (include "should-set-dd-api-key" .) "true" }}
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "datadog-operator.apiKeySecretName" . }}
+                  key: api-key
+            {{- end }}
+            {{- if eq (include "should-set-dd-app-key" .) "true" }}
+            - name: DD_APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ template "datadog-operator.appKeySecretName" . }}
+                  key: app-key
+            {{- end }}
+            {{- if or .Values.site (eq (include "is-valid-endpoint-config-data" (list . "dd-site")) "true")}}
+            - name: DD_SITE
+              value: {{ default .Values.site (include "get-endpoint-config-data-key" (list . "dd-site"))  }}
+            {{- end }}
+            {{- if or .Values.dd_url (eq (include "is-valid-endpoint-config-data" (list . "dd-url")) "true") }}
+            - name: DD_URL
+              value: {{ default .Values.dd_url (include "get-endpoint-config-data-key" (list . "dd-url")) }}
+            {{- end }}
+            {{- $registryMode := include "datadog-registry-mode" . }}
+            {{- if or (eq $registryMode "auto") (eq $registryMode "all") }}
+            - name: DD_REGISTRY_OVERRIDE_ASIA
+              value: "true"
+            - name: DD_REGISTRY_OVERRIDE_EU
+              value: "true"
+            - name: DD_REGISTRY_OVERRIDE_DEFAULT
+              value: "true"
+            {{- end }}
+            {{- if eq $registryMode "all" }}
+            - name: DD_REGISTRY_OVERRIDE_AZURE
+              value: "true"
+            {{- end }}
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+          args:
+            - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
+            - "-logEncoder=json"
+            - "-metrics-addr=:{{ .Values.metricsPort }}"
+            - "-loglevel={{ .Values.logLevel }}"
+            - "-operatorMetricsEnabled={{ .Values.operatorMetricsEnabled }}"
+          {{- if .Values.secretBackend.command }}
+            - "-secretBackendCommand={{ .Values.secretBackend.command }}"
+          {{- end }}
+          {{- if .Values.secretBackend.arguments }}
+            - "-secretBackendArgs={{ .Values.secretBackend.arguments }}"
+          {{- end }}
+          {{- if .Values.secretBackend.refreshInterval }}
+            - "-secretRefreshInterval={{ .Values.secretBackend.refreshInterval }}"
+          {{- end }}
+          {{- if and .Values.maximumGoroutines (semverCompare ">=1.0.0-rc.13" $version) }}
+            - "-maximumGoroutines={{ .Values.maximumGoroutines }}"
+          {{- end }}
+          {{- if (semverCompare ">=1.4.0-0" $version) }}
+            - "-introspectionEnabled={{ .Values.introspection.enabled }}"
+          {{- end }}
+          {{- if (semverCompare ">=1.5.0-0" $version) }}
+            - "-datadogAgentProfileEnabled={{ .Values.datadogAgentProfile.enabled }}"
+          {{- end }}
+            - "-datadogMonitorEnabled={{ .Values.datadogMonitor.enabled }}"
+          {{- if (semverCompare ">=1.0.0-rc.13" $version) }}
+            - "-datadogAgentEnabled={{ .Values.datadogAgent.enabled }}"
+          {{- end }}
+          {{- if (semverCompare ">=1.3.0-0" $version) }}
+            - "-datadogSLOEnabled={{ .Values.datadogSLO.enabled }}"
+          {{- end }}
+          {{- if (semverCompare ">=1.9.0-0" $version) }}
+            - "-datadogDashboardEnabled={{ .Values.datadogDashboard.enabled }}"
+          {{- end }}
+          {{- if (semverCompare ">=1.12.0-0" $version) }}
+            - "-datadogGenericResourceEnabled={{ .Values.datadogGenericResource.enabled }}"
+          {{- end }}
+          {{- if (semverCompare ">=1.7.0-0" $version) }}
+            - "-remoteConfigEnabled={{ .Values.remoteConfiguration.enabled }}"
+          {{- end }}
+          {{- if and (semverCompare ">=1.18.0-0 <1.27.0-0" $version) (or (not .Values.image.doNotCheckTag) (not .Values.datadogAgentInternal.enabled)) }}
+            - "-datadogAgentInternalEnabled={{ .Values.datadogAgentInternal.enabled }}"
+          {{- end }}
+          {{- if (semverCompare ">=1.26.0-0" $version) }}
+            - "-datadogCSIDriverEnabled={{ .Values.datadogCSIDriver.enabled }}"
+          {{- end }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.metricsPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz/
+              port: 8081
+            {{- if .Values.livenessProbe }}
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          {{- if .Values.volumeMounts }}
+          {{- toYaml .Values.volumeMounts | nindent 10 }}
+          {{- end }}
+          {{- if .Values.containerSecurityContext }}
+          securityContext:
+            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+      {{- if .Values.volumes }}
+      {{- toYaml .Values.volumes | nindent 6 }}
+      {{- end }}

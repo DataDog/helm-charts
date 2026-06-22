@@ -1,0 +1,11 @@
+clusterAgent:
+  enabled: true
+  celWorkloadExclude:
+    - products: ["global"]
+      rules:
+        containers:
+          - container.name == "redis"
+    - products: ["logs", "metrics"]
+      rules:
+        kube_services:
+          - kube_service.name == "nginx"

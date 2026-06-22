@@ -1,0 +1,140 @@
+{{- define "container-trace-agent" -}}
+- name: trace-agent
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
+  imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.lifecycle }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
+  {{- if eq .Values.targetSystem "linux" }}
+  {{- if eq (include "use-trace-loader" .) "true" }}
+  command: ["trace-loader", "{{ template "datadog.confPath" . }}/datadog.yaml", "trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- else }}
+  command: ["trace-agent", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end }}
+  {{- end -}}
+  {{- if eq .Values.targetSystem "windows" }}
+  command: ["trace-agent", "-foreground", "-config={{ template "datadog.confPath" . }}/datadog.yaml"]
+  {{- end -}}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.traceAgent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
+  resources:
+{{- if and (empty .Values.agents.containers.traceAgent.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 4 }}
+{{- else }}
+{{ toYaml .Values.agents.containers.traceAgent.resources | indent 4 }}
+{{- end }}
+  ports:
+  - containerPort: {{ .Values.datadog.apm.port }}
+  {{- if or .Values.datadog.apm.portEnabled .Values.datadog.apm.enabled }}
+    hostPort: {{ .Values.datadog.apm.port }}
+  {{- end }}
+    name: traceport
+    protocol: TCP
+{{- if .Values.agents.containers.traceAgent.ports }}
+{{ toYaml .Values.agents.containers.traceAgent.ports | indent 2 }}
+{{- end }}
+{{- if or .Values.datadog.envFrom .Values.agents.containers.traceAgent.envFrom }}
+  envFrom:
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.traceAgent.envFrom }}
+{{ .Values.agents.containers.traceAgent.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- end }}
+  env:
+    {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    {{- include "fips-envvar" . | nindent 4 }}
+    - name: DD_LOG_LEVEL
+      value: {{ .Values.agents.containers.traceAgent.logLevel | default .Values.datadog.logLevel | quote }}
+    - name: DD_APM_ENABLED
+      value: "true"
+    - name: DD_APM_NON_LOCAL_TRAFFIC
+      value: "true"
+    - name: DD_APM_RECEIVER_PORT
+      value: {{ .Values.datadog.apm.port | quote }}
+    {{- if eq (include "trace-agent-use-uds" .) "true" }}
+    - name: DD_APM_RECEIVER_SOCKET
+      value: {{ .Values.datadog.apm.socketPath | quote }}
+    {{- end }}
+    {{- if eq .Values.targetSystem "linux" }}
+    - name: DD_DOGSTATSD_SOCKET
+      value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
+    {{- end }}
+    - name: DD_INSTRUMENTATION_INSTALL_TIME
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_time
+    - name: DD_INSTRUMENTATION_INSTALL_ID
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_id
+    - name: DD_INSTRUMENTATION_INSTALL_TYPE
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_type
+    {{- include "additional-env-entries" .Values.agents.containers.traceAgent.env | indent 4 }}
+    {{- include "additional-env-dict-entries" .Values.agents.containers.traceAgent.envDict | indent 4 }}
+    {{- if .Values.datadog.apm.errorTrackingStandalone.enabled }}
+    - name: DD_APM_ERROR_TRACKING_STANDALONE_ENABLED
+      value: "true"
+    {{- end }}
+  volumeMounts:
+    - name: config
+      mountPath: {{ template "datadog.confPath" . }}
+      readOnly: true
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false # Need RW to write logs
+    {{- if (not .Values.providers.gke.autopilot) }}
+    - name: auth-token
+      mountPath: {{ template "datadog.confPath" . }}/auth
+      readOnly: true
+    {{- end }}
+    {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
+    - name: datadog-yaml
+      mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
+      subPath: datadog.yaml
+      readOnly: true
+    {{- end }}
+    {{- if eq .Values.targetSystem "linux" }}
+    {{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
+    - name: procdir
+      mountPath: /host/proc
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: cgroups
+      mountPath: /host/sys/fs/cgroup
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    {{- end }}
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false # Need RW for tmp directory
+    {{- if not .Values.providers.gke.gdc }}
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+      readOnly: false # Need RW for UDS DSD socket
+    {{- if and (eq (include "trace-agent-use-uds" .) "true") (ne (dir .Values.datadog.dogstatsd.socketPath) (dir .Values.datadog.apm.socketPath)) }}
+    - name: apmsocket
+      mountPath: {{ (dir .Values.datadog.apm.socketPath) }}
+      readOnly: false # Need RW for UDS APM socket
+    {{- end }}
+    {{- end }}
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- end }}
+    {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
+    {{- if .Values.datadog.kubelet.hostCAPath }}
+{{ include "datadog.kubelet.volumeMount" . | indent 4 }}
+    {{- end }}
+{{- if .Values.agents.volumeMounts }}
+{{ toYaml .Values.agents.volumeMounts | indent 4 }}
+{{- end }}
+  livenessProbe:
+{{- $live := .Values.agents.containers.traceAgent.livenessProbe }}
+{{ include "probe.tcp" (dict "port" .Values.datadog.apm.port "settings" $live ) | indent 4 }}
+{{- end -}}

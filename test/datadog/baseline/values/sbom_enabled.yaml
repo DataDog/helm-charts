@@ -1,0 +1,14 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  sbom:
+    containerImage:
+      enabled: true
+      overlayFSDirectScan: true
+      analyzers:
+      - "os"
+    host:
+      enabled: true
+      analyzers:
+      - "os"
+      - "languages"

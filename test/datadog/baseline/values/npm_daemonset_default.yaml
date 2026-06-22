@@ -1,0 +1,5 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  networkMonitoring:
+    enabled: true

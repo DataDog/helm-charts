@@ -1,0 +1,6 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
+      foo: "i am extraneous"

@@ -1,0 +1,42 @@
+{{- if or .Values.datadog.apiKeyExistingSecret .Values.datadog.apiKey }}
+  {{- if .Values.datadog.apiKeyExistingSecret }}
+You disabled creation of Secret containing API key, therefore it is expected
+that you create Secret named '{{ .Values.datadog.apiKeyExistingSecret }}', which includes a key called 'api-key' containing the API key.
+  {{- end }}
+
+{{- else }}
+##############################################################################
+####               ERROR: You did not set a datadog.apiKey.               ####
+##############################################################################
+
+This deployment will be incomplete until you get your API key from Datadog.
+Sign up for a free Datadog trial at https://app.datadoghq.com/signup
+
+Once registered, you can create an API key at:
+
+    https://app.datadoghq.com/observability-pipelines
+
+Then run:
+
+    helm upgrade {{ .Release.Name }} \
+        --set datadog.apiKey=YOUR-KEY-HERE datadog/observability-pipelines-worker
+{{- end }}
+
+{{- if not .Values.datadog.pipelineId }}
+
+##############################################################################
+####              ERROR: You did not set a datadog.pipelineId.            ####
+##############################################################################
+
+This deployment will be incomplete until you get your pipeline ID from Datadog.
+Sign up for a free Datadog trial at https://app.datadoghq.com/signup
+
+Once registered, you can create a pipeline at:
+
+    https://app.datadoghq.com/observability-pipelines
+
+Then run:
+
+    helm upgrade {{ .Release.Name }} \
+        --set datadog.pipelineId=YOUR-PIPELINE-ID-HERE datadog/observability-pipelines-worker
+{{- end }}

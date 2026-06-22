@@ -1,0 +1,729 @@
+{{- if .Values.rbac.create -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "datadog-operator.fullname" . }}
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+rules:
+- nonResourceURLs:
+  - /metrics
+  - /metrics/slis
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - componentstatuses
+  - deployments
+  - limitranges
+  - namespaces
+  - persistentvolumeclaims
+  - persistentvolumes
+  - replicationcontrollers
+  - resourcequotas
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - endpoints
+  - events
+  - pods
+  - secrets
+  - serviceaccounts
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes/configz
+  - nodes/healthz
+  - nodes/logs
+  - nodes/metrics
+  - nodes/pods
+  {{- if not .Values.clusterRole.kubeletFineGrainedAuthorization }}
+  - nodes/proxy
+  {{- end }}
+  - nodes/spec
+  - nodes/stats
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - pods/eviction
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
+  - pods/resize
+  verbs:
+  - patch
+- apiGroups:
+  - '*'
+  resources:
+  - '*/scale'
+  verbs:
+  - get
+  - update
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  - validatingwebhookconfigurations
+  verbs:
+  - '*'
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiregistration.k8s.io
+  resources:
+  - apiservices
+  verbs:
+  - '*'
+- apiGroups:
+  - apps
+  resources:
+  - controllerrevisions
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - daemonsets
+  - deployments
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - replicasets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - applications
+  - applicationsets
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - argoproj.io
+  resources:
+  - rollouts
+  verbs:
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+  - get
+- apiGroups:
+  - auto.gke.io
+  resources:
+  - allowlistsynchronizers
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - autoscaling.k8s.io
+  resources:
+  - verticalpodautoscalers
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - cronjobs
+  - jobs
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - certificates.k8s.io
+  resources:
+  - certificatesigningrequests
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - cilium.io
+  resources:
+  - ciliumnetworkpolicies
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - configuration.konghq.com
+  - consul.hashicorp.com
+  - core.haproxy.org
+  - datadoghq.com
+  - gateway.envoyproxy.io
+  - ingress.v1.haproxy.org
+  - karpenter.azure.com
+  - kuma.io
+  - mesh.consul.hashicorp.com
+  - policy.linkerd.io
+  - traefik.containo.us
+  resources:
+  - '*'
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagents
+  - datadogagents/finalizers
+  - datadoggenericresources
+  - datadoggenericresources/finalizers
+  - datadogmonitors
+  - datadogmonitors/finalizers
+  - datadogslos
+  - datadogslos/finalizers
+  - extendeddaemonsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagents/status
+  - datadoggenericresources/status
+  - datadogmonitors/status
+  - datadogslos/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogmetrics/status
+  verbs:
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadoginstrumentations
+  - extendeddaemonsetreplicasets
+  - watermarkpodautoscalers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadoginstrumentations/status
+  verbs:
+  - patch
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogmetrics
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogpodautoscalerclusterprofiles
+  - datadogpodautoscalerclusterprofiles/status
+  - datadogpodautoscalers
+  - datadogpodautoscalers/status
+  verbs:
+  - '*'
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - eks.amazonaws.com
+  - external.metrics.k8s.io
+  - karpenter.k8s.aws
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - gateway.envoyproxy.io
+  resources:
+  - backends
+  - envoyextensionpolicies
+  - envoypatchpolicies
+  verbs:
+  - create
+  - delete
+  - get
+- apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - gatewayclasses
+  - gateways
+  - httproutes
+  verbs:
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - grpcroutes
+  - listenersets
+  - tlsroutes
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - referencegrants
+  verbs:
+  - create
+  - delete
+  - get
+  - patch
+- apiGroups:
+  - k8s.nginx.org
+  resources:
+  - virtualserverroutes
+  - virtualservers
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - karpenter.sh
+  resources:
+  - '*'
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - kustomize.toolkit.fluxcd.io
+  resources:
+  - kustomizations
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - metrics.eks.amazonaws.com
+  resources:
+  - kcm/metrics
+  - ksh/metrics
+  verbs:
+  - get
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - destinationrules
+  - serviceentries
+  - sidecars
+  - virtualservices
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - envoyfilters
+  verbs:
+  - create
+  - delete
+  - get
+- apiGroups:
+  - networking.istio.io
+  resources:
+  - gateways
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingressclasses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - networkpolicies
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - quota.openshift.io
+  resources:
+  - clusterresourcequotas
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - clusterroles
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  - roles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - security.openshift.io
+  resourceNames:
+  - restricted
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - buckets
+  - externalartifacts
+  - gitrepositories
+  - helmcharts
+  - helmrepositories
+  - ocirepositories
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - storageclasses
+  - volumeattachments
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - traefik.io
+  resources:
+  - ingressroutes
+  verbs:
+  - list
+  - watch
+{{- if .Values.datadogAgentInternal.enabled }}
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end }}
+{{- if .Values.datadogAgentProfile.enabled }}
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - patch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals
+  - datadogagentprofiles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals/finalizers
+  - datadogagentprofiles/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogagentinternals/status
+  - datadogagentprofiles/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end }}
+{{- if .Values.datadogDashboard.enabled }}
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogdashboards
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogdashboards/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogdashboards/status
+  verbs:
+  - get
+  - patch
+  - update
+{{- end }}
+{{- if .Values.datadogCSIDriver.enabled }}
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogcsidrivers
+  - datadogcsidrivers/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogcsidrivers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - csidrivers
+  verbs:
+  - create
+  - list
+  - watch
+- apiGroups:
+  - storage.k8s.io
+  resourceNames:
+  - k8s.csi.datadoghq.com
+  resources:
+  - csidrivers
+  verbs:
+  - delete
+  - get
+  - patch
+  - update
+{{- end }}
+{{- if .Values.clusterRole.allowReadAllResources }}
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - list
+  - watch
+{{- end }}
+{{- if .Values.clusterRole.allowCreatePodsExec }}
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+{{- end }}
+{{- end -}}

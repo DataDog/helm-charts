@@ -1,0 +1,74 @@
+{{- define "kubeStateMetricsCore-config" -}}
+kubernetes_state_core.yaml.default: |-
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+  cluster_check: true
+{{- end }}
+  init_config:
+  instances:
+    - collectors:
+{{- if .Values.datadog.kubeStateMetricsCore.collectSecretMetrics }}
+      - secrets
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectConfigMaps }}
+      - configmaps
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectVpaMetrics }}
+      - verticalpodautoscalers
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectApiServicesMetrics }}
+      - apiservices
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectCrdMetrics }}
+      - customresourcedefinitions
+{{- end }}
+      - nodes
+      - pods
+      - services
+      - resourcequotas
+      - replicationcontrollers
+      - limitranges
+      - persistentvolumeclaims
+      - persistentvolumes
+      - namespaces
+      - endpoints
+      - daemonsets
+      - deployments
+      - replicasets
+      - statefulsets
+{{- $imageTag := ternary (.Values.clusterChecksRunner.image.tag | toString) (.Values.agents.image.tag | toString) .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- $doNotCheckTag := ternary .Values.clusterChecksRunner.image.doNotCheckTag .Values.agents.image.doNotCheckTag .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+{{- if or $doNotCheckTag (hasPrefix "latest" $imageTag) (semverCompare ">=7.72.0" $imageTag) }}
+      - controllerrevisions
+{{- end }}
+      - cronjobs
+      - jobs
+      - horizontalpodautoscalers
+      - poddisruptionbudgets
+      - storageclasses
+      - volumeattachments
+      - ingresses
+{{- if .Values.datadog.kubeStateMetricsCore.useApiServerCache }}
+      use_api_server_cache: true
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+      skip_leader_election: true
+{{- end }}
+      labels_as_tags:
+{{ .Values.datadog.kubeStateMetricsCore.labelsAsTags | toYaml | indent 8 }}
+      annotations_as_tags:
+{{ .Values.datadog.kubeStateMetricsCore.annotationsAsTags | toYaml | indent 8 }}
+{{- if .Values.datadog.kubeStateMetricsCore.collectCrMetrics }}
+      custom_resource:
+        spec:
+          resources:
+{{ .Values.datadog.kubeStateMetricsCore.collectCrMetrics | toYaml | indent 12 }}
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.namespaces }}
+      namespaces:
+{{ .Values.datadog.kubeStateMetricsCore.namespaces | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.tags }}
+      tags:
+{{ .Values.datadog.kubeStateMetricsCore.tags | toYaml | indent 8 }}
+{{- end }}
+{{- end -}}

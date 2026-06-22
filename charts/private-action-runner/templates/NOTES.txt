@@ -1,0 +1,12 @@
+Chart version : {{ .Chart.Version }}
+Private action runner image : {{ $.Values.image.repository }}:{{ $.Values.image.tag }}
+
+Helm chart readme : https://github.com/DataDog/helm-charts/tree/main/charts/private-action-runner
+Helm chart changelog : https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/CHANGELOG.md
+Upgrade guide : https://github.com/DataDog/helm-charts/blob/main/charts/private-action-runner/UPGRADING.md
+
+To see the running pods for this chart, use the following command:
+  kubectl get pods -l app.kubernetes.io/instance={{ .Release.Name }}
+
+To see the logs for a specific pod, use the following command:
+  kubectl logs <pod-name>

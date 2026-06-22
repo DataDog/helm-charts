@@ -1,0 +1,29 @@
+agents:
+  image:
+    repository: datadog/agent-dev
+    tag: nightly-ot-beta-main
+    doNotCheckTag: true
+  containers:
+    agent:
+      env:
+        - name: DD_HOSTNAME
+          value: "my-hostname"
+datadog:
+  apiKey: $DD_API_KEY
+  otelCollector:
+    enabled: true
+  logs:
+    enabled: true
+    containerCollectAll: true
+  orchestratorExplorer:
+    enabled: true
+  processAgent:
+    enabled: true
+    processCollection: true
+  networkMonitoring:
+    enabled: true
+  apm:
+    portEnabled: true
+    peer_tags_aggregation: true
+    compute_stats_by_span_kind: true
+    peer_service_aggregation: true

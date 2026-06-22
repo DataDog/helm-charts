@@ -1,0 +1,32 @@
+datadog:
+  kubelet:
+    tlsVerify: false
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  apm:
+    portEnabled: true
+  dogstatsd:
+    originDetection: true
+    useHostPID: true
+    useHostPort: true
+    nonLocalTraffic: true
+  logs:
+    containerCollectAll: true
+    containerCollectUsingFiles: true
+    enabled: true
+  processAgent:
+    enabled: true
+    processCollection: true
+  networkMonitoring:
+    enabled: true
+  serviceMonitoring:
+    enabled: true
+  systemProbe:
+    enableOOMKill: true
+  ignoreAutoConfig:
+    - etcd
+    - kube_scheduler
+    - kube_controller_manager
+providers:
+  talos:
+    enabled: true

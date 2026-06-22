@@ -1,0 +1,56 @@
+{{ $version := include "check-image-tag" . }}
+{{- if .Values.datadogMonitor.enabled }}
+    {{- if (and ( not .Values.apiKeyExistingSecret) (not .Values.apiKey)) }}
+##############################################################################
+####               ERROR: You did not set a apiKey value.                 ####
+##############################################################################
+
+This deployment will be incomplete until you get your API key from Datadog.
+One can sign up for a free Datadog trial at https://app.datadoghq.com/signup
+
+Once registered you can request an API key at https://app.datadoghq.com/account/settings#agent/kubernetes
+    {{- end }}
+
+    {{- if (and ( not .Values.appKeyExistingSecret) (not .Values.appKey)) }}
+##############################################################################
+####               ERROR: You did not set a appKey value.                 ####
+##############################################################################
+
+This deployment will be incomplete until you get your APP key from Datadog.
+Create an application key at https://app.datadoghq.com/account/settings#api
+    {{- end }}
+{{- end }}
+
+
+{{- if (semverCompare "<1.0.0-rc.13" $version) }}
+    {{- if (not .Values.datadogAgent.enabled) }}
+##############################################################################
+####               WARNING: Unsupported parameter datadogAgent.enabled.   ####
+##############################################################################
+
+The datadogAgent.enabled parameter isn't supported by the Operator 1.0.0-rc.12 and earlier.
+DatadogAgent is enabled by default and setting it to false will not have any effect.
+    {{- end }}
+
+    {{- if .Values.maximumGoroutines }}
+##############################################################################
+####               WARNING: Unsupported parameter maximumGoroutines.      ####
+##############################################################################
+
+The maximumGoroutines parameter isn't supported by the Operator 1.0.0-rc.12 and earlier.
+Setting a value will not change the default defined in the Operator.
+    {{- end }}
+{{- end }}
+
+{{- if .Values.clusterRole.kubeletFineGrainedAuthorization }}
+##############################################################################
+####               WARNING: Fine-grained authorization flag enabled.      ####
+##############################################################################
+
+Setting this flag requires:
+- the Kubernetes feature gate `KubeletFineGrainedAuthz` (false in 1.32, true in 1.33+ by default)
+- Datadog Operator version 1.20.0 or later
+- adding the annotation `agent.datadoghq.com/fine-grained-kubelet-authorization-enabled: "true"` on your `DatadogAgent` resource.
+
+Without any of these prerequisites, your Datadog Agent will not function properly.
+{{- end }}

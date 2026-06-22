@@ -1,0 +1,25 @@
+apiVersion: v2
+name: datadog-operator
+version: 2.24.0-dev.4
+appVersion: 1.28.0-rc.3
+description: Datadog Operator
+keywords:
+- monitoring
+- alerting
+- metric
+home: https://www.datadoghq.com
+icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+sources:
+- https://app.datadoghq.com/account/settings#agent/kubernetes
+- https://github.com/DataDog/datadog-agent
+maintainers:
+- name: Datadog
+  email: support@datadoghq.com
+dependencies:
+- name: datadog-crds
+  version: 2.22.0-dev.2
+  alias: datadogCRDs
+  repository: https://helm.datadoghq.com
+  condition: installCRDs
+  tags:
+  - install-crds

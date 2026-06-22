@@ -1,0 +1,117 @@
+# Default values for datadog-csi-driver.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# nameOverride -- Allows overriding the name of the chart.
+# If set, this value replaces the default chart name.
+nameOverride: ""
+
+# fullnameOverride -- Allows overriding the full name of resources created by the chart.
+# If set, this value completely replaces the generated name, ignoring the standard naming convention.
+fullnameOverride: ""
+
+## Define the Datadog CSI Driver image to work with
+image:
+  # image.tag -- CSI driver image tag to use
+  tag: 1.2.2
+
+  # image.repository -- Override default registry + image.name for CSI driver
+  repository: gcr.io/datadoghq/csi-driver
+
+  # image.pullPolicy -- CSI driver image pullPolicy
+  pullPolicy: IfNotPresent
+
+  # image.pullSecrets -- CSI driver repository pullSecret (for example: specify Docker registry credentials)
+
+  ## See https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
+  pullSecrets: []
+  #   - name: "<REG_SECRET>"
+
+# priorityClassName -- Name of the priorityClass to apply to the CSI daemonset pods.
+priorityClassName: ""
+
+## Configure the CSI registrar to use as a sidecar container
+registrar:
+
+  # Define the CSI registrar image to work with
+  image:
+    # registrar.image.tag -- CSI registrar image tag to use
+    tag: v2.0.1
+
+    # registrar.image.repository -- Override default registry + image.name for the registrar
+    repository: k8s.gcr.io/sig-storage/csi-node-driver-registrar
+
+    # registrar.image.pullPolicy -- CSI registrar image pullPolicy
+    pullPolicy: IfNotPresent
+
+  # registrar.securityContext -- CSI registrar securityContext
+  securityContext: {}
+
+driver:
+  # driver.securityContext -- CSI driver securityContext
+  securityContext:
+    readOnlyRootFilesystem: true
+    privileged: true
+
+  # driver.resources -- Resource requests and limits for the CSI driver container.
+  resources: {}
+  #  requests:
+  #    cpu: 100m
+  #    memory: 128Mi
+  #  limits:
+  #    cpu: 200m
+  #    memory: 256Mi
+
+sockets:
+  # apmHostSocketPath -- Host path of the apm socket.
+  # Should correspond to `datadog.apm.hostSocketPath`
+  apmHostSocketPath: /var/run/datadog/apm.socket
+
+  # dsdHostSocketPath -- Host path of the dsd socket.
+  # Should correspond to `datadog.dsd.hostSocketPath`
+  dsdHostSocketPath: /var/run/datadog/dsd.socket
+
+## APM/Single Step Instrumentation (SSI) configuration for the CSI driver.
+## Note: SSI is not supported on legacy GKE Autopilot clusters (< 1.32.1-gke.1729000)
+apm:
+  # apm.enabled -- Enable APM/SSI support for the CSI driver.
+  enabled: true
+
+# tolerations -- Allow scheduling the csi driver daemonset pods on tainted nodes.
+
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations: []
+
+# nodeSelector -- Configure the nodeSelector for the csi driver daemonset pods.
+
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
+nodeSelector: {}
+
+# nodeAffinity -- Configure the nodeAffinity for the csi driver daemonset pods.
+
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+nodeAffinity: {}
+# updateStrategy -- Allow the DaemonSet to perform a rolling update on helm update
+
+## Ref: https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: "10%"
+
+# securityContext -- Configure the security context for the csi driver daemonset pods.
+securityContext: {}
+
+# annotations -- Configure the annotations for the csi driver daemonset pods.
+annotations: {}
+
+# labels -- Configure the labels for the csi driver daemonset pods.
+labels: {}
+
+# global -- Global values shared across charts when this chart is used as a sub-chart.
+# When installed standalone, these values have no effect.
+global:
+  # global.apmRegistryAllowList -- Restrict which registries can be used for APM library injection.
+  ## When non-empty, only libraries from the listed registries will be injected via the CSI driver.
+  ## This value is typically set in the parent `datadog` chart as a Helm global.
+  apmRegistryAllowList: []

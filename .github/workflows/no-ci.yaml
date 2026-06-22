@@ -1,0 +1,15 @@
+name: No chart lint and test needed
+on:
+  pull_request:
+    paths-ignore:
+      - "charts/**/Chart.*"
+      - "charts/**/requirements.*"
+      - "charts/**/values.*"
+      - "charts/**/templates/**"
+jobs:
+  pr-validated:
+    name: pr-validated
+    runs-on: ubuntu-latest
+    steps:
+      - name: validate
+        run: echo "PR OK"

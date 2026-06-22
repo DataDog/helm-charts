@@ -1,0 +1,240 @@
+{{- if .Values.agents.rbac.create -}}
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  name: {{ template "datadog.fullname" . }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+rules:
+{{- if eq (include "should-deploy-cluster-agent" .) "false" }}
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - events
+  - endpoints
+  - pods
+  - nodes
+  - namespaces
+  - componentstatuses
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - "discovery.k8s.io"
+  resources:
+    - endpointslices
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups: ["quota.openshift.io"]
+  resources:
+  - clusterresourcequotas
+  verbs:
+  - get
+  - list
+{{- if .Values.datadog.collectEvents }}
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - {{ template "datadog.fullname" . }}token  # Kubernetes event collection state
+  - datadogtoken  # Kept for backward compatibility with agent <7.37.0
+  verbs:
+  - get
+  - update
+{{- end }}
+{{- if .Values.datadog.leaderElection }}
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  resourceNames:
+  - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
+  - datadog-leader-election  # Kept for backward compatibility with agent <7.37.0
+  verbs:
+  - get
+  - update
+- apiGroups:  # To create the leader election token
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+- apiGroups:
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  resourceNames:
+  - {{ template "datadog.fullname" . }}-leader-election  # Leader election token
+  verbs:
+  - get
+  - update
+- apiGroups:  # To create the leader election token
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  verbs:
+  - create
+{{- end }}
+- nonResourceURLs:
+  - "/version"
+  - "/healthz"
+  verbs:
+  - get
+{{- end }}
+- nonResourceURLs:
+  - "/metrics"
+  - "/metrics/slis"
+  verbs:
+  - get
+- apiGroups:  # Kubelet connectivity
+  - ""
+  resources:
+  - nodes/metrics
+  - nodes/spec
+  {{ if .Values.datadog.kubelet.fineGrainedAuthorization }}
+  - nodes/pods
+  - nodes/healthz
+  - nodes/configz
+  - nodes/logs
+  {{ else }}
+  - nodes/proxy
+  {{ end }}
+  - nodes/stats
+  verbs:
+  - get
+{{- if .Values.datadog.kubelet.useApiServer }}
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+{{- end }}
+- apiGroups:  # leader election check
+  - ""
+  resources:
+  - endpoints
+  verbs:
+  - get
+{{- if and .Values.clusterAgent.podSecurity.podSecurityPolicy.create (.Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy") }}
+- apiGroups:
+  - policy
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+  resourceNames:
+  - {{ template "datadog.fullname" . }}
+{{- end }}
+- apiGroups:
+  - "security.openshift.io"
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+  resourceNames:
+  - {{ template "datadog.fullname" . }}
+  - hostaccess
+  - privileged
+- apiGroups:  # leader election check
+  - "coordination.k8s.io"
+  resources:
+  - leases
+  verbs:
+  - get
+{{- if eq (include "need-secret-permissions" .) "true" }}
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+{{- end }}
+- apiGroups:  # EKS kube_scheduler and kube_controller_manager control plane metrics
+  - "metrics.eks.amazonaws.com"
+  resources:
+  - kcm/metrics
+  - ksh/metrics
+  verbs:
+  - get
+{{- if .Values.datadog.operator.migration.enabled }}
+- apiGroups:
+    - datadoghq.com
+  resources:
+    - datadogagents
+  verbs:
+    - get
+    - patch
+    - create
+{{- end }}
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  name: {{ template "datadog.fullname" . }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "agents.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: {{ .Values.agents.rbac.automountServiceAccountToken }}
+metadata:
+  name: {{ include "agents.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+  {{- if .Values.agents.rbac.serviceAccountAnnotations }}
+  annotations: {{ tpl (toYaml .Values.agents.rbac.serviceAccountAnnotations) . | nindent 4}}
+  {{- end }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+{{- if .Values.agents.rbac.serviceAccountAdditionalLabels -}}
+{{ tpl (toYaml .Values.agents.rbac.serviceAccountAdditionalLabels) . | nindent 4}}
+{{- end }}
+{{- range $role := .Values.datadog.secretBackend.roles }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ template "datadog.fullname" $ }}-secret-reader-{{ $role.namespace }}
+  namespace: {{ $role.namespace }}
+  labels:
+{{ include "datadog.labels" $ | indent 4 }}
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    resourceNames: {{ toYaml $role.secrets | nindent 6 }}
+    verbs:
+      - get
+      - watch
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ template "datadog.fullname" $ }}-read-secrets-{{ $role.namespace }}
+  namespace: {{ $role.namespace }}
+  labels:
+{{ include "datadog.labels" $ | indent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "agents.serviceAccountName" $ }}
+    apiGroup: ""
+    namespace: {{ $.Release.Namespace }}
+roleRef:
+  kind: Role
+  name: {{ template "datadog.fullname" $ }}-secret-reader-{{ $role.namespace }}
+  apiGroup: ""
+{{- end }} # end range $role := .Values.datadog.secretBackend.roles
+{{- end -}}

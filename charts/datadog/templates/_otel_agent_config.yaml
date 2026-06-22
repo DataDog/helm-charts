@@ -1,0 +1,101 @@
+{{- define "otel-agent-config-configmap-content" -}}
+otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Values.datadog.otelCollector.config | indent 4 }}
+  {{- else if .Values.otelAgentGateway.enabled }} |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+             endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.datadog.otelCollector.ports "portName" "otel-grpc") }}
+          http:
+             endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.datadog.otelCollector.ports "portName" "otel-http") }}
+    exporters:
+      otlphttp:
+        endpoint: http://{{ template "datadog.fullname" . }}-otel-agent-gateway:4318
+        tls:
+          insecure: true
+        sending_queue:
+          batch:
+            flush_timeout: 10s
+    processors:
+      infraattributes:
+        cardinality: 2
+    connectors:
+      datadog/connector:
+        traces:
+          compute_top_level_by_span_kind: true
+          peer_tags_aggregation: true
+          compute_stats_by_span_kind: true
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [infraattributes]
+          exporters: [otlphttp, datadog/connector]
+        metrics:
+          receivers: [otlp, datadog/connector]
+          processors: [infraattributes]
+          exporters: [otlphttp]
+        logs:
+          receivers: [otlp]
+          processors: [infraattributes]
+          exporters: [otlphttp]
+  {{- else }} |
+    receivers:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: "otelcol"
+              scrape_interval: 60s
+              static_configs:
+                - targets: ["0.0.0.0:8888"]
+      otlp:
+        protocols:
+          grpc:
+             endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.datadog.otelCollector.ports "portName" "otel-grpc") }}
+          http:
+             endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.datadog.otelCollector.ports "portName" "otel-http") }}
+    exporters:
+      datadog:
+        api:
+          key: ${env:DD_API_KEY}
+          site: {{ .Values.datadog.site | default "" | quote }}
+        sending_queue:
+          batch:
+            flush_timeout: 10s
+    processors:
+      infraattributes:
+        cardinality: 2
+      filter/drop-prometheus-internal-metrics:
+        metrics:
+          exclude:
+            match_type: regexp
+            metric_names:
+              - ^scrape_.*$
+              - ^up$
+              - ^promhttp_metric_handler_errors_total$
+    connectors:
+      datadog/connector:
+        traces:
+          compute_top_level_by_span_kind: true
+          peer_tags_aggregation: true
+          compute_stats_by_span_kind: true
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [infraattributes]
+          exporters: [datadog, datadog/connector]
+        metrics:
+          receivers: [otlp, datadog/connector]
+          processors: [infraattributes]
+          exporters: [datadog]
+        metrics/prometheus:
+          receivers: [prometheus]
+          processors: [filter/drop-prometheus-internal-metrics, infraattributes]
+          exporters: [datadog]
+        logs:
+          receivers: [otlp]
+          processors: [infraattributes]
+          exporters: [datadog]
+{{- end -}}
+{{- end -}}

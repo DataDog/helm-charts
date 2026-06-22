@@ -1,0 +1,20 @@
+{{- if or .Values.datadog.bootstrap.config .Values.datadog.bootstrap.secretFileContents }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "opw.fullname" . }}-bootstrap
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "opw.labels" . | nindent 4 }}
+data:
+  bootstrap.yaml: |-
+  {{- if .Values.datadog.bootstrap.config }}
+  {{- toYaml .Values.datadog.bootstrap.config | nindent 4 }}
+  {{- end }}
+  {{- if .Values.datadog.bootstrap.secretFileContents }}
+    secret:
+      sgc_path: /opt/datadog/observability-pipelines-worker/bin/datadog-secret-backend
+      backend_type: json
+      backend_config:
+        file_path: /etc/observability-pipelines-secrets/secrets.json
+{{- end }}
+{{- end }}

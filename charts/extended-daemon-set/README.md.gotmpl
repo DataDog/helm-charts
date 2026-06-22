@@ -1,0 +1,29 @@
+# Extended DaemonSet
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+This chart installs the Extended DaemonSet (EDS). It aims to provide a new implementation of the Kubernetes DaemonSet resource with key features:
+- Canary Deployment: Deploy a new DaemonSet version with only a few nodes.
+- Custom Rolling Update: Improve the default rolling update logic available in Kubernetes batch/v1 Daemonset.
+
+For more information, please refer to the [EDS repo](https://github.com/DataDog/extendeddaemonset/).
+
+
+## How to use the Datadog Helm repository
+
+You need to add this repository to your Helm repositories:
+
+```
+helm repo add datadog https://helm.datadoghq.com
+helm repo update
+```
+
+{{ template "chart.valuesSection" . }}
+
+## Developers
+
+### How to update CRDs
+
+```shell
+./update-crds.sh <extendeddaemonset-tag>
+```

@@ -1,0 +1,15 @@
+charts/*/charts
+helm-docs
+kubeconform
+.idea
+vendor/
+go.work*
+.DS_Store
+.zed
+
+# VSCode Profiles
+.vscode/*
+!.vscode/extensions.json
+
+# Claude
+.claude/*

@@ -1,0 +1,20 @@
+{{- define "system-probe-init" -}}
+- name: seccomp-setup
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
+  imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  command:
+  - cp
+  - /etc/config/system-probe-seccomp.json
+  - /host/var/lib/kubelet/seccomp/system-probe
+  volumeMounts:
+  - name: datadog-agent-security
+    mountPath: /etc/config
+    readOnly: true
+  - name: seccomp-root
+    mountPath: /host/var/lib/kubelet/seccomp
+    mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+    readOnly: false # Need RW for seccomp-root
+  resources:
+{{ toYaml .Values.agents.containers.initContainers.resources | indent 4 }}
+{{- end -}}

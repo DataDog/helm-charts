@@ -1,0 +1,11 @@
+agents:
+  enabled: true
+  rbac:
+    enabled: true
+    serviceAccountAdditionalLabels:
+      "app.kubernetes.io/custom-label": custom-value
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false

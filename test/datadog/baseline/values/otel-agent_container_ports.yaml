@@ -1,0 +1,15 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+  otelCollector:
+    enabled: true
+
+agents:
+  containers:
+    otelAgent:
+      ports:
+        - containerPort: 55679
+          hostPort: 55679
+          name: zpages
+          protocol: TCP

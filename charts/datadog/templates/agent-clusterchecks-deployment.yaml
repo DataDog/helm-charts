@@ -1,0 +1,317 @@
+{{- if and (eq (include "should-deploy-cluster-agent" .) "true") (eq (include "should-enable-cluster-check-workers" .) "true") -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "datadog.fullname" . }}-clusterchecks
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.workload-labels" (list . "cluster-checks-runner") | indent 4 }}
+    app.kubernetes.io/component: clusterchecks-agent
+    agent.datadoghq.com/component: cluster-checks-runner
+    {{- if .Values.clusterChecksRunner.additionalLabels }}
+{{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 4 }}
+    {{- end }}
+{{ include "provider-labels" . | indent 4 }}
+  {{- if .Values.clusterChecksRunner.deploymentAnnotations }}
+  annotations: {{ toYaml .Values.clusterChecksRunner.deploymentAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: {{ .Values.clusterChecksRunner.replicas }}
+  revisionHistoryLimit: {{ .Values.clusterChecksRunner.revisionHistoryLimit }}
+  strategy:
+{{ toYaml .Values.clusterChecksRunner.strategy | indent 4 }}
+  selector:
+    matchLabels:
+      app: {{ template "datadog.fullname" . }}-clusterchecks
+  template:
+    metadata:
+      labels:
+{{ include "datadog.pod-template-labels" (list . "cluster-checks-runner") | indent 8 }}
+        app.kubernetes.io/component: clusterchecks-agent
+        admission.datadoghq.com/enabled: "false"
+        app: {{ template "datadog.fullname" . }}-clusterchecks
+        agent.datadoghq.com/component: cluster-checks-runner
+        {{- if .Values.clusterChecksRunner.additionalLabels }}
+{{ toYaml .Values.clusterChecksRunner.additionalLabels | indent 8 }}
+        {{- end }}
+{{ include "provider-labels" . | indent 8 }}
+      name: {{ template "datadog.fullname" . }}-clusterchecks
+      annotations:
+        checksum/clusteragent_token: {{ include (print $.Template.BasePath "/secret-cluster-agent-token.yaml") . | sha256sum }}
+        {{- if not .Values.datadog.apiKeyExistingSecret }}
+        checksum/api_key: {{ include (print $.Template.BasePath "/secret-api-key.yaml") . | sha256sum }}
+        {{- end }}
+        checksum/install_info: {{ printf "%s-%s" .Chart.Name .Chart.Version | sha256sum }}
+        {{- if .Values.datadog.checksd }}
+        checksum/checksd-config: {{ tpl (toYaml .Values.datadog.checksd) . | sha256sum }}
+        {{- end }}
+        {{- if .Values.datadog.secretBackend.roles }}
+        checksum/secret-backend-roles: {{ tpl (toYaml .Values.datadog.secretBackend.roles) . | sha256sum }}
+        {{- end }}
+      {{- if .Values.clusterChecksRunner.podAnnotations }}
+{{ toYaml .Values.clusterChecksRunner.podAnnotations | indent 8 }}
+      {{- end }}
+    spec:
+      {{- if .Values.clusterChecksRunner.shareProcessNamespace }}
+      shareProcessNamespace: {{ .Values.clusterChecksRunner.shareProcessNamespace }}
+      {{- end }}
+      {{- if or (eq (include "should-enable-cluster-check-workers" .) "true") .Values.clusterChecksRunner.rbac.dedicated }}
+      serviceAccountName: {{ if .Values.clusterChecksRunner.rbac.create }}{{ template "datadog.fullname" . }}-cluster-checks{{ else }}"{{ .Values.clusterChecksRunner.rbac.serviceAccountName }}"{{ end }}
+      {{- else }}
+      serviceAccountName: {{ if .Values.clusterChecksRunner.rbac.create }}{{ template "datadog.fullname" . }}{{ else }}"{{ .Values.clusterChecksRunner.rbac.serviceAccountName }}"{{ end }}
+      {{- end }}
+      {{- if .Values.clusterChecksRunner.rbac.create  }}
+      automountServiceAccountToken: {{ .Values.clusterChecksRunner.rbac.automountServiceAccountToken }}
+      {{- end }}
+      imagePullSecrets:
+{{ toYaml .Values.clusterChecksRunner.image.pullSecrets | indent 8 }}
+      {{- if .Values.clusterChecksRunner.priorityClassName }}
+      priorityClassName: {{ .Values.clusterChecksRunner.priorityClassName }}
+      {{- end }}
+      {{- if .Values.clusterChecksRunner.dnsConfig }}
+      dnsConfig:
+{{ toYaml .Values.clusterChecksRunner.dnsConfig | indent 8 }}
+      {{- end }}
+      {{- if .Values.clusterChecksRunner.securityContext }}
+      securityContext:
+        {{ toYaml .Values.clusterChecksRunner.securityContext | nindent 8 }}
+      {{- end }}
+      initContainers:
+      - name: init-volume
+        image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
+        imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+        command: ["bash", "-c"]
+        args:
+          - cp -r /etc/datadog-agent /opt
+{{- if .Values.clusterChecksRunner.containers.initContainers.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.initContainers.securityContext | indent 10 }}
+{{- end }}
+        volumeMounts:
+          - name: config
+            mountPath: /opt/datadog-agent
+            readOnly: false # Need RW for writing agent config files
+        resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 10 }}
+{{- else }}
+{{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
+{{- end }}
+      - name: init-config
+        image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
+        imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+        command: ["bash", "-c"]
+        args:
+          - for script in $(find /etc/cont-init.d/ -type f -name '*.sh' | sort) ; do bash $script ; done
+{{- if .Values.clusterChecksRunner.containers.initContainers.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.initContainers.securityContext | indent 10 }}
+{{- end }}
+        volumeMounts:
+          - name: config
+            mountPath: /etc/datadog-agent
+            readOnly: false # Need RW for writing datadog.yaml config file
+          {{- if .Values.datadog.checksd }}
+          - name: checksd
+            mountPath: /checks.d
+            readOnly: true
+          {{- end }}
+        resources:
+{{- if and (empty .Values.agents.containers.initContainers.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-container-resources" . | indent 10 }}
+{{- else }}
+{{ toYaml .Values.agents.containers.initContainers.resources | indent 10 }}
+{{- end }}
+      containers:
+        {{- if eq  (include "should-enable-fips-proxy" .) "true" }}
+          {{- include "fips-proxy" . | nindent 6 }}
+        {{- end }}
+      - name: agent
+        image: "{{ include "image-path" (dict "root" .Values "image" .Values.clusterChecksRunner.image) }}"
+        command: ["bash", "-c"]
+        args:
+          - find /etc/datadog-agent/conf.d/ -name "*.yaml.default" -type f -delete && touch /etc/datadog-agent/datadog.yaml && exec agent run
+        imagePullPolicy: {{ .Values.clusterChecksRunner.image.pullPolicy }}
+{{- if .Values.clusterChecksRunner.ports }}
+        ports:
+{{ toYaml .Values.clusterChecksRunner.ports | indent 10 }}
+{{- end }}
+{{- if or .Values.datadog.envFrom .Values.clusterChecksRunner.envFrom }}
+        envFrom:
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 10 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.envFrom }}
+{{ .Values.clusterChecksRunner.envFrom | toYaml | indent 10 }}
+{{- end }}
+{{- end }}
+        env:
+          {{- include "components-common-env" . | nindent 10 }}
+          - name: DD_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "datadog.apiSecretName" . }}
+                key: api-key
+          {{- if .Values.datadog.logLevel }}
+          - name: DD_LOG_LEVEL
+            value: {{ .Values.datadog.logLevel | quote }}
+          {{- end }}
+          - name: DD_EXTRA_CONFIG_PROVIDERS
+            value: "clusterchecks"
+          - name: DD_HEALTH_PORT
+          {{- $healthPort := .Values.clusterChecksRunner.healthPort }}
+            value: {{ $healthPort | quote }}
+          # Cluster checks (cluster-agent communication)
+          {{- include "containers-cluster-agent-env" . | nindent 10 }}
+          # Safely run alongside the daemonset
+          - name: DD_ENABLE_METADATA_COLLECTION
+            value: "false"
+          # Expose CLC stats
+          - name: DD_CLC_RUNNER_ENABLED
+            value: "true"
+          - name: DD_CLC_RUNNER_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: DD_CLC_RUNNER_ID
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          {{- if eq .Values.clusterChecksRunner.image.tagSuffix "jmx" }}
+          - name: DD_USE_DOGSTATSD
+            value: "true"
+          {{- else }}
+          - name: DD_USE_DOGSTATSD
+            value: "false"
+          {{- end }}
+          # Remove unused features
+          - name: DD_PROCESS_AGENT_ENABLED
+            value: "false"
+          - name: DD_LOGS_ENABLED
+            value: "false"
+          - name: DD_APM_ENABLED
+            value: "false"
+          - name: DD_REMOTE_CONFIGURATION_ENABLED
+            value: {{ (and .Values.remoteConfiguration.enabled .Values.clusterChecksRunner.remoteConfiguration.enabled (not .Values.providers.gke.gdc)) | quote }}
+          - name: DD_HOSTNAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          {{- if and (eq (include "should-enable-k8s-resource-monitoring" .) "true") (.Values.datadog.orchestratorExplorer.useClusterCheckRunners) }}
+          - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
+            value: {{ .Values.datadog.orchestratorExplorer.container_scrubbing.enabled | quote }}
+          {{- end }}
+          {{- include "provider-env" . | nindent 10 }}
+          {{- include "fips-envvar" . | nindent 10 }}
+          {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
+          {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
+        resources:
+{{- if and (empty .Values.clusterChecksRunner.resources) .Values.providers.gke.autopilot -}}
+{{- include "default-cluster-check-runner-resources" . | indent 10 }}
+{{- else }}
+{{ toYaml .Values.clusterChecksRunner.resources | indent 10 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.containers.agent.securityContext }}
+        securityContext:
+{{ toYaml .Values.clusterChecksRunner.containers.agent.securityContext | indent 10 }}
+{{- end }}
+        volumeMounts:
+          - name: datadogrun
+            mountPath: /opt/datadog-agent/run
+          - name: varlog
+            mountPath: /var/log/datadog
+          - name: tmpdir
+            mountPath: /tmp
+          - name: installinfo
+            subPath: install_info
+            {{- if eq .Values.targetSystem "windows" }}
+            mountPath: C:/ProgramData/Datadog/install_info
+            {{- else }}
+            mountPath: /etc/datadog-agent/install_info
+            {{- end }}
+            readOnly: true
+          - name: config
+            mountPath: {{ template "datadog.confPath" . }}
+            readOnly: false # Need RW for config path
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+          - name: etcd-client-certs
+            mountPath: /etc/etcd-certs
+            readOnly: true
+          - name: disable-etcd-autoconf
+            mountPath: /etc/datadog-agent/conf.d/etcd.d
+            readOnly: false
+{{- end }}
+{{- if eq (include "should-mount-fips-configmap" .) "true" }}
+{{- include "linux-container-fips-proxy-cfg-volumemount" . | indent 10 }}
+{{- end }}
+{{- if .Values.clusterChecksRunner.volumeMounts }}
+{{ toYaml .Values.clusterChecksRunner.volumeMounts | indent 10 }}
+{{- end }}
+        livenessProbe:
+{{- $live := .Values.clusterChecksRunner.livenessProbe }}
+{{ include "probe.http" (dict "settings" $live "path" "/live" "port" $healthPort) | indent 10 }}
+        readinessProbe:
+{{- $ready := .Values.clusterChecksRunner.readinessProbe }}
+{{ include "probe.http" (dict "settings" $ready "path" "/ready" "port" $healthPort) | indent 10 }}
+        startupProbe:
+{{- $startup := .Values.clusterChecksRunner.startupProbe }}
+{{ include "probe.http" (dict "settings" $startup "path" "/startup" "port" $healthPort) | indent 10 }}
+      volumes:
+        - name: datadogrun
+          emptyDir: {}
+        - name: varlog
+          emptyDir: {}
+        - name: tmpdir
+          emptyDir: {}
+        - name: installinfo
+          configMap:
+            name: {{ include "agents-install-info-configmap-name" . }}
+{{- if .Values.clusterChecksRunner.volumes }}
+{{ toYaml .Values.clusterChecksRunner.volumes | indent 8 }}
+{{- end }}
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+        - name: etcd-client-certs
+          secret:
+            secretName: etcd-metric-client
+        - name: disable-etcd-autoconf
+          emptyDir: {}
+{{- end }}
+        - name: config
+          emptyDir: {}
+{{- if .Values.datadog.checksd }}
+        - name: checksd
+          configMap:
+            name: {{ include "datadog-checksd-configmap-name" . }}
+{{- end }}
+{{- if eq (include "should-mount-fips-configmap" .) "true"}}
+{{ include "linux-container-fips-proxy-cfg-volume" . | indent 8}}
+{{- end }}
+      affinity:
+{{- if .Values.clusterChecksRunner.affinity }}
+{{ toYaml .Values.clusterChecksRunner.affinity | indent 8 }}
+{{- else }}
+        # Prefer scheduling the runners on different nodes if possible
+        # for better checks stability in case of node failure.
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 50
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: {{ template "datadog.fullname" . }}-clusterchecks
+              topologyKey: kubernetes.io/hostname
+{{- end }}
+      nodeSelector:
+        {{ template "label.os" . }}: {{ .Values.targetSystem }}
+      {{- if .Values.clusterChecksRunner.nodeSelector }}
+{{ toYaml .Values.clusterChecksRunner.nodeSelector | indent 8 }}
+      {{- end }}
+      {{- if .Values.clusterChecksRunner.tolerations }}
+      tolerations:
+{{ toYaml .Values.clusterChecksRunner.tolerations | indent 8 }}
+      {{- end }}
+      {{- with .Values.clusterChecksRunner.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}

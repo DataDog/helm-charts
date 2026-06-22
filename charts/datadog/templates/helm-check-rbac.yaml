@@ -1,0 +1,38 @@
+{{- if and .Values.datadog.helmCheck.enabled (eq (include "cluster-agent-enabled" .) "true") }}
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-helm-check
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-helm-check
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-helm-check
+subjects:
+  - kind: ServiceAccount
+    {{- if and .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled }}
+    name: {{ if .Values.clusterChecksRunner.rbac.create }}{{ template "datadog.fullname" . }}-cluster-checks{{ else }}"{{ .Values.clusterChecksRunner.rbac.serviceAccountName }}"{{ end }}
+    {{- else }}
+    name: {{ if .Values.clusterAgent.rbac.create }}{{ template "datadog.fullname" . }}-cluster-agent{{ else }}"{{ .Values.clusterAgent.rbac.serviceAccountName }}"{{ end }}
+    {{- end }}
+    namespace: {{ .Release.Namespace }}
+---
+{{- end }}

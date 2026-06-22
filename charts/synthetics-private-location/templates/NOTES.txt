@@ -1,0 +1,26 @@
+{{- if and ( ne .Values.configFile "{}" ) .Values.configConfigMap }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You provided configConfigMap and configFile. The config map provided by configConfigMap takes precedence over configFile, so configFile was ignored.
+{{- end }}
+
+{{- if and ( ne .Values.configFile "{}" ) .Values.configSecret }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You provided configSecret and configFile. The secret provided by configSecret takes precedence over configFile, so configFile was ignored.
+{{- end }}
+
+{{- if and .Values.configConfigMap .Values.configSecret }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You provided configConfigMap and configSecret. The config map provided by configConfigMap takes precedence over configSecret, so configSecret was ignored.
+{{- end }}

@@ -1,0 +1,130 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "synthetics-private-location.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "synthetics-private-location.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "synthetics-private-location.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "synthetics-private-location.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{ if .Values.dnsPolicy }}
+      dnsPolicy: {{ .Values.dnsPolicy}}
+      {{ end }}
+      {{- with .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      serviceAccountName: {{ include "synthetics-private-location.serviceAccountName" . }}
+      hostAliases:
+        {{- .Values.hostAliases | toYaml | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.enableStatusProbes }}
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 10
+            httpGet:
+              path: /liveness
+              port: 8080
+          readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 2
+            httpGet:
+              path: /readiness
+              port: 8080
+          {{- end }}
+          volumeMounts:
+          {{- if or (ne .Values.configFile "{}") (.Values.configConfigMap) (.Values.configSecret) }}
+          - mountPath: /etc/datadog
+            name: worker-config
+          {{- end }}
+          # s6-overlay's preinit chowns /run to the worker UID; on clusters that
+          # mount /run read-only (OpenShift, FIPS-hardened pod security standards,
+          # `securityContext.readOnlyRootFilesystem: true`) the chown fails and
+          # the container crashes with `s6-overlay-suexec: fatal: child failed
+          # with exit code 111`. Mounting an emptyDir at /run gives s6-overlay
+          # a writable runtime dir without requiring write access to the image
+          # filesystem.
+          - mountPath: /run
+            name: run
+          {{- if .Values.extraVolumeMounts }}
+          {{- toYaml .Values.extraVolumeMounts | nindent 10 }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- if .Values.envFrom }}
+          envFrom:
+      {{- toYaml .Values.envFrom | nindent 12 }}
+      {{- end }}
+      {{- if or (.Values.env) (.Values.enableStatusProbes) }}
+          env:
+      {{- if .Values.enableStatusProbes }}
+            - name: DATADOG_WORKER_ENABLE_STATUS_PROBES
+              value: {{ .Values.enableStatusProbes | quote }}
+      {{- end }}
+      {{- if .Values.env }}
+      {{- toYaml .Values.env | nindent 12 }}
+      {{- end }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      {{- if or (ne .Values.configFile "{}") (.Values.configConfigMap) (.Values.configSecret) }}
+      - name: worker-config
+        {{- if .Values.configConfigMap }}
+        configMap:
+          name: {{ tpl .Values.configConfigMap . | quote }}
+        {{- else }}
+        secret:
+        {{- if .Values.configSecret }}
+          secretName: {{ tpl .Values.configSecret . | quote }}
+        {{- else }}
+          secretName: {{ include "synthetics-private-location.fullname" . }}-config
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      - name: run
+        emptyDir: {}
+      {{- if .Values.extraVolumes }}
+      {{- toYaml .Values.extraVolumes | nindent 6 }}
+      {{- end }}

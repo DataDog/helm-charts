@@ -1,0 +1,81 @@
+{{- $fullname := include "quickwit.fullname" . }}
+{{- $labels := include "quickwit.labels" . }}
+{{- $ingress := .Values.ingress.internal }}
+{{- $ingressClassName := $ingress.ingressClassName }}
+
+{{- if $ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $fullname }}-internal
+  labels: {{- $labels | nindent 4 }}
+  annotations:
+    {{- if eq $ingressClassName "alb" }}
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /health/readyz
+    {{- else if regexMatch "nginx" $ingressClassName }}
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    {{- end }}
+  {{- with  $ingress.extraAnnotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ $ingressClassName }}
+  {{- with $ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+    - http:
+        paths:
+          # Ingest (Quickwit, ES, Datadog) endpoints to indexers
+          - path: /api/v1/*/ingest
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullname }}-indexer
+                port:
+                  name: rest
+          - path: /api/v1/_elastic/bulk
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-indexer
+                port:
+                  name: rest
+          - path: /api/v1/_elastic/*/_bulk
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullname }}-indexer
+                port:
+                  name: rest
+          - path: /api/v2/logs
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-indexer
+                port:
+                  name: rest
+          # Index management API endpoints to metastores
+          - path: /api/v1/indexes
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $fullname }}-metastore
+                port:
+                  name: rest
+          # Everything else to searchers
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ $fullname }}-searcher
+                port:
+                  name: rest
+      {{- with $ingress.host }}
+      host: {{ . }}
+      {{- end }}
+{{- end }}

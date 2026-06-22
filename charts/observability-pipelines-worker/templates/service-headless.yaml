@@ -1,0 +1,34 @@
+{{- $ports := (include "opw.ports" .) -}}
+{{- if and .Values.serviceHeadless.enabled (or .Values.service.ports $ports .Values.datadog.workerAPI.enabled) -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "opw.fullname" . }}-headless
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "opw.labels" . | nindent 4 }}
+  {{- if .Values.service.annotations }}
+  annotations: {{ toYaml .Values.service.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  clusterIP: None
+{{- if .Values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
+{{- end }}
+{{- if .Values.service.ipFamilies }}
+  ipFamilies: {{ toYaml .Values.service.ipFamilies | nindent 4 }}
+{{- end }}
+  ports:
+{{- if .Values.service.ports }}
+{{ toYaml .Values.service.ports | indent 4 }}
+{{- else }}
+{{- $ports | indent 4 }}
+{{- end }}
+{{- if .Values.datadog.workerAPI.enabled }}
+{{ include "opw.api.servicePort" . | indent 4 }}
+{{- end }}
+  selector: {{ include "opw.template-labels" . | nindent 4 }}
+  type: ClusterIP
+  {{- if .Values.service.topologyKeys }}
+  topologyKeys: {{ toYaml .Values.service.topologyKeys | nindent 4 }}
+  {{- end }}
+{{- end -}}

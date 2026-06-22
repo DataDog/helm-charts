@@ -1,0 +1,64 @@
+#!/bin/bash
+
+set -euox pipefail
+
+ROOT=$(git rev-parse --show-toplevel)
+
+DATADOG_OPERATOR_REPO=Datadog/datadog-operator
+
+DATADOG_OPERATOR_TAG=main
+if [[ $# -eq 1 ]]; then
+    DATADOG_OPERATOR_TAG=$1
+fi
+
+download_crd() {
+    repo=$1
+    tag=$2
+    name=$3
+    installOption=$4 # Name of the option to install the CRD (defined in values.yaml)
+    version=$5
+
+    inFile=datadoghq.com_$name.yaml
+    # shellcheck disable=SC2154
+    outFile=datadoghq.com_"$name"_"$version".yaml
+    path=$ROOT/charts/datadog-crds/templates/$outFile
+    echo "Download CRD \"$inFile\" version \"$version\" from repo \"$repo\" tag \"$tag\""
+    curl --silent --show-error --fail --location --output "$path" "https://raw.githubusercontent.com/$repo/$tag/config/crd/bases/$version/$inFile"
+
+    if [ "$name" = "datadogagents" ] || [ "$name" = "datadogagentinternals" ] || [ "$name" = "datadogagentprofiles" ] || [ "$name" = "datadogcsidrivers" ]; then
+        yq -i eval 'del(.. | select(has("defaultOverride")).defaultOverride.properties)' "$path"
+        yq -i eval 'del(.. | select(has("description") and (.description | kind == "scalar") and (path | .[-1] != "openAPIV3Schema")) | .description)' "$path"
+    fi
+
+    ifCondition="{{- if .Values.crds.$installOption }}"
+    cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
+
+    VALUE="'{{ include \"datadog-crds.chart\" . }}'" \
+    yq eval '.metadata.labels."helm.sh/chart" = env(VALUE)'                              -i "$path"
+    yq eval '.metadata.labels."app.kubernetes.io/managed-by" = "{{ .Release.Service }}"' -i "$path"
+    VALUE="'{{ include \"datadog-crds.name\" . }}'" \
+    yq eval '.metadata.labels."app.kubernetes.io/name" = env(VALUE)'                     -i "$path"
+    yq eval '.metadata.labels."app.kubernetes.io/instance" = "{{ .Release.Name }}"'      -i "$path"
+
+    { echo "$ifCondition"; cat "$path"; } > tmp.file
+    mv tmp.file "$path"
+    echo '{{- end }}' >> "$path"
+
+    # Add keepCrds and crds.annotations
+    sed -i.bak 's/^  annotations:$/  annotations:\n    {{- if .Values.keepCrds }}\n    helm.sh\/resource-policy: keep\n    {{- end }}\n    {{- with .Values.crds.annotations }}\n    {{- toYaml . | nindent 4 }}\n    {{- end }}/' "$path"
+    rm -f "$path.bak"
+}
+
+mkdir -p "$ROOT/crds"
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmetrics datadogMetrics v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagents datadogAgents v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogmonitors datadogMonitors v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogslos datadogSLOs v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagentprofiles datadogAgentProfiles v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogpodautoscalers datadogPodAutoscalers v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogpodautoscalerclusterprofiles datadogPodAutoscalerClusterProfiles v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogdashboards datadogDashboards v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadoggenericresources datadogGenericResources v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagentinternals datadogAgentInternals v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogcsidrivers datadogCSIDrivers v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadoginstrumentations datadogInstrumentations v1

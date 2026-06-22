@@ -1,0 +1,167 @@
+datadog:
+  clusterName: kubernetes-cluster.example.comkubernetes-cluster.example.com.kube.rnetes-80chars
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  clusterChecks:
+    enabled: true
+  kubernetesEvents:
+    filteringEnabled: true
+    unbundleEvents: true
+  clusterTagger:
+    collectKubernetesTags: true
+  expvarPort: 6001
+  env:
+    - name: DD_FOOBAR
+      value: 7500
+    - name: DD_BATZ
+      value: true
+    - name: DD_TEXT
+      value: TEST_TEXT
+    - name: DD_QUOTED
+      value: "quoted_text_in_env"
+    - name: DD_SINGLE_QUOTED
+      value: "\"double_quoted_text_in_env\" 'single_quoted_second_text_in_env'"
+    - name: DD_VALUE_VALUE_FROM
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+  envDict:
+    DD_ENV_DICT_KEY: DD_ENV_DICT_VALUE
+    DD_ENV_DICT_KEY_FROM:
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+
+agents:
+  containers:
+    agent:
+      env:
+        - name: DD_AGENT_FOOBAR
+          value: 7500
+        - name: DD_AGENT_BATZ
+          value: true
+        - name: DD_AGENT_TEXT
+          value: TEST_TEXT
+        - name: DD_AGENT_QUOTED
+          value: "quoted_text_in_env"
+        - name: DD_AGENT_SINGLE_QUOTED
+          value: "\"double_quoted_text_in_env\" 'single_quoted_second_text_in_env'"
+        - name: DD_AGENT_VALUE_FROM
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+    processAgent:
+      env:
+        - name: DD_PROCESS_AGENT_FOOBAR
+          value: 7500
+        - name: DD_PROCESS_AGENT_BATZ
+          value: true
+        - name: DD_PROCESS_AGENT_TEXT
+          value: TEST_TEXT
+        - name: DD_PROCESS_AGENT_QUOTED
+          value: "quoted_text_in_env"
+        - name: DD_PROCESS_AGENT_SINGLE_QUOTED
+          value: "\"double_quoted_text_in_env\" 'single_quoted_second_text_in_env'"
+        - name: DD_PROCESS_VALUE_FROM
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+    securityAgent:
+      env:
+        - name: DD_SECURITY_AGENT_FOOBAR
+          value: 7500
+        - name: DD_SECURITY_AGENT_BATZ
+          value: true
+        - name: DD_SECURITY_AGENT_TEXT
+          value: TEST_TEXT
+        - name: DD_SECURITY_AGENT_QUOTED
+          value: "quoted_text_in_env"
+        - name: DD_SECURITY_AGENT_SINGLE_QUOTED
+          value: "\"double_quoted_text_in_env\" 'single_quoted_second_text_in_env'"
+        - name: DD_SECURITY_AGENT_VALUE_FROM
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+    systemProbe:
+      env:
+        - name: DD_SYSTEM_PROBE_AGENT_FOOBAR
+          value: 7500
+        - name: DD_SYSTEM_PROBE_AGENT_BATZ
+          value: true
+        - name: DD_SYSTEM_PROBE_AGENT_TEXT
+          value: TEST_TEXT
+        - name: DD_SYSTEM_PROBE_AGENT_QUOTED
+          value: "quoted_text_in_env"
+        - name: DD_SYSTEM_PROBE_AGENT_SINGLE_QUOTED
+          value: "\"double_quoted_text_in_env\" 'single_quoted_second_text_in_env'"
+        - name: DD_SYSTEM_PROBE_AGENT_VALUE_FROM
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+    traceAgent:
+      env:
+        - name: DD_TRACE_AGENT_FOOBAR
+          value: 7500
+        - name: DD_TRACE_AGENT_BATZ
+          value: true
+        - name: DD_TRACE_AGENT_TEXT
+          value: TEST_TEXT
+        - name: DD_TRACE_AGENT_QUOTED
+          value: "quoted_text_in_env"
+        - name: DD_TRACE_AGENT_SINGLE_QUOTED
+          value: "\"double_quoted_text_in_env\" 'single_quoted_second_text_in_env'"
+        - name: DD_TRACE_AGENT_VALUE_FROM
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+
+
+clusterAgent:
+  enabled: true
+  wpaController: true
+  env:
+    - name: DD_CLUSTER_AGENT_FOOBAR
+      value: 7500
+    - name: DD_CLUSTER_AGENT_BATZ
+      value: true
+    - name: DD_CLUSTER_AGENT_TEXT
+      value: TEST_TEXT
+    - name: DD_CLUSTER_AGENT_QUOTED
+      value: "quoted_text_in_env"
+    - name: DD_CLUSTER_AGENT_SINGLE_QUOTED
+      value: "\"double_quoted_text_in_env\" 'single_quoted_second_text_in_env'"
+    - name: DD_CLUSTER_AGENT_VALUE_FROM
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+
+clusterChecksRunner:
+  enabled: true
+  replicas: 1
+  env:
+    - name: DD_CLUSTER_CHECKS_AGENT_FOOBAR
+      value: 7500
+    - name: DD_CLUSTER_CHECKS_AGENT_BATZ
+      value: true
+    - name: DD_CLUSTER_CHECKS_AGENT_TEXT
+      value: TEST_TEXT
+    - name: DD_CLUSTER_CHECKS_AGENT_QUOTED
+      value: "quoted_text_in_env"
+    - name: DD_CLUSTER_CHECKS_AGENT_SINGLE_QUOTED
+      value: "\"double_quoted_text_in_env\" 'single_quoted_second_text_in_env'"
+    - name: DD_CLUSTER_CHECKS_AGENT_VALUE_FROM
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+
+  volumes:
+    - name: tmp
+      hostPath:
+        path: /tmp
+
+  volumeMounts:
+    - name: tmp
+      mountPath: /etc/tmp
+      readOnly: true

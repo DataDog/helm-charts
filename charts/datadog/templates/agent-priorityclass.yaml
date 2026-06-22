@@ -1,0 +1,9 @@
+{{- if .Values.agents.priorityClassCreate}}
+apiVersion: scheduling.k8s.io/v1
+description: Used for Datadog Agent Components to be scheduled with higher priority.
+kind: PriorityClass
+metadata:
+  name: {{ .Values.agents.priorityClassName | default (include "datadog.fullname" . ) }}
+preemptionPolicy: {{ .Values.agents.priorityPreemptionPolicyValue }}
+value: {{ .Values.agents.priorityClassValue }}
+{{- end }}

@@ -1,0 +1,17 @@
+apiVersion: datadoghq.com/v1alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog-agent-dda
+spec:
+  credentials:
+    apiSecret:
+      secretName: datadog-secret
+      keyName: api-key
+    appSecret:
+      secretName: datadog-secret
+      keyName: app-key
+  clusterName: operator-ci
+  agent:
+    config:
+      kubelet:
+        tlsVerify: false

@@ -1,0 +1,45 @@
+targetSystem: "linux"
+agents:
+  enabled: false
+  kubelet:
+    tlsVerify: false
+clusterAgent:
+  enabled: false
+otelAgentGateway:
+  enabled: true
+  rbac:
+    create: true
+    rules:
+      - apiGroups: [""]
+        resources: ["endpoints"]
+        verbs: ["get", "watch", "list"]
+  ports:
+    - containerPort: "4317"
+      name: "otel-grpc"
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+    exporters:
+      debug:
+      loadbalancing:
+        routing_key: "service"
+        protocol:
+          otlp:
+            tls:
+              insecure: true
+        resolver:
+          k8s:
+            service: my-k8s-svc
+            ports:
+              - 4317
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [loadbalancing, debug]
+        metrics:
+          receivers: [otlp]
+          exporters: [loadbalancing, debug]

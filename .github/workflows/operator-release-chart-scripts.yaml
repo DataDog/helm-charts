@@ -1,0 +1,66 @@
+name: Operator Release - Chart Scripts
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Branch to check out, run release-operator.sh on, and push back to"
+        required: true
+        type: string
+      version:
+        description: "Operator version to bump to (e.g. 1.26.0-rc.3, 1.25.1)"
+        required: true
+        type: string
+      phase:
+        description: "Release phase to run"
+        required: true
+        type: choice
+        options:
+          - crds
+          - operator
+          - datadog
+      correlation_id:
+        description: "Correlation ID, surfaced in run-name so the caller can find this run"
+        required: true
+        type: string
+
+run-name: "operator release - chart scripts ${{ inputs.phase }} ${{ inputs.version }} [${{ inputs.correlation_id }}]"
+
+permissions:
+  contents: read
+
+jobs:
+  chart-scripts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: 0
+
+      - name: Run release-operator.sh
+        run: ./scripts/release-operator.sh "${{ inputs.phase }}" --operator-version "${{ inputs.version }}"
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+            echo "No chart changes to commit"
+          else
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Commits made via the GitHub API are automatically signed by GitHub
+      - name: Commit & push (signed via GitHub API)
+        if: steps.changes.outputs.has_changes == 'true'
+        uses: planetscale/ghcommit-action@a6b150b81dca5dd027baa898604418eec9e11465 # v0.2.22
+        with:
+          commit_message: "chore(${{ inputs.phase }}): release-operator.sh for v${{ inputs.version }}"
+          repo: ${{ github.repository }}
+          branch: ${{ inputs.branch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

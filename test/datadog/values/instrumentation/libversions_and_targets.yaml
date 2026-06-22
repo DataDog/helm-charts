@@ -1,0 +1,14 @@
+---
+datadog:
+  apm:
+    instrumentation:
+      enabled: true
+      libVersions:
+        python: "v2"
+      targets:
+        - name: "billing-service"
+          podSelector:
+            matchLabels:
+              app: "billing-service"
+          ddTraceVersions:
+            python: "v2"

@@ -1,0 +1,134 @@
+# Default values for synthetics-private-location.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# replicaCount -- Number of instances of Datadog Synthetics Private Location
+replicaCount: 1
+
+# commonLabels -- Labels to apply to all resources
+commonLabels: {}
+# team_name: dev
+
+image:
+  # image.repository -- Repository to use for Datadog Synthetics Private Location image
+  repository: gcr.io/datadoghq/synthetics-private-location-worker
+  # image.pullPolicy -- Define the pullPolicy for Datadog Synthetics Private Location image
+  pullPolicy: IfNotPresent
+  # image.tag -- Define the Datadog Synthetics Private Location version to use
+  tag: 1.68.0
+
+# dnsPolicy -- DNS Policy to set to the Datadog Synthetics Private Location PODs
+dnsPolicy: ClusterFirst
+# dnsConfig -- DNS Config to set to the Datadog Synthetics Private Location PODs
+dnsConfig: {}
+
+# imagePullSecrets -- Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials)
+imagePullSecrets: []
+# nameOverride -- Override name of app
+nameOverride: ""
+# fullnameOverride -- Override the full qualified app name
+fullnameOverride: ""
+
+serviceAccount:
+  # serviceAccount.create -- Specifies whether a service account should be created
+  create: true
+  # serviceAccount.name -- The name of the service account to use. If not set name is generated using the fullname template
+  name: ""
+  # serviceAccount.annotations -- Annotations for the service account
+  annotations: {}
+
+# Create a ConfigMap containing the PEM files of your custom CA Root certificate
+# Then add it as an extra volume mounted on /etc/datadog/certs/
+# extraVolumes -- Optionally specify extra list of additional volumes to mount into the pod
+extraVolumes: []
+# extraVolumes:
+# - name: capem-volume
+#   configMap:
+#     name: ca-pemstore-cm
+
+# extraVolumeMounts -- Optionally specify extra list of additional volumeMounts for container
+extraVolumeMounts: []
+# extraVolumeMounts:
+# - name: capem-volume
+#   mountPath: /etc/datadog/certs/
+#   readOnly: true
+
+# podAnnotations -- Annotations to set to Datadog Synthetics Private Location PODs
+podAnnotations: {}
+
+# podLabels -- Labels to be placed on pods managed by the deployment
+podLabels: {}
+
+# podSecurityContext -- Security context to set to Datadog Synthetics Private Location PODs
+podSecurityContext: {}
+  # fsGroup: 2000
+
+# securityContext -- Security context to set to the Datadog Synthetics Private Location container
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# resources -- Set resources requests/limits for Datadog Synthetics Private Location PODs
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# nodeSelector -- Allows to schedule Datadog Synthetics Private Location on specific nodes
+nodeSelector: {}
+# tolerations -- Allows to schedule Datadog Synthetics Private Location on tainted nodes
+tolerations: []
+# affinity -- Allows to specify affinity for Datadog Synthetics Private Location PODs
+affinity: {}
+
+# configFile -- JSON string containing the configuration of the private location worker
+configFile: "{}"
+
+# configConfigMap -- Config Map that stores the configuration of the private location worker for the deployment
+configConfigMap: ""
+
+# configSecret -- Name of the secret that stores the configuration of the private location worker for the deployment. Use it only if you want to manage the secret outside of the Helm chart as using `configFile` will create a secret. The `data` inside the secret needs to have the key `synthetics-check-runner.json`.
+configSecret: ""
+
+# envFrom -- Set environment variables from configMaps and/or secrets
+envFrom: []
+#   - configMapRef:
+#       name: <CONFIGMAP_NAME>
+#   - secretRef:
+#       name: <SECRET_NAME>
+
+# env -- Set environment variables
+env: []
+#   - name: <ENV_VAR_NAME>
+#     value: <ENV_VAR_VALUE>
+
+# hostAliases -- Add entries to Datadog Synthetics Private Location PODs' /etc/hosts
+hostAliases: []
+#  - ip: "10.0.0.1"
+#    hostnames:
+#    - "host.domain.com"
+
+# enableStatusProbes -- Enable both liveness and readiness probes (minimal private location image version required: 1.12.0)
+enableStatusProbes: false
+  # Requires to be in sync with `enableStatusProbes` in the configuration of the private location worker
+
+
+# priorityClassName -- Allows to specify PriorityClass for Datadog Synthetics Private Location PODs
+priorityClassName: ""
+
+# podDisruptionBudget -- Allows to create and configure PodDisruptionBudget for Datadog Synthetics Private Location deployment
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1

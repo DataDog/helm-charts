@@ -1,0 +1,471 @@
+{{- define "container-agent" -}}
+- name: agent
+  image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
+  imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.agents.lifecycle }}
+  lifecycle:
+{{ toYaml .Values.agents.lifecycle | indent 4 }}
+  {{- end }}
+  command: ["agent", "run"]
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" (and (eq (include "should-enable-sbom-container-image-collection" .) "true") (and .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.datadog.sbom.containerImage.overlayFSDirectScan))) "apparmor" (and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport "unconfined") "mknod" .Values.datadog.gpuMonitoring.enabled) | indent 2 }}
+  resources:
+{{- if and (empty .Values.agents.containers.agent.resources) .Values.providers.gke.autopilot -}}
+{{ include "default-agent-container-resources" . | indent 4 }}
+{{- else }}
+{{ toYaml .Values.agents.containers.agent.resources | indent 4 }}
+{{- end }}
+  ports:
+  {{- if eq (include "should-enable-data-plane" .) "false" }}
+  - containerPort: {{ .Values.datadog.dogstatsd.port }}
+    {{- if .Values.datadog.dogstatsd.useHostPort }}
+    hostPort: {{ .Values.datadog.dogstatsd.port }}
+    {{- end }}
+    name: dogstatsdport
+    protocol: UDP
+  {{- end }}
+  {{- if .Values.datadog.otlp }}
+  {{- if .Values.datadog.otlp.receiver }}
+  {{- if .Values.datadog.otlp.receiver.protocols }}
+  {{- with .Values.datadog.otlp.receiver.protocols }}
+
+  {{- if (and .grpc .grpc.enabled) }}
+  {{- include "verify-otlp-grpc-endpoint-prefix" .grpc.endpoint }}
+  {{- include "verify-otlp-endpoint-port" .grpc.endpoint }}
+  - containerPort: {{ .grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- if .grpc.useHostPort }}
+    hostPort: {{ .grpc.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- end }}
+    name: otlpgrpcport
+    protocol: TCP
+  {{- end }}
+
+  {{- if (and .http .http.enabled) }}
+  {{- include "verify-otlp-endpoint-port" .http.endpoint }}
+  - containerPort: {{ .http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- if .http.useHostPort }}
+    hostPort: {{ .http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}
+    {{- end }}
+    name: otlphttpport
+    protocol: TCP
+  {{- end }}
+
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+{{- if .Values.agents.containers.agent.ports }}
+{{ toYaml .Values.agents.containers.agent.ports | indent 2 }}
+{{- end }}
+{{- if or .Values.datadog.envFrom .Values.agents.containers.agent.envFrom }}
+  envFrom:
+{{- if .Values.datadog.envFrom }}
+{{ .Values.datadog.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.agent.envFrom }}
+{{ .Values.agents.containers.agent.envFrom | toYaml | indent 4 }}
+{{- end }}
+{{- end }}
+  env:
+    {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "fips-envvar" . | nindent 4 }}
+    {{- include "processes-common-envs" . | nindent 4 }}
+    {{- if or (eq (include "should-enable-otel-agent" .) "true") (eq (include "should-enable-host-profiler" .) "true") }}
+    - name: DD_AGENT_IPC_PORT
+      value: "5009"
+    - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+      value: "60"
+    {{- end }}
+
+    {{- if .Values.datadog.logLevel }}
+    - name: DD_LOG_LEVEL
+      value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
+    {{- end }}
+    {{- if eq (include "should-enable-data-plane" .) "true" }}
+    - name: DD_REMOTE_AGENT_REGISTRY_ENABLED
+      value: "true"
+    - name: DD_DATA_PLANE_ENABLED
+      value: "true"
+    {{- include "core-agent-data-plane-env" . | nindent 4 }}
+    {{- end }}
+    {{- include "containers-dogstatsd-env" . | nindent 4 }}
+    {{- if eq (include "cluster-agent-enabled" .) "false" }}
+    {{- if .Values.datadog.leaderElection }}
+    - name: DD_LEADER_ELECTION
+      value: {{ .Values.datadog.leaderElection | quote}}
+    - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
+      value: {{ .Values.datadog.leaderElectionResource | quote}}
+    {{- end }}
+    {{- if .Values.datadog.leaderLeaseDuration }}
+    - name: DD_LEADER_LEASE_DURATION
+      value: {{ .Values.datadog.leaderLeaseDuration | quote }}
+    {{- end }}
+    {{- if .Values.datadog.collectEvents }}
+    - name: DD_COLLECT_KUBERNETES_EVENTS
+      value: {{.Values.datadog.collectEvents | quote}}
+    {{- end }}
+    {{- else }}
+    {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    {{- end }}
+    - name: DD_APM_ENABLED
+      value: {{ include "should-enable-trace-agent" . | quote }}
+    {{- if eq (include "should-enable-trace-agent" .) "true" }}
+    - name: DD_APM_NON_LOCAL_TRAFFIC
+      value: "true"
+    - name: DD_APM_RECEIVER_PORT
+      value: {{ .Values.datadog.apm.port | quote }}
+    {{- if eq (include "trace-agent-use-uds" .) "true" }}
+    - name: DD_APM_RECEIVER_SOCKET
+      value: {{ .Values.datadog.apm.socketPath | quote }}
+    {{- end }}
+    - name: DD_INSTRUMENTATION_INSTALL_TIME
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_time
+    - name: DD_INSTRUMENTATION_INSTALL_ID
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_id
+    - name: DD_INSTRUMENTATION_INSTALL_TYPE
+      valueFrom:
+        configMapKeyRef:
+          name: {{ template "datadog.fullname" . }}-kpi-telemetry-configmap
+          key: install_type
+    {{- end }}
+    - name: DD_LOGS_ENABLED
+      value: {{  (default false (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled)) | quote}}
+    - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
+      value: {{  (default false (or .Values.datadog.logs.containerCollectAll .Values.datadog.logsConfigContainerCollectAll)) | quote}}
+    {{- if .Values.datadog.logs.enabled }}
+    - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
+      value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
+    {{- end }}
+    - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
+      value: {{ .Values.datadog.logs.autoMultiLineDetection | quote }}
+    - name: DD_HEALTH_PORT
+    {{- $healthPort := .Values.agents.containers.agent.healthPort }}
+      value: {{ $healthPort | quote }}
+    {{- if and (eq (include "cluster-agent-enabled" .) "true") .Values.datadog.clusterChecks.enabled }}
+    {{- if or (and (not .Values.existingClusterAgent.join) .Values.clusterChecksRunner.enabled) (and .Values.existingClusterAgent.join (not .Values.existingClusterAgent.clusterchecksEnabled)) }}
+    - name: DD_EXTRA_CONFIG_PROVIDERS
+      value: "endpointschecks"
+    {{ else }}
+    - name: DD_EXTRA_CONFIG_PROVIDERS
+      value: "clusterchecks endpointschecks"
+    {{- end }}
+    {{- end }}
+    {{- if .Values.datadog.prometheusScrape.enabled }}
+    - name: DD_PROMETHEUS_SCRAPE_ENABLED
+      value: "true"
+    - name: DD_PROMETHEUS_SCRAPE_SERVICE_ENDPOINTS
+      value: {{ .Values.datadog.prometheusScrape.serviceEndpoints | quote }}
+    {{- if .Values.datadog.prometheusScrape.additionalConfigs }}
+    - name: DD_PROMETHEUS_SCRAPE_CHECKS
+      value: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
+    {{- end }}
+    {{- if .Values.datadog.prometheusScrape.version }}
+    - name: DD_PROMETHEUS_SCRAPE_VERSION
+      value: {{ .Values.datadog.prometheusScrape.version | quote }}
+    {{- end }}
+    {{- end }}
+    {{- $ignoreAutoConfig := .Values.datadog.ignoreAutoConfig }}
+    {{- if and .Values.datadog.kubeStateMetricsCore.enabled .Values.datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck }}
+      {{- $ignoreAutoConfig = append $ignoreAutoConfig "kubernetes_state" }}
+    {{- end }}
+    {{- if not (empty $ignoreAutoConfig) }}
+    - name: DD_IGNORE_AUTOCONF
+      value: {{ join " " $ignoreAutoConfig | quote }}
+    {{- end }}
+    {{- if .Values.datadog.checksCardinality }}
+    - name: DD_CHECKS_TAG_CARDINALITY
+      value: {{ .Values.datadog.checksCardinality | quote }}
+    {{- end }}
+    - name: DD_CONTAINER_LIFECYCLE_ENABLED
+      value: {{ .Values.datadog.containerLifecycle.enabled | quote | default "true" }}
+    - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
+      value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
+    - name: DD_EXPVAR_PORT
+      value: {{ .Values.datadog.expvarPort | quote }}
+    - name: DD_COMPLIANCE_CONFIG_ENABLED
+      value: {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
+    - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
+      value: {{ .Values.datadog.securityAgent.compliance.runInSystemProbe | quote }}
+    - name: DD_CONTAINER_IMAGE_ENABLED
+      value: {{ include "should-enable-container-image-collection" . | quote }}
+    {{- if or (eq (include "should-enable-sbom-host-fs-collection" .) "true") (eq (include "should-enable-sbom-container-image-collection" .) "true") (eq (include "should-enable-sbom-enrichment-usage" .) "true") }}
+    - name: DD_SBOM_ENABLED
+      value: "true"
+    {{- if eq (include "should-enable-sbom-container-image-collection" .) "true" }}
+    - name: DD_SBOM_CONTAINER_IMAGE_ENABLED
+      value: "true"
+    {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.containerExclude }}
+    - name: DD_SBOM_CONTAINER_IMAGE_CONTAINER_EXCLUDE
+      value: {{ .Values.datadog.sbom.containerImage.containerExclude | quote }}
+    {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.containerInclude }}
+    - name: DD_SBOM_CONTAINER_IMAGE_CONTAINER_INCLUDE
+      value: {{ .Values.datadog.sbom.containerImage.containerInclude | quote }}
+    {{- end }}
+    {{- if .Values.datadog.sbom.containerImage.analyzers }}
+    - name: DD_SBOM_CONTAINER_IMAGE_ANALYZERS
+      value: {{ join " " .Values.datadog.sbom.containerImage.analyzers | quote }}
+    {{- end }}
+    {{- if (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
+    {{- if .Values.datadog.sbom.containerImage.uncompressedLayersSupport }}
+    {{- if .Values.datadog.sbom.containerImage.overlayFSDirectScan }}
+    - name: DD_SBOM_CONTAINER_IMAGE_OVERLAYFS_DIRECT_SCAN
+      value: "true"
+    {{- else }}
+    - name: DD_SBOM_CONTAINER_IMAGE_USE_MOUNT
+      value: "true"
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- if eq (include "should-enable-sbom-host-fs-collection" .) "true" }}
+    - name: DD_SBOM_HOST_ENABLED
+      value: "true"
+    - name: HOST_ROOT
+      value: /host
+    {{- if .Values.datadog.sbom.host.analyzers }}
+    - name: DD_SBOM_HOST_ANALYZERS
+      value: {{ join " " .Values.datadog.sbom.host.analyzers | quote }}
+    {{- end }}
+    {{- end }}
+    {{- if eq (include "should-enable-sbom-enrichment-usage" .) "true" }}
+    - name: DD_SBOM_ENRICHMENT_USAGE_ENABLED
+      value: "true"
+    {{- end }}
+    {{- end }}
+    - name: DD_KUBELET_CORE_CHECK_ENABLED
+      value: {{ .Values.datadog.kubelet.coreCheckEnabled | quote | default "true" }}
+    {{- if eq (include "should-enable-otel-agent" .) "true" }}
+    - name: DD_OTELCOLLECTOR_ENABLED
+      value: "true"
+    {{- end }}
+    {{- if .Values.datadog.apm.errorTrackingStandalone.enabled }}
+    - name: DD_APM_ERROR_TRACKING_STANDALONE_ENABLED
+      value: "true"
+    {{- end }}
+    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) }}
+    - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
+      value: {{ printf "%s/kubelet.sock" .Values.datadog.kubelet.podResourcesSocketDir | quote }}
+    {{- end }}
+    {{- if .Values.datadog.gpuMonitoring.enabled }}
+    # depending on the NVIDIA container toolkit configuration, we might need to request visible devices via this env var or via the /var/run/nvidia-container-devices/all volume mount
+    - name: NVIDIA_VISIBLE_DEVICES
+      value: all
+    - name: DD_ENABLE_NVML_DETECTION
+      value: "true"
+    - name: DD_GPU_ENABLED
+      value: "true"
+    {{- end }}
+    {{- if eq  (include "should-enable-process-agent" .) "true" }}
+    - name: DD_SYSTEM_PROBE_ENABLED
+      value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
+    {{- if .Values.datadog.networkMonitoring.enabled }}
+    - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
+      value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
+    {{- end }}
+    {{- end }}
+    {{- if .Values.datadog.instrumentationCrd.enabled }}
+    - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
+      value: {{ .Values.datadog.instrumentationCrd.enabled | quote }}
+    {{- end }}
+    {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
+    - name: DD_AUTOSCALING_FAILOVER_ENABLED
+      value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
+    - name: DD_AUTOSCALING_FAILOVER_METRICS
+      value: "container.memory.usage container.cpu.usage"
+    {{- end }}
+    - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
+      value: {{ .Values.datadog.kubernetesKubeServiceIgnoreReadiness | quote }}
+    {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
+    {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
+    {{- if .Values.datadog.orchestratorExplorer.kubelet_configuration_check.enabled }}
+    - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
+      value: "true"
+    {{- end }}
+  volumeMounts:
+    - name: logdatadog
+      mountPath: {{ template "datadog.logDirectoryPath" . }}
+      readOnly: false # Need RW to write logs
+    {{- if eq .Values.targetSystem "linux" }}
+    - name: installinfo
+      subPath: install_info
+      mountPath: /etc/datadog-agent/install_info
+      readOnly: true
+    - name: tmpdir
+      mountPath: /tmp
+      readOnly: false # Need RW to write to /tmp directory
+    {{- include "linux-container-host-release-volumemounts" . | nindent 4 }}
+    {{- if eq (include "should-mount-fips-configmap" .) "true" }}
+    {{- include "linux-container-fips-proxy-cfg-volumemount" . | nindent 4 }}
+    {{- end }}
+    {{- end }}
+    - name: config
+      mountPath: {{ template "datadog.confPath" . }}
+      readOnly: false # Need RW to mount to config path
+    {{- if (not .Values.providers.gke.autopilot) }}
+    - name: auth-token
+      mountPath: {{ template "datadog.confPath" . }}/auth
+      readOnly: false # Need RW to write auth token
+    {{- end }}
+    {{- include "container-crisocket-volumemounts" . | nindent 4 }}
+    {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
+    {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
+    - name: datadog-yaml
+      mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
+      subPath: datadog.yaml
+      readOnly: true
+    {{- end }}
+    {{- if eq .Values.targetSystem "linux" }}
+    {{- if and (not .Values.providers.gke.gdc) (not .Values.providers.gke.autopilot) .Values.datadog.gpuMonitoring.enabled }}
+    - name: pod-resources-socket
+      mountPath: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+      readOnly: false
+    - name: gpu-devices
+      mountPath: /var/run/nvidia-container-devices/all
+    {{- end }}
+    {{- if not .Values.providers.gke.gdc }}
+    - name: dsdsocket
+      mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
+      readOnly: false
+    {{- if eq (include "should-enable-system-probe" .) "true" }}
+    - name: sysprobe-socket-dir
+      mountPath: /var/run/sysprobe
+      readOnly: true
+    - name: sysprobe-config
+      mountPath: /etc/datadog-agent/system-probe.yaml
+      subPath: system-probe.yaml
+      readOnly: true
+    {{- end }}
+    - name: procdir
+      mountPath: /host/proc
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: cgroups
+      mountPath: /host/sys/fs/cgroup
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (and (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true")) }}
+    - name: passwd
+      mountPath: /etc/passwd
+      readOnly: true
+    {{- end }}
+    {{- end }}
+    {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+    - name: {{ include "datadog.agentRunVolumeName" . }}
+      mountPath: /opt/datadog-agent/run
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: false # Need RW for logs pointer
+    - name: logpodpath
+      mountPath: /var/log/pods
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    - name: logscontainerspath
+      mountPath: /var/log/containers
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    {{- if and (not .Values.datadog.criSocketPath) (not .Values.providers.gke.gdc) }}
+    - name: logdockercontainerpath
+      mountPath: /var/lib/docker/containers
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
+    {{- end }}
+    {{- else if or .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
+    - name: {{ include "datadog.agentRunVolumeName" . }}
+      mountPath: /opt/datadog-agent/run
+      readOnly: false
+    {{- else }}
+    - name: datadogrun
+      mountPath: /opt/datadog-agent/run
+    {{- end }}
+    {{- if and (eq (include "should-enable-sbom-container-image-collection" .) "true") (or .Values.datadog.sbom.containerImage.uncompressedLayersSupport .Values.datadog.sbom.containerImage.overlayFSDirectScan)}}
+    - name: host-containerd-dir
+      mountPath: /host/var/lib/containerd
+      readOnly: true
+    - name: host-docker-dir
+      mountPath: /host/var/lib/docker
+      readOnly: true
+    - name: host-crio-dir
+      mountPath: /host/var/lib/containers
+      readOnly: true
+    {{- end }}
+    {{- if eq (include "should-enable-sbom-host-fs-collection" .) "true" }}
+    - name: host-apk-dir
+      mountPath: /host/var/lib/apk
+      readOnly: true
+    - name: host-dpkg-dir
+      mountPath: /host/var/lib/dpkg
+      readOnly: true
+    - name: host-rpm-dir
+      mountPath: /host/var/lib/rpm
+      readOnly: true
+    {{- if eq (include "should-add-host-path-for-os-release-paths" .) "true" }}
+    {{- if ne .Values.datadog.osReleasePath "/etc/redhat-release" }}
+    - name: etc-redhat-release
+      mountPath: /host/etc/redhat-release
+      readOnly: true
+    {{- end }}
+    {{- if ne .Values.datadog.osReleasePath "/etc/fedora-release" }}
+    - name: etc-fedora-release
+      mountPath: /host/etc/fedora-release
+      readOnly: true
+    {{- end }}
+    {{- if ne .Values.datadog.osReleasePath "/etc/lsb-release" }}
+    - name: etc-lsb-release
+      mountPath: /host/etc/lsb-release
+      readOnly: true
+    {{- end }}
+    {{- if ne .Values.datadog.osReleasePath "/etc/system-release" }}
+    - name: etc-system-release
+      mountPath: /host/etc/system-release
+      readOnly: true
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- if eq .Values.targetSystem "windows" }}
+    {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+    - name: pointerdir
+      mountPath: c:/programdata/datadog/run
+      readOnly: false # Need RW for logs pointer
+    - name: logpodpath
+      mountPath: C:/var/log/pods
+      readOnly: true
+    - name: logdockercontainerpath
+      mountPath: C:/ProgramData
+      readOnly: true
+    {{- end }}
+    {{- end }}
+    {{- if .Values.datadog.kubelet.hostCAPath }}
+{{ include "datadog.kubelet.volumeMount" . | indent 4 }}
+    {{- end }}
+    {{- if .Values.providers.gke.gdc }}
+    - name: kubelet-cert-volume
+      mountPath: /certs
+    {{- end }}
+{{- if .Values.providers.openshift.controlPlaneMonitoring }}
+    - name: etcd-certs
+      mountPath: /etc/etcd-certs
+      readOnly: true
+    - name: disable-etcd-autoconf
+      mountPath: /etc/datadog-agent/conf.d/etcd.d
+{{- end }}
+{{- if .Values.agents.volumeMounts }}
+{{ toYaml .Values.agents.volumeMounts | indent 4 }}
+{{- end }}
+  livenessProbe:
+{{- $live := .Values.agents.containers.agent.livenessProbe }}
+{{ include "probe.http" (dict "path" "/live" "port" $healthPort "settings" $live) | indent 4 }}
+  readinessProbe:
+{{- $ready := .Values.agents.containers.agent.readinessProbe }}
+{{ include "probe.http" (dict "path" "/ready" "port" $healthPort "settings" $ready) | indent 4 }}
+{{- if (not .Values.providers.gke.autopilot) }}
+  startupProbe:
+{{- $startup := .Values.agents.containers.agent.startupProbe }}
+{{ include "probe.http" (dict "path" "/startup" "port" $healthPort "settings" $startup) | indent 4 }}
+{{- end }}
+{{- end -}}

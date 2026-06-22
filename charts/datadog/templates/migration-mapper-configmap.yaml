@@ -1,0 +1,13 @@
+{{- if or .Values.datadog.operator.migration.enabled .Values.datadog.operator.migration.preview }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "datadog.fullname" . }}-migration-mapper-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+data:
+  {{- $path := "files/mapping_datadog_helm_to_datadogagent_crd.yaml" }}
+  {{ base $path }}: |-
+{{- .Files.Get $path | nindent 4 }}
+{{- end }}

@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+name: datadog
+version: 3.225.1
+appVersion: "7"
+description: Datadog Agent
+keywords:
+  - monitoring
+  - alerting
+  - metric
+home: https://www.datadoghq.com
+icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+sources:
+  - https://app.datadoghq.com/account/settings#agent/kubernetes
+  - https://github.com/DataDog/datadog-agent
+maintainers:
+  - name: Datadog
+    email: support@datadoghq.com

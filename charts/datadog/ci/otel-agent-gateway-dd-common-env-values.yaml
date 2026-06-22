@@ -1,0 +1,42 @@
+targetSystem: "linux"
+fullnameOverride: "gw-only"
+agents:
+  enabled: false
+clusterAgent:
+  enabled: false
+datadog:
+  apiKey: "f0000000000000000000000000000000"
+  site: "datadog.eu"
+  dd_url: "api.datadog.eu"
+  clusterName: "my-cluster"
+  tags: ["tag1", "tag2"]
+otelAgentGateway:
+  enabled: true
+  ports:
+    - containerPort: "4317"
+      name: "otel-grpc"
+  config: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+    exporters:
+      datadog:
+        api:
+          key: ${env:DD_API_KEY}
+          site: ${env:DD_SITE}
+        metrics:
+          endpoint: ${env:DD_DD_URL}
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [datadog]
+        metrics:
+          receivers: [otlp]
+          exporters: [datadog]
+        logs:
+          receivers: [otlp]
+          exporters: [datadog]
+  replicas: 2

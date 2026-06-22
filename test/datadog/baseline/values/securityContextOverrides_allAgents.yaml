@@ -1,0 +1,84 @@
+datadog:
+  clusterChecks:
+    enabled: true
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  securityContext:
+    runAsUser: 100
+    seccompProfile:
+      type: RuntimeDefault
+
+agents:
+  containers:
+    agent:
+      securityContext:
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: ["ALL"]
+    initContainers:
+      securityContext: 
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: ["ALL"]
+    traceAgent:
+      securityContext: 
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: ["ALL"]
+    processAgent:
+      securityContext: 
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: ["ALL"]
+    systemProbe:
+      securityContext: 
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: ["ALL"]
+
+clusterAgent:
+  securityContext:
+    runAsUser: 100
+    seccompProfile:
+      type: RuntimeDefault
+    
+  containers:
+    clusterAgent:
+      securityContext:
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: ["ALL"]
+    initContainers:
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: ["ALL"]
+
+clusterChecksRunner:
+  enabled: true
+  securityContext:
+    runAsUser: 100
+    seccompProfile:
+      type: RuntimeDefault
+
+  containers:
+    clusterChecksRunner:
+      securityContext:
+        runAsUser: 100
+        seccompProfile:
+          type: RuntimeDefault
+    initContainers:
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: ["ALL"]

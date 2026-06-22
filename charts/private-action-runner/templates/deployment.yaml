@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chart.fullname" . }}
+  namespace: {{ $.Release.Namespace }}
+  {{- with .Values.deployment.metadata.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+    {{- with .Values.deployment.metadata.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  minReadySeconds: 10
+  replicas: {{ $.Values.runner.replicas }}
+  selector:
+    matchLabels:
+      {{- include "chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "chart.labels" . | nindent 8 }}
+      annotations:
+        checksum/values: {{ $.Values | toJson | sha256sum }}
+        {{- with .Values.runner.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "chart.serviceAccountName" . }}
+      containers:
+        - name: runner
+          image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $.Values.runner.config.port | default 9016 }}
+          {{- if .Values.runner.livenessProbe }}
+          livenessProbe:
+            {{- toYaml $.Values.runner.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.runner.readinessProbe }}
+          readinessProbe:
+            {{- toYaml $.Values.runner.readinessProbe | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml $.Values.runner.resources | nindent 12 }}
+          volumeMounts:
+            - name: secrets
+              mountPath: /etc/dd-action-runner/config
+            {{- if $.Values.runner.useSeparateSecretForCredentials }}
+            - name: credentials
+              mountPath: /etc/dd-action-runner/config/credentials
+            {{- end}}
+            {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
+            - name: {{ $credentialSecret.secretName }}
+              mountPath: /etc/dd-action-runner/config/credentials/{{ $credentialSecret.directoryName }}
+            {{- end }}
+            {{- if $.Values.runner.scriptFiles }}
+            - name: scripts
+              mountPath: /home/scriptuser
+            {{- end }}
+            {{- if $.Values.runner.customCaCert.configMapName }}
+            - name: custom-ca-cert
+              mountPath: /etc/dd-action-runner/config/ca-certificates
+              readOnly: true
+            {{- end }}
+          env:
+            - name: DD_PRIVATE_RUNNER_CONFIG_DIR
+              value: {{ $.Values.runner.configDirectory }}
+            {{- if $.Values.runner.customCaCert.configMapName }}
+            - name: SSL_CERT_DIR
+              value: /etc/dd-action-runner/config/ca-certificates
+            {{- end }}
+          {{- if $.Values.runner.env }}{{ $.Values.runner.env | toYaml | nindent 12 }}{{- end }}
+          {{- if $.Values.runner.runnerIdentitySecret }}
+          envFrom:
+            - secretRef:
+                name: {{ $.Values.runner.runnerIdentitySecret }}
+          {{- end }}
+      {{- with .Values.runner.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.runner.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.runner.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: secrets
+          secret:
+            secretName: {{ include "chart.fullname" . }}
+        {{- if $.Values.runner.useSeparateSecretForCredentials }}
+        - name: credentials
+          secret:
+            secretName: {{ include "chart.fullname" . }}-credentials
+        {{- end }}
+        {{- range $_, $credentialSecret := $.Values.runner.credentialSecrets }}
+        - name: {{ $credentialSecret.secretName }}
+          secret:
+            secretName: {{ $credentialSecret.secretName }}
+        {{- end }}
+        {{- if $.Values.runner.scriptFiles }}
+        - name: scripts
+          configMap:
+            name: {{ include "chart.fullname" . }}-scripts
+        {{- end }}
+        {{- if $.Values.runner.customCaCert.configMapName }}
+        - name: custom-ca-cert
+          configMap:
+            name: {{ $.Values.runner.customCaCert.configMapName }}
+        {{- else if $.Values.runner.customCaCert.secretName }}
+        - name: custom-ca-cert
+          secret:
+            secretName: {{ $.Values.runner.customCaCert.secretName }}
+        {{- end }}

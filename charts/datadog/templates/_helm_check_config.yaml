@@ -1,0 +1,11 @@
+{{- define "helmCheck-config" -}}
+helm.yaml: |-
+{{- if and .Values.datadog.clusterChecks.enabled .Values.clusterChecksRunner.enabled }}
+  cluster_check: true
+{{- end }}
+  init_config:
+  instances:
+    - collect_events: {{ .Values.datadog.helmCheck.collectEvents }}
+      helm_values_as_tags:
+{{- .Values.datadog.helmCheck.valuesAsTags | toYaml | nindent 8 }}
+{{- end -}}

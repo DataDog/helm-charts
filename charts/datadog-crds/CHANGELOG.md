@@ -1,0 +1,402 @@
+# Changelog
+
+## 2.22.0-dev.2
+
+* Update CRDs from Datadog Operator v1.28.0-rc.2 release candidate tag.
+
+## 2.22.0-dev.1
+
+* Update CRDs from Datadog Operator v1.28.0-rc.1 release candidate tag.
+
+## 2.21.0
+
+* Update CRDs from Datadog Operator v1.27.0.
+
+## 2.21.0-dev.3
+
+* Update CRDs from Datadog Operator v1.27.0-rc.3 release candidate tag.
+
+## 2.21.0-dev.2
+
+* Update CRDs from Datadog Operator v1.27.0-rc.2 release candidate tag.
+
+## 2.21.0-dev.1
+
+* Update CRDs from Datadog Operator v1.27.0-rc.1 release candidate tag.
+
+## 2.20.0
+
+* Update CRDs from Datadog Operator v1.26.0.
+
+## 2.20.0-dev.6
+
+* Add `crds.annotations` value to allow setting custom annotations on all CRD resources (useful for ArgoCD users).
+
+## 2.20.0-dev.5
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 2.20.0-dev.4
+
+* Update CRDs from Datadog Operator v1.26.0-rc.3 release candidate tag.
+
+## 2.20.0-dev.3
+
+* Update CRDs from Datadog Operator v1.26.0-rc.2 release candidate tag.
+
+## 2.20.0-dev.2
+
+* Drop `description` fields from `datadogcsidrivers` ([#2563](https://github.com/DataDog/helm-charts/pull/2563)).
+
+## 2.20.0-dev.1
+
+* Update CRDs from Datadog Operator v1.26.0-rc.1 release candidate tag.
+
+## 2.19.0
+
+* Update DatadogPodAutoscaler CRD and add DatadogPodAutoscalerClusterProfile CRD.
+
+## 2.18.1
+
+Drop `description` fields from `datadogagentinternals` and `datadogagentprofiles`.
+
+## 2.18.0
+
+* Update CRDs from Datadog Operator v1.25.0.
+
+## 2.18.0-dev.1
+
+* Update CRDs from Datadog Operator v1.25.0-rc.1 release candidate tag.
+
+## 2.17.0
+
+* Update CRDs from Datadog Operator v1.24.0.
+
+## 2.17.0-dev.1
+
+* Update CRDs from Datadog Operator v1.24.0-rc.1 release candidate tag.
+
+## 2.16.0
+
+* Update CRDs from Datadog Operator v1.23.0 tag.
+
+## 2.16.0-dev.2
+
+* Update CRDs from Datadog Operator v1.23.0-rc.2 release candidate tag.
+
+## 2.16.0-dev.1
+
+* Update CRDs from Datadog Operator v1.23.0-rc.1 release candidate tag.
+
+## 2.15.0
+
+* Update CRDs from Datadog Operator v1.22.0 tag.
+* [BREAKING] Update datadogAgentInternal CRD values name to datadogAgentInternals.
+
+## 2.15.0-dev.2
+
+* [BREAKING] Update datadogAgentInternal CRD values name to datadogAgentInternals.
+
+## 2.15.0-dev.1
+
+* Update CRDs from Datadog Operator v1.22.0-rc.1 release candidate tag.
+
+## 2.14.0
+
+* Update CRDs from Datadog Operator v1.21.0 tag.
+
+## 2.14.0-dev.6
+
+* Update CRDs from Datadog Operator v1.21.0-rc.3 release candidate tag.
+* Update `update-crds.sh` script to prevent keepCrds annotation deletion
+
+## 2.14.0-dev.5
+
+* Add keepCrds option to add the `helm.sh/resource-policy: keep` annotation to enabled CRD resources.
+
+## 2.14.0-dev.4
+
+* Update CRDs from Datadog Operator v1.21.0-rc.2 release candidate tag.
+
+## 2.14.0-dev.3
+
+* Preserve DatadogAgent schema description.
+
+## 2.14.0-dev.2
+
+* Same as 2.14.0-dev.1 + changes from 2.13.1 for DPA CRD.
+
+## 2.14.0-dev.1
+
+* Update CRDs from Datadog Operator v1.21.0-rc.1 release candidate tag.
+
+## 2.13.1
+
+* Update DatadogPodAutoscaler CRD to version with correct names
+
+## 2.13.0
+
+* Update CRDs from Datadog Operator v1.20.0 tag.
+
+## 2.13.0-dev.2
+
+* Update CRDs from Datadog Operator v1.20.0-rc.4 release candidate tag.
+
+## 2.13.0-dev.1
+
+* Update CRDs from Datadog Operator v1.20.0-rc.1 release candidate tag.
+
+## 2.12.0
+
+* Update CRDs from Datadog Operator v1.19.0 release candidate tag.
+
+## 2.12.0-dev.2
+
+* Update CRDs from Datadog Operator v1.19.0-rc.2 release candidate tag.
+
+## 2.12.0-dev.1
+
+* Update CRDs from Datadog Operator v1.19.0-rc.1 release candidate tag.
+
+## 2.11.0
+
+* Update CRDs from Datadog Operator v1.18.0 tag.
+
+## 2.11.0-dev.1
+
+* Update CRDs from Datadog Operator v1.18.0-rc.1 release candidate tag.
+
+## 2.10.0
+
+* Update CRDs from Datadog Operator v1.17.0 tag.
+
+## 2.10.0-dev.1
+
+* Update CRDs from Datadog Operator v1.17.0-rc.1 release candidate tag.
+
+## 2.9.0
+
+* Update CRDs from Datadog Operator v1.16.0 tag.
+
+## 2.9.0-dev.1
+
+* Update CRDs from Datadog Operator v1.16.0-rc.1 release candidate tag.
+
+## 2.8.0
+
+* Update CRDs from Datadog Operator v1.15.0 tag.
+
+## 2.8.0-dev.1
+
+* Update CRDs from Datadog Operator v1.15.0-rc.2 release candidate tag.
+
+## 2.8.0-dev
+
+* Update CRDs from Datadog Operator v1.15.0-rc.1 release candidate tag.
+
+## 2.7.0
+
+* Clean up `apiextensions.k8s.io/v1beta1` CRD versions. Kubernetes cluster v1.21 and earlier will be updated to `apiextensions.k8s.io/v1` CRD version.
+
+## 2.6.0
+
+* Update CRDs from Datadog Operator v1.14.0 tag.
+
+## 2.6.0-dev
+
+* Update CRDs from Datadog Operator v1.14.0 release candidate tag.
+
+## 2.5.1
+
+* Update DatadogPodAutoscaler CRD to have `storage` set to `v1alpha2`.
+
+# 2.5.0
+
+* Update CRDs from Datadog Operator v1.13.0 tag.
+
+# 2.4.1
+
+* Add DatadogGenericResources CRD.
+
+# 2.4.0
+
+* Update CRDs from Datadog Operator v1.12.0 tag.
+
+# 2.3.0
+
+* Update CRDs from Datadog Operator v1.11.0 tag.
+
+# 2.2.0
+
+* Update CRDs from Datadog Operator v1.10.0 tag.
+
+## 2.1.0
+
+* Update CRDs from Datadog Operator v1.9.0 tag.
+* Add DatadogDashboards CRD.
+
+## 2.0.0
+
+* Update CRDs from Datadog Operator v1.8.0 tag.
+* Remove support for DatadogAgent `v1alpha1` and conversion webhook.
+* Final update of Datadog CRDs with the `apiextensions.k8s.io/v1beta1` version of CustomResourceDefinition.
+
+## 1.7.2
+
+* Remove XValidation as requires K8S >= 1.25.
+
+## 1.7.1
+
+* Add DPA CRD.
+
+## 1.7.0
+* Update CRDs from Datadog Operator v1.7.0 tag.
+
+## 1.6.0
+* Update CRDs from Datadog Operator v1.6.0 tag.
+
+## 1.5.0
+* Update CRDs from Datadog Operator v1.5.0 tag.
+
+## 1.4.0
+* Update CRDs from Datadog Operator v1.4.0 tag.
+
+## 1.3.1
+* Migrate from `kubeval` to `kubeconform` for ci chart validation.
+
+## 1.3.0
+* Update CRDs from Datadog Operator v1.3.0 tag.
+
+## 1.2.0
+* Update CRDs from Datadog Operator v1.2.0 tag.
+
+## 1.1.0
+* Update CRDs from Datadog Operator v1.1.0-rc.1 tag.
+
+## 1.0.1
+
+* Update CRDs from Datadog Operator v1.0.3.
+
+## 1.0.0
+
+* Default DatadogAgent stored version is `v2alpha1` to align with the GA of the Datadog Operator.
+
+## 0.6.1
+
+* Add missing `nodeLabelsAsTags` and `namespaceLabelsAsTags` to the v2alpha1 spec.
+
+## 0.6.0
+
+* Support Certificate Manager.
+* Document conversion webhook configuration.
+
+## 0.5.9
+
+* Updating DatadogMonitors CRD and DatadogAgents CRDs.
+
+## 0.5.8
+
+* Updating CRD of the Datadog Operator for Kubernetes cluster < 1.21.0.
+
+## 0.5.7
+
+* Update CRD of DatadogAgent to have new fields for the cws feature.
+
+## 0.5.6
+
+* Introduce option to store DatadogAgent v2alpha1 or v1alpha1.
+
+## 0.5.5
+
+* Fix CI, by renaming `kubeval.yaml` to `kubeval-values.yaml`
+
+## 0.5.4
+
+* Fix semver comparison for minor version corner case.
+* Update charts.
+
+## 0.5.3
+
+* Fix the semver comparison so v1beta1 is used on 1.21.
+
+## 0.5.2
+
+* Rely on the Kubernetes version to deploy the CRD v1 or v1beta1.
+
+## 0.5.1
+
+* Remove `preserveUnknownFields` to maintain compatibility with Kubernetes versions <1.15.
+
+## 0.5.0
+
+* Update CRDs from Datadog Operator v0.8.0.
+
+## 0.4.7
+
+* Fix Capabilities.APIVersions check
+
+## 0.4.6
+
+* Nothing
+
+## 0.4.5
+
+* Reduce DatadogAgent CRD size by removing description.
+
+## 0.4.4
+
+* Update CRDs from Datadog Operator v0.7.2.
+
+## 0.4.3
+
+* Cleanup `update-crds.sh` script.
+
+## 0.4.2
+
+* Fixed instructions to run the `update-crds.sh` script.
+
+## 0.4.1
+
+* Cleanup `update-crds.sh` script.
+
+## 0.4.0
+
+* Update CRDs from Datadog Operator v0.7.0.
+* Remove Extended Daemon Set CRDs from this chart. They will be direclty located in the ExtendedDaemonset chart.
+
+## 0.3.5
+
+* Add CRDs from Extended Daemon Set v0.7.0.
+
+## 0.3.4
+
+* Include only `v1beta1` CRDs from the EDS v0.6.0 tag.
+
+## 0.3.3
+
+* Add CRDs from Extended Daemon Set v0.6.0 tag.
+
+## 0.3.2
+
+* Set `apiVersion` to `v1` for compatibility with helm 2.
+
+## 0.3.1
+
+* Fix typo in DatadogMetrics CRD
+
+## 0.3.0
+
+* Update all the CRDs from operator v0.6.0 tag.
+
+## 0.2.0
+
+* Update all the CRDs from operator v0.5.0 tag.
+
+## 0.1.1
+
+* Move back `chart.yaml` `apiVersion` to `v1` for compatibily with helm2.
+
+## 0.1.0
+
+* Initial version
+* Add `DatadogMetrics` and `DatadogAgents` CRDs
