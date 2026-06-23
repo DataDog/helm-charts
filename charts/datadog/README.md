@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.226.0](https://img.shields.io/badge/Version-3.226.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.227.0](https://img.shields.io/badge/Version-3.227.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -588,6 +588,7 @@ helm install <RELEASE_NAME> \
 | agents.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the Datadog Daemonset |
 | agents.terminationGracePeriodSeconds | int | `nil` | Configure the termination grace period for the Agent |
 | agents.tolerations | list | `[]` | Allow the DaemonSet to schedule on tainted nodes (requires Kubernetes >= 1.6) |
+| agents.untaintToleration.enabled | bool | `false` | Add a toleration for the startup taint `agent.datadoghq.com/not-ready=presence:NoSchedule` so the Agent can schedule on nodes managed by the Datadog Operator untaint controller |
 | agents.updateStrategy | object | `{"rollingUpdate":{"maxUnavailable":"10%"},"type":"RollingUpdate"}` | Allow the DaemonSet to perform a rolling update on helm update |
 | agents.useConfigMap | string | `nil` | Configures a configmap to provide the agent configuration. Use this in combination with the `agents.customAgentConfig` parameter. |
 | agents.useHostNetwork | bool | `false` | Bind ports on the hostNetwork |

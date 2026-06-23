@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.227.0
+
+* Add `agents.untaintToleration.enabled` (default `false`). When enabled, the node Agent DaemonSet tolerates the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint, letting the Agent schedule on nodes held by the Datadog Operator untaint controller until the Agent is ready. Use this on Helm-managed clusters where the operator is not managing the Agent.
+
 ## 3.226.0
 
 * Add `agents.containers.agent.command` value to override the default `agent run` entrypoint of the agent container. When unset, the agent container continues to run `agent run` as before. Setting this value on GKE Autopilot or GDC is rejected at template render time to avoid breaking the Datadog WorkloadAllowlist constraint.
