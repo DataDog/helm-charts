@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.227.0
+
+* Add `providers.flatcar.enabled` to support Flatcar Container Linux nodes. Flatcar mounts `/usr` read-only, which caused the `system-probe` container to fail with `failed to mkdir "/usr/src": read-only file system` when runtime compilation was enabled (e.g. via Service Discovery, on by default for Agent >= 7.78.0). Enabling this provider skips mounting the host `/usr/src` volume, matching the existing behavior for GKE Autopilot and COS.
+
 ## 3.226.0
 
 * Add `agents.containers.agent.command` value to override the default `agent run` entrypoint of the agent container. When unset, the agent container continues to run `agent run` as before. Setting this value on GKE Autopilot or GDC is rejected at template render time to avoid breaking the Datadog WorkloadAllowlist constraint.
