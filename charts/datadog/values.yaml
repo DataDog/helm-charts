@@ -3172,8 +3172,7 @@ providers:
     gdc: false
 
   flatcar:
-    # providers.flatcar.enabled -- Activate all required specificities related to Flatcar Container Linux configuration.
-    # Flatcar mounts `/usr` (and thus `/usr/src`) read-only, so the chart skips mounting the host `/usr/src` volume into system-probe.
+    # providers.flatcar.enabled -- Enable Flatcar Container Linux support. Flatcar mounts `/usr` read-only, so the host `/usr/src` volume is not mounted into system-probe.
     enabled: false
 
   eks:

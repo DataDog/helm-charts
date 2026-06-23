@@ -2,7 +2,7 @@
 
 ## 3.227.0
 
-* Add `providers.flatcar.enabled` to support Flatcar Container Linux nodes. Flatcar mounts `/usr` read-only, which caused the `system-probe` container to fail with `failed to mkdir "/usr/src": read-only file system` when runtime compilation was enabled (e.g. via Service Discovery, on by default for Agent >= 7.78.0). Enabling this provider skips mounting the host `/usr/src` volume, matching the existing behavior for GKE Autopilot and COS.
+* Add `providers.flatcar.enabled` for Flatcar Container Linux. Flatcar's read-only `/usr` caused `system-probe` to fail with `failed to mkdir "/usr/src": read-only file system`; enabling this flag skips the host `/usr/src` mount, as on GKE Autopilot/COS.
 
 ## 3.226.0
 
