@@ -263,6 +263,12 @@ spec:
         value: windows
         operator: Equal
       {{- end }}
+      {{- if .Values.agents.untaintToleration.enabled }}
+      - key: agent.datadoghq.com/not-ready
+        operator: Equal
+        value: presence
+        effect: NoSchedule
+      {{- end }}
       {{- if .Values.agents.tolerations }}
 {{ toYaml .Values.agents.tolerations | indent 6 }}
       {{- end }}
