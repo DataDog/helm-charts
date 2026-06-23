@@ -1379,7 +1379,8 @@ Returns whether or not the underlying OS is Google Container-Optimized-OS
 Note: GKE Autopilot only use COS (see https://cloud.google.com/kubernetes-engine/docs/concepts/node-images)
 */}}
 {{- define "can-mount-host-usr-src" -}}
-{{- if or .Values.providers.gke.autopilot .Values.providers.gke.cos -}}
+{{- /* Flatcar mounts /usr read-only, so the /usr/src hostPath can't be mounted (as on GKE COS/Autopilot). */ -}}
+{{- if or .Values.providers.gke.autopilot .Values.providers.gke.cos .Values.providers.flatcar.enabled -}}
 true
 {{- else -}}
 false
