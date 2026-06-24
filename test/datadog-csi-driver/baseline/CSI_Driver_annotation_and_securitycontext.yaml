@@ -61,6 +61,10 @@ spec:
             - name: plugin-dir
               mountPath: /csi
             # storage-dir stores the data and database for the CSI driver.
+            # Skipped on legacy GKE Autopilot (< 1.32.1-gke.1729000, AllowlistedV2Workload
+            # mode): no updated AllowlistedV2Workload exemption is published for the
+            # CSI driver in that mode, so rendering this hostPath would cause Warden
+            # to reject the DaemonSet.
             - name: storage-dir
               mountPath: /var/lib/datadog-csi-driver
             - name: apm-socket
@@ -76,6 +80,9 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            # DD_APM_ENABLED controls SSI on the CSI driver. Skipped on legacy GKE
+            # Autopilot (< 1.32.1-gke.1729000, AllowlistedV2Workload mode) because
+            # no updated exemption is published for it in that mode.
             - name: DD_APM_ENABLED
               value: "true"
         - name: csi-node-driver-registrar

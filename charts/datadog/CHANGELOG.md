@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.227.1
+
+* default to CNM direct send if >=7.81.0 ([#2742](https://github.com/DataDog/helm-charts/pull/2742)).
+
 ## 3.227.0
 
 * Add `providers.flatcar.enabled` for Flatcar Container Linux. Flatcar's read-only `/usr` caused `system-probe` to fail with `failed to mkdir "/usr/src": read-only file system`; enabling this flag skips the host `/usr/src` mount, as on GKE Autopilot/COS.

@@ -97,6 +97,17 @@ false
 {{- end -}}
 {{- end -}}
 
+{{- define "cnm-use-direct-send" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- if semverCompare ">=7.81.0-0" (include "get-agent-version" .) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
 
 {{- define "check-version" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
