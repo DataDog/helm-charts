@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 0.17.27
+
+* Update private location image version to `1.69.0`.
+
 ## 0.17.26
 
 * Update private location image version to `1.68.0`.
