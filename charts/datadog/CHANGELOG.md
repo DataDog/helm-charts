@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.228.0
+
+* Enable Remote Configuration on the Cluster Agent when `datadog.kubernetesActions.enabled` is set. The Kubernetes Actions product receives its configuration over Remote Configuration, so `DD_REMOTE_CONFIGURATION_ENABLED` is now set to `true` on the Cluster Agent whenever Kubernetes Actions is enabled (alongside the existing admission controller remote instrumentation, private action runner, and workload autoscaling triggers).
+
 ## 3.227.1
 
 * default to CNM direct send if >=7.81.0 ([#2742](https://github.com/DataDog/helm-charts/pull/2742)).
