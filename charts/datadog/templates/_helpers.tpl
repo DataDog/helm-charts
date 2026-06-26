@@ -271,6 +271,19 @@ false
 {{- end -}}
 
 {{/*
+Return true if the host-profiler seccomp profile (and its setup init container) should be
+applied. Requires the host-profiler to be enabled and the seccomp toggle to not be disabled
+(defaults to enabled).
+*/}}
+{{- define "should-enable-host-profiler-seccomp" -}}
+{{- if and (eq (include "should-enable-host-profiler" .) "true") (ne (toString .Values.datadog.hostProfiler.seccomp.enabled) "false") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the seccomp profile filename for the host-profiler, scoped to the image ref
 to avoid races when multiple host-profiler versions coexist on the same node.
 */}}
