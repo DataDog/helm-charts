@@ -53,6 +53,30 @@ func TestHostProfilerSeccomp(t *testing.T) {
 		"init container cp destination should match the seccomp profile name; command: %v", initContainer.Command)
 }
 
+func TestHostProfilerSeccompDisabled(t *testing.T) {
+	overrides := copyMap(hostProfilerBaseOverrides)
+	overrides["datadog.hostProfiler.seccomp.enabled"] = "false"
+
+	ds := renderHostProfilerDaemonSet(t, overrides)
+
+	// Container must not carry a seccomp profile, but other hardening still applies.
+	hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+	require.True(t, ok, "host-profiler container should be present")
+	require.NotNil(t, hpContainer.SecurityContext)
+	assert.Nil(t, hpContainer.SecurityContext.SeccompProfile,
+		"host-profiler should have no seccomp profile when datadog.hostProfiler.seccomp.enabled=false")
+
+	// Seccomp setup init container must be absent.
+	_, ok = getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
+	assert.False(t, ok, "host-profiler-seccomp-setup init container should be absent when seccomp is disabled")
+
+	// seccomp-root volume must be absent.
+	for _, v := range ds.Spec.Template.Spec.Volumes {
+		assert.NotEqual(t, "host-profiler-seccomp-root", v.Name,
+			"host-profiler-seccomp-root volume should be absent when seccomp is disabled")
+	}
+}
+
 func TestHostProfilerSeccompDifferentImages(t *testing.T) {
 	overridesV1 := copyMap(hostProfilerBaseOverrides)
 	overridesV2 := copyMap(hostProfilerBaseOverrides)
