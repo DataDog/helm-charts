@@ -3171,6 +3171,10 @@ providers:
     # providers.gke.gdc -- Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC)
     gdc: false
 
+  flatcar:
+    # providers.flatcar.enabled -- Enable Flatcar Container Linux support. Flatcar mounts `/usr` read-only, so the host `/usr/src` volume is not mounted into system-probe.
+    enabled: false
+
   eks:
     # providers.eks.controlPlaneMonitoring -- Enable control plane monitoring checks in the EKS cluster.
     controlPlaneMonitoring: false

@@ -97,6 +97,17 @@ false
 {{- end -}}
 {{- end -}}
 
+{{- define "cnm-use-direct-send" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- if semverCompare ">=7.81.0-0" (include "get-agent-version" .) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
 
 {{- define "check-version" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
@@ -1379,7 +1390,8 @@ Returns whether or not the underlying OS is Google Container-Optimized-OS
 Note: GKE Autopilot only use COS (see https://cloud.google.com/kubernetes-engine/docs/concepts/node-images)
 */}}
 {{- define "can-mount-host-usr-src" -}}
-{{- if or .Values.providers.gke.autopilot .Values.providers.gke.cos -}}
+{{- /* Flatcar mounts /usr read-only, so the /usr/src hostPath can't be mounted (as on GKE COS/Autopilot). */ -}}
+{{- if or .Values.providers.gke.autopilot .Values.providers.gke.cos .Values.providers.flatcar.enabled -}}
 true
 {{- else -}}
 false
@@ -1401,7 +1413,7 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled)) (not .Values.providers.gke.gdc ) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
 true
 {{- else -}}
 false
