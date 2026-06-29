@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.229.0
+
+* Add `agents.instanceLabelOverride`, `clusterAgent.instanceLabelOverride`, and `clusterChecksRunner.instanceLabelOverride` to override the `app.kubernetes.io/instance` label on the corresponding workloads. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+
 ## 3.228.0
 
 * Enable Remote Configuration on the Cluster Agent when `datadog.kubernetesActions.enabled` is set. The Kubernetes Actions product receives its configuration over Remote Configuration, so `DD_REMOTE_CONFIGURATION_ENABLED` is now set to `true` on the Cluster Agent whenever Kubernetes Actions is enabled (alongside the existing admission controller remote instrumentation, private action runner, and workload autoscaling triggers).
