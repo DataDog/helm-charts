@@ -73,7 +73,7 @@ spec:
             mountPath: /quickwit/{{ .source.source_id }}.yaml
             subPath: {{ .source.source_id }}.yaml
           {{- end }}
-          {{- with $.Values.bootstrap.sources.extraVolumeMounts }}
+          {{- with concat ($.Values.volumeMounts | default list) ($.Values.bootstrap.sources.extraVolumeMounts | default list) }}
             {{- toYaml . | nindent 10 }}
           {{- end }}
         resources:
@@ -91,18 +91,18 @@ spec:
             items:
               - key: {{ .source.source_id }}.yaml
                 path: {{ .source.source_id }}.yaml
-         {{- with $.Values.bootstrap.sources.extraVolumes }}
+         {{- with concat ($.Values.volumes | default list) ($.Values.bootstrap.sources.extraVolumes | default list) }}
            {{- toYaml . | nindent 8 }}
          {{- end }}
       {{- with $.Values.bootstrap.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with merge (dict) $.Values.bootstrap.affinity $.Values.affinity }}
+      {{- with merge (dict) ($.Values.bootstrap.affinity | default dict) ($.Values.affinity | default dict) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := concat $.Values.tolerations $.Values.bootstrap.tolerations | compact | uniq }}
+      {{- $tolerations := concat ($.Values.tolerations | default list) ($.Values.bootstrap.tolerations | default list) | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
       {{- if $.Values.bootstrap.runtimeClassName }}

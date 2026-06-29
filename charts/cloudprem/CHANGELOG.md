@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+## 0.4.3
+
+* Add global `volumes` and `volumeMounts` values that apply to all components, merged with the existing per-component `extraVolumes`/`extraVolumeMounts`.
+* Add global `topologySpreadConstraints` applied to all workload pods and merged with per-component topology spread constraints.
+* Merge upstream Quickwit Helm chart version 0.8.5.
+
 ## 0.4.2
 
 * Update Docker image to `v0.1.29`.

@@ -90,7 +90,7 @@ spec:
               mountPath: /quickwit/
             - name: data
               mountPath: /quickwit/qwdata
-            {{- with .Values.intake.extraVolumeMounts }}
+            {{- with concat (.Values.volumeMounts | default list) (.Values.intake.extraVolumeMounts | default list) }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           resources:
@@ -106,23 +106,24 @@ spec:
             name: {{ include "quickwit.fullname" . }}-intake
         - name: data
           emptyDir: {}
-        {{- with .Values.intake.extraVolumes }}
+        {{- with concat (.Values.volumes | default list) (.Values.intake.extraVolumes | default list) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- with .Values.intake.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with merge (dict) .Values.intake.affinity .Values.affinity }}
+      {{- with merge (dict) (.Values.intake.affinity | default dict) (.Values.affinity | default dict) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := concat .Values.tolerations .Values.intake.tolerations | compact | uniq }}
+      {{- $tolerations := concat (.Values.tolerations | default list) (.Values.intake.tolerations | default list) | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
-      {{- with .Values.intake.topologySpreadConstraints }}
+      {{- $tsc := concat (.Values.topologySpreadConstraints | default list) (.Values.intake.topologySpreadConstraints | default list) | compact }}
+      {{- if $tsc }}
       topologySpreadConstraints:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml $tsc | nindent 8 }}
       {{- end }}
       {{- if .Values.intake.runtimeClassName }}
       runtimeClassName: {{ .Values.intake.runtimeClassName | quote }}
