@@ -45,12 +45,25 @@ func TestHostProfilerSeccomp(t *testing.T) {
 	profileRef := *hpContainer.SecurityContext.SeccompProfile.LocalhostProfile
 	assert.Regexp(t, `^host-profiler-[0-9a-f]{8}$`, profileRef)
 
+	// seccomp-root volume must be present.
+	var seccompVolume *corev1.Volume
+	for i := range ds.Spec.Template.Spec.Volumes {
+		if ds.Spec.Template.Spec.Volumes[i].Name == "host-profiler-seccomp-root" {
+			seccompVolume = &ds.Spec.Template.Spec.Volumes[i]
+			break
+		}
+	}
+	require.NotNil(t, seccompVolume, "host-profiler-seccomp-root volume should be present when seccomp is enabled")
+	require.NotNil(t, seccompVolume.HostPath, "host-profiler-seccomp-root volume should be a hostPath volume")
+	assert.Equal(t, "/var/lib/kubelet/seccomp", seccompVolume.HostPath.Path)
+
 	// Init container copies to the matching hashed filename.
 	initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
-	require.True(t, ok, "host-profiler-seccomp-setup init container should be present")
+	require.True(t, ok, "host-profiler-seccomp-setup init container should be present when seccomp is enabled")
 	assert.Equal(t, "myreg/host-profiler:v1.2.3", initContainer.Image)
 	assert.True(t, containsString(initContainer.Command, "/host/var/lib/kubelet/seccomp/"+profileRef),
 		"init container cp destination should match the seccomp profile name; command: %v", initContainer.Command)
+
 }
 
 func TestHostProfilerSeccompDisabled(t *testing.T) {
