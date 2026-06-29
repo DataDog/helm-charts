@@ -166,6 +166,15 @@ tolerations: []
 # Global affinity settings applied to all deployments
 affinity: {}
 
+# -- Configure topology spread constraints applied to all workload Pods.
+topologySpreadConstraints: []
+
+# volumes -- Additional volumes to use with all Pods. Merged with per-component `extraVolumes`.
+volumes: []
+
+# volumeMounts -- Additional volumes to mount into all Quickwit containers. Merged with per-component `extraVolumeMounts`.
+volumeMounts: []
+
 searcher:
   # -- Pod size for the searcher. Determines resource limits/requests and config tuning parameters. Valid values: medium, large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
   podSize: xlarge
@@ -215,19 +224,19 @@ searcher:
   startupProbe:
     httpGet:
       path: /health/livez
-      port: rest
+      port: health
     failureThreshold: 12
     periodSeconds: 5
 
   livenessProbe:
     httpGet:
       path: /health/livez
-      port: rest
+      port: health
 
   readinessProbe:
     httpGet:
       path: /health/readyz
-      port: rest
+      port: health
 
   # StatefulSet allows you to relax its ordering guarantees
   #   - OrderedReady
@@ -356,19 +365,19 @@ indexer:
   startupProbe:
     httpGet:
       path: /health/livez
-      port: rest
+      port: health
     failureThreshold: 12
     periodSeconds: 5
 
   livenessProbe:
     httpGet:
       path: /health/livez
-      port: rest
+      port: health
 
   readinessProbe:
     httpGet:
       path: /health/readyz
-      port: rest
+      port: health
 
   # StatefulSet allows you to relax its ordering guarantees
   #   - OrderedReady
@@ -502,19 +511,19 @@ metastore:
   startupProbe:
     httpGet:
       path: /health/livez
-      port: rest
+      port: health
     failureThreshold: 12
     periodSeconds: 5
 
   livenessProbe:
     httpGet:
       path: /health/livez
-      port: rest
+      port: health
 
   readinessProbe:
     httpGet:
       path: /health/readyz
-      port: rest
+      port: health
 
   # Override args for starting container
   args: []
@@ -585,19 +594,19 @@ control_plane:
   startupProbe:
     httpGet:
       path: /health/livez
-      port: rest
+      port: health
     failureThreshold: 12
     periodSeconds: 5
 
   livenessProbe:
     httpGet:
       path: /health/livez
-      port: rest
+      port: health
 
   readinessProbe:
     httpGet:
       path: /health/readyz
-      port: rest
+      port: health
 
   # Override args for starting container
   args: []
@@ -664,19 +673,19 @@ janitor:
   startupProbe:
     httpGet:
       path: /health/livez
-      port: rest
+      port: health
     failureThreshold: 12
     periodSeconds: 5
 
   livenessProbe:
     httpGet:
       path: /health/livez
-      port: rest
+      port: health
 
   readinessProbe:
     httpGet:
       path: /health/readyz
-      port: rest
+      port: health
 
   # Override args for starting container
   args: []
@@ -916,6 +925,9 @@ config:
   listen_address: 0.0.0.0
   gossip_listen_port: 7282
   cloudprem_listen_port: 7283
+  health:
+    # Dedicated plaintext health check server used by health checks.
+    listen_port: 7284
   data_dir: /quickwit/qwdata
   grpc:
     keep_alive:
