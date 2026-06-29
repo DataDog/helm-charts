@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.229.0
+
+* Seccomp toggle for Host Profiler ([#2755](https://github.com/DataDog/helm-charts/pull/2755)).
+
 ## 3.228.0
 
 * Enable Remote Configuration on the Cluster Agent when `datadog.kubernetesActions.enabled` is set. The Kubernetes Actions product receives its configuration over Remote Configuration, so `DD_REMOTE_CONFIGURATION_ENABLED` is now set to `true` on the Cluster Agent whenever Kubernetes Actions is enabled (alongside the existing admission controller remote instrumentation, private action runner, and workload autoscaling triggers).
