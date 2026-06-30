@@ -93,7 +93,7 @@ spec:
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
             {{- end }}
-            {{- with .Values.janitor.extraVolumeMounts }}
+            {{- with concat (.Values.volumeMounts | default list) (.Values.janitor.extraVolumeMounts | default list) }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           resources:
@@ -112,23 +112,24 @@ spec:
           configMap:
             name: {{ .name }}
         {{- end }}
-        {{- with .Values.janitor.extraVolumes }}
+        {{- with concat (.Values.volumes | default list) (.Values.janitor.extraVolumes | default list) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- with .Values.janitor.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with merge (dict) .Values.janitor.affinity .Values.affinity }}
+      {{- with merge (dict) (.Values.janitor.affinity | default dict) (.Values.affinity | default dict) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := concat .Values.tolerations .Values.janitor.tolerations | compact | uniq }}
+      {{- $tolerations := concat (.Values.tolerations | default list) (.Values.janitor.tolerations | default list) | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
-      {{- with .Values.janitor.topologySpreadConstraints }}
+      {{- $tsc := concat (.Values.topologySpreadConstraints | default list) (.Values.janitor.topologySpreadConstraints | default list) | compact }}
+      {{- if $tsc }}
       topologySpreadConstraints:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml $tsc | nindent 8 }}
       {{- end }}
       {{- if .Values.janitor.runtimeClassName }}
       runtimeClassName: {{ .Values.janitor.runtimeClassName | quote }}

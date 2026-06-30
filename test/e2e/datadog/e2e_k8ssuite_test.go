@@ -6,18 +6,19 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"time"
 
 	"github.com/DataDog/datadog-agent/pkg/util/testutil/flake"
-	"github.com/DataDog/datadog-agent/test/fakeintake/aggregator"
-	"github.com/DataDog/datadog-agent/test/fakeintake/client"
+	"github.com/DataDog/datadog-agent/test/e2e-framework/components/datadog/kubernetesagentparams"
 	"github.com/DataDog/datadog-agent/test/e2e-framework/testing/e2e"
 	"github.com/DataDog/datadog-agent/test/e2e-framework/testing/environments"
 	gcpkubernetes "github.com/DataDog/datadog-agent/test/e2e-framework/testing/provisioners/gcp/kubernetes"
 	"github.com/DataDog/datadog-agent/test/e2e-framework/testing/runner"
+	"github.com/DataDog/datadog-agent/test/fakeintake/aggregator"
+	"github.com/DataDog/datadog-agent/test/fakeintake/client"
 	"github.com/DataDog/helm-charts/test/common"
-	"github.com/DataDog/datadog-agent/test/e2e-framework/components/datadog/kubernetesagentparams"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
@@ -52,6 +53,56 @@ func datadogChartPath() string {
 		panic(fmt.Sprintf("datadogChartPath: filepath.Abs(): %v", err))
 	}
 	return chartPath
+}
+
+func isLinuxNodeAgentPod(pod corev1.Pod) bool {
+	return strings.Contains(pod.Name, "dda-linux-datadog") &&
+		!strings.Contains(pod.Name, "cluster-agent") &&
+		!strings.Contains(pod.Name, "clusterchecks")
+}
+
+func isClusterAgentPod(pod corev1.Pod) bool {
+	return strings.Contains(pod.Name, "cluster-agent")
+}
+
+func isClusterChecksPod(pod corev1.Pod) bool {
+	return strings.Contains(pod.Name, "dda-linux-datadog-clusterchecks")
+}
+
+func isNginxPod(pod corev1.Pod) bool {
+	return strings.Contains(pod.Name, "nginx")
+}
+
+func assertRunningPod(c *assert.CollectT, pods []corev1.Pod, label string, match func(corev1.Pod) bool) (corev1.Pod, bool) {
+	var firstMatch corev1.Pod
+	found := false
+	for _, pod := range pods {
+		if !match(pod) {
+			continue
+		}
+		if pod.Status.Phase == corev1.PodRunning {
+			return pod, true
+		}
+		if !found {
+			firstMatch = pod
+			found = true
+		}
+	}
+
+	assert.Truef(c, found, "%s not found. Pods: %s", label, podPhaseSummary(pods))
+	if found {
+		assert.Equalf(c, corev1.PodRunning, firstMatch.Status.Phase, "%s is not running: %s. Pods: %s", label, firstMatch.Status.Phase, podPhaseSummary(pods))
+	}
+	return corev1.Pod{}, false
+}
+
+func podPhaseSummary(pods []corev1.Pod) string {
+	phases := make([]string, 0, len(pods))
+	for _, pod := range pods {
+		phases = append(phases, fmt.Sprintf("%s=%s", pod.Name, pod.Status.Phase))
+	}
+	sort.Strings(phases)
+	return strings.Join(phases, ", ")
 }
 
 func (s *k8sSuite) testGenericK8sAutopilot() {
@@ -99,17 +150,10 @@ func (s *k8sSuite) testGenericK8sLogs() {
 				return
 			}
 
-			var agent corev1.Pod
-			containsAgent := false
-			for _, pod := range agentPods.Items {
-				if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
-					containsAgent = true
-					agent = pod
-					break
-				}
+			_, ok := assertRunningPod(c, agentPods.Items, "Agent", isLinuxNodeAgentPod)
+			if !ok {
+				return
 			}
-			assert.True(c, containsAgent, "Agent not found")
-			assert.Equalf(c, corev1.PodPhase("Running"), agent.Status.Phase, "Agent is not running: %s", agent.Status.Phase)
 
 			s.verifyAPILogs(c)
 		}, 5*time.Minute, 15*time.Second, "could not validate logs collection in time")
@@ -128,29 +172,12 @@ func (s *k8sSuite) testGenericK8sAutodiscovery() {
 				return
 			}
 
-			var nginx corev1.Pod
-			containsNginx := false
-			for _, pod := range res.Items {
-				if strings.Contains(pod.Name, "nginx") {
-					containsNginx = true
-					nginx = pod
-					break
-				}
+			if _, ok := assertRunningPod(c, res.Items, "Nginx", isNginxPod); !ok {
+				return
 			}
-			assert.True(c, containsNginx, "Nginx pod not found")
-			assert.Equalf(c, corev1.PodPhase("Running"), nginx.Status.Phase, "Nginx is not running: %s", nginx.Status.Phase)
-
-			var agent corev1.Pod
-			containsAgent := false
-			for _, pod := range res.Items {
-				if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
-					containsAgent = true
-					agent = pod
-					break
-				}
+			if _, ok := assertRunningPod(c, res.Items, "Agent", isLinuxNodeAgentPod); !ok {
+				return
 			}
-			assert.True(c, containsAgent, "Agent not found")
-			assert.Equalf(c, corev1.PodPhase("Running"), agent.Status.Phase, "Agent is not running: %s", agent.Status.Phase)
 
 			s.verifyHTTPCheck(c)
 		}, 5*time.Minute, 15*time.Second, "could not validate http_check in time")
@@ -180,6 +207,9 @@ datadog:
     tlsVerify: false
   kubeStateMetricsCore:
     useClusterCheckRunners: true
+providers:
+  gke:
+    cos: true
 clusterChecksRunner:
   enabled: true`)}
 
@@ -197,17 +227,9 @@ clusterChecksRunner:
 				return
 			}
 
-			var agent corev1.Pod
-			containsCCR := false
-			for _, pod := range res.Items {
-				if strings.Contains(pod.Name, "dda-linux-datadog-clusterchecks") {
-					containsCCR = true
-					agent = pod
-					break
-				}
+			if _, ok := assertRunningPod(c, res.Items, "Agent cluster check runner", isClusterChecksPod); !ok {
+				return
 			}
-			assert.True(c, containsCCR, "Agent cluster check runner not found")
-			assert.Equalf(c, corev1.PodPhase("Running"), agent.Status.Phase, "Agent cluster check runner is not running: %s", agent.Status.Phase)
 
 			s.verifyKSMCheck(c)
 		}, 10*time.Minute, 15*time.Second, "could not validate kubernetes_state_core (cluster check on CCR) check in time")

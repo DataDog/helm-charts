@@ -1107,6 +1107,12 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
     useClusterCheckRunners: false
 
+  kubernetesActions:
+    # datadog.kubernetesActions.enabled -- Set this to true to enable the Kubernetes Actions feature on the Cluster Agent.
+    # This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog
+    # Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater.
+    enabled: false
+
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
     # This requires clusterAgent.enabled to be set to true
@@ -2007,6 +2013,9 @@ clusterAgent:
   additionalLabels: {}
     # key: "value"
 
+  # clusterAgent.instanceLabelOverride -- Override the `app.kubernetes.io/instance` label on the Cluster Agent deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+  instanceLabelOverride:  # "datadog"
+
   # clusterAgent.containerExclude -- Exclude containers from the Cluster Agent
   # Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+)
 
@@ -2085,7 +2094,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.26
+    tag: 1.1.27
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -2315,6 +2324,14 @@ agents:
 
       # agents.containers.agent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
+
+      # agents.containers.agent.command -- Override the default `agent run` entrypoint for the agent container.
+      # Useful for wrapping the agent in a shell entrypoint (e.g. to set environment variables based on
+      # node-level information before `exec`-ing the agent). When unset, the container runs `agent run`.
+      # Not supported on GKE Autopilot or GDC: the Datadog WorkloadAllowlist requires the agent container
+      # command to be exactly `["agent", "run"]` on those providers, so setting this value with
+      # `providers.gke.autopilot=true` or `providers.gke.gdc=true` fails at template render time.
+      command: []
 
     privateActionRunner:
       # agents.containers.privateActionRunner.env -- Additional environment variables for the private-action-runner container
@@ -2740,6 +2757,9 @@ agents:
   additionalLabels: {}
     # key: "value"
 
+  # agents.instanceLabelOverride -- Override the `app.kubernetes.io/instance` label on the Agent daemonset and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+  instanceLabelOverride:  # "datadog"
+
   # agents.useConfigMap -- Configures a configmap to provide the agent configuration. Use this in combination with the `agents.customAgentConfig` parameter.
   useConfigMap:  # false
 
@@ -3032,6 +3052,9 @@ clusterChecksRunner:
   additionalLabels: {}
     # key: "value"
 
+  # clusterChecksRunner.instanceLabelOverride -- Override the `app.kubernetes.io/instance` label on the cluster checks runner deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+  instanceLabelOverride:  # "datadog"
+
   # clusterChecksRunner.securityContext -- Allows you to overwrite the default PodSecurityContext on the clusterchecks pods.
   securityContext: {}
 
@@ -3156,6 +3179,10 @@ providers:
 
     # providers.gke.gdc -- Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC)
     gdc: false
+
+  flatcar:
+    # providers.flatcar.enabled -- Enable Flatcar Container Linux support. Flatcar mounts `/usr` read-only, so the host `/usr/src` volume is not mounted into system-probe.
+    enabled: false
 
   eks:
     # providers.eks.controlPlaneMonitoring -- Enable control plane monitoring checks in the EKS cluster.

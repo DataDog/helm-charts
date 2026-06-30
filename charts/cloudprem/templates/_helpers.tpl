@@ -184,7 +184,10 @@ Quickwit ports
   protocol: UDP
 - name: cloudprem
   containerPort: 7283
-  protocol:  TCP
+  protocol: TCP
+- name: health
+  containerPort: 7284
+  protocol: TCP
 {{- end }}
 
 

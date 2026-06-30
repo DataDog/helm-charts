@@ -15,6 +15,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internal
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/healthcheck-path: /health/readyz
+    alb.ingress.kubernetes.io/healthcheck-port: "7284"
     {{- else if regexMatch "nginx" $ingressClassName }}
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     {{- end }}

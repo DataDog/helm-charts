@@ -1,5 +1,41 @@
 # Datadog changelog
 
+## 3.229.0
+
+* Add `agents.instanceLabelOverride`, `clusterAgent.instanceLabelOverride`, and `clusterChecksRunner.instanceLabelOverride` to override the `app.kubernetes.io/instance` label on the corresponding workloads. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+
+## 3.228.0
+
+* Enable Remote Configuration on the Cluster Agent when `datadog.kubernetesActions.enabled` is set. The Kubernetes Actions product receives its configuration over Remote Configuration, so `DD_REMOTE_CONFIGURATION_ENABLED` is now set to `true` on the Cluster Agent whenever Kubernetes Actions is enabled (alongside the existing admission controller remote instrumentation, private action runner, and workload autoscaling triggers).
+
+## 3.227.1
+
+* default to CNM direct send if >=7.81.0 ([#2742](https://github.com/DataDog/helm-charts/pull/2742)).
+
+## 3.227.0
+
+* Add `providers.flatcar.enabled` for Flatcar Container Linux. Flatcar's read-only `/usr` caused `system-probe` to fail with `failed to mkdir "/usr/src": read-only file system`; enabling this flag skips the host `/usr/src` mount, as on GKE Autopilot/COS.
+
+## 3.226.0
+
+* Add `agents.containers.agent.command` value to override the default `agent run` entrypoint of the agent container. When unset, the agent container continues to run `agent run` as before. Setting this value on GKE Autopilot or GDC is rejected at template render time to avoid breaking the Datadog WorkloadAllowlist constraint.
+
+## 3.225.1
+
+* Update `fips.image.tag` to `1.1.27` fixing CVEs and updating packages.
+
+## 3.225.0
+
+* Always render the App & API Protection (AppSec) injector cluster-agent RBAC, regardless of `datadog.appsec.injector.enabled`. This keeps the cluster-agent's permissions to clean up the resources its injector controller created (Envoy Gateway `Backend`/`EnvoyExtensionPolicy`, Istio `EnvoyFilter`, Gateway API `ReferenceGrant`, copied `ConfigMap`s, and `Gateway` patches) when the feature is disabled, preventing orphaned resources.
+
+## 3.224.0
+
+* Add `datadog.kubernetesActions.enabled` to enable the Kubernetes Actions feature on the Cluster Agent. When set to `true`, the chart sets `DD_KUBEACTIONS_ENABLED=true` on the Cluster Agent and creates a ClusterRole/ClusterRoleBinding granting permission to delete pods and patch deployments for remediation. Requires Cluster Agent version 7.79.0 or greater.
+
+## 3.223.4
+
+* Grant the Cluster Agent `backends` (`gateway.envoyproxy.io`) RBAC permissions (`get`, `create`, `delete`) when `datadog.appsec.injector.enabled` is set. This is required for the Envoy Gateway App & API Protection (AppSec) UDS sidecar mode, which creates and deletes a `Backend` resource for the ext_proc endpoint.
+
 ## 3.223.3
 
 * Bump the default App & API Protection (AppSec) sidecar processor image tag (`datadog.appsec.injector.sidecar.imageTag`) from `v2.6.0` to `v2.8.2`.

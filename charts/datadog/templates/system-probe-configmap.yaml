@@ -50,6 +50,7 @@ data:
         - {{ . }}
         {{- end }}
       {{- end }}
+      direct_send: {{ include "cnm-use-direct-send" . }}
     service_monitoring_config:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
       {{- if not (eq .Values.datadog.serviceMonitoring.httpMonitoringEnabled nil) }}

@@ -97,6 +97,17 @@ false
 {{- end -}}
 {{- end -}}
 
+{{- define "cnm-use-direct-send" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- if semverCompare ">=7.81.0-0" (include "get-agent-version" .) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
 
 {{- define "check-version" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
@@ -1049,13 +1060,20 @@ Build part-of label
 {{- end }}
 
 {{/*
-Common agent, cluster-agent, and cluster-checks-runner workload template labels
+Common agent, cluster-agent, and cluster-checks-runner workload template labels.
+Per-workload `instanceLabelOverride` overrides the `app.kubernetes.io/instance`
+value (restored from pre-3.140.0 for callers that pin on the previous label, e.g.
+NetworkPolicies).
 */}}
 {{- define "datadog.pod-template-labels" }}
 {{- $ctx := index . 0 }}
 {{- $name := index . 1 }}
+{{- $instance := printf "%s-%s" (include "datadog.fullname" $ctx) $name }}
+{{- if and (eq $name "agent") $ctx.Values.agents.instanceLabelOverride }}{{- $instance = $ctx.Values.agents.instanceLabelOverride }}{{- end }}
+{{- if and (eq $name "cluster-agent") $ctx.Values.clusterAgent.instanceLabelOverride }}{{- $instance = $ctx.Values.clusterAgent.instanceLabelOverride }}{{- end }}
+{{- if and (eq $name "cluster-checks-runner") $ctx.Values.clusterChecksRunner.instanceLabelOverride }}{{- $instance = $ctx.Values.clusterChecksRunner.instanceLabelOverride }}{{- end }}
 app.kubernetes.io/name: "{{ template "datadog.fullname" $ctx }}"
-app.kubernetes.io/instance: {{ template "datadog.fullname" $ctx }}-{{ $name }}
+app.kubernetes.io/instance: {{ $instance | quote }}
 app.kubernetes.io/managed-by: {{ $ctx.Release.Service }}
 app.kubernetes.io/part-of: {{ include "part-of-label" $ctx }}
 {{- end }}
@@ -1379,7 +1397,8 @@ Returns whether or not the underlying OS is Google Container-Optimized-OS
 Note: GKE Autopilot only use COS (see https://cloud.google.com/kubernetes-engine/docs/concepts/node-images)
 */}}
 {{- define "can-mount-host-usr-src" -}}
-{{- if or .Values.providers.gke.autopilot .Values.providers.gke.cos -}}
+{{- /* Flatcar mounts /usr read-only, so the /usr/src hostPath can't be mounted (as on GKE COS/Autopilot). */ -}}
+{{- if or .Values.providers.gke.autopilot .Values.providers.gke.cos .Values.providers.flatcar.enabled -}}
 true
 {{- else -}}
 false
@@ -1401,7 +1420,7 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled)) (not .Values.providers.gke.gdc ) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
 true
 {{- else -}}
 false

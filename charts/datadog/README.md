@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.223.3](https://img.shields.io/badge/Version-3.223.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.229.0](https://img.shields.io/badge/Version-3.229.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -470,6 +470,7 @@ helm install <RELEASE_NAME> \
 |-----|------|---------|-------------|
 | agents.additionalLabels | object | `{}` | Adds labels to the Agent daemonset and pods |
 | agents.affinity | object | `{}` | Allow the DaemonSet to schedule using affinity rules |
+| agents.containers.agent.command | list | `[]` | Override the default `agent run` entrypoint for the agent container. Useful for wrapping the agent in a shell entrypoint (e.g. to set environment variables based on node-level information before `exec`-ing the agent). When unset, the container runs `agent run`. Not supported on GKE Autopilot or GDC: the Datadog WorkloadAllowlist requires the agent container command to be exactly `["agent", "run"]` on those providers, so setting this value with `providers.gke.autopilot=true` or `providers.gke.gdc=true` fails at template render time. |
 | agents.containers.agent.env | list | `[]` | Additional environment variables for the agent container |
 | agents.containers.agent.envDict | object | `{}` | Set environment variables specific to agent container defined in a dict |
 | agents.containers.agent.envFrom | list | `[]` | Set environment variables specific to agent container from configMaps and/or secrets |
@@ -556,6 +557,7 @@ helm install <RELEASE_NAME> \
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
 | agents.image.tag | string | `"7.80.1"` | Define the Agent version to use |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
+| agents.instanceLabelOverride | string | `nil` | Override the `app.kubernetes.io/instance` label on the Agent daemonset and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label. |
 | agents.lifecycle | object | `{}` | Configure the lifecycle of the Agent. Note: The `exec` lifecycle handler is not supported in GKE Autopilot. |
 | agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
 | agents.localService.overrideName | string | `""` | Name of the internal traffic service to target the agent running on the local node |
@@ -648,6 +650,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterAgent.image.repository | string | `nil` | Override default registry + image.name for Cluster Agent |
 | clusterAgent.image.tag | string | `"7.80.1"` | Cluster Agent image tag to use |
+| clusterAgent.instanceLabelOverride | string | `nil` | Override the `app.kubernetes.io/instance` label on the Cluster Agent deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label. |
 | clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus | bool | `false` | Set this to true to disable use_component_status for the kube_apiserver integration. |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
 | clusterAgent.metricsProvider.aggregator | string | `"avg"` | Define the aggregator the cluster agent will use to process the metrics. The options are (avg, min, max, sum) |
@@ -716,6 +719,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
 | clusterChecksRunner.image.tag | string | `"7.80.1"` | Define the Agent version to use |
 | clusterChecksRunner.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
+| clusterChecksRunner.instanceLabelOverride | string | `nil` | Override the `app.kubernetes.io/instance` label on the cluster checks runner deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label. |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
 | clusterChecksRunner.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the cluster checks runners. DEPRECATED. Use datadog.networkPolicy.create instead |
 | clusterChecksRunner.nodeSelector | object | `{}` | Allow the ClusterChecks Deployment to schedule on selected nodes |
@@ -878,6 +882,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubelet.podResourcesSocketDir | string | /var/lib/kubelet/pod-resources | Path (on host) where the kubelet.sock socket for the PodResources API is located |
 | datadog.kubelet.tlsVerify | string | true | Toggle kubelet TLS verification |
 | datadog.kubelet.useApiServer | bool | false | Enable this to query the pod list from the API Server instead of the Kubelet. (Requires Agent 7.65.0+) |
+| datadog.kubernetesActions.enabled | bool | `false` | Set this to true to enable the Kubernetes Actions feature on the Cluster Agent. This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater. |
 | datadog.kubernetesEvents.collectedEventTypes | list | `[{"kind":"Pod","reasons":["Failed","BackOff","Unhealthy","FailedScheduling","FailedMount","FailedAttachVolume"]},{"kind":"Node","reasons":["TerminatingEvictedPod","NodeNotReady","Rebooted","HostPortConflict"]},{"kind":"CronJob","reasons":["SawCompletedJob"]}]` | Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true. |
 | datadog.kubernetesEvents.filteringEnabled | bool | `false` | Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+). |
 | datadog.kubernetesEvents.kubernetesEventResyncPeriodS | string | `nil` | Specify the frequency in seconds at which the Agent should list all events to re-sync following the informer pattern |
@@ -1045,7 +1050,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.26"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"1.1.27"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |
@@ -1144,6 +1149,7 @@ helm install <RELEASE_NAME> \
 | providers.aks.enabled | bool | `false` | Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS. |
 | providers.eks.controlPlaneMonitoring | bool | `false` | Enable control plane monitoring checks in the EKS cluster. |
 | providers.eks.ec2.useHostnameFromFile | bool | `false` | Use hostname from EC2 filesystem instead of fetching from metadata endpoint. |
+| providers.flatcar.enabled | bool | `false` | Enable Flatcar Container Linux support. Flatcar mounts `/usr` read-only, so the host `/usr/src` volume is not mounted into system-probe. |
 | providers.gke.autopilot | bool | `false` | Enables Datadog Agent deployment on GKE Autopilot |
 | providers.gke.cos | bool | `false` | Enables Datadog Agent deployment on GKE with Container-Optimized OS (COS) |
 | providers.gke.gdc | bool | `false` | Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC) |
