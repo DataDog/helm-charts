@@ -38,6 +38,9 @@ spec:
     - port: 7283
       targetPort: cloudprem
       name: cloudprem
+    - port: 7284
+      targetPort: health
+      name: health
   selector:
     {{- include "quickwit.searcher.selectorLabels" . | nindent 4 }}
 {{- end }}
@@ -77,6 +80,9 @@ spec:
       protocol: UDP
     - name: tcp-cloudprem
       port: 7283
+      protocol: TCP
+    - name: tcp-health
+      port: 7284
       protocol: TCP
   selector:
     {{- include "quickwit.selectorLabels" . | nindent 4 }}
@@ -119,6 +125,10 @@ spec:
       {{- if and (eq $type "NodePort") .Values.indexer.grpcNodePort }}
       nodePort: {{ .Values.indexer.grpcNodePort }}
       {{- end }}
+    - port: 7284
+      targetPort: health
+      protocol: TCP
+      name: health
   selector:
     {{- include "quickwit.indexer.selectorLabels" . | nindent 4 }}
 {{- end }}
@@ -160,6 +170,10 @@ spec:
       {{- if and (eq $type "NodePort") .Values.metastore.grpcNodePort }}
       nodePort: {{ .Values.metastore.grpcNodePort }}
       {{- end }}
+    - port: 7284
+      targetPort: health
+      protocol: TCP
+      name: health
   selector:
     {{- include "quickwit.metastore.selectorLabels" . | nindent 4 }}
 ---
@@ -201,6 +215,10 @@ spec:
       {{- if and (eq $type "NodePort") .Values.control_plane.grpcNodePort }}
       nodePort: {{ .Values.control_plane.grpcNodePort }}
       {{- end }}
+    - port: 7284
+      targetPort: health
+      protocol: TCP
+      name: health
   selector:
     {{- include "quickwit.control_plane.selectorLabels" . | nindent 4 }}
 {{- end }}
@@ -243,6 +261,10 @@ spec:
       {{- if and (eq $type "NodePort") .Values.janitor.grpcNodePort }}
       nodePort: {{ .Values.janitor.grpcNodePort }}
       {{- end }}
+    - port: 7284
+      targetPort: health
+      protocol: TCP
+      name: health
   selector:
     {{- include "quickwit.janitor.selectorLabels" . | nindent 4 }}
 {{- end }}
