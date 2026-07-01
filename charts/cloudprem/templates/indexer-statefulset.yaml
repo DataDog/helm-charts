@@ -110,7 +110,7 @@ spec:
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
             {{- end }}
-            {{- with .Values.indexer.extraVolumeMounts }}
+            {{- with concat (.Values.volumeMounts | default list) (.Values.indexer.extraVolumeMounts | default list) }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           resources:
@@ -143,23 +143,24 @@ spec:
           configMap:
             name: {{ .name }}
         {{- end }}
-        {{- with .Values.indexer.extraVolumes }}
+        {{- with concat (.Values.volumes | default list) (.Values.indexer.extraVolumes | default list) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- with .Values.indexer.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with merge (dict) .Values.indexer.affinity .Values.affinity }}
+      {{- with merge (dict) (.Values.indexer.affinity | default dict) (.Values.affinity | default dict) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := concat .Values.tolerations .Values.indexer.tolerations | compact | uniq }}
+      {{- $tolerations := concat (.Values.tolerations | default list) (.Values.indexer.tolerations | default list) | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
-      {{- with .Values.indexer.topologySpreadConstraints }}
+      {{- $tsc := concat (.Values.topologySpreadConstraints | default list) (.Values.indexer.topologySpreadConstraints | default list) | compact }}
+      {{- if $tsc }}
       topologySpreadConstraints:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml $tsc | nindent 8 }}
       {{- end }}
       {{- if .Values.indexer.runtimeClassName }}
       runtimeClassName: {{ .Values.indexer.runtimeClassName | quote }}
