@@ -335,6 +335,11 @@
       readOnly: false
     - name: gpu-devices
       mountPath: /var/run/nvidia-container-devices/all
+    {{- if .Values.providers.gke.cos }}
+    - name: gke-nvidia-driver-lib64
+      mountPath: /host/run/nvidia/driver/usr/lib/x86_64-linux-gnu
+      readOnly: true
+    {{- end }}
     {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket

@@ -249,6 +249,12 @@
 - name: gpu-devices
   hostPath:
     path: /dev/null
+{{- if .Values.providers.gke.cos }}
+- name: gke-nvidia-driver-lib64
+  hostPath:
+    path: /home/kubernetes/bin/nvidia/lib64
+    type: DirectoryOrCreate
+{{- end }}
 {{- end }}
 {{- if .Values.providers.openshift.controlPlaneMonitoring }}
 - name: etcd-certs
