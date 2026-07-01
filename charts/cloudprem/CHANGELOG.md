@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.4.4
+
+* Disable `serviceAccount.automountServiceAccountToken` by default to reduce token exposure on pods that don't need Kubernetes API access.
+* Enable `securityContext.readOnlyRootFilesystem` by default across all workloads for defense-in-depth hardening.
+
 ## 0.4.3
 
 * Add global `volumes` and `volumeMounts` values that apply to all components, merged with the existing per-component `extraVolumes`/`extraVolumeMounts`.
