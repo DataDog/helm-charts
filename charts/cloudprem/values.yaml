@@ -102,6 +102,7 @@ serviceAccount:
   # - eks.amazonaws.com/role-arn: arn:<aws.partition>:iam::<aws.accountId>:role/<serviceAccount.eksRoleName>
   # - eks.amazonaws.com/sts-regional-endpoints: "true"
   eksRoleName: cloudprem
+  automountServiceAccountToken: false
   extraAnnotations: {}
 
 annotations: {}
@@ -114,6 +115,7 @@ podSecurityContext:
 securityContext:
   runAsNonRoot: true
   runAsUser: 1005
+  readOnlyRootFilesystem: true
 
 # If enabled, we index Cloudprem (well, pomsky/quickwit) traces within Cloudprem
 tracingEnabled: false
