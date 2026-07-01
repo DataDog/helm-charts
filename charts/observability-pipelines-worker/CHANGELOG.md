@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.18.0
+
+* Official image `2.18.0`
+
 ## 2.17.2
 
 * Official image `2.17.2`
