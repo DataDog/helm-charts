@@ -1,6 +1,6 @@
 dependencies:
   - name: datadog-crds
-    version: 2.21.0
+    version: 2.22.0
     repository: https://helm.datadoghq.com
     # Ordering matters here. Helm uses the first condition with a defined (non-nil) value. Conditions with an
     # explicit false default (e.g. clusterAgent.metricsProvider.useDatadogMetrics) must come last, otherwise
@@ -17,7 +17,7 @@ dependencies:
     repository: https://helm.datadoghq.com
     condition: datadog.csi.enabled
   - name: datadog-operator
-    version: 2.23.1
+    version: 2.24.0
     repository: https://helm.datadoghq.com
     condition: datadog.operator.enabled
     alias: operator

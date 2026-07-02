@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.230.0
+
+* Bump Datadog Operator chart dependency to 2.24.0.
+* Bump Datadog CRD chart dependency to 2.22.0.
+* Bump Operator image tag to 1.28.0.
+
 ## 3.229.0
 
 * Add `agents.instanceLabelOverride`, `clusterAgent.instanceLabelOverride`, and `clusterChecksRunner.instanceLabelOverride` to override the `app.kubernetes.io/instance` label on the corresponding workloads. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
