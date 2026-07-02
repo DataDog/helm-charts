@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.24.0-dev.5](https://img.shields.io/badge/Version-2.24.0--dev.5-informational?style=flat-square) ![AppVersion: 1.28.0-rc.4](https://img.shields.io/badge/AppVersion-1.28.0--rc.4-informational?style=flat-square)
+![Version: 2.24.0-dev.6](https://img.shields.io/badge/Version-2.24.0--dev.6-informational?style=flat-square) ![AppVersion: 1.28.0-rc.4](https://img.shields.io/badge/AppVersion-1.28.0--rc.4-informational?style=flat-square)
 
 ## Values
 
@@ -61,6 +61,7 @@
 | remoteConfiguration.enabled | bool | `false` | If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set. |
 | replicaCount | int | `1` | Number of instances of Datadog Operator |
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
+| revisionHistoryLimit | int | `10` | The number of ReplicaSet revisions to keep in the Deployment for rollback purposes |
 | secretBackend.arguments | string | `""` | Specifies the space-separated arguments passed to the command that implements the secret backend api |
 | secretBackend.command | string | `""` | Specifies the path to the command that implements the secret backend api |
 | secretBackend.refreshInterval | string | `nil` | Specifies the secret backend refresh interval in seconds. |

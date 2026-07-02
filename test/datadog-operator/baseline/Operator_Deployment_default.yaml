@@ -7,12 +7,13 @@ metadata:
   namespace: datadog-agent
   labels:
     app.kubernetes.io/name: datadog-operator
-    helm.sh/chart: datadog-operator-2.24.0-dev.5
+    helm.sh/chart: datadog-operator-2.24.0-dev.6
     app.kubernetes.io/instance: datadog-operator
     app.kubernetes.io/version: "1.28.0-rc.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app.kubernetes.io/name: datadog-operator
@@ -32,7 +33,7 @@ spec:
             "metrics": ["*"]
           }]
     spec:
-      serviceAccountName: datadog-operator 
+      serviceAccountName: datadog-operator
       containers:
         - name: datadog-operator
           image: "registry.datadoghq.com/operator:1.28.0-rc.4"
