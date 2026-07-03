@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.229.1
+
+* Mount GKE COS NVIDIA driver libraries into the Agent and system-probe containers when GPU monitoring is enabled with `providers.gke.cos=true`.
+
 ## 3.229.0
 
 * Add `agents.instanceLabelOverride`, `clusterAgent.instanceLabelOverride`, and `clusterChecksRunner.instanceLabelOverride` to override the `app.kubernetes.io/instance` label on the corresponding workloads. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
