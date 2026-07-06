@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.27.0
+    app.kubernetes.io/version: 1.28.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -454,7 +454,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.27.0
+    app.kubernetes.io/version: 1.28.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -639,6 +639,7 @@ rules:
       - create
       - get
       - list
+      - patch
       - watch
   - apiGroups:
       - autoscaling
@@ -682,6 +683,23 @@ rules:
       - list
       - patch
       - update
+      - watch
+  - apiGroups:
+      - configuration.konghq.com
+      - consul.hashicorp.com
+      - core.haproxy.org
+      - datadoghq.com
+      - gateway.envoyproxy.io
+      - ingress.v1.haproxy.org
+      - karpenter.azure.com
+      - kuma.io
+      - mesh.consul.hashicorp.com
+      - policy.linkerd.io
+      - traefik.containo.us
+    resources:
+      - '*'
+    verbs:
+      - list
       - watch
   - apiGroups:
       - coordination.k8s.io
@@ -769,14 +787,6 @@ rules:
     verbs:
       - '*'
   - apiGroups:
-      - datadoghq.com
-      - karpenter.azure.com
-    resources:
-      - '*'
-    verbs:
-      - list
-      - watch
-  - apiGroups:
       - discovery.k8s.io
     resources:
       - endpointslices
@@ -797,7 +807,9 @@ rules:
   - apiGroups:
       - gateway.envoyproxy.io
     resources:
+      - backends
       - envoyextensionpolicies
+      - envoypatchpolicies
     verbs:
       - create
       - delete
@@ -816,12 +828,29 @@ rules:
   - apiGroups:
       - gateway.networking.k8s.io
     resources:
+      - grpcroutes
+      - listenersets
+      - tlsroutes
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
       - referencegrants
     verbs:
       - create
       - delete
       - get
       - patch
+  - apiGroups:
+      - k8s.nginx.org
+    resources:
+      - virtualserverroutes
+      - virtualservers
+    verbs:
+      - list
+      - watch
   - apiGroups:
       - karpenter.sh
     resources:
@@ -851,11 +880,37 @@ rules:
   - apiGroups:
       - networking.istio.io
     resources:
+      - destinationrules
+      - serviceentries
+      - sidecars
+      - virtualservices
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - networking.istio.io
+    resources:
       - envoyfilters
     verbs:
       - create
       - delete
       - get
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - gateways
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingressclasses
+    verbs:
+      - get
+      - list
+      - watch
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -950,6 +1005,13 @@ rules:
       - volumeattachments
     verbs:
       - get
+      - list
+      - watch
+  - apiGroups:
+      - traefik.io
+    resources:
+      - ingressroutes
+    verbs:
       - list
       - watch
   - apiGroups:
@@ -2521,7 +2583,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.27.0
+    app.kubernetes.io/version: 1.28.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2586,7 +2648,7 @@ spec:
               value: "true"
             - name: DD_REGISTRY_OVERRIDE_DEFAULT
               value: "true"
-          image: registry.datadoghq.com/operator:1.27.0
+          image: registry.datadoghq.com/operator:1.28.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:

@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.230.0
+
+* Bump Datadog Operator chart dependency to 2.24.0.
+* Bump Datadog CRD chart dependency to 2.22.0.
+* Bump Operator image tag to 1.28.0.
+
 ## 3.229.1
 
 * Mount GKE COS NVIDIA driver libraries into the Agent and system-probe containers when GPU monitoring is enabled with `providers.gke.cos=true`.
