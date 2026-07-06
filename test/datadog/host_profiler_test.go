@@ -72,12 +72,16 @@ func TestHostProfilerSeccompDisabled(t *testing.T) {
 
 	ds := renderHostProfilerDaemonSet(t, overrides)
 
-	// Container must not carry a seccomp profile, but other hardening still applies.
+	// Container must run Unconfined, but other hardening still applies.
 	hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
 	require.True(t, ok, "host-profiler container should be present")
 	require.NotNil(t, hpContainer.SecurityContext)
-	assert.Nil(t, hpContainer.SecurityContext.SeccompProfile,
-		"host-profiler should have no seccomp profile when datadog.hostProfiler.seccomp.enabled=false")
+	require.NotNil(t, hpContainer.SecurityContext.SeccompProfile,
+		"host-profiler should carry a seccomp profile when datadog.hostProfiler.seccomp.enabled=false")
+	assert.Equal(t, corev1.SeccompProfileTypeUnconfined, hpContainer.SecurityContext.SeccompProfile.Type,
+		"host-profiler should run Unconfined when datadog.hostProfiler.seccomp.enabled=false")
+	assert.Nil(t, hpContainer.SecurityContext.SeccompProfile.LocalhostProfile,
+		"Unconfined profile should not reference a localhost profile")
 
 	// Seccomp setup init container must be absent.
 	_, ok = getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")

@@ -284,6 +284,19 @@ false
 {{- end -}}
 
 {{/*
+Return the seccomp profile to apply to the host-profiler container: the hashed localhost
+profile when seccomp is enabled, otherwise "unconfined" so the container runs without a
+seccomp profile.
+*/}}
+{{- define "host-profiler-seccomp-profile" -}}
+{{- if eq (include "should-enable-host-profiler-seccomp" .) "true" -}}
+localhost/{{ include "host-profiler-seccomp-name" . }}
+{{- else -}}
+unconfined
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the seccomp profile filename for the host-profiler, scoped to the image ref
 to avoid races when multiple host-profiler versions coexist on the same node.
 */}}
