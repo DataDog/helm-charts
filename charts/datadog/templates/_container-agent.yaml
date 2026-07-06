@@ -335,6 +335,11 @@
       readOnly: false
     - name: gpu-devices
       mountPath: /var/run/nvidia-container-devices/all
+    {{- if .Values.providers.gke.cos }}
+    - name: gke-nvidia-driver-lib64
+      mountPath: /host/run/nvidia/driver/usr/lib/x86_64-linux-gnu # the agent automatically looks for the nvidia driver in this path, and it's also not likely to conflict with other libraries
+      readOnly: true
+    {{- end }}
     {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
