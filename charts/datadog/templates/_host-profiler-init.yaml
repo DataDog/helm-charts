@@ -3,10 +3,18 @@
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.initContainers.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | indent 2 }}
   image: "{{ include "ddot-ebpf-image" . }}"
   imagePullPolicy: {{ .Values.datadog.hostProfiler.imagePullPolicy | default .Values.agents.image.pullPolicy }}
+  {{- $dst := printf "/host%s/%s" .Values.datadog.hostProfiler.seccompRoot (include "host-profiler-seccomp-name" .) }}
   command:
+  {{- if .Values.datadog.hostProfiler.loggingSeccomp }}
+  # Prefer the logging profile, falling back to the default if the image predates it.
+  - sh
+  - -c
+  - if [ -f /etc/dd-host-profiler/logging-seccomp.json ]; then cp /etc/dd-host-profiler/logging-seccomp.json {{ $dst }}; else cp /etc/dd-host-profiler/seccomp.json {{ $dst }}; fi
+  {{- else }}
   - cp
   - /etc/dd-host-profiler/seccomp.json
-  - /host{{ .Values.datadog.hostProfiler.seccompRoot }}/{{ include "host-profiler-seccomp-name" . }}
+  - {{ $dst }}
+  {{- end }}
   volumeMounts:
   - name: host-profiler-seccomp-root
     mountPath: /host{{ .Values.datadog.hostProfiler.seccompRoot }}
