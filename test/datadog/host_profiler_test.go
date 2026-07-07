@@ -134,6 +134,21 @@ func TestHostProfilerSCC(t *testing.T) {
 		"SCC should allow the hashed seccomp profile")
 }
 
+func TestHostProfilerLoggingSeccomp(t *testing.T) {
+	overrides := copyMap(hostProfilerBaseOverrides)
+	overrides["datadog.hostProfiler.loggingSeccomp"] = "true"
+	ds := renderHostProfilerDaemonSet(t, overrides)
+	initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
+	require.True(t, ok)
+
+	// Prefer the logging profile, falling back to the default if the image predates it.
+	cmd := strings.Join(initContainer.Command, " ")
+	assert.Contains(t, cmd, "if [ -f /etc/dd-host-profiler/logging-seccomp.json ]",
+		"init container should guard the logging profile copy; command: %v", initContainer.Command)
+	assert.Contains(t, cmd, "cp /etc/dd-host-profiler/logging-seccomp.json")
+	assert.Contains(t, cmd, "cp /etc/dd-host-profiler/seccomp.json", "should fall back to the default profile")
+}
+
 func containsString(slice []string, s string) bool {
 	for _, v := range slice {
 		if strings.Contains(v, s) {
