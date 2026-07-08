@@ -220,6 +220,14 @@ searcher:
     # storage: "1Gi"
     # storageClass: ""
 
+  volumeAttributesClass:
+    enabled: false
+    # driverName is mandatory when volumeAttributesClass is enabled.
+    # driverName: ebs.csi.aws.com
+    # parameters:
+    #   iops: "3000"
+    #   throughput: "125"
+
   updateStrategy: {}
     # type: RollingUpdate
 
@@ -473,6 +481,14 @@ indexer:
     annotations: {}
     # storage: "1Gi"
     # storageClass: ""
+
+  volumeAttributesClass:
+    enabled: false
+    # driverName is mandatory when volumeAttributesClass is enabled.
+    # driverName: ebs.csi.aws.com
+    # parameters:
+    #   iops: "3000"
+    #   throughput: "125"
 
 metastore:
   replicaCount: 2
