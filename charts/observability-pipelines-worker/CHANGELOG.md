@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.19.0
+
+* [observability-pipelines-worker] expose termination grace period to the worker ([#2776](https://github.com/DataDog/helm-charts/pull/2776)).
+
 ## 2.18.0
 
 * Official image `2.18.0`
