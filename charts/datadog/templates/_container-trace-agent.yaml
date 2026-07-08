@@ -50,6 +50,8 @@
       value: {{ .Values.agents.containers.traceAgent.logLevel | default .Values.datadog.logLevel | quote }}
     - name: DD_APM_ENABLED
       value: "true"
+    - name: DD_LOGS_ENABLED
+      value: {{ (default false (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled)) | quote }}
     - name: DD_APM_NON_LOCAL_TRAFFIC
       value: "true"
     - name: DD_APM_RECEIVER_PORT

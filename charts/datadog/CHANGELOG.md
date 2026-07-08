@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.230.1
+
+* Fix `DD_LOGS_ENABLED` not being propagated to the `trace-agent` container, which caused Dynamic Instrumentation (Live Debugger) and Exception Replay payloads to be silently dropped when `datadog.logs.enabled` is `true`.
+
 ## 3.230.0
 
 * Bump Datadog Operator chart dependency to 2.24.0.
