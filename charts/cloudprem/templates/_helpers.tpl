@@ -159,6 +159,33 @@ Intake container ports
 {{- end }}
 
 {{/*
+VolumeAttributesClass name for the indexer.
+*/}}
+{{- define "quickwit.indexer.vacName" -}}
+{{- printf "%s-indexer-vac" .Release.Name }}
+{{- end }}
+
+{{/*
+VolumeAttributesClass name for the searcher.
+*/}}
+{{- define "quickwit.searcher.vacName" -}}
+{{- printf "%s-searcher-vac" .Release.Name }}
+{{- end }}
+
+{{/*
+VolumeAttributesClass apiVersion, auto-detected from cluster capabilities.
+*/}}
+{{- define "quickwit.volumeAttributesClass.apiVersion" -}}
+{{- if .Capabilities.APIVersions.Has "storage.k8s.io/v1/VolumeAttributesClass" -}}
+storage.k8s.io/v1
+{{- else if .Capabilities.APIVersions.Has "storage.k8s.io/v1beta1/VolumeAttributesClass" -}}
+storage.k8s.io/v1beta1
+{{- else -}}
+{{- fail "VolumeAttributesClass is not available on this cluster (requires Kubernetes >= 1.31)" }}
+{{- end -}}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "quickwit.serviceAccountName" -}}
@@ -214,7 +241,7 @@ Quickwit environment
 - name: KUBERNETES_POD_IP
   valueFrom:
     fieldRef:
-      fieldPath: metadata.name
+      fieldPath: status.podIP
 - name: KUBERNETES_LIMITS_CPU
   valueFrom:
     resourceFieldRef:
