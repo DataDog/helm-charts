@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.25.0
+
+* Add `untaintController.enabled` (default `false`) to enable the Datadog Operator Untaint controller. When enabled, the operator is granted `patch` permission on nodes and started with `-untaintControllerEnabled=true` (requires operator v1.28.0+).
+
 ## 2.24.0
 
 * Update Datadog Operator chart for 1.28.0.

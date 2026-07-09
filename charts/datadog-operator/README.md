@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.24.0](https://img.shields.io/badge/Version-2.24.0-informational?style=flat-square) ![AppVersion: 1.28.0](https://img.shields.io/badge/AppVersion-1.28.0-informational?style=flat-square)
+![Version: 2.25.0](https://img.shields.io/badge/Version-2.25.0-informational?style=flat-square) ![AppVersion: 1.28.0](https://img.shields.io/badge/AppVersion-1.28.0-informational?style=flat-square)
 
 ## Values
 
@@ -71,6 +71,7 @@
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDaemonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
+| untaintController.enabled | bool | `false` | Enables the Untaint controller, which removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint from nodes once the Agent is ready. Grants the operator `patch` permission on nodes. Requires v1.28.0+ |
 | volumeMounts | list | `[]` | Specify additional volumes to mount in the container |
 | volumes | list | `[]` | Specify additional volumes to mount in the container |
 | watchNamespaces | list | `[]` | Restricts the Operator to watch its managed resources on specific namespaces unless CRD-specific watchNamespaces properties are set |

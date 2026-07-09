@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 
 	"github.com/DataDog/helm-charts/test/common"
 )
@@ -188,6 +189,43 @@ func Test_operator_chart(t *testing.T) {
 				assert.Equal(t, "unknown", installToolEnv.Value)
 			},
 		},
+		{
+			name: "untaintController disabled by default",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Contains(t, operatorContainer.Args, "-untaintControllerEnabled=false")
+				assert.NotContains(t, operatorContainer.Args, "-untaintControllerEnabled=true")
+			},
+		},
+		{
+			name: "untaintController enabled sets flag",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"untaintController.enabled": "true",
+				},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Contains(t, operatorContainer.Args, "-untaintControllerEnabled=true")
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -252,6 +290,64 @@ func verifyWatchNamespaces(t *testing.T, manifest string) {
 	assert.Equal(t, "monitor-ns", monitorNsEnv.Value)
 	assert.Equal(t, "", sloNsEnv.Value)
 	assert.Nil(t, dapNsEnv)
+}
+
+func Test_operator_untaint_controller_rbac(t *testing.T) {
+	tests := []struct {
+		name      string
+		overrides map[string]string
+		wantPatch bool
+	}{
+		{
+			name:      "untaintController disabled -- no nodes patch rule",
+			overrides: map[string]string{},
+			wantPatch: false,
+		},
+		{
+			name:      "untaintController enabled -- nodes patch rule present",
+			overrides: map[string]string{"untaintController.enabled": "true"},
+			wantPatch: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/clusterrole.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   tt.overrides,
+			})
+			assert.Nil(t, err, "couldn't render template")
+
+			var clusterRole rbacv1.ClusterRole
+			common.Unmarshal(t, manifest, &clusterRole)
+			assert.Equal(t, tt.wantPatch, hasNodesPatchRule(clusterRole.Rules),
+				"unexpected presence of nodes patch rule")
+		})
+	}
+}
+
+func hasNodesPatchRule(rules []rbacv1.PolicyRule) bool {
+	for _, rule := range rules {
+		if !containsString(rule.APIGroups, "") || !containsString(rule.Resources, "nodes") {
+			continue
+		}
+		if len(rule.Verbs) == 1 && rule.Verbs[0] == "patch" {
+			return true
+		}
+	}
+	return false
+}
+
+func containsString(values []string, want string) bool {
+	for _, v := range values {
+		if v == want {
+			return true
+		}
+	}
+	return false
 }
 
 func FindEnvVarByName(envs []v1.EnvVar, name string) *v1.EnvVar {

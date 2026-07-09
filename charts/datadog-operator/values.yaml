@@ -107,6 +107,9 @@ datadogSLO:
 remoteConfiguration:
   # remoteConfiguration.enabled -- If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set.
   enabled: false
+untaintController:
+  # untaintController.enabled -- Enables the Untaint controller, which removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint from nodes once the Agent is ready. Grants the operator `patch` permission on nodes. Requires v1.28.0+
+  enabled: false
 # registryMigrationMode -- Controls gradual migration of Agent image pulls to
 # registry.datadoghq.com. When enabled, DD_REGISTRY_OVERRIDE_* environment variables
 # are added to the Datadog Operator deployment to pull Agent images from the global
