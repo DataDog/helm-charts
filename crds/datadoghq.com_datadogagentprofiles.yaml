@@ -1057,6 +1057,11 @@ spec:
                             enabled:
                               type: boolean
                           type: object
+                        kubernetesActions:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         liveContainerCollection:
                           properties:
                             enabled:
@@ -1955,7 +1960,7 @@ spec:
                               type: string
                             config:
                               additionalProperties:
-                                type: string
+                                x-kubernetes-preserve-unknown-fields: true
                               type: object
                             enableGlobalPermissions:
                               type: boolean
