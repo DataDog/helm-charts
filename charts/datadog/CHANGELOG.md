@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.231.0
+
+* Add `operator.untaintController.enabled` (default `false`). When enabled, the node Agent DaemonSet tolerates the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint and the Datadog Operator untaint controller is enabled to remove that taint once the Agent is ready. Requires Operator v1.28.0+.
+
 ## 3.230.0
 
 * Bump Datadog Operator chart dependency to 2.24.0.

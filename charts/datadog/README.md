@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.230.0](https://img.shields.io/badge/Version-3.230.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.231.0](https://img.shields.io/badge/Version-3.231.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -1085,6 +1085,7 @@ helm install <RELEASE_NAME> \
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | operator.datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
 | operator.image.tag | string | `"1.28.0"` | Define the Datadog Operator version to use |
+| operator.untaintController.enabled | bool | `false` | Enables the Datadog Operator untaint controller (removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint once the Agent is ready) and adds the matching toleration to the Agent DaemonSet so it can schedule on tainted nodes. Requires Operator v1.28.0+ |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
 | otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |

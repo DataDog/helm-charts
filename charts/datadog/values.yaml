@@ -3099,6 +3099,10 @@ operator:
     # operator.datadogSLO.enabled -- Enables the Datadog SLO controller
     enabled: false
 
+  untaintController:
+    # operator.untaintController.enabled -- Enables the Datadog Operator untaint controller (removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint once the Agent is ready) and adds the matching toleration to the Agent DaemonSet so it can schedule on tainted nodes. Requires Operator v1.28.0+
+    enabled: false
+
   datadogCRDs:
     # operator.datadogCRDs.keepCrds -- Set to true to keep the CRDs when the helm chart is uninstalled. This must be set to true if datadog.operator.migration.enabled is set to true.
     keepCrds: false
