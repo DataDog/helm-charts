@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.4.5
+
+* Update Docker image to `v0.1.31`.
+* Add `indexer.volumeAttributesClass` and `searcher.volumeAttributesClass` values to provision a Kubernetes `VolumeAttributesClass` for the indexer/searcher persistent volumes, allowing tuning of volume attributes such as IOPS and throughput. Disabled by default; requires Kubernetes >= 1.31 and a mandatory `driverName` when enabled.
+* Fix the Kubernetes advertise address by setting the `KUBERNETES_POD_IP` environment variable from the pod IP (`status.podIP`) instead of the pod name.
+
 ## 0.4.4
 
 * Disable `serviceAccount.automountServiceAccountToken` by default to reduce token exposure on pods that don't need Kubernetes API access.
