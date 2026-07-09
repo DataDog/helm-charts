@@ -44,7 +44,7 @@ spec:
         runAsUser: 0
       containers:
         - name: csi-node-driver
-          image: "gcr.io/datadoghq/csi-driver:1.2.2"
+          image: "gcr.io/datadoghq/csi-driver:1.3.0"
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true
