@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 func Test_baseline_manifests(t *testing.T) {
@@ -101,10 +102,11 @@ func Test_baseline_manifests(t *testing.T) {
 		{
 			// New GKE Autopilot (>= 1.32.1-gke.1729000) exposes the
 			// WorkloadAllowlist / AllowlistSynchronizer CRDs. The chart installs
-			// the v1.1.0 allowlist (via gke_autopilot_allowlist_synchronizer.yaml)
-			// which exempts the `storage-dir` hostPath and the `DD_APM_ENABLED`
-			// env var, so SSI is enabled. The DaemonSet must carry the matching
-			// `cloud.google.com/matching-allowlist` label pointing at v1.1.0.
+			// the v1.1.0 and v1.1.1 allowlists (via
+			// gke_autopilot_allowlist_synchronizer.yaml). The v1.1.1 allowlist
+			// covers the `registry.k8s.io` CSI registrar image. The DaemonSet must
+			// carry the matching `cloud.google.com/matching-allowlist` label
+			// pointing at v1.1.1.
 			name: "CSI Driver on GKE Autopilot (WorkloadAllowlist)",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-csi-driver",
@@ -120,6 +122,26 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			baselineManifestPath: "./baseline/CSI_Driver_gke_autopilot_workloadallowlist.yaml",
 			assertions:           verifyCSIDriverDaemonSet,
+		},
+		{
+			// Keep the currently available WorkloadAllowlist version until the new
+			// version is confirmed available in all GKE node versions, while also
+			// syncing the new version needed for the registry.k8s.io registrar image.
+			name: "CSI Driver GKE Autopilot AllowlistSynchronizer",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-csi-driver",
+				ChartPath:   "../../charts/datadog-csi-driver",
+				ShowOnly:    []string{"templates/gke_autopilot_allowlist_synchronizer.yaml"},
+				Values:      []string{"../../charts/datadog-csi-driver/values.yaml"},
+				Overrides:   map[string]string{},
+				ExtraArgs: []string{
+					"--api-versions=auto.gke.io/v1/AllowlistSynchronizer",
+					"--api-versions=auto.gke.io/v1/WorkloadAllowlist",
+					"--kube-version=1.32.1-gke.1729000",
+				},
+			},
+			baselineManifestPath: "./baseline/CSI_Driver_gke_autopilot_allowlist_synchronizer.yaml",
+			assertions:           verifyCSIAllowlistSynchronizer,
 		},
 	}
 
@@ -139,6 +161,10 @@ func Test_baseline_manifests(t *testing.T) {
 
 func verifyCSIDriverDaemonSet(t *testing.T, baselineManifestPath, manifest string) {
 	utils.VerifyBaseline(t, baselineManifestPath, manifest, appsv1.DaemonSet{}, appsv1.DaemonSet{})
+}
+
+func verifyCSIAllowlistSynchronizer(t *testing.T, baselineManifestPath, manifest string) {
+	utils.VerifyBaseline(t, baselineManifestPath, manifest, unstructured.Unstructured{}, unstructured.Unstructured{})
 }
 
 func findCSIDriverEnvVar(env []corev1.EnvVar, name string) (corev1.EnvVar, bool) {

@@ -1,6 +1,6 @@
 # datadog-csi-driver
 
-![Version: 0.15.0](https://img.shields.io/badge/Version-0.15.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
+![Version: 0.15.1](https://img.shields.io/badge/Version-0.15.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
 
 Datadog CSI Driver helm chart
 
@@ -31,7 +31,7 @@ Datadog CSI Driver helm chart
 | nodeSelector | object | `{}` | Configure the nodeSelector for the csi driver daemonset pods. |
 | priorityClassName | string | `""` | Name of the priorityClass to apply to the CSI daemonset pods. |
 | registrar.image.pullPolicy | string | `"IfNotPresent"` | CSI registrar image pullPolicy |
-| registrar.image.repository | string | `"k8s.gcr.io/sig-storage/csi-node-driver-registrar"` | Override default registry + image.name for the registrar |
+| registrar.image.repository | string | `"registry.k8s.io/sig-storage/csi-node-driver-registrar"` | Override default registry + image.name for the registrar |
 | registrar.image.tag | string | `"v2.0.1"` | CSI registrar image tag to use |
 | registrar.securityContext | object | `{}` | CSI registrar securityContext |
 | securityContext | object | `{}` | Configure the security context for the csi driver daemonset pods. |
