@@ -110,6 +110,16 @@ remoteConfiguration:
 untaintController:
   # untaintController.enabled -- Enables the Untaint controller, which removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint from nodes once the Agent is ready. Grants the operator `patch` permission on nodes. Requires v1.28.0+
   enabled: false
+  # untaintController.waitForCSIDriver -- When true (requires untaintController.enabled), the taint is removed only after both the node Agent and Datadog CSI node-server pods are Ready. The operator's Pod cache must cover the CSI namespaces (DD_CSIDRIVER_WATCH_NAMESPACE). Requires v1.28.0+
+  waitForCSIDriver: false
+  # untaintController.timeout -- Readiness timeout (Go duration, e.g. "10m") after which the timeout policy is applied even if the Agent is not Ready. Empty uses the operator default (10m).
+  timeout: ""
+  # untaintController.schedulingTimeout -- Scheduling timeout (Go duration, e.g. "5m") applied when no Agent pod has scheduled on the node. Empty uses the operator default (5m).
+  schedulingTimeout: ""
+  # untaintController.timeoutPolicy -- Action when a timeout fires: "remove" (untaint the node anyway) or "keep" (leave the taint and emit a Warning event). Empty uses the operator default (remove).
+  timeoutPolicy: ""
+  # untaintController.eventsEnabled -- Emit Kubernetes Events on Nodes for taint removals and timeout decisions.
+  eventsEnabled: false
 # registryMigrationMode -- Controls gradual migration of Agent image pulls to
 # registry.datadoghq.com. When enabled, DD_REGISTRY_OVERRIDE_* environment variables
 # are added to the Datadog Operator deployment to pull Agent images from the global

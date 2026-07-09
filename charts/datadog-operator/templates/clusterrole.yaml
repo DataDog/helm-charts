@@ -599,13 +599,15 @@ rules:
   - patch
   - update
 {{- end }}
-{{- if .Values.datadogAgentProfile.enabled }}
+{{- if or .Values.datadogAgentProfile.enabled .Values.untaintController.enabled }}
 - apiGroups:
   - ""
   resources:
   - nodes
   verbs:
   - patch
+{{- end }}
+{{- if .Values.datadogAgentProfile.enabled }}
 - apiGroups:
   - datadoghq.com
   resources:
@@ -641,14 +643,6 @@ rules:
   - get
   - patch
   - update
-{{- end }}
-{{- if .Values.untaintController.enabled }}
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  verbs:
-  - patch
 {{- end }}
 {{- if .Values.datadogDashboard.enabled }}
 - apiGroups:
