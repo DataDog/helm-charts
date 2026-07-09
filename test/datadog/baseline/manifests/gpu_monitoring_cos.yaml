@@ -1859,6 +1859,8 @@ spec:
                   name: datadog-cluster-agent
             - name: DD_APM_ENABLED
               value: "true"
+            - name: DD_LOGS_ENABLED
+              value: "false"
             - name: DD_APM_NON_LOCAL_TRAFFIC
               value: "true"
             - name: DD_APM_RECEIVER_PORT
@@ -2060,6 +2062,8 @@ spec:
               value: INFO
             - name: DD_APM_ENABLED
               value: "true"
+            - name: DD_LOGS_ENABLED
+              value: "false"
             - name: DD_APM_NON_LOCAL_TRAFFIC
               value: "true"
             - name: DD_APM_RECEIVER_PORT
