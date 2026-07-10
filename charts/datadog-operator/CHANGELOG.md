@@ -2,7 +2,8 @@
 
 ## 2.25.0
 
-* Add `untaintController` configuration to enable the Datadog Operator Untaint controller (requires operator v1.28.0+). When `untaintController.enabled` is `true`, the operator is granted `patch` permission on nodes and started with `-untaintControllerEnabled=true`. Additional tuning is exposed via `untaintController.waitForCSIDriver`, `untaintController.timeout`, `untaintController.schedulingTimeout`, `untaintController.timeoutPolicy`, and `untaintController.eventsEnabled`.
+* Add `untaintController` configuration to enable the Datadog Operator Untaint controller (requires operator v1.28.0+). When `untaintController.enabled` is `true`, the operator is granted `patch` permission on nodes and started with `-untaintControllerEnabled=true`. Additional tuning is exposed via `untaintController.waitForCSIDriver`, `untaintController.timeout`, `untaintController.schedulingTimeout`, `untaintController.timeoutPolicy`, and `untaintController.eventsEnabled`. See [documentation](https://github.com/DataDog/datadog-operator/blob/main/docs/untaint_controller.md) for more details.
+
 
 ## 2.24.0
 
