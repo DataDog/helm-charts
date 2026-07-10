@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.231.1
+
+* Fix `DD_LOGS_ENABLED` not being propagated to the `trace-agent` container, which caused Dynamic Instrumentation (Live Debugger) and Exception Replay payloads to be silently dropped when `datadog.logs.enabled` is `true`.
+
 ## 3.231.0
 
 * [PROF-15238] Seccomp toggle for Host Profiler ([#2755](https://github.com/DataDog/helm-charts/pull/2755)).
