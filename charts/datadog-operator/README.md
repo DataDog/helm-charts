@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.25.0-dev.1](https://img.shields.io/badge/Version-2.25.0--dev.1-informational?style=flat-square) ![AppVersion: 1.29.0-rc.1](https://img.shields.io/badge/AppVersion-1.29.0--rc.1-informational?style=flat-square)
+![Version: 2.25.0-dev.2](https://img.shields.io/badge/Version-2.25.0--dev.2-informational?style=flat-square) ![AppVersion: 1.29.0-rc.1](https://img.shields.io/badge/AppVersion-1.29.0--rc.1-informational?style=flat-square)
 
 ## Values
 
@@ -71,6 +71,12 @@
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDaemonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
+| untaintController.enabled | bool | `false` | Enables the Untaint controller, which removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint from nodes once the Agent is ready. Grants the operator `patch` permission on nodes. Requires v1.28.0+ |
+| untaintController.eventsEnabled | bool | `false` | Emit Kubernetes Events on Nodes for taint removals and timeout decisions. |
+| untaintController.schedulingTimeout | string | `""` | Scheduling timeout (Go duration, e.g. "5m") applied when no Agent pod has scheduled on the node. Empty uses the operator default (5m). |
+| untaintController.timeout | string | `""` | Readiness timeout (Go duration, e.g. "10m") after which the timeout policy is applied even if the Agent is not Ready. Empty uses the operator default (10m). |
+| untaintController.timeoutPolicy | string | `""` | Action when a timeout fires: "remove" (untaint the node anyway) or "keep" (leave the taint and emit a Warning event). Empty uses the operator default (remove). |
+| untaintController.waitForCSIDriver | bool | `false` | When true (requires untaintController.enabled), the taint is removed only after both the node Agent and Datadog CSI node-server pods are Ready. The operator's Pod cache must cover the CSI namespaces (DD_CSIDRIVER_WATCH_NAMESPACE). Requires v1.28.0+ |
 | volumeMounts | list | `[]` | Specify additional volumes to mount in the container |
 | volumes | list | `[]` | Specify additional volumes to mount in the container |
 | watchNamespaces | list | `[]` | Restricts the Operator to watch its managed resources on specific namespaces unless CRD-specific watchNamespaces properties are set |
