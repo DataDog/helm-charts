@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.231.0
+
+* [PROF-15238] Seccomp toggle for Host Profiler ([#2755](https://github.com/DataDog/helm-charts/pull/2755)).
+
 ## 3.230.1
 
 * Update `fips.image.tag` to `1.1.28` fixing CVEs and updating packages.

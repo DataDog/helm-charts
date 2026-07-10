@@ -811,6 +811,10 @@ datadog:
     image: ""
     # datadog.hostProfiler.imagePullPolicy -- Pull policy for the Host Profiler image. Defaults to agents.image.pullPolicy when unset.
     imagePullPolicy: ""
+    # datadog.hostProfiler.seccomp -- Seccomp profile configuration for the Host Profiler
+    seccomp:
+      # datadog.hostProfiler.seccomp.enabled -- Apply the localhost seccomp profile to the host-profiler container and run the init container that installs it on the node. Disable to run the host-profiler container Unconfined (no init container, no profile installed on the node).
+      enabled: true
     # datadog.hostProfiler.seccompRoot -- Specify the seccomp profile root directory
     seccompRoot: /var/lib/kubelet/seccomp
     # datadog.hostProfiler.apparmor -- Specify an AppArmor profile for the host-profiler container (e.g. "localhost/datadog-host-profiler").
