@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.231.2
+
+* Update the Go Dynamic Instrumentation cache volume mount to `/opt/datadog-agent/run/system-probe/dynamic-instrumentation`, matching the Agent's relocation of that writable state out of `/tmp`, so the SymDB upload cache, probe tombstone, and decompressed debug info persist across container restarts again.
+
 ## 3.231.1
 
 * Fix `DD_LOGS_ENABLED` not being propagated to the `trace-agent` container, which caused Dynamic Instrumentation (Live Debugger) and Exception Replay payloads to be silently dropped when `datadog.logs.enabled` is `true`.
@@ -11,7 +15,6 @@
 ## 3.230.1
 
 * Update `fips.image.tag` to `1.1.28` fixing CVEs and updating packages.
-
 
 ## 3.230.0
 
