@@ -150,9 +150,6 @@
       mountPath: /var/run/nvidia-container-devices/all
 {{- if .Values.providers.gke.cos }}
     - name: gke-nvidia-driver-lib64
-      mountPath: /host/run/nvidia/driver/usr/lib/x86_64-linux-gnu
-      readOnly: true
-    - name: gke-nvidia-driver-lib64
       mountPath: /host/root/run/nvidia/driver/usr/lib/x86_64-linux-gnu
       readOnly: true
 {{- end }}

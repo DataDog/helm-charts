@@ -2305,9 +2305,6 @@ spec:
               readOnly: false
             - mountPath: /var/run/nvidia-container-devices/all
               name: gpu-devices
-            - mountPath: /host/run/nvidia/driver/usr/lib/x86_64-linux-gnu
-              name: gke-nvidia-driver-lib64
-              readOnly: true
             - mountPath: /host/root/run/nvidia/driver/usr/lib/x86_64-linux-gnu
               name: gke-nvidia-driver-lib64
               readOnly: true
