@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.231.3
+
+* Mount GKE COS NVIDIA driver libraries at system-probe's `HOST_ROOT` path so GPU monitoring can find NVML when `providers.gke.cos=true`.
+
 ## 3.231.2
 
 * Update the Go Dynamic Instrumentation cache volume mount to `/opt/datadog-agent/run/system-probe/dynamic-instrumentation`, matching the Agent's relocation of that writable state out of `/tmp`, so the SymDB upload cache, probe tombstone, and decompressed debug info persist across container restarts again.
