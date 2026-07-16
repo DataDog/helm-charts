@@ -5,6 +5,14 @@
 ## FOR AN EFFORTLESS UPGRADE PATH, DO NOT COPY THIS FILE AS YOUR OWN values.yaml.
 ## ONLY SET THE VALUES YOU WANT TO OVERRIDE IN YOUR values.yaml.
 
+# global.apmRegistryAllowList -- Restrict which registries can be used for APM library injection.
+## When non-empty, only libraries from the listed registries will be injected. Enforced by both the
+## admission controller webhook and the CSI driver. An empty list allows all registries (default).
+global:
+  apmRegistryAllowList: []
+  #   - public.ecr.aws/datadog
+  #   - gcr.io/datadoghq
+
 # nameOverride -- Override name of app
 nameOverride:  # ""
 
@@ -43,7 +51,7 @@ registry:  # gcr.io/datadoghq
 # US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io.
 
 ## "auto" (default): enable registry.datadoghq.com for sites where migration is rolled out.
-##   Currently enabled: AP1 (ap1.datadoghq.com).
+##   Currently enabled: AP1 (ap1.datadoghq.com), AP2 (ap2.datadoghq.com), US5 (us5.datadoghq.com), EU1 (datadoghq.eu), US1 (datadoghq.com, when APM is disabled).
 ## "all": enable registry.datadoghq.com for all sites (AP1, AP2, EU, US1, US5).
 ## "": disable migration, keeping site-specific registries.
 registryMigrationMode: "auto"
@@ -175,6 +183,9 @@ datadog:
     rbac:
     # datadog.kubeStateMetricsCore.rbac.create -- If true, create & use RBAC resources
       create: true
+
+    ## Configuring this field changes the default kubernetes_state_core check configuration. Recommended for large clusters to reduce load on the API server.
+    useApiServerCache: false
 
     # datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck -- Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true)
 
@@ -457,7 +468,7 @@ datadog:
   collectEvents: true
 
   # datadog.kubernetesUseEndpointSlices -- Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+).
-  kubernetesUseEndpointSlices: false
+  kubernetesUseEndpointSlices: true
 
   # datadog.kubernetesKubeServiceIgnoreReadiness -- Enable this to attach kube_service tag unconditionally. (Requires Cluster Agent 7.76.0+).
   kubernetesKubeServiceIgnoreReadiness: false
@@ -493,6 +504,10 @@ datadog:
       - kind: CronJob
         reasons:
           - SawCompletedJob
+    # datadog.kubernetesEvents.maxEventsPerRun -- Maximum number of events you wish to collect per check run.
+    maxEventsPerRun:
+    # datadog.kubernetesEvents.kubernetesEventResyncPeriodS -- Specify the frequency in seconds at which the Agent should list all events to re-sync following the informer pattern
+    kubernetesEventResyncPeriodS:
 
   clusterTagger:
     # datadog.clusterTagger.collectKubernetesTags -- Enables Kubernetes resources tags collection.
@@ -515,6 +530,33 @@ datadog:
     # datadog.remoteConfiguration.enabled -- Set to true to enable remote configuration.
     # DEPRECATED: Consider using remoteConfiguration.enabled instead
     enabled: true
+
+  privateActionRunner:
+    # datadog.privateActionRunner.enabled -- Enable the Private Action Runner on the node agent to execute workflow actions
+    enabled: false
+
+    # datadog.privateActionRunner.selfEnroll -- Enable self-enrollment for the Private Action Runner
+    ## When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys
+    ## and store its identity in a local file. Requires leader election to be enabled.
+    selfEnroll: true
+
+    # datadog.privateActionRunner.urn -- URN of the Private Action Runner (required if selfEnroll is false)
+    ## Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id>
+    urn:  # "urn:datadog:private-action-runner:organization:123456:runner:abc-def"
+
+    # datadog.privateActionRunner.privateKey -- Private key for the Private Action Runner (required if selfEnroll is false)
+    ## This key is used to authenticate the runner with Datadog
+    privateKey:  # "<PRIVATE_KEY>"
+
+    # datadog.privateActionRunner.identityFromExistingSecret -- Use existing Secret which stores the Private Action Runner URN and private key
+    ## The secret should contain 'urn' and 'private_key' keys
+    ## If set, this parameter takes precedence over "urn" and "privateKey"
+    identityFromExistingSecret:  # "<PAR_SECRET_NAME>"
+
+    # datadog.privateActionRunner.actionsAllowlist -- List of actions executable by the Private Action Runner
+    actionsAllowlist: []
+    #   - "com.datadoghq.http.request"
+    #   - "com.datadoghq.gitlab.branches.*"
 
   ## Enable logs agent and provide custom configs
   logs:
@@ -677,15 +719,43 @@ datadog:
       # datadog.appsec.injector.enabled -- Enable App & API Protection on your cluster ingress usage across all your cluster at once
       enabled: false
 
-      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio)
+      # datadog.appsec.injector.autoDetect -- Automatically detect and inject supported proxies in the cluster (Envoy Gateway, Istio Gateway API, native Istio Gateway, ingress-nginx)
       autoDetect: true
 
-      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio"
+      # datadog.appsec.injector.mode -- Deployment mode for the AppSec processor. Valid values: "sidecar", "external". Leave empty to use the agent default (sidecar). Upgrading users who rely on the external-processor flow (processor.address / processor.service.*) should set this to "external" explicitly.
+      mode: ""
+
+      # datadog.appsec.injector.proxies -- Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway", "ingress-nginx"
       # When autoDetect is true, detected proxies are added to this list
       # When autoDetect is false, only proxies in this list are enabled
       proxies: []
-      # - envoy-gateway: Uses the EnvoyExtensionPolicy CRD of Envoy Gateway to inject the AppSec extension
-      # - istio: Adds a EnvoyFilter to the istio root namespace to inject the AppSec extension
+      # - envoy-gateway: Configures Envoy Gateway resources for AppSec injection
+      # - istio: Watches Istio-managed Kubernetes Gateway API GatewayClasses for AppSec injection
+      # - istio-gateway: Watches native Istio Gateway resources for AppSec injection
+      # - ingress-nginx: Watches IngressClass resources to discover ingress-nginx controllers and injects the nginx-datadog module via an init container
+
+      sidecar:
+        # datadog.appsec.injector.sidecar.image -- Container image for the AppSec sidecar processor
+        image: "ghcr.io/datadog/dd-trace-go/service-extensions-callout"
+        # datadog.appsec.injector.sidecar.imageTag -- Image tag for the AppSec sidecar processor
+        imageTag: "v2.8.2"
+        # datadog.appsec.injector.sidecar.port -- Listening port for the AppSec sidecar processor
+        port: 8080
+        # datadog.appsec.injector.sidecar.healthPort -- Health check port for the AppSec sidecar processor
+        healthPort: 8081
+        # datadog.appsec.injector.sidecar.bodyParsingSizeLimit -- Request body parsing size limit in bytes for the AppSec sidecar processor. Set to 0 to leave it unset (default agent behavior). Set to a negative value (e.g. -1) to disable body parsing entirely.
+        bodyParsingSizeLimit: 0
+        resources:
+          requests:
+            # datadog.appsec.injector.sidecar.resources.requests.cpu -- CPU request for the AppSec sidecar processor
+            cpu: "10m"
+            # datadog.appsec.injector.sidecar.resources.requests.memory -- Memory request for the AppSec sidecar processor
+            memory: "128Mi"
+          limits:
+            # datadog.appsec.injector.sidecar.resources.limits.cpu -- Optional CPU limit for the AppSec sidecar processor
+            cpu: ""
+            # datadog.appsec.injector.sidecar.resources.limits.memory -- Optional memory limit for the AppSec sidecar processor
+            memory: ""
 
       processor:
         # datadog.appsec.injector.processor.address -- Address of the AppSec processor service
@@ -703,6 +773,10 @@ datadog:
           name: ""
           # datadog.appsec.injector.processor.service.namespace -- Namespace where the AppSec processor service is deployed
           namespace: ""
+
+      nginx:
+        # datadog.appsec.injector.nginx.moduleMountPath -- Path inside the ingress-nginx controller pod where the nginx-datadog module .so is mounted from the shared emptyDir
+        moduleMountPath: "/modules_mount"
 
   ## OTLP ingest related configuration
   otlp:
@@ -735,20 +809,17 @@ datadog:
     enabled: false
     # datadog.hostProfiler.image -- Image the Host Profiler. This parameter is experimental and will be removed once official image is available.
     image: ""
-    # datadog.hostProfiler.config -- Host Profiler configuration (experimental)
-    config: null
-    # datadog.hostProfiler.configMap -- Use an existing ConfigMap for Host Profiler configuration (experimental)
-    configMap:
-      # datadog.hostProfiler.configMap.name -- Name of the existing ConfigMap that contains the Host Profiler configuration (experimental)
-      name: null
-      # datadog.hostProfiler.configMap.items -- Items within the ConfigMap that contain Host Profiler configuration (experimental)
-      items:
-      #   - key: host-profiler-config.yaml
-      #     path: host-profiler-config.yaml
-      #   - key: host-profiler-config-two.yaml
-      #     path: host-profiler-config-two.yaml
-      # datadog.hostProfiler.configMap.key -- Key within the ConfigMap that contains the Host Profiler configuration (experimental)
-      key: host-profiler-config.yaml
+    # datadog.hostProfiler.imagePullPolicy -- Pull policy for the Host Profiler image. Defaults to agents.image.pullPolicy when unset.
+    imagePullPolicy: ""
+    # datadog.hostProfiler.seccomp -- Seccomp profile configuration for the Host Profiler
+    seccomp:
+      # datadog.hostProfiler.seccomp.enabled -- Apply the localhost seccomp profile to the host-profiler container and run the init container that installs it on the node. Disable to run the host-profiler container Unconfined (no init container, no profile installed on the node).
+      enabled: true
+    # datadog.hostProfiler.seccompRoot -- Specify the seccomp profile root directory
+    seccompRoot: /var/lib/kubelet/seccomp
+    # datadog.hostProfiler.apparmor -- Specify an AppArmor profile for the host-profiler container (e.g. "localhost/datadog-host-profiler").
+    ## Only used when agents.podSecurity.apparmor.enabled is true.
+    apparmor: unconfined
 
   ## OTel collector related configuration for the otel-agent in Agent Daemonset
   otelCollector:
@@ -834,7 +905,7 @@ datadog:
   #   - secretRef:
   #       name: <SECRET_NAME>
 
-  # datadog.env -- Set environment variables for all Agents
+  # datadog.env -- Set environment variables for the node Agents containers only
 
   ## The Datadog Agent supports many environment variables.
   ## ref: https://docs.datadoghq.com/agent/docker/?tab=standard#environment-variables
@@ -842,7 +913,7 @@ datadog:
   #   - name: <ENV_VAR_NAME>
   #     value: <ENV_VAR_VALUE>
 
-  # datadog.envDict -- Set environment variables for all Agents defined in a dict
+  # datadog.envDict -- Set environment variables defined in a dict for node Agents containers only
   envDict: {}
   #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
@@ -904,6 +975,7 @@ datadog:
     # datadog.processAgent.runInCoreAgent -- Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery.
     ## This requires Agent 7.60.0+ and Linux.
     ## DEPRECATED: This behavior will be enabled by default for installations that meet the requirements.
+    ## For Agent 7.78.0+, this setting is ignored — process checks always run in the core agent on Linux.
     runInCoreAgent: true
 
      # datadog.processAgent.containerCollection -- Set this to true to enable container collection
@@ -1024,6 +1096,27 @@ datadog:
     #   - datadoghq.com/v1alpha1/watermarkpodautoscalers
     customResources: []
 
+    rbac:
+    # datadog.orchestratorExplorer.rbac.create -- If true, create & use a dedicated ClusterRole and ClusterRoleBinding for orchestrator explorer permissions
+      create: true
+
+    # datadog.orchestratorExplorer.networkCRDs.enabled -- Enable RBAC for Gateway API, service mesh, and ingress controller CRD collection.
+    # Set to true to add RBAC rules for these resources to the orchestrator explorer ClusterRole
+    networkCRDs:
+      enabled: false
+
+    # datadog.orchestratorExplorer.useClusterCheckRunners -- For clusters where orchestrator explorer checks run on dedicated Cluster Checks Runners instead of the Cluster Agent.
+
+    ## When enabled, the orchestrator explorer RBAC is bound to the Cluster Checks Runner ServiceAccount instead of the Cluster Agent.
+    ## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
+    useClusterCheckRunners: false
+
+  kubernetesActions:
+    # datadog.kubernetesActions.enabled -- Set this to true to enable the Kubernetes Actions feature on the Cluster Agent.
+    # This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog
+    # Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater.
+    enabled: false
+
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
     # This requires clusterAgent.enabled to be set to true
@@ -1091,12 +1184,16 @@ datadog:
     enabled: false
 
   discovery:
-    # datadog.discovery.enabled -- (bool) Enable Service Discovery
+    # datadog.discovery.enabled -- (bool) Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`.
     enabled:  # false
 
     # datadog.discovery.networkStats.enabled -- (bool) Enable Service Discovery Network Stats
     networkStats:
       enabled: true
+
+    # datadog.discovery.serviceMap.enabled -- (bool) Enable Discovery Service Map (restricted USM)
+    serviceMap:
+      enabled: false
 
   gpuMonitoring:
     # datadog.gpuMonitoring.enabled -- Enable GPU monitoring core check
@@ -1152,6 +1249,13 @@ datadog:
       analyzers:
         - "os"
 
+    enrichment:
+      usage:
+        # datadog.sbom.enrichment.usage.enabled -- Enable runtime "package in use" SBOM enrichment.
+        # Requires the system-probe container (auto-enabled when set to true) for eBPF-based file
+        # access tracking, and sets `hostPID: true` on the agent pod. Requires Agent 7.79.0+.
+        enabled: false
+
   ## Enable security agent and provide custom configs
   securityAgent:
     compliance:
@@ -1177,6 +1281,10 @@ datadog:
       # datadog.securityAgent.compliance.host_benchmarks.enabled -- Set to false to disable host benchmarks. If enabled, this feature requires 160 MB extra memory for the `security-agent` container. (Requires Agent 7.47.0+)
       host_benchmarks:
         enabled: true
+
+      # datadog.securityAgent.compliance.runInSystemProbe -- Set to true to run compliance checks in system-probe instead of security-agent.
+      # When enabled in conjunction with datadog.securityAgent.runtime.directSendFromSystemProbe, the security-agent container will not be created.
+      runInSystemProbe: false
 
     runtime:
       # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
@@ -1346,6 +1454,11 @@ datadog:
     #   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts.
     enabled: false
 
+  instrumentationCrd:
+    # datadog.instrumentationCrd.enabled -- Enable the DatadogInstrumentation CRD controller and reconciliation platform.
+    # Requires version 7.80.0 or later of both cluster and node agent.
+    enabled:
+
   dataPlane:
     # datadog.dataPlane.enabled -- Whether or not the data plane is enabled
     #
@@ -1356,23 +1469,7 @@ datadog:
 
     dogstatsd:
       # datadog.dataPlane.dogstatsd.enabled -- Whether or not DogStatsD is enabled in the data plane
-      enabled: false
-
-    image:
-      # datadog.dataPlane.image.name -- Data plane image name to use (relative to `registry`)
-      name: agent-data-plane
-
-      # datadog.dataPlane.image.tag -- Define the data plane version to use
-      tag: 0.1.30
-
-      # datadog.dataPlane.image.digest -- Define the data plane image digest to use, takes precedence over tag if specified
-      digest: ""
-
-      # datadog.dataPlane.image.repository -- Override default registry + image.name for data plane
-      repository:
-
-      # datadog.dataPlane.image.pullPolicy -- Data plane image pull policy
-      pullPolicy: IfNotPresent
+      enabled: true
 
   ## Datadog Operator
   ## * Enable the Datadog Operator chart dependency.
@@ -1404,7 +1501,7 @@ datadog:
   # Configuration related to Workload Autoscaling
   autoscaling:
     workload:
-      # datadog.autoscaling.workload.enabled -- Enable Workload Autoscaling.
+      # datadog.autoscaling.workload.enabled -- (bool) Enable Workload Autoscaling.
       enabled:
 
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
@@ -1424,7 +1521,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.76.1
+    tag: 7.81.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1636,6 +1733,18 @@ clusterAgent:
       # clusterAgent.admissionController.kubernetesAdmissionEvents.enabled -- Enable the Kubernetes Admission Events feature.
       enabled: false
 
+    probe:
+      # clusterAgent.admissionController.probe.enabled -- Enable the admission controller connectivity probe.
+      ## The probe periodically sends dry-run ConfigMap creation requests to verify the webhook is reachable from the API server.
+      ## (Requires Cluster Agent 7.78.0+).
+      enabled: false
+
+      # clusterAgent.admissionController.probe.interval -- Seconds between probe executions.
+      interval: 60
+
+      # clusterAgent.admissionController.probe.gracePeriod -- Seconds to wait at startup before the first probe.
+      gracePeriod: 60
+
     agentSidecarInjection:
       # clusterAgent.admissionController.agentSidecarInjection.enabled -- Enables Datadog Agent sidecar injection.
 
@@ -1801,6 +1910,12 @@ clusterAgent:
     #   - "com.datadoghq.http.request"
     #   - "com.datadoghq.kubernetes.core.*"
 
+    # clusterAgent.privateActionRunner.k8sRemediationEnabled -- Enable k8s remediation RBAC for the Private Action Runner
+    ## When enabled, a ClusterRole and ClusterRoleBinding are created granting the Cluster Agent
+    ## permissions to read/patch workloads (Deployments, DaemonSets, StatefulSets, ReplicaSets, Pods)
+    ## and manage ConfigMaps and Events cluster-wide.
+    k8sRemediationEnabled: false
+
   # clusterAgent.livenessProbe -- Override default Cluster Agent liveness probe settings
   # @default -- Every 15s / 6 KO / 1 OK
   livenessProbe:
@@ -1902,6 +2017,9 @@ clusterAgent:
   additionalLabels: {}
     # key: "value"
 
+  # clusterAgent.instanceLabelOverride -- Override the `app.kubernetes.io/instance` label on the Cluster Agent deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+  instanceLabelOverride:  # "datadog"
+
   # clusterAgent.containerExclude -- Exclude containers from the Cluster Agent
   # Autodiscovery, as a space-separated list. (Requires Agent/Cluster Agent 7.50.0+)
 
@@ -1980,7 +2098,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.21
+    tag: 1.1.28
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -2023,7 +2141,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.76.1
+    tag: 7.81.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2113,6 +2231,7 @@ agents:
       - AUDIT_READ
       - DAC_READ_SEARCH
       - MKNOD
+      - SYSLOG
 
     # agents.podSecurity.allowedUnsafeSysctls -- Allowed unsafe sysclts
     allowedUnsafeSysctls: []
@@ -2209,6 +2328,42 @@ agents:
 
       # agents.containers.agent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
+
+      # agents.containers.agent.command -- Override the default `agent run` entrypoint for the agent container.
+      # Useful for wrapping the agent in a shell entrypoint (e.g. to set environment variables based on
+      # node-level information before `exec`-ing the agent). When unset, the container runs `agent run`.
+      # Not supported on GKE Autopilot or GDC: the Datadog WorkloadAllowlist requires the agent container
+      # command to be exactly `["agent", "run"]` on those providers, so setting this value with
+      # `providers.gke.autopilot=true` or `providers.gke.gdc=true` fails at template render time.
+      command: []
+
+    privateActionRunner:
+      # agents.containers.privateActionRunner.env -- Additional environment variables for the private-action-runner container
+      env: []
+
+      # agents.containers.privateActionRunner.envFrom -- Set environment variables specific to private-action-runner from configMaps and/or secrets
+      envFrom: []
+
+      # agents.containers.privateActionRunner.envDict -- Set environment variables specific to private-action-runner defined in a dict
+      envDict: {}
+
+      # agents.containers.privateActionRunner.logLevel -- Set logging verbosity for the private-action-runner container
+      logLevel:
+
+      # agents.containers.privateActionRunner.resources -- Resource requests and limits for the private-action-runner container.
+      resources: {}
+      #  requests:
+      #    cpu: 100m
+      #    memory: 128Mi
+      #  limits:
+      #    cpu: 100m
+      #    memory: 128Mi
+
+      # agents.containers.privateActionRunner.securityContext -- Specify securityContext on the private-action-runner container.
+      securityContext:
+        readOnlyRootFilesystem: true
+        capabilities:
+          add: ["NET_RAW"]
 
     processAgent:
       # agents.containers.processAgent.env -- Additional environment variables for the process-agent container
@@ -2309,7 +2464,20 @@ agents:
       # agents.containers.hostProfiler.securityContext -- Allows you to overwrite the default container SecurityContext for the host-profiler container.
       securityContext:
         readOnlyRootFilesystem: true
-        privileged: true
+        allowPrivilegeEscalation: false
+        privileged: false
+        capabilities:
+          drop:
+            - ALL
+          add:
+            - BPF
+            - PERFMON
+            - SYS_PTRACE
+            - SYS_RESOURCE
+            - DAC_READ_SEARCH
+            - SYSLOG
+            - CHECKPOINT_RESTORE
+            - IPC_LOCK
 
       # agents.containers.hostProfiler.volumeMounts -- Specify additional volumes to mount in the host-profiler container
       volumeMounts: []
@@ -2593,6 +2761,9 @@ agents:
   additionalLabels: {}
     # key: "value"
 
+  # agents.instanceLabelOverride -- Override the `app.kubernetes.io/instance` label on the Agent daemonset and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+  instanceLabelOverride:  # "datadog"
+
   # agents.useConfigMap -- Configures a configmap to provide the agent configuration. Use this in combination with the `agents.customAgentConfig` parameter.
   useConfigMap:  # false
 
@@ -2651,13 +2822,18 @@ clusterChecksRunner:
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
   enabled: false
 
+  remoteConfiguration:
+    # clusterChecksRunner.remoteConfiguration.enabled -- Enable remote configuration on the Cluster Checks Runner.
+    # Set to true to enable remote configuration on the Cluster Checks Runner.
+    enabled: false
+
   ## Define the Datadog image to work with.
   image:
     # clusterChecksRunner.image.name -- Datadog Agent image name to use (relative to `registry`)
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.76.1
+    tag: 7.81.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2880,6 +3056,9 @@ clusterChecksRunner:
   additionalLabels: {}
     # key: "value"
 
+  # clusterChecksRunner.instanceLabelOverride -- Override the `app.kubernetes.io/instance` label on the cluster checks runner deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label.
+  instanceLabelOverride:  # "datadog"
+
   # clusterChecksRunner.securityContext -- Allows you to overwrite the default PodSecurityContext on the clusterchecks pods.
   securityContext: {}
 
@@ -2898,7 +3077,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.23.0
+    tag: 1.28.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller
@@ -2906,7 +3085,7 @@ operator:
 
   datadogAgentInternal:
     # operator.datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
-    enabled: false
+    enabled: true
 
   datadogDashboard:
     # operator.datadogDashboard.enabled -- Enables the Datadog Dashboard controller
@@ -2943,8 +3122,14 @@ operator:
       datadogMetrics: false
       # operator.datadogCRDs.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
       datadogPodAutoscalers: false
+      # operator.datadogCRDs.crds.datadogPodAutoscalerClusterProfile -- Set to false to deploy the DatadogPodAutoscalerClusterProfiles CRD
+      datadogPodAutoscalerClusterProfiles: false
       # operator.datadogCRDs.crds.datadogAgentInternals -- Set to true to deploy the DatadogAgentInternals CRD
-      datadogAgentInternals: false
+      datadogAgentInternals: true
+      # operator.datadogCRDs.crds.datadogCSIDrivers -- Set to true to deploy the DatadogCSIDriver CRD
+      datadogCSIDrivers: true
+      # operator.datadogCRDs.crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
+      datadogInstrumentations: false
 
 datadog-crds:
   crds:
@@ -2952,6 +3137,10 @@ datadog-crds:
     datadogMetrics: true
     # datadog-crds.crds.datadogPodAutoscalers -- Set to true to deploy the DatadogPodAutoscalers CRD
     datadogPodAutoscalers: true
+    # crds.datadogPodAutoscalerClusterProfile -- Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD
+    datadogPodAutoscalerClusterProfiles: true
+    # crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
+    datadogInstrumentations: true
 
 kube-state-metrics:
   # kube-state-metrics.image.repository -- Default kube-state-metrics image repository.
@@ -2994,6 +3183,10 @@ providers:
 
     # providers.gke.gdc -- Enables Datadog Agent deployment on GKE on Google Distributed Cloud (GDC)
     gdc: false
+
+  flatcar:
+    # providers.flatcar.enabled -- Enable Flatcar Container Linux support. Flatcar mounts `/usr` read-only, so the host `/usr/src` volume is not mounted into system-probe.
+    enabled: false
 
   eks:
     # providers.eks.controlPlaneMonitoring -- Enable control plane monitoring checks in the EKS cluster.
@@ -3256,6 +3449,31 @@ otelAgentGateway:
       # otelAgentGateway.containers.otelAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
       logLevel:  # INFO
+
+      # otelAgentGateway.containers.otelAgent.healthPort -- Port number to use for the otel-agent-gateway health check endpoint (OTel health_check extension)
+      healthPort: 13133
+
+      # otelAgentGateway.containers.otelAgent.livenessProbe -- otel-agent-gateway liveness probe settings.
+      # Set enabled to true to activate. The OTel config must expose the health_check extension
+      # on healthPort (default 13133); the generated default config does this automatically.
+      livenessProbe:
+        enabled: false
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
+      # otelAgentGateway.containers.otelAgent.readinessProbe -- otel-agent-gateway readiness probe settings.
+      # Set enabled to true to activate. The OTel config must expose the health_check extension
+      # on healthPort (default 13133); the generated default config does this automatically.
+      readinessProbe:
+        enabled: false
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
 
   ## Provide OTel Collector RBAC configuration in Gateway
   rbac:

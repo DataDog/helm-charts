@@ -53,6 +53,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.signals.metrics.enabled }}
+          command: ["quickwit-metrics"]
+          {{- end }}
           {{- if $.Values.control_plane.args }}
           args: {{- toYaml $.Values.control_plane.args | nindent 10 }}
           {{- else }}
@@ -90,7 +93,7 @@ spec:
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
             {{- end }}
-            {{- with .Values.control_plane.extraVolumeMounts }}
+            {{- with concat (.Values.volumeMounts | default list) (.Values.control_plane.extraVolumeMounts | default list) }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           resources:
@@ -109,23 +112,24 @@ spec:
           configMap:
             name: {{ .name }}
         {{- end }}
-        {{- with .Values.control_plane.extraVolumes }}
+        {{- with concat (.Values.volumes | default list) (.Values.control_plane.extraVolumes | default list) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- with .Values.control_plane.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with merge (dict) .Values.control_plane.affinity .Values.affinity }}
+      {{- with merge (dict) (.Values.control_plane.affinity | default dict) (.Values.affinity | default dict) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := concat .Values.tolerations .Values.control_plane.tolerations | compact | uniq }}
+      {{- $tolerations := concat (.Values.tolerations | default list) (.Values.control_plane.tolerations | default list) | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
-      {{- with .Values.control_plane.topologySpreadConstraints }}
+      {{- $tsc := concat (.Values.topologySpreadConstraints | default list) (.Values.control_plane.topologySpreadConstraints | default list) | compact }}
+      {{- if $tsc }}
       topologySpreadConstraints:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml $tsc | nindent 8 }}
       {{- end }}
       {{- if .Values.control_plane.runtimeClassName }}
       runtimeClassName: {{ .Values.control_plane.runtimeClassName | quote }}

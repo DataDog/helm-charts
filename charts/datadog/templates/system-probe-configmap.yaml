@@ -50,6 +50,7 @@ data:
         - {{ . }}
         {{- end }}
       {{- end }}
+      direct_send: {{ include "cnm-use-direct-send" . }}
     service_monitoring_config:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
       {{- if not (eq .Values.datadog.serviceMonitoring.httpMonitoringEnabled nil) }}
@@ -77,11 +78,14 @@ data:
         {{- end }}
     traceroute:
       enabled: {{ $.Values.datadog.traceroute.enabled }}
-    {{- if not (eq .Values.datadog.discovery.enabled nil) }}
+    {{- if eq (include "should-render-discovery-config" .) "true" }}
     discovery:
-      enabled: {{ $.Values.datadog.discovery.enabled }}
+      enabled: {{ include "resolved-discovery-enabled" . }}
+      use_system_probe_lite: {{ include "discovery-use-system-probe-lite" . }}
       network_stats:
         enabled: {{ $.Values.datadog.discovery.networkStats.enabled }}
+      service_map:
+        enabled: {{ $.Values.datadog.discovery.serviceMap.enabled }}
     {{- end }}
     gpu_monitoring:
       enabled: {{ and $.Values.datadog.gpuMonitoring.enabled $.Values.datadog.gpuMonitoring.privilegedMode }}
@@ -138,9 +142,13 @@ data:
           enabled: {{ $.Values.datadog.securityAgent.runtime.securityProfile.autoSuppression.enabled }}
         dir: /var/run/sysprobe/runtime-security/profiles
       enforcement:
-        enabled: {{ $.Values.datadog.securityAgent.runtime.enforcement.enabled }}
+        enabled: {{ and $.Values.datadog.securityAgent.runtime.enabled $.Values.datadog.securityAgent.runtime.enforcement.enabled }}
+      compliance_module:
+        enabled: {{ $.Values.datadog.securityAgent.compliance.runInSystemProbe }}
     dynamic_instrumentation:
       enabled: {{ $.Values.datadog.dynamicInstrumentationGo.enabled }}
+    compliance_config:
+      enabled: {{ and $.Values.datadog.securityAgent.compliance.enabled $.Values.datadog.securityAgent.compliance.runInSystemProbe }}
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---
@@ -168,9 +176,7 @@ data:
             "capset",
             "chdir",
             "chmod",
-            {{- if (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
             "chown",
-            {{- end }}
             "clock_gettime",
             "clone",
             "clone3",
@@ -247,7 +253,7 @@ data:
             "inotify_rm_watch",
             "ioctl",
             "ipc",
-            {{- if .Values.datadog.securityAgent.runtime.enforcement.enabled }}
+            {{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.enforcement.enabled }}
             "kill",
             {{- end }}
             "listen",
@@ -326,10 +332,10 @@ data:
             "setresuid",
             "setrlimit",
             "setsid",
-            "setsidaccept4",
             "setsockopt",
             "setuid",
             "setuid32",
+            "shutdown",
             "sigaltstack",
             "socket",
             "socketcall",
@@ -355,7 +361,8 @@ data:
             "wait4",
             "waitid",
             "waitpid",
-            "write"
+            "write",
+            "writev"
           ],
           "action": "SCMP_ACT_ALLOW",
           "args": null

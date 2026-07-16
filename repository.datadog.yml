@@ -4,18 +4,21 @@ kind: mergequeue
 gitlab_check_enable: true
 github_teams_restrictions:
   - action-platform
-  - agent-all
+  - agent-community-eng
   - container-app
   - container-ecosystems
   - container-helm-chart-maintainers
   - container-integrations
-  - container-t2
   - logs-cloudprem
   - synthetics
   - documentation
   - observability-pipelines
   - telemetry-and-analytics
   - vector
+  - profiling-full-host
+  - injection-platform
+  - containers-tee
+  - asm-go
 github_users_restrictions:
   - cahillsf
   - clamoriniere

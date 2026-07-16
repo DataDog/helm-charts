@@ -15,5 +15,11 @@ kubernetes_apiserver.yaml: |-
 {{- if .Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus }}
       use_component_status: false
 {{- end }}
+{{- if .Values.datadog.kubernetesEvents.maxEventsPerRun }}
+      max_events_per_run: {{ .Values.datadog.kubernetesEvents.maxEventsPerRun }}
+{{- end }}
+{{- if .Values.datadog.kubernetesEvents.kubernetesEventResyncPeriodS }}
+      kubernetes_event_resync_period_s: {{ .Values.datadog.kubernetesEvents.kubernetesEventResyncPeriodS }}
+{{- end }}
 {{- end -}}
 {{- end -}}

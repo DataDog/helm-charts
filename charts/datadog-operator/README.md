@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.19.0](https://img.shields.io/badge/Version-2.19.0-informational?style=flat-square) ![AppVersion: 1.24.0](https://img.shields.io/badge/AppVersion-1.24.0-informational?style=flat-square)
+![Version: 2.25.0-dev.2](https://img.shields.io/badge/Version-2.25.0--dev.2-informational?style=flat-square) ![AppVersion: 1.29.0-rc.1](https://img.shields.io/badge/AppVersion-1.29.0--rc.1-informational?style=flat-square)
 
 ## Values
 
@@ -21,12 +21,16 @@
 | datadogCRDs.crds.datadogAgentInternals | bool | `true` | Set to true to deploy the DatadogAgentInternals CRD |
 | datadogCRDs.crds.datadogAgentProfiles | bool | `false` | Set to true to deploy the DatadogAgentProfile CRD |
 | datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
+| datadogCRDs.crds.datadogCSIDrivers | bool | `true` | Set to true to deploy the DatadogCSIDriver CRD |
 | datadogCRDs.crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboard CRD |
 | datadogCRDs.crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResource CRD |
+| datadogCRDs.crds.datadogInstrumentations | bool | `true` | Set to true to deploy the DatadogInstrumentations CRD |
 | datadogCRDs.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
+| datadogCRDs.crds.datadogPodAutoscalerClusterProfiles | bool | `true` | Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD |
 | datadogCRDs.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
+| datadogCSIDriver.enabled | bool | `true` | Enables the Datadog CSI Driver controller |
 | datadogDashboard.enabled | bool | `false` | Enables the Datadog Dashboard controller |
 | datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
@@ -39,7 +43,7 @@
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"registry.datadoghq.com/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.24.0"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.29.0-rc.1"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |
@@ -53,12 +57,13 @@
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
-| registryMigrationMode | string | `"auto"` | Controls gradual migration of Agent image pulls to registry.datadoghq.com. When enabled, DD_REGISTRY_OVERRIDE_* environment variables are added to the Datadog Operator deployment to pull Agent images from the global CDN-backed registry.datadoghq.com based on the global.site setting, unless global.registry is specified in the DatadogAgent custom resource (which takes precedence). This has no effect on sites not covered by the active overrides. More sites will be enabled by default in future helm-chart releases. "auto" (default): enable overrides for sites where migration is rolled out.   Currently enabled: AP1 (ap1.datadoghq.com). "all": enable all per-site overrides (AP1, US1, EU1, US3). "" or unset: disable all overrides. |
+| registryMigrationMode | string | `"auto"` | Controls gradual migration of Agent image pulls to registry.datadoghq.com. When enabled, DD_REGISTRY_OVERRIDE_* environment variables are added to the Datadog Operator deployment to pull Agent images from the global CDN-backed registry.datadoghq.com based on the global.site setting, unless global.registry is specified in the DatadogAgent custom resource (which takes precedence). This has no effect on sites not covered by the active overrides. More sites will be enabled by default in future helm-chart releases. "auto" (default): enable overrides for sites where migration is rolled out.   Currently enabled: AP1 (ap1.datadoghq.com), EU1 (datadoghq.eu), US1 (datadoghq.com), US5 (us5.datadoghq.com). "all": enable all per-site overrides (AP1, US1, EU1, US3, US5). "" or unset: disable all overrides. |
 | remoteConfiguration.enabled | bool | `false` | If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set. |
 | replicaCount | int | `1` | Number of instances of Datadog Operator |
 | resources | object | `{}` | Set resources requests/limits for Datadog Operator PODs |
 | secretBackend.arguments | string | `""` | Specifies the space-separated arguments passed to the command that implements the secret backend api |
 | secretBackend.command | string | `""` | Specifies the path to the command that implements the secret backend api |
+| secretBackend.refreshInterval | string | `nil` | Specifies the secret backend refresh interval in seconds. |
 | serviceAccount.annotations | object | `{}` | Allows setting additional annotations for service account |
 | serviceAccount.automountServiceAccountToken | bool | `true` | Specifies whether the service account token should be automatically mounted |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
@@ -66,11 +71,19 @@
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDaemonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
+| untaintController.enabled | bool | `false` | Enables the Untaint controller, which removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint from nodes once the Agent is ready. Grants the operator `patch` permission on nodes. Requires v1.28.0+ |
+| untaintController.eventsEnabled | bool | `false` | Emit Kubernetes Events on Nodes for taint removals and timeout decisions. |
+| untaintController.schedulingTimeout | string | `""` | Scheduling timeout (Go duration, e.g. "5m") applied when no Agent pod has scheduled on the node. Empty uses the operator default (5m). |
+| untaintController.timeout | string | `""` | Readiness timeout (Go duration, e.g. "10m") after which the timeout policy is applied even if the Agent is not Ready. Empty uses the operator default (10m). |
+| untaintController.timeoutPolicy | string | `""` | Action when a timeout fires: "remove" (untaint the node anyway) or "keep" (leave the taint and emit a Warning event). Empty uses the operator default (remove). |
+| untaintController.waitForCSIDriver | bool | `false` | When true (requires untaintController.enabled), the taint is removed only after both the node Agent and Datadog CSI node-server pods are Ready. The operator's Pod cache must cover the CSI namespaces (DD_CSIDRIVER_WATCH_NAMESPACE). Requires v1.28.0+ |
 | volumeMounts | list | `[]` | Specify additional volumes to mount in the container |
 | volumes | list | `[]` | Specify additional volumes to mount in the container |
 | watchNamespaces | list | `[]` | Restricts the Operator to watch its managed resources on specific namespaces unless CRD-specific watchNamespaces properties are set |
 | watchNamespacesAgent | list | `[]` | Restricts the Operator to watch DatadogAgent resources on specific namespaces. Requires v1.8.0+ |
 | watchNamespacesAgentProfile | list | `[]` | Restricts the Operator to watch DatadogAgentProfile resources on specific namespaces. Requires v1.8.0+ |
+| watchNamespacesDashboard | list | `[]` | Restricts the Operator to watch DatadogDashboard resources on specific namespaces. Requires v1.13.0+ |
+| watchNamespacesGenericResource | list | `[]` | Restricts the Operator to watch DatadogGenericResource resources on specific namespaces. Requires v1.13.0+ |
 | watchNamespacesMonitor | list | `[]` | Restricts the Operator to watch DatadogMonitor resources on specific namespaces. Requires v1.8.0+ |
 | watchNamespacesSLO | list | `[]` | Restricts the Operator to watch DatadogSLO resources on specific namespaces. Requires v1.8.0+ |
 

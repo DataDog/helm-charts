@@ -82,12 +82,11 @@ false
 {{- end -}}
 
 {{/*
-Check if target cluster is GKE Autopilot (any version).
-Older GKE Autopilot versions have allowlistedv2workloads.auto.gke.io CRD.
-Newer versions (>= 1.32.1-gke.1729000) have WorkloadAllowlist and AllowlistSynchronizer CRDs.
+Check if target cluster is legacy GKE Autopilot (GKE Autopilot but no
+WorkloadAllowlist support, i.e. GKE < 1.32.1-gke.1729000).
 */}}
-{{- define "csi.gke-autopilot" -}}
-{{- if or (.Capabilities.APIVersions.Has "allowlistedv2workloads.auto.gke.io/v1/AllowlistedV2Workload") (eq (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") -}}
+{{- define "csi.gke-autopilot-legacy" -}}
+{{- if and (.Capabilities.APIVersions.Has "allowlistedv2workloads.auto.gke.io/v1/AllowlistedV2Workload") (ne (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") -}}
 true
 {{- else -}}
 false

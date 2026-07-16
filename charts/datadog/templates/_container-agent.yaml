@@ -6,7 +6,15 @@
   lifecycle:
 {{ toYaml .Values.agents.lifecycle | indent 4 }}
   {{- end }}
+  {{- if and .Values.agents.containers.agent.command (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
+  {{- fail "agents.containers.agent.command override is not supported on GKE Autopilot or GDC. The Datadog WorkloadAllowlist requires the agent container command to be exactly [\"agent\", \"run\"]." }}
+  {{- end }}
+  {{- if .Values.agents.containers.agent.command }}
+  command:
+{{ toYaml .Values.agents.containers.agent.command | indent 4 }}
+  {{- else }}
   command: ["agent", "run"]
+  {{- end }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.agent.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version "sysAdmin" (and (eq (include "should-enable-sbom-container-image-collection" .) "true") (and .Values.datadog.sbom.containerImage.uncompressedLayersSupport (not .Values.datadog.sbom.containerImage.overlayFSDirectScan))) "apparmor" (and .Values.agents.podSecurity.apparmor.enabled (eq (include "should-enable-sbom-container-image-collection" .) "true") .Values.datadog.sbom.containerImage.uncompressedLayersSupport "unconfined") "mknod" .Values.datadog.gpuMonitoring.enabled) | indent 2 }}
   resources:
 {{- if and (empty .Values.agents.containers.agent.resources) .Values.providers.gke.autopilot -}}
@@ -69,7 +77,7 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
-    {{- if eq (include "should-enable-otel-agent" .) "true" }}
+    {{- if or (eq (include "should-enable-otel-agent" .) "true") (eq (include "should-enable-host-profiler" .) "true") }}
     - name: DD_AGENT_IPC_PORT
       value: "5009"
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
@@ -137,7 +145,7 @@
       value: {{  (default false (or .Values.datadog.logs.enabled .Values.datadog.logsEnabled)) | quote}}
     - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
       value: {{  (default false (or .Values.datadog.logs.containerCollectAll .Values.datadog.logsConfigContainerCollectAll)) | quote}}
-    {{- if .Values.datadog.logs.enabled }} 
+    {{- if .Values.datadog.logs.enabled }}
     - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
       value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
     {{- end }}
@@ -189,9 +197,11 @@
       value: {{ .Values.datadog.expvarPort | quote }}
     - name: DD_COMPLIANCE_CONFIG_ENABLED
       value: {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
+    - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
+      value: {{ .Values.datadog.securityAgent.compliance.runInSystemProbe | quote }}
     - name: DD_CONTAINER_IMAGE_ENABLED
       value: {{ include "should-enable-container-image-collection" . | quote }}
-    {{- if or (eq (include "should-enable-sbom-host-fs-collection" .) "true") (eq (include "should-enable-sbom-container-image-collection" .) "true") }}
+    {{- if or (eq (include "should-enable-sbom-host-fs-collection" .) "true") (eq (include "should-enable-sbom-container-image-collection" .) "true") (eq (include "should-enable-sbom-enrichment-usage" .) "true") }}
     - name: DD_SBOM_ENABLED
       value: "true"
     {{- if eq (include "should-enable-sbom-container-image-collection" .) "true" }}
@@ -231,6 +241,10 @@
       value: {{ join " " .Values.datadog.sbom.host.analyzers | quote }}
     {{- end }}
     {{- end }}
+    {{- if eq (include "should-enable-sbom-enrichment-usage" .) "true" }}
+    - name: DD_SBOM_ENRICHMENT_USAGE_ENABLED
+      value: "true"
+    {{- end }}
     {{- end }}
     - name: DD_KUBELET_CORE_CHECK_ENABLED
       value: {{ .Values.datadog.kubelet.coreCheckEnabled | quote | default "true" }}
@@ -262,6 +276,10 @@
     - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- end }}
+    {{- end }}
+    {{- if .Values.datadog.instrumentationCrd.enabled }}
+    - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
+      value: {{ .Values.datadog.instrumentationCrd.enabled | quote }}
     {{- end }}
     {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
     - name: DD_AUTOSCALING_FAILOVER_ENABLED
@@ -317,6 +335,11 @@
       readOnly: false
     - name: gpu-devices
       mountPath: /var/run/nvidia-container-devices/all
+    {{- if .Values.providers.gke.cos }}
+    - name: gke-nvidia-driver-lib64
+      mountPath: /host/run/nvidia/driver/usr/lib/x86_64-linux-gnu # the agent automatically looks for the nvidia driver in this path, and it's also not likely to conflict with other libraries
+      readOnly: true
+    {{- end }}
     {{- end }}
     {{- if not .Values.providers.gke.gdc }}
     - name: dsdsocket
@@ -346,7 +369,7 @@
     {{- end }}
     {{- end }}
     {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
-    - name: pointerdir
+    - name: {{ include "datadog.agentRunVolumeName" . }}
       mountPath: /opt/datadog-agent/run
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: false # Need RW for logs pointer
@@ -364,6 +387,10 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
+    {{- else if or .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
+    - name: {{ include "datadog.agentRunVolumeName" . }}
+      mountPath: /opt/datadog-agent/run
+      readOnly: false
     {{- else }}
     - name: datadogrun
       mountPath: /opt/datadog-agent/run

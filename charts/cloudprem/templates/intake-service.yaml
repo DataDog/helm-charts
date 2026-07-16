@@ -1,0 +1,60 @@
+{{- if .Values.intake.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "quickwit.fullname" . }}-intake
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.intake.serviceAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.intake.serviceType | default .Values.service.type }}
+  {{- if .Values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
+  {{- end }}
+  {{- if .Values.service.ipFamilies }}
+  ipFamilies: {{ .Values.service.ipFamilies | toYaml | nindent 2 }}
+  {{- end }}
+  ports:
+    - port: 8181
+      targetPort: dd-agent
+      protocol: TCP
+      name: dd-agent
+    - port: 8282
+      targetPort: http-ingest
+      protocol: TCP
+      name: http-ingest
+    - port: 8383
+      targetPort: otlp-grpc
+      protocol: TCP
+      name: otlp-grpc
+    - port: 8384
+      targetPort: otlp-http
+      protocol: TCP
+      name: otlp-http
+    {{- if .Values.signals.metrics.enabled }}
+    - port: 8585
+      targetPort: connections
+      protocol: TCP
+      name: connections
+    {{- end }}
+    - port: 8686
+      targetPort: api
+      protocol: TCP
+      name: api
+    - port: 8787
+      targetPort: host-meta
+      protocol: TCP
+      name: host-meta
+    - port: 8788
+      targetPort: inv-meta
+      protocol: TCP
+      name: inv-meta
+  selector:
+    {{- include "quickwit.intake.selectorLabels" . | nindent 4 }}
+{{- end }}

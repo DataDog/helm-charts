@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.23.0
+    app.kubernetes.io/version: 1.28.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -143,7 +143,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  7654\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: true\n  enable_oom_kill: true\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: true\n  conntrack_init_timeout: 10s\nservice_monitoring_config:\n  enabled: false\n  tls:\ntraceroute:\n  enabled: false\ndiscovery:\n  enabled: true\n  network_stats:\n    enabled: true\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: false\n  use_secruntime_track: true\n  direct_send_from_system_probe: false\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: false \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: true\ndynamic_instrumentation:\n  enabled: false\n"
+  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  7654\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: true\n  enable_oom_kill: true\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: true\n  conntrack_init_timeout: 10s\n  direct_send: true\nservice_monitoring_config:\n  enabled: false\n  tls:\ntraceroute:\n  enabled: false\ndiscovery:\n  enabled: true\n  use_system_probe_lite: true\n  network_stats:\n    enabled: true\n  service_map:\n    enabled: false\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: false\n  use_secruntime_track: true\n  direct_send_from_system_probe: false\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: false \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: false\n  compliance_module:\n    enabled: false\ndynamic_instrumentation:\n  enabled: false\ncompliance_config:\n  enabled: false\n"
 kind: ConfigMap
 metadata:
   labels:
@@ -172,6 +172,7 @@ data:
             "capset",
             "chdir",
             "chmod",
+            "chown",
             "clock_gettime",
             "clone",
             "clone3",
@@ -244,7 +245,6 @@ data:
             "inotify_rm_watch",
             "ioctl",
             "ipc",
-            "kill",
             "listen",
             "lseek",
             "lstat",
@@ -317,10 +317,10 @@ data:
             "setresuid",
             "setrlimit",
             "setsid",
-            "setsidaccept4",
             "setsockopt",
             "setuid",
             "setuid32",
+            "shutdown",
             "sigaltstack",
             "socket",
             "socketcall",
@@ -343,7 +343,8 @@ data:
             "wait4",
             "waitid",
             "waitpid",
-            "write"
+            "write",
+            "writev"
           ],
           "action": "SCMP_ACT_ALLOW",
           "args": null
@@ -400,7 +401,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.23.0
+    app.kubernetes.io/version: 1.28.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -463,6 +464,18 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - ""
+    resources:
+      - pods/eviction
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - pods/resize
+    verbs:
+      - patch
+  - apiGroups:
       - '*'
     resources:
       - '*/scale'
@@ -495,7 +508,11 @@ rules:
     resources:
       - controllerrevisions
     verbs:
+      - create
+      - delete
+      - get
       - list
+      - patch
       - watch
   - apiGroups:
       - apps
@@ -515,9 +532,25 @@ rules:
       - apps
     resources:
       - replicasets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
       - statefulsets
     verbs:
       - get
+      - list
+      - patch
+      - watch
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - applications
+      - applicationsets
+    verbs:
       - list
       - watch
   - apiGroups:
@@ -525,9 +558,10 @@ rules:
     resources:
       - rollouts
     verbs:
+      - get
       - list
-      - watch
       - patch
+      - watch
   - apiGroups:
       - authentication.k8s.io
     resources:
@@ -552,6 +586,7 @@ rules:
       - create
       - get
       - list
+      - patch
       - watch
   - apiGroups:
       - autoscaling
@@ -595,6 +630,23 @@ rules:
       - list
       - patch
       - update
+      - watch
+  - apiGroups:
+      - configuration.konghq.com
+      - consul.hashicorp.com
+      - core.haproxy.org
+      - datadoghq.com
+      - gateway.envoyproxy.io
+      - ingress.v1.haproxy.org
+      - karpenter.azure.com
+      - kuma.io
+      - mesh.consul.hashicorp.com
+      - policy.linkerd.io
+      - traefik.containo.us
+    resources:
+      - '*'
+    verbs:
+      - list
       - watch
   - apiGroups:
       - coordination.k8s.io
@@ -648,6 +700,23 @@ rules:
   - apiGroups:
       - datadoghq.com
     resources:
+      - datadoginstrumentations
+      - extendeddaemonsetreplicasets
+      - watermarkpodautoscalers
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadoginstrumentations/status
+    verbs:
+      - patch
+      - update
+  - apiGroups:
+      - datadoghq.com
+    resources:
       - datadogmetrics
     verbs:
       - create
@@ -658,35 +727,22 @@ rules:
   - apiGroups:
       - datadoghq.com
     resources:
+      - datadogpodautoscalerclusterprofiles
+      - datadogpodautoscalerclusterprofiles/status
       - datadogpodautoscalers
       - datadogpodautoscalers/status
     verbs:
       - '*'
   - apiGroups:
-      - datadoghq.com
+      - discovery.k8s.io
     resources:
-      - extendeddaemonsetreplicasets
-      - watermarkpodautoscalers
+      - endpointslices
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - datadoghq.com
-      - karpenter.azure.com
-    resources:
-      - '*'
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - discovery.k8s.io
-    resources:
-      - endpointslices
-    verbs:
-      - list
-      - watch
-  - apiGroups:
+      - eks.amazonaws.com
       - external.metrics.k8s.io
       - karpenter.k8s.aws
     resources:
@@ -698,7 +754,9 @@ rules:
   - apiGroups:
       - gateway.envoyproxy.io
     resources:
+      - backends
       - envoyextensionpolicies
+      - envoypatchpolicies
     verbs:
       - create
       - delete
@@ -717,12 +775,29 @@ rules:
   - apiGroups:
       - gateway.networking.k8s.io
     resources:
+      - grpcroutes
+      - listenersets
+      - tlsroutes
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
       - referencegrants
     verbs:
       - create
       - delete
       - get
       - patch
+  - apiGroups:
+      - k8s.nginx.org
+    resources:
+      - virtualserverroutes
+      - virtualservers
+    verbs:
+      - list
+      - watch
   - apiGroups:
       - karpenter.sh
     resources:
@@ -736,6 +811,13 @@ rules:
       - update
       - watch
   - apiGroups:
+      - kustomize.toolkit.fluxcd.io
+    resources:
+      - kustomizations
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - metrics.eks.amazonaws.com
     resources:
       - kcm/metrics
@@ -745,11 +827,37 @@ rules:
   - apiGroups:
       - networking.istio.io
     resources:
+      - destinationrules
+      - serviceentries
+      - sidecars
+      - virtualservices
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - networking.istio.io
+    resources:
       - envoyfilters
     verbs:
       - create
       - delete
       - get
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - gateways
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingressclasses
+    verbs:
+      - get
+      - list
+      - watch
   - apiGroups:
       - networking.k8s.io
     resources:
@@ -826,6 +934,18 @@ rules:
     verbs:
       - use
   - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - buckets
+      - externalartifacts
+      - gitrepositories
+      - helmcharts
+      - helmrepositories
+      - ocirepositories
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - storage.k8s.io
     resources:
       - storageclasses
@@ -835,12 +955,84 @@ rules:
       - list
       - watch
   - apiGroups:
-      - metrics.eks.amazonaws.com
+      - traefik.io
     resources:
-      - kcm/metrics
-      - ksh/metrics
+      - ingressroutes
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagentinternals
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagentinternals/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogagentinternals/status
     verbs:
       - get
+      - patch
+      - update
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogcsidrivers
+      - datadogcsidrivers/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadogcsidrivers/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csidrivers
+    verbs:
+      - create
+      - list
+      - watch
+  - apiGroups:
+      - storage.k8s.io
+    resourceNames:
+      - k8s.csi.datadoghq.com
+    resources:
+      - csidrivers
+    verbs:
+      - delete
+      - get
+      - patch
+      - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -946,98 +1138,6 @@ rules:
     verbs:
       - get
   - apiGroups:
-      - ""
-    resourceNames:
-      - kube-system
-    resources:
-      - namespaces
-    verbs:
-      - get
-  - apiGroups:
-      - ""
-    resourceNames:
-      - datadog-cluster-id
-    resources:
-      - configmaps
-    verbs:
-      - create
-      - get
-      - update
-  - apiGroups:
-      - ""
-    resources:
-      - persistentvolumes
-      - persistentvolumeclaims
-      - serviceaccounts
-    verbs:
-      - list
-      - get
-      - watch
-  - apiGroups:
-      - apps
-    resources:
-      - deployments
-      - replicasets
-      - daemonsets
-      - statefulsets
-    verbs:
-      - list
-      - get
-      - watch
-  - apiGroups:
-      - batch
-    resources:
-      - cronjobs
-      - jobs
-    verbs:
-      - list
-      - get
-      - watch
-  - apiGroups:
-      - networking.k8s.io
-    resources:
-      - ingresses
-      - networkpolicies
-    verbs:
-      - list
-      - get
-      - watch
-  - apiGroups:
-      - rbac.authorization.k8s.io
-    resources:
-      - roles
-      - rolebindings
-      - clusterroles
-      - clusterrolebindings
-    verbs:
-      - list
-      - get
-      - watch
-  - apiGroups:
-      - storage.k8s.io
-    resources:
-      - storageclasses
-    verbs:
-      - list
-      - get
-      - watch
-  - apiGroups:
-      - autoscaling.k8s.io
-    resources:
-      - verticalpodautoscalers
-    verbs:
-      - list
-      - get
-      - watch
-  - apiGroups:
-      - apiextensions.k8s.io
-    resources:
-      - customresourcedefinitions
-    verbs:
-      - list
-      - get
-      - watch
-  - apiGroups:
       - admissionregistration.k8s.io
     resourceNames:
       - datadog-webhook
@@ -1080,6 +1180,14 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csidrivers
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
       - security.openshift.io
     resourceNames:
       - datadog-cluster-agent
@@ -1089,55 +1197,68 @@ rules:
     verbs:
       - use
   - apiGroups:
-      - policy
+      - gateway.networking.k8s.io
     resources:
-      - poddisruptionbudgets
+      - gateways
+      - gatewayclasses
+    verbs:
+      - get
+      - list
+      - watch
+      - patch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - referencegrants
+    verbs:
+      - get
+      - delete
+      - create
+      - patch
+  - apiGroups:
+      - gateway.envoyproxy.io
+    resources:
+      - envoyextensionpolicies
+      - backends
+    verbs:
+      - get
+      - delete
+      - create
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - envoyfilters
+    verbs:
+      - get
+      - create
+      - delete
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - gateways
     verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - datadoghq.com
-      - eks.amazonaws.com
-      - karpenter.azure.com
-      - karpenter.k8s.aws
-      - karpenter.sh
+      - networking.k8s.io
     resources:
-      - '*'
+      - ingressclasses
     verbs:
+      - get
       - list
       - watch
   - apiGroups:
-      - argoproj.io
+      - ""
     resources:
-      - rollouts
-      - applications
-      - applicationsets
+      - configmaps
     verbs:
+      - get
       - list
       - watch
-      - get
-  - apiGroups:
-      - source.toolkit.fluxcd.io
-    resources:
-      - buckets
-      - helmcharts
-      - externalartifacts
-      - gitrepositories
-      - helmrepositories
-      - ocirepositories
-    verbs:
-      - list
-      - watch
-      - get
-  - apiGroups:
-      - kustomize.toolkit.fluxcd.io
-    resources:
-      - kustomizations
-    verbs:
-      - list
-      - watch
-      - get
+      - create
+      - update
+      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1241,6 +1362,178 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
+  name: datadog-orchestrator-explorer
+rules:
+  - apiGroups:
+      - ""
+    resourceNames:
+      - kube-system
+    resources:
+      - namespaces
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resourceNames:
+      - datadog-cluster-id
+    resources:
+      - configmaps
+    verbs:
+      - create
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - nodes
+      - namespaces
+      - limitranges
+      - services
+      - persistentvolumes
+      - persistentvolumeclaims
+      - serviceaccounts
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - replicasets
+      - daemonsets
+      - statefulsets
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - batch
+    resources:
+      - cronjobs
+      - jobs
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+      - networkpolicies
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - roles
+      - rolebindings
+      - clusterroles
+      - clusterrolebindings
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - autoscaling.k8s.io
+    resources:
+      - verticalpodautoscalers
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+      - eks.amazonaws.com
+      - karpenter.azure.com
+      - karpenter.k8s.aws
+      - karpenter.sh
+    resources:
+      - '*'
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - argoproj.io
+    resources:
+      - rollouts
+      - applications
+      - applicationsets
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - buckets
+      - helmcharts
+      - externalartifacts
+      - gitrepositories
+      - helmrepositories
+      - ocirepositories
+    verbs:
+      - list
+      - watch
+      - get
+  - apiGroups:
+      - kustomize.toolkit.fluxcd.io
+    resources:
+      - kustomizations
+    verbs:
+      - list
+      - watch
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
   name: datadog
 rules:
   - nonResourceURLs:
@@ -1331,6 +1624,24 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: datadog-ksm-core
+subjects:
+  - kind: ServiceAccount
+    name: datadog-cluster-agent
+    namespace: datadog-agent
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-orchestrator-explorer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: datadog-orchestrator-explorer
 subjects:
   - kind: ServiceAccount
     name: datadog-cluster-agent
@@ -1646,6 +1957,8 @@ spec:
               value: "6000"
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "false"
+            - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
+              value: "false"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
@@ -1660,7 +1973,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.81.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1791,6 +2104,8 @@ spec:
               value: INFO
             - name: DD_APM_ENABLED
               value: "true"
+            - name: DD_LOGS_ENABLED
+              value: "false"
             - name: DD_APM_NON_LOCAL_TRAFFIC
               value: "true"
             - name: DD_APM_RECEIVER_PORT
@@ -1814,7 +2129,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.81.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1916,7 +2231,7 @@ spec:
               value: /var/run/datadog/dsd.socket
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.81.1
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources: {}
@@ -1994,7 +2309,9 @@ spec:
               value: "false"
             - name: DD_LOG_LEVEL
               value: INFO
-          image: gcr.io/datadoghq/agent:7.76.1
+            - name: DD_DOGSTATSD_PORT
+              value: "8125"
+          image: registry.datadoghq.com/agent:7.81.1
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -2012,7 +2329,6 @@ spec:
                 - IPC_LOCK
                 - CHOWN
                 - DAC_READ_SEARCH
-                - KILL
             privileged: false
             readOnlyRootFilesystem: true
             seccompProfile:
@@ -2109,7 +2425,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.81.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -2148,7 +2464,7 @@ spec:
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.81.1
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2175,7 +2491,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: gcr.io/datadoghq/agent:7.76.1
+          image: registry.datadoghq.com/agent:7.81.1
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -2308,7 +2624,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.23.0
+    app.kubernetes.io/version: 1.28.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2347,7 +2663,7 @@ spec:
             - -datadogDashboardEnabled=false
             - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
-            - -datadogAgentInternalEnabled=false
+            - -datadogCSIDriverEnabled=true
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -2367,7 +2683,13 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: gcr.io/datadoghq/operator:1.23.0
+            - name: DD_REGISTRY_OVERRIDE_ASIA
+              value: "true"
+            - name: DD_REGISTRY_OVERRIDE_EU
+              value: "true"
+            - name: DD_REGISTRY_OVERRIDE_DEFAULT
+              value: "true"
+          image: registry.datadoghq.com/operator:1.28.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2382,6 +2704,8 @@ spec:
               protocol: TCP
           resources: {}
           volumeMounts: null
+      nodeSelector:
+        kubernetes.io/os: linux
       serviceAccountName: datadog-operator
       volumes: null
 ---
@@ -2493,7 +2817,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_PORT
               value: "8000"
             - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
-              value: gcr.io/datadoghq
+              value: registry.datadoghq.com
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
             - name: DD_CLUSTER_CHECKS_ENABLED
@@ -2515,7 +2839,7 @@ spec:
             - name: DD_COLLECT_KUBERNETES_EVENTS
               value: "true"
             - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
-              value: "false"
+              value: "true"
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
               value: "false"
             - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
@@ -2558,7 +2882,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.76.1
+          image: registry.datadoghq.com/cluster-agent:7.81.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2631,7 +2955,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.76.1
+          image: registry.datadoghq.com/cluster-agent:7.81.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

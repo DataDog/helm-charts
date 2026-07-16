@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.16.0
+
+* Set csi driver image to `1.3.0`
+
+## 0.15.0
+
+* Enable Single Step Instrumentation (SSI) on GKE Autopilot >= 1.32.1-gke.1729000 by rendering `storage-dir` and `DD_APM_ENABLED`. The DaemonSet now matches the new `datadog-datadog-csi-driver-daemonset-exemption-v1.1.0` WorkloadAllowlist (which exempts the new `storage-dir` hostPath and the `DD_APM_ENABLED` env var), replacing `v1.0.1` in the `AllowlistSynchronizer`.
+
+## 0.14.0
+
+* Set the `csi.datadoghq.com/apm-enabled` annotation on the `k8s.csi.datadoghq.com` `CSIDriver` resource based on `apm.enabled`. The cluster-agent admission controller reads this annotation (via the `workloadmeta-kubeapiserver` CSIDriver collector) to decide whether SSI library injection can use CSI mode for this driver.
+
+## 0.13.0
+
+* Add `driver.resources` value to configure resource requests and limits for the CSI driver container.
+
+## 0.12.0
+
+* Add `labels` value to configure labels on CSI driver daemonset pods.
+
+## 0.11.0
+
+* Registry allow list is now configured via `global.apmRegistryAllowList` in the parent `datadog` chart. When set, the CSI driver enforces the list via `DD_REGISTRY_ALLOW_LIST` and the admission controller enforces it via `DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST`. Both layers must be satisfied for injection to proceed.
+
+## 0.10.1
+
+* Fix false positive outcome in csi e2e test ([#2579](https://github.com/DataDog/helm-charts/pull/2579)).
+* Bump CSI driver version to include bug fix ([#77](https://github.com/DataDog/datadog-csi-driver/pull/77)).
+
+## 0.10.0
+
+* Add `priorityClassName` support for CSI driver daemonset pods (default: `""`).
+
 ## 0.9.1
 
 * Set csi driver image to `1.2.1`

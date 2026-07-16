@@ -130,14 +130,14 @@ make cleanup-mapper-crds
 ```
 
 #### End-to-End Tests
-The helm-charts end-to-end (E2E) tests run on [Pulumi][pulumi]-deployed test infrastructures, defined as "stacks". The test infrastructures are deployed using the [`test-infra-definitions`][test-infra-repo] and [`datadog-agent`][agent-e2e-source] E2E frameworks.
+The helm-charts end-to-end (E2E) tests run on [Pulumi][pulumi]-deployed test infrastructures, defined as "stacks". The test infrastructures are deployed using the [`e2e-framework`][e2e-framework-source] and [`datadog-agent`][agent-e2e-source] E2E frameworks.
 
 **Prerequisites**
 Internal Datadog users may run E2E locally with the following prerequisites:
 
 * Access to the AWS `agent-sandbox` account
 * AWS keypair with your public ssh key created in the `agent-sandbox` account
-* Completed steps 1-4 of the `test-infra-definitions` [Quick start guide][test-infra-quickstart]
+* Completed steps 1-4 of the `e2e-framework` [Quick start guide][e2e-framework-quickstart]
 * Environment Variables:
   * AWS_KEYPAIR_NAME
   * E2E_API_KEY
@@ -172,6 +172,6 @@ In each chart, the `README.md` file is generated from the corresponding `README.
 [go-ws]:https://go.dev/ref/mod#workspaces
 [terratest]:https://github.com/gruntwork-io/terratest
 [pulumi]:https://www.pulumi.com/
-[test-infra-repo]:https://github.com/DataDog/test-infra-definitions
+[e2e-framework-source]:https://github.com/DataDog/datadog-agent/tree/main/test/e2e-framework
 [agent-e2e-source]:https://github.com/DataDog/datadog-agent/tree/main/test/new-e2e
-[test-infra-quickstart]:https://github.com/DataDog/test-infra-definitions#quick-start-guide
+[e2e-framework-quickstart]:https://github.com/DataDog/datadog-agent/tree/main/test/e2e-framework#quick-start-guide

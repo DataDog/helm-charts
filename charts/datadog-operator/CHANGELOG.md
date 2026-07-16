@@ -1,5 +1,137 @@
 # Changelog
 
+## 2.25.0-dev.2
+
+* Add `untaintController` configuration to enable the Datadog Operator Untaint controller (requires operator v1.28.0+). When `untaintController.enabled` is `true`, the operator is granted `patch` permission on nodes and started with `-untaintControllerEnabled=true`. Additional tuning is exposed via `untaintController.waitForCSIDriver`, `untaintController.timeout`, `untaintController.schedulingTimeout`, `untaintController.timeoutPolicy`, and `untaintController.eventsEnabled`. See [documentation](https://github.com/DataDog/datadog-operator/blob/main/docs/untaint_controller.md) for more details.
+
+## 2.25.0-dev.1
+
+* Update Datadog Operator chart for 1.29.0-rc.1.
+
+## 2.24.0
+
+* Update Datadog Operator chart for 1.28.0.
+
+## 2.24.0-dev.5
+
+* Update Datadog Operator chart for 1.28.0-rc.4.
+
+## 2.24.0-dev.4
+
+* Update Datadog Operator chart for 1.28.0-rc.3.
+
+## 2.24.0-dev.3
+
+* Update Datadog Operator chart for 1.28.0-rc.2.
+
+## 2.24.0-dev.2
+
+* Same as 2.24.0-dev.1 including 2.23.2 changelog entry to resume development.
+
+## 2.24.0-dev.1
+
+* Update Datadog Operator chart for 1.28.0-rc.1.
+
+## 2.23.2
+
+* Update Datadog Operator image tag to 1.27.1.
+
+## 2.23.1
+
+* Install the DatadogInstrumentation CRD by default.
+
+## 2.23.0
+
+* Update Datadog Operator chart for 1.27.0.
+
+## 2.23.0-dev.6
+
+* Update Datadog Operator chart for 1.27.0-rc.3.
+
+## 2.23.0-dev.5
+
+* Update Datadog Operator chart for 1.27.0-rc.2.
+
+## 2.23.0-dev.4
+
+* [datadog-operator] Enable DatadogCSIDriver by default and install related CRD ([#2670](https://github.com/DataDog/helm-charts/pull/2670)).
+
+## 2.23.0-dev.3
+
+* Support Helm parameters for `DD_DASHBOARD_WATCH_NAMESPACE`and `DD_GENERIC_RESOURCE_WATCH_NAMESPACE`
+
+## 2.23.0-dev.2
+
+* Install the DatadogPodAutoscalerClusterProfiles CRD by default. 
+
+## 2.23.0-dev.1
+
+* Update Datadog Operator chart for 1.27.0-rc.1.
+
+## 2.22.2
+
+* Don't add datadogAgentInternalEnabled arg for operator >= 1.27.
+
+## 2.22.1
+
+* Datadog-operator automountServiceAccountToken deployment file bug fix.
+
+## 2.22.0
+
+* Update Datadog Operator chart for 1.26.0.
+
+## 2.22.0-dev.7
+
+* [CONTP-1511] Support backend refresh intervals in operator install ([#2617](https://github.com/DataDog/helm-charts/pull/2617)).
+
+## 2.22.0-dev.6
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 2.22.0-dev.5
+
+* Update Datadog Operator chart for 1.26.0-rc.3.
+
+## 2.22.0-dev.4
+
+* Update Datadog Operator chart for 1.26.0-rc.2.
+
+## 2.22.0-dev.3
+
+* [No-op] Remove metadata change notice for 1.21.0+.
+
+## 2.22.0-dev.2
+
+* [No-op] Lint operator ClusterRole template
+
+## 2.22.0-dev.1
+
+* Update Datadog Operator chart for 1.26.0-rc.1.
+
+## 2.21.1
+
+* Bump `datadog-crds` chart to 2.18.1, no-op change.
+
+## 2.21.0
+
+* Update Datadog Operator chart for 1.25.0.
+
+## 2.21.0-dev.2
+
+* Update Datadog Operator chart for 1.25.0-rc.3.
+
+## 2.21.0-dev.1
+
+* Update Datadog Operator chart for 1.25.0-rc.1.
+
+## 2.20.0
+
+* Extend `registryMigrationMode: "auto"` to also enable `DD_REGISTRY_OVERRIDE_DEFAULT`, migrating US1 (`datadoghq.com`) and US5 (`us5.datadoghq.com`) Agent image pulls to `registry.datadoghq.com` ([#2483](https://github.com/DataDog/helm-charts/pull/2483)).
+
+## 2.19.1
+
+* Extend `registryMigrationMode: "auto"` to also enable `DD_REGISTRY_OVERRIDE_EU`, migrating EU1 (`datadoghq.eu`) Agent image pulls to `registry.datadoghq.com`.
+
 ## 2.19.0
 
 * Update Datadog Operator chart for 1.24.0

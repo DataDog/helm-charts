@@ -59,6 +59,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.signals.metrics.enabled }}
+          command: ["quickwit-metrics"]
+          {{- end }}
           {{- if $.Values.indexer.args }}
           args: {{- toYaml $.Values.indexer.args | nindent 10 }}
           {{- else }}
@@ -66,6 +69,14 @@ spec:
           {{- end }}
           env:
             {{- include "quickwit.environment" . | nindent 12 }}
+            {{- if .Values.indexer.persistentVolume.enabled }}
+            {{- if .Values.indexer.persistentVolume.storageClass }}
+            - name: KUBERNETES_STORAGE_CLASS
+              value: {{ .Values.indexer.persistentVolume.storageClass | quote }}
+            {{- end }}
+            - name: KUBERNETES_STORAGE_SIZE
+              value: {{ .Values.indexer.persistentVolume.storage | quote }}
+            {{- end }}
             {{- if .Values.pipelinesConfig }}
             - name: "QW_PIPELINE_CONFIG_PATH"
               value: "/quickwit/pipelines_config.json"
@@ -99,7 +110,7 @@ spec:
             - name: {{ .name }}
               mountPath: {{ .mountPath }}
             {{- end }}
-            {{- with .Values.indexer.extraVolumeMounts }}
+            {{- with concat (.Values.volumeMounts | default list) (.Values.indexer.extraVolumeMounts | default list) }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           resources:
@@ -132,23 +143,24 @@ spec:
           configMap:
             name: {{ .name }}
         {{- end }}
-        {{- with .Values.indexer.extraVolumes }}
+        {{- with concat (.Values.volumes | default list) (.Values.indexer.extraVolumes | default list) }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- with .Values.indexer.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with merge (dict) .Values.indexer.affinity .Values.affinity }}
+      {{- with merge (dict) (.Values.indexer.affinity | default dict) (.Values.affinity | default dict) }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- $tolerations := concat .Values.tolerations .Values.indexer.tolerations | compact | uniq }}
+      {{- $tolerations := concat (.Values.tolerations | default list) (.Values.indexer.tolerations | default list) | compact | uniq }}
       tolerations:
         {{- toYaml $tolerations | nindent 8 }}
-      {{- with .Values.indexer.topologySpreadConstraints }}
+      {{- $tsc := concat (.Values.topologySpreadConstraints | default list) (.Values.indexer.topologySpreadConstraints | default list) | compact }}
+      {{- if $tsc }}
       topologySpreadConstraints:
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml $tsc | nindent 8 }}
       {{- end }}
       {{- if .Values.indexer.runtimeClassName }}
       runtimeClassName: {{ .Values.indexer.runtimeClassName | quote }}
@@ -169,6 +181,9 @@ spec:
             storage: "{{ .Values.indexer.persistentVolume.storage }}"
       {{- if .Values.indexer.persistentVolume.storageClass }}
         storageClassName: "{{ .Values.indexer.persistentVolume.storageClass }}"
+      {{- end }}
+      {{- if .Values.indexer.volumeAttributesClass.enabled }}
+        volumeAttributesClassName: {{ include "quickwit.indexer.vacName" . | quote }}
       {{- end }}
   {{- end }}
 {{- end }}

@@ -14,7 +14,6 @@ import (
 // migration mode, and relevant overrides (APM, GKE Autopilot/GDC, explicit registry).
 func TestRegistryMigration(t *testing.T) {
 	// Site × mode matrix.
-	// In auto mode, AP1 migrates because datadog.apm.enabled defaults to false.
 	sites := []struct {
 		name         string
 		site         string // empty = default (datadoghq.com / US1)
@@ -24,7 +23,7 @@ func TestRegistryMigration(t *testing.T) {
 	}{
 		{
 			name:         "US1 (default)",
-			wantAuto:     "gcr.io/datadoghq",
+			wantAuto:     "registry.datadoghq.com",
 			wantAll:      "registry.datadoghq.com",
 			wantDisabled: "gcr.io/datadoghq",
 		},
@@ -38,14 +37,14 @@ func TestRegistryMigration(t *testing.T) {
 		{
 			name:         "US5",
 			site:         "us5.datadoghq.com",
-			wantAuto:     "gcr.io/datadoghq",
+			wantAuto:     "registry.datadoghq.com",
 			wantAll:      "registry.datadoghq.com",
 			wantDisabled: "gcr.io/datadoghq",
 		},
 		{
 			name:         "EU1",
 			site:         "datadoghq.eu",
-			wantAuto:     "eu.gcr.io/datadoghq",
+			wantAuto:     "registry.datadoghq.com",
 			wantAll:      "registry.datadoghq.com",
 			wantDisabled: "eu.gcr.io/datadoghq",
 		},
@@ -57,7 +56,6 @@ func TestRegistryMigration(t *testing.T) {
 			wantDisabled: "public.ecr.aws/datadog",
 		},
 		{
-			// apm.enabled defaults to false, so auto mode migrates AP1.
 			name:         "AP1",
 			site:         "ap1.datadoghq.com",
 			wantAuto:     "registry.datadoghq.com",
@@ -67,7 +65,7 @@ func TestRegistryMigration(t *testing.T) {
 		{
 			name:         "AP2",
 			site:         "ap2.datadoghq.com",
-			wantAuto:     "gcr.io/datadoghq",
+			wantAuto:     "registry.datadoghq.com",
 			wantAll:      "registry.datadoghq.com",
 			wantDisabled: "gcr.io/datadoghq",
 		},
@@ -138,6 +136,27 @@ func TestRegistryMigration(t *testing.T) {
 		assert.Equal(t, "registry.datadoghq.com", registry)
 	})
 
+	// US1 auto migration is unconditional — APM config has no effect.
+	t.Run("US1/auto/apm-enabled: migrates", func(t *testing.T) {
+		registry := renderAndExtractRegistry(t, map[string]string{
+			"datadog.apiKeyExistingSecret": "datadog-secret",
+			"datadog.appKeyExistingSecret": "datadog-secret",
+			"datadog.apm.enabled":          "true",
+			"registryMigrationMode":        "auto",
+		})
+		assert.Equal(t, "registry.datadoghq.com", registry)
+	})
+
+	t.Run("US1/auto/apm-portEnabled: migrates", func(t *testing.T) {
+		registry := renderAndExtractRegistry(t, map[string]string{
+			"datadog.apiKeyExistingSecret": "datadog-secret",
+			"datadog.appKeyExistingSecret": "datadog-secret",
+			"datadog.apm.portEnabled":      "true",
+			"registryMigrationMode":        "auto",
+		})
+		assert.Equal(t, "registry.datadoghq.com", registry)
+	})
+
 	// Explicit registry always takes precedence over migration.
 	t.Run("explicit registry overrides migration", func(t *testing.T) {
 		registry := renderAndExtractRegistry(t, map[string]string{
@@ -191,6 +210,81 @@ func TestRegistryMigration(t *testing.T) {
 			assert.Equal(t, "gcr.io/datadoghq", registry)
 		})
 	}
+}
+
+// TestAdmissionControllerContainerRegistry verifies that DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
+// follows registryMigrationMode (same as the Agent image registry), and that
+// clusterAgent.admissionController.containerRegistry always takes precedence when set.
+func TestAdmissionControllerContainerRegistry(t *testing.T) {
+	tests := []struct {
+		name         string
+		site         string
+		mode         string
+		wantRegistry string
+	}{
+		// Migration disabled: site-specific registries.
+		{name: "US1/disabled", site: "", mode: "", wantRegistry: "gcr.io/datadoghq"},
+		{name: "EU1/disabled", site: "datadoghq.eu", mode: "", wantRegistry: "eu.gcr.io/datadoghq"},
+		{name: "AP1/disabled", site: "ap1.datadoghq.com", mode: "", wantRegistry: "asia.gcr.io/datadoghq"},
+		{name: "US5/disabled", site: "us5.datadoghq.com", mode: "", wantRegistry: "gcr.io/datadoghq"},
+		// Migration enabled: registry.datadoghq.com for migrated sites.
+		{name: "US1/auto", site: "", mode: "auto", wantRegistry: "registry.datadoghq.com"},
+		{name: "US1/all", site: "", mode: "all", wantRegistry: "registry.datadoghq.com"},
+		{name: "EU1/auto", site: "datadoghq.eu", mode: "auto", wantRegistry: "registry.datadoghq.com"},
+		{name: "EU1/all", site: "datadoghq.eu", mode: "all", wantRegistry: "registry.datadoghq.com"},
+		{name: "AP1/auto", site: "ap1.datadoghq.com", mode: "auto", wantRegistry: "registry.datadoghq.com"},
+		{name: "AP1/all", site: "ap1.datadoghq.com", mode: "all", wantRegistry: "registry.datadoghq.com"},
+		{name: "US5/auto", site: "us5.datadoghq.com", mode: "auto", wantRegistry: "registry.datadoghq.com"},
+		{name: "US5/all", site: "us5.datadoghq.com", mode: "all", wantRegistry: "registry.datadoghq.com"},
+		// Sites excluded from migration always use their site-specific registry.
+		{name: "US3/auto", site: "us3.datadoghq.com", mode: "auto", wantRegistry: "datadoghq.azurecr.io"},
+		{name: "US1-FED/auto", site: "ddog-gov.com", mode: "auto", wantRegistry: "public.ecr.aws/datadog"},
+		// Explicit containerRegistry override takes precedence.
+		{name: "explicit override", site: "", mode: "auto", wantRegistry: "my-custom-registry.example.com"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			overrides := map[string]string{
+				"datadog.apiKeyExistingSecret": "datadog-secret",
+				"datadog.appKeyExistingSecret": "datadog-secret",
+				"clusterAgent.enabled":         "true",
+				"registryMigrationMode":        tt.mode,
+			}
+			if tt.site != "" {
+				overrides["datadog.site"] = tt.site
+			}
+			if tt.name == "explicit override" {
+				overrides["clusterAgent.admissionController.containerRegistry"] = "my-custom-registry.example.com"
+			}
+			assert.Equal(t, tt.wantRegistry, renderAndExtractAdmissionControllerRegistry(t, overrides))
+		})
+	}
+}
+
+func renderAndExtractAdmissionControllerRegistry(t *testing.T, overrides map[string]string) string {
+	t.Helper()
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-deployment.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides:   overrides,
+	})
+	require.NoError(t, err, "couldn't render template")
+
+	var deploy appsv1.Deployment
+	common.Unmarshal(t, manifest, &deploy)
+
+	for _, container := range deploy.Spec.Template.Spec.Containers {
+		for _, env := range container.Env {
+			if env.Name == "DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY" {
+				return env.Value
+			}
+		}
+	}
+	t.Fatal("DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY not found in cluster-agent deployment")
+	return ""
 }
 
 func renderAndExtractRegistry(t *testing.T, overrides map[string]string) string {

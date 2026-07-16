@@ -1,0 +1,55 @@
+name: Chart Version
+
+on:
+  pull_request:
+    types: [labeled, unlabeled, opened, edited, synchronize]
+
+# Permission forced by repo-level setting; only elevate on job-level
+permissions:
+  id-token: write # Required for dd-octo-sts action
+  pull-requests: write
+  contents: write
+  # packages: read
+
+jobs:
+  bump-chart-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: DataDog/dd-octo-sts-action@96a25462dbcb10ebf0bfd6e2ccc917d2ab235b9a # v1.0.4
+        id: octo-sts
+        with:
+          scope: DataDog/helm-charts
+          policy: self.bump-chart-version.create-commit
+
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Extract all chart label information and update Chart.yaml and CHANGELOG.md
+        id: update_charts
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          github-token: ${{ steps.octo-sts.outputs.token }}
+          script: |
+            const script = require('./.github/scripts/bump-chart-version.js')
+            await script({github, context, core, exec})
+
+  validate-chart-version:
+    runs-on: ubuntu-latest
+    # Run after bump-chart-version so that any fixup commit it pushes is visible
+    # when we fetch content via pr.head.ref (branch name resolves to latest HEAD).
+    needs: [bump-chart-version]
+    # Run even if the bump job failed — validation gives independent, actionable feedback.
+    if: ${{ !cancelled() }}
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Validate chart version, CHANGELOG, and README badge
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const script = require('./.github/scripts/validate-chart-version.js')
+            await script({github, context, core})

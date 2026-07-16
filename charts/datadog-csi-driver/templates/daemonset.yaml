@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   {{- if (eq (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") }}
   labels:
-    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.0.1"
+    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.1.0"
   {{- end }}
 spec:
   {{- with .Values.updateStrategy }}
@@ -20,6 +20,9 @@ spec:
       labels:
         app: {{ include "datadog-csi-driver.daemonsetName" . }}
         admission.datadoghq.com/enabled: "false"
+      {{- with .Values.labels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.annotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
@@ -33,12 +36,19 @@ spec:
       imagePullSecrets:
     {{ toYaml .Values.image.pullSecrets | indent 8 }}
       {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
       containers:
         - name: csi-node-driver
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- with .Values.driver.securityContext }}
           securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.driver.resources }}
+          resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           ports:
@@ -52,8 +62,12 @@ spec:
             # it is created by the node server and needs to be writeable.
             - name: plugin-dir
               mountPath: /csi
-            {{- if ne (include "csi.gke-autopilot" .) "true" }}
+            {{- if ne (include "csi.gke-autopilot-legacy" .) "true" }}
             # storage-dir stores the data and database for the CSI driver.
+            # Skipped on legacy GKE Autopilot (< 1.32.1-gke.1729000, AllowlistedV2Workload
+            # mode): no updated AllowlistedV2Workload exemption is published for the
+            # CSI driver in that mode, so rendering this hostPath would cause Warden
+            # to reject the DaemonSet.
             - name: storage-dir
               mountPath: /var/lib/datadog-csi-driver
             {{- end }}
@@ -75,9 +89,16 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-            {{- if ne (include "csi.gke-autopilot" .) "true" }}
+            {{- if ne (include "csi.gke-autopilot-legacy" .) "true" }}
+            # DD_APM_ENABLED controls SSI on the CSI driver. Skipped on legacy GKE
+            # Autopilot (< 1.32.1-gke.1729000, AllowlistedV2Workload mode) because
+            # no updated exemption is published for it in that mode.
             - name: DD_APM_ENABLED
               value: {{ .Values.apm.enabled | quote }}
+            {{- if .Values.global.apmRegistryAllowList }}
+            - name: DD_REGISTRY_ALLOW_LIST
+              value: {{ join "," .Values.global.apmRegistryAllowList | quote }}
+            {{- end }}
             {{- end }}
         - name: csi-node-driver-registrar
           image: "{{ .Values.registrar.image.repository }}:{{ .Values.registrar.image.tag }}"
@@ -122,7 +143,7 @@ spec:
           hostPath:
             path: /var/lib/kubelet/plugins/datadog.csi/driver
             type: DirectoryOrCreate
-        {{- if ne (include "csi.gke-autopilot" .) "true" }}
+        {{- if ne (include "csi.gke-autopilot-legacy" .) "true" }}
         - name: storage-dir
           hostPath:
             path: /var/lib/kubelet/plugins/datadog.csi/storage

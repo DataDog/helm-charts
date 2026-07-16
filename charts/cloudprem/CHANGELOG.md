@@ -1,5 +1,74 @@
 # Changelog
 
+## Unreleased
+
+## 0.4.5
+
+* Update Docker image to `v0.1.31`.
+* Add `indexer.volumeAttributesClass` and `searcher.volumeAttributesClass` values to provision a Kubernetes `VolumeAttributesClass` for the indexer/searcher persistent volumes, allowing tuning of volume attributes such as IOPS and throughput. Disabled by default; requires Kubernetes >= 1.31 and a mandatory `driverName` when enabled.
+* Fix the Kubernetes advertise address by setting the `KUBERNETES_POD_IP` environment variable from the pod IP (`status.podIP`) instead of the pod name.
+
+## 0.4.4
+
+* Disable `serviceAccount.automountServiceAccountToken` by default to reduce token exposure on pods that don't need Kubernetes API access.
+* Enable `securityContext.readOnlyRootFilesystem` by default across all workloads for defense-in-depth hardening.
+
+## 0.4.3
+
+* Add global `volumes` and `volumeMounts` values that apply to all components, merged with the existing per-component `extraVolumes`/`extraVolumeMounts`.
+* Add global `topologySpreadConstraints` applied to all workload pods and merged with per-component topology spread constraints.
+* Merge upstream Quickwit Helm chart version 0.8.5.
+
+## 0.4.2
+
+* Update Docker image to `v0.1.29`.
+* Add Kubernetes node name as an OpenTelemetry resource attribute (`host.name`).
+* Stop setting the `CP_RETENTION_PERIOD` environment variable. The `cloudprem.index.retention` value is now ignored and deprecated; it will be removed in a future release. Retention can now be set per index from the UI.
+
+## 0.4.1
+
+* Update Docker image to `v0.1.28`.
+* Enable `datadog.byocTelemetry.enabled` by default.
+* Expose pomsky-intake host metadata forwarders. New container/service ports `host-meta` (8787) and `inv-meta` (8788) for the agent's `POST /intake` and `POST /api/v1/metadata` payloads, plus ingress rules routing those paths to the new ports. Gated by `intake.forwardHostMetadata.enabled` (default `true`); disable when the agent is dual-shipping to BYOC and SaaS to avoid duplicate host metadata writes.
+
+## 0.4.0
+
+* Update Docker image to `v0.1.26`.
+* Add intake service: new `intake` deployment, service, configmap, HPA, PDB, and ingress (disabled by default; enable with `intake.enabled=true`) for accepting Datadog Agent and OTLP traffic ([#74](https://github.com/DataDog/pomsky-helm-charts/pull/74)).
+* Add top-level `signals` config (`logs`, `metrics`, `traces`) to gate intake ingress paths and the indexes the cloudprem binary creates on startup. Defaults: logs enabled, metrics and traces disabled.
+
+## 0.3.3
+
+* TON-347: Replace imgix image URLs with DRUIDS equivalent ([#2608](https://github.com/DataDog/helm-charts/pull/2608)).
+
+## 0.3.2
+
+* Update Docker image to `v0.1.25`
+
+## 0.3.1
+
+* Remove unnecessary `datadog-values.yaml` file
+
+## 0.3.0
+
+* Update Docker image to `v0.1.24`
+
+## 0.2.4
+
+* Update Docker image to `v0.1.23`
+* Set default `QW_LOG_FORMAT` to `DDG`
+* Remove default CPU limits from all components
+* Fix default environment variables (`NO_COLOR`, `QW_DISABLE_TELEMETRY`, `QW_LOG_FORMAT`) not being applied when `environment` is empty
+
+## 0.2.3
+
+* Add support for annotations on searcher PersistentVolumeClaim (`searcher.persistentVolume.annotations`)
+* Merge upstream Quickwit Helm chart version 0.8.4
+
+## 0.2.2
+
+* Update Docker image to `v0.1.22`
+
 ## 0.2.1
 
 * Add support for annotations on indexer PersistentVolumeClaim (`indexer.persistentVolume.annotations`)

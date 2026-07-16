@@ -275,6 +275,14 @@ spec:
             value: {{ .Values.clusterAgent.admissionController.failurePolicy | quote }}
           - name: DD_ADMISSION_CONTROLLER_PORT
             value: {{ .Values.clusterAgent.admissionController.port | quote }}
+          {{- if .Values.clusterAgent.admissionController.probe.enabled }}
+          - name: DD_ADMISSION_CONTROLLER_PROBE_ENABLED
+            value: "true"
+          - name: DD_ADMISSION_CONTROLLER_PROBE_INTERVAL
+            value: {{ .Values.clusterAgent.admissionController.probe.interval | quote }}
+          - name: DD_ADMISSION_CONTROLLER_PROBE_GRACE_PERIOD
+            value: {{ .Values.clusterAgent.admissionController.probe.gracePeriod | quote }}
+          {{- end }}
           {{- end }}
           {{- if .Values.clusterAgent.admissionController.remoteInstrumentation.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PATCHER_ENABLED
@@ -326,6 +334,10 @@ spec:
           {{- if .Values.datadog.apm.instrumentation.injectionMode }}
           - name: DD_APM_INSTRUMENTATION_INJECTION_MODE
             value: {{ .Values.datadog.apm.instrumentation.injectionMode | quote }}
+          {{- end }}
+          {{- if .Values.global.apmRegistryAllowList }}
+          - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_CONTAINER_REGISTRY_ALLOW_LIST
+            value: {{ join "," .Values.global.apmRegistryAllowList | quote }}
           {{- end }}
           {{- if .Values.datadog.asm.threats.enabled }}
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_APPSEC_ENABLED
@@ -414,6 +426,13 @@ spec:
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
+          {{- if .Values.datadog.kubernetesActions.enabled }}
+          {{- $dcaImageTag := .Values.clusterAgent.image.tag | toString }}
+          {{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.79.0-0" $dcaImageTag) }}
+          - name: DD_KUBEACTIONS_ENABLED
+            value: "true"
+          {{- end }}
+          {{- end }}
           - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
             value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
           - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
@@ -443,6 +462,14 @@ spec:
           - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
             value: {{ .Values.datadog.orchestratorExplorer.container_scrubbing.enabled | quote }}
           {{- end }}
+          {{- if .Values.datadog.orchestratorExplorer.networkCRDs.enabled }}
+          - name: DD_ORCHESTRATOR_EXPLORER_CUSTOM_RESOURCES_OOTB_GATEWAY_API
+            value: "true"
+          - name: DD_ORCHESTRATOR_EXPLORER_CUSTOM_RESOURCES_OOTB_SERVICE_MESH
+            value: "true"
+          - name: DD_ORCHESTRATOR_EXPLORER_CUSTOM_RESOURCES_OOTB_INGRESS_CONTROLLERS
+            value: "true"
+          {{- end }}
           - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
             value: {{ include "language-detection-enabled" .  | quote }}
           {{- if eq  (include "should-enable-security-agent" .) "true" }}
@@ -467,15 +494,27 @@ spec:
             value: {{ .Values.datadog.prometheusScrape.version | quote }}
           {{- end }}
           {{- end }}
+          {{- if .Values.datadog.instrumentationCrd.enabled }}
+          - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
+            value: {{ .Values.datadog.instrumentationCrd.enabled | quote }}
+          {{- end }}
           {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
           - name: DD_AUTOSCALING_WORKLOAD_ENABLED
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
           - name: DD_AUTOSCALING_FAILOVER_ENABLED
             value: {{ (((.Values.datadog.autoscaling).workload).enabled) | quote }}
+          {{- if ((((.Values.datadog.autoscaling).workload).inPlaceVerticalScaling).enabled) }}
+          - name: DD_AUTOSCALING_WORKLOAD_IN_PLACE_VERTICAL_SCALING_ENABLED
+            value: "true"
+          {{- end }}
           {{- end }}
           {{- if (((.Values.datadog.autoscaling).cluster).enabled) }}
           - name: DD_AUTOSCALING_CLUSTER_ENABLED
             value: {{ (((.Values.datadog.autoscaling).cluster).enabled) | quote }}
+          {{- end }}
+          {{- if ((((.Values.datadog.autoscaling).cluster).spot).enabled) }}
+          - name: DD_AUTOSCALING_CLUSTER_SPOT_ENABLED
+            value: {{ ((((.Values.datadog.autoscaling).cluster).spot).enabled) | quote }}
           {{- end }}
           - name: DD_INSTRUMENTATION_INSTALL_TIME
             valueFrom:
@@ -504,6 +543,39 @@ spec:
           {{- if .Values.datadog.appsec.injector.proxies }}
           - name: DD_APPSEC_PROXY_PROXIES
             value: {{ .Values.datadog.appsec.injector.proxies | toJson | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.mode }}
+          - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_MODE
+            value: {{ .Values.datadog.appsec.injector.mode | quote }}
+          {{- end }}
+          {{- /* Sidecar config is always passed to the cluster agent regardless of mode so it
+               knows the full sidecar spec. In "external" mode the agent uses a separately
+               deployed processor instead, but still needs these values for reference. */}}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_IMAGE
+            value: {{ .Values.datadog.appsec.injector.sidecar.image | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_IMAGE_TAG
+            value: {{ .Values.datadog.appsec.injector.sidecar.imageTag | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_PORT
+            value: {{ .Values.datadog.appsec.injector.sidecar.port | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_HEALTH_PORT
+            value: {{ .Values.datadog.appsec.injector.sidecar.healthPort | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_RESOURCES_REQUESTS_CPU
+            value: {{ .Values.datadog.appsec.injector.sidecar.resources.requests.cpu | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_RESOURCES_REQUESTS_MEMORY
+            value: {{ .Values.datadog.appsec.injector.sidecar.resources.requests.memory | quote }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_NGINX_MODULE_MOUNT_PATH
+            value: {{ .Values.datadog.appsec.injector.nginx.moduleMountPath | quote }}
+          {{- if .Values.datadog.appsec.injector.sidecar.resources.limits.cpu }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_RESOURCES_LIMITS_CPU
+            value: {{ .Values.datadog.appsec.injector.sidecar.resources.limits.cpu | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.sidecar.resources.limits.memory }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_RESOURCES_LIMITS_MEMORY
+            value: {{ .Values.datadog.appsec.injector.sidecar.resources.limits.memory | quote }}
+          {{- end }}
+          {{- if .Values.datadog.appsec.injector.sidecar.bodyParsingSizeLimit }}
+          - name: DD_ADMISSION_CONTROLLER_APPSEC_SIDECAR_BODY_PARSING_SIZE_LIMIT
+            value: {{ .Values.datadog.appsec.injector.sidecar.bodyParsingSizeLimit | quote }}
           {{- end }}
           {{- if .Values.datadog.appsec.injector.processor.port }}
           - name: DD_APPSEC_PROXY_PROCESSOR_PORT
@@ -618,7 +690,7 @@ spec:
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.d/kubernetes_apiserver.yaml
             {{- end }}
-            {{- if and .Values.datadog.orchestratorExplorer.enabled (eq (include "orchestratorExplorer-add-crd-collection-config" .) "true") }}
+            {{- if eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true" }}
             - key: orchestrator.yaml
               path: orchestrator.d/orchestrator.yaml
             {{- end }}

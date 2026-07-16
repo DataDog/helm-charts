@@ -1,6 +1,6 @@
 # CloudPrem
 
-![Version: 0.2.1](https://img.shields.io/badge/Version-0.2.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.21](https://img.shields.io/badge/AppVersion-v0.1.21-informational?style=flat-square)
+![Version: 0.4.5](https://img.shields.io/badge/Version-0.4.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.31](https://img.shields.io/badge/AppVersion-v0.1.31-informational?style=flat-square)
 
 ## Using the Datadog Helm repository
 
@@ -44,11 +44,6 @@ datadog:
   site: datadoghq.eu
   # The name of the existing Secret containing the Datadog API key. The secret key name must be `api-key`.
   apiKeyExistingSecret: datadog-api-key
-
-cloudprem:
-  index:
-    # The retention period for the index specified as a human-readable duration such as `30d`, `6m`, or `1y`. Defaults to 30 days.
-    retention: 90d
 
 aws:
   accountId: "123456789012"

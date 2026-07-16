@@ -24,6 +24,13 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 {{/*
+Default Quickwit cluster ID.
+*/}}
+{{- define "quickwit.defaultClusterID" -}}
+{{- printf "%s-%s" .Release.Namespace (include "quickwit.fullname" .) -}}
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "quickwit.chart" -}}
@@ -58,6 +65,17 @@ Selector labels
 {{- define "quickwit.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "quickwit.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Datadog BYOC telemetry intake host.
+*/}}
+{{- define "quickwit.byocTelemetryHost" -}}
+{{- if has .Values.datadog.site (list "datadoghq.com" "datadoghq.eu" "ddog-gov.com") -}}
+{{- printf "app.%s" .Values.datadog.site -}}
+{{- else -}}
+{{- .Values.datadog.site -}}
+{{- end -}}
 {{- end }}
 
 {{/*
@@ -101,6 +119,73 @@ app.kubernetes.io/component: indexer
 {{- end }}
 
 {{/*
+Intake Selector labels
+*/}}
+{{- define "quickwit.intake.selectorLabels" -}}
+{{ include "quickwit.selectorLabels" . }}
+app.kubernetes.io/component: intake
+{{- end }}
+
+{{/*
+Intake container ports
+*/}}
+{{- define "quickwit.intake.ports" -}}
+- name: dd-agent
+  containerPort: 8181
+  protocol: TCP
+- name: http-ingest
+  containerPort: 8282
+  protocol: TCP
+- name: otlp-grpc
+  containerPort: 8383
+  protocol: TCP
+- name: otlp-http
+  containerPort: 8384
+  protocol: TCP
+{{- if .Values.signals.metrics.enabled }}
+- name: connections
+  containerPort: 8585
+  protocol: TCP
+{{- end }}
+- name: api
+  containerPort: 8686
+  protocol: TCP
+- name: host-meta
+  containerPort: 8787
+  protocol: TCP
+- name: inv-meta
+  containerPort: 8788
+  protocol: TCP
+{{- end }}
+
+{{/*
+VolumeAttributesClass name for the indexer.
+*/}}
+{{- define "quickwit.indexer.vacName" -}}
+{{- printf "%s-indexer-vac" .Release.Name }}
+{{- end }}
+
+{{/*
+VolumeAttributesClass name for the searcher.
+*/}}
+{{- define "quickwit.searcher.vacName" -}}
+{{- printf "%s-searcher-vac" .Release.Name }}
+{{- end }}
+
+{{/*
+VolumeAttributesClass apiVersion, auto-detected from cluster capabilities.
+*/}}
+{{- define "quickwit.volumeAttributesClass.apiVersion" -}}
+{{- if .Capabilities.APIVersions.Has "storage.k8s.io/v1/VolumeAttributesClass" -}}
+storage.k8s.io/v1
+{{- else if .Capabilities.APIVersions.Has "storage.k8s.io/v1beta1/VolumeAttributesClass" -}}
+storage.k8s.io/v1beta1
+{{- else -}}
+{{- fail "VolumeAttributesClass is not available on this cluster (requires Kubernetes >= 1.31)" }}
+{{- end -}}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "quickwit.serviceAccountName" -}}
@@ -126,7 +211,10 @@ Quickwit ports
   protocol: UDP
 - name: cloudprem
   containerPort: 7283
-  protocol:  TCP
+  protocol: TCP
+- name: health
+  containerPort: 7284
+  protocol: TCP
 {{- end }}
 
 
@@ -146,10 +234,14 @@ Quickwit environment
   valueFrom:
     fieldRef:
       fieldPath: metadata.name
+- name: KUBERNETES_NODE_NAME
+  valueFrom:
+    fieldRef:
+      fieldPath: spec.nodeName
 - name: KUBERNETES_POD_IP
   valueFrom:
     fieldRef:
-      fieldPath: metadata.name
+      fieldPath: status.podIP
 - name: KUBERNETES_LIMITS_CPU
   valueFrom:
     resourceFieldRef:
@@ -165,6 +257,11 @@ Quickwit environment
     resourceFieldRef:
       containerName: {{ .Chart.Name }}
       resource: requests.cpu
+- name: QW_NUM_CPUS
+  valueFrom:
+    resourceFieldRef:
+      containerName: {{ .Chart.Name }}
+      resource: requests.cpu
 - name: KUBERNETES_REQUESTS_MEMORY
   valueFrom:
     resourceFieldRef:
@@ -174,7 +271,7 @@ Quickwit environment
   value: {{ .Values.configLocation }}
 {{- if not .Values.config.cluster_id }}
 - name: QW_CLUSTER_ID
-  value: {{ .Release.Namespace }}-{{ include "quickwit.fullname" . }}
+  value: {{ include "quickwit.defaultClusterID" . }}
 {{- end }}
 - name: QW_NODE_ID
   value: "$(KUBERNETES_POD_NAME)"
@@ -216,6 +313,10 @@ Quickwit environment
       name: {{ .Values.azure.storageAccount.accessKeySecretRef.name }}
       key: {{ .Values.azure.storageAccount.accessKeySecretRef.key }}
 {{- end}}
+{{- if .Values.signals.metrics.enabled }}
+- name: QW_ENABLE_DATAFUSION_ENDPOINT
+  value: "true"
+{{- end }}
 - name: CP_DOGSTATSD_SERVER_HOST
 {{- if .Values.dogstatsdServer.host.value }}
   value: {{ .Values.dogstatsdServer.host.value | quote }}
@@ -229,8 +330,6 @@ Quickwit environment
   value: {{ .Values.cloudprem.reverseConnection.enabled | quote }}
 - name: CP_MIN_SHARDS
   value: {{ .Values.cloudprem.index.minShards | quote }}
-- name: CP_RETENTION_PERIOD
-  value: {{ .Values.cloudprem.index.retention | quote }}
 - name: DD_SITE
   value: {{ .Values.datadog.site | quote }}
 {{- if or .Values.datadog.apiKey .Values.datadog.apiKeyExistingSecret }}
@@ -244,23 +343,75 @@ Quickwit environment
       {{- end }}
       key: api-key
 {{- end }}
-{{- if .Values.tracingEnabled }}
+{{- if or .Values.datadog.byocTelemetry.enabled .Values.tracingEnabled }}
 - name: QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER
   value: "true"
-- name: OTEL_EXPORTER_OTLP_ENDPOINT
+{{- end }}
+{{- if .Values.datadog.byocTelemetry.enabled }}
+{{- $byocTelemetryHost := include "quickwit.byocTelemetryHost" . }}
+{{- $clusterID := .Values.config.cluster_id | default (include "quickwit.defaultClusterID" .) }}
+- name: BYOC_TELEMETRY_ENABLED
+  value: "true"
+- name: OTEL_RESOURCE_ATTRIBUTES
+  value: {{ printf "cluster_id=%s,node_id=$(QW_NODE_ID),host.name=$(KUBERNETES_NODE_NAME)" $clusterID | quote }}
+- name: OTEL_EXPORTER_OTLP_LOGS_PROTOCOL
+  value: "http/protobuf"
+- name: OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
+  value: {{ printf "https://%s/api/unstable/byoc-telemetry-intake/v1/logs" $byocTelemetryHost | quote }}
+- name: OTEL_EXPORTER_OTLP_METRICS_PROTOCOL
+  value: "http/protobuf"
+- name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+  value: "delta"
+- name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+  value: {{ printf "https://%s/api/unstable/byoc-telemetry-intake/v1/metrics" $byocTelemetryHost | quote }}
+{{- end }}
+{{- if .Values.tracingEnabled }}
+- name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
   value: http://{{ include "quickwit.fullname" $ }}-indexer:7281
-- name: OTEL_EXPORTER_OTLP_PROTOCOL
+- name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
   value: "grpc"
-- name: OTEL_EXPORTER_OTLP_TIMEOUT
+- name: OTEL_EXPORTER_OTLP_TRACES_TIMEOUT
   value: "10"
 - name: IMAGE_NAME
   value: {{ .Values.image.repository }}
 - name: IMAGE_TAG
   value: {{ .Values.image.tag }}
 {{- end }}
-{{- with (include "quickwit.extraEnv" .Values.environment) }}
+{{- with (include "quickwit.environmentDefaults" .Values.environment) }}
 {{ . }}
 {{- end }}
+{{- end }}
+
+{{/*
+Merge default environment variables (NO_COLOR, QW_DISABLE_TELEMETRY, QW_LOG_FORMAT) with
+user-provided values. Supports both legacy map and list formats. User-provided values
+take precedence over defaults.
+Defaults are stored as a list (not a dict) to guarantee deterministic rendering order
+and avoid spurious rollouts from manifest drift.
+*/}}
+{{- define "quickwit.environmentDefaults" -}}
+{{- $defaults := list (dict "name" "NO_COLOR" "value" "true") (dict "name" "QW_DISABLE_TELEMETRY" "value" "true") (dict "name" "QW_LOG_FORMAT" "value" "DDG") -}}
+{{- $envs := list -}}
+{{- $keys := list -}}
+{{- if kindIs "map" . -}}
+{{- range $key, $value := . -}}
+{{- $envs = append $envs (dict "name" $key "value" ($value | toString)) -}}
+{{- $keys = append $keys $key -}}
+{{- end -}}
+{{- else -}}
+{{- range . -}}
+{{- $envs = append $envs . -}}
+{{- $keys = append $keys .name -}}
+{{- end -}}
+{{- end -}}
+{{- range $defaults -}}
+{{- if not (has .name $keys) -}}
+{{- $envs = append $envs . -}}
+{{- end -}}
+{{- end -}}
+{{- with $envs -}}
+{{- toYaml . -}}
+{{- end -}}
 {{- end }}
 
 {{/*

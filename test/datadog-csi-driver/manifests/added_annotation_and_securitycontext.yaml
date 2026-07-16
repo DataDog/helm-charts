@@ -1,3 +1,7 @@
+labels:
+  team: observability
+  cost-center: engineering
+
 annotations:
   ad.datadoghq.com/csi-node-driver.checks: |
     {

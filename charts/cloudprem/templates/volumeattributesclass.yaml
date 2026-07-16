@@ -1,0 +1,23 @@
+{{- if .Values.indexer.volumeAttributesClass.enabled }}
+apiVersion: {{ include "quickwit.volumeAttributesClass.apiVersion" . }}
+kind: VolumeAttributesClass
+metadata:
+  name: {{ include "quickwit.indexer.vacName" . }}
+driverName: {{ .Values.indexer.volumeAttributesClass.driverName }}
+{{- with .Values.indexer.volumeAttributesClass.parameters }}
+parameters:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- if .Values.searcher.volumeAttributesClass.enabled }}
+---
+apiVersion: {{ include "quickwit.volumeAttributesClass.apiVersion" . }}
+kind: VolumeAttributesClass
+metadata:
+  name: {{ include "quickwit.searcher.vacName" . }}
+driverName: {{ .Values.searcher.volumeAttributesClass.driverName }}
+{{- with .Values.searcher.volumeAttributesClass.parameters }}
+parameters:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}

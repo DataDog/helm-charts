@@ -1,24 +1,15 @@
 {{- define "container-host-profiler" -}}
 - name: host-profiler
   image: "{{ include "ddot-ebpf-image" . }}"
-  imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  imagePullPolicy: {{ .Values.datadog.hostProfiler.imagePullPolicy | default .Values.agents.image.pullPolicy }}
   {{- if .Values.agents.lifecycle }}
   lifecycle:
 {{ toYaml .Values.agents.lifecycle | indent 4 }}
   {{- end }}
   command:
-    - "/opt/datadog-agent/embedded/bin/full-host-profiler"
-    - "run"
+    - "host-profiler"
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
-  args:
-    {{- if .Values.datadog.hostProfiler.configMap.items }}
-    {{- range .Values.datadog.hostProfiler.configMap.items }}
-    - "--config={{ template "datadog.hostprofilerconfPath" $ }}/{{ .path }}"
-    {{- end }}
-    {{- else }}
-    - "--config={{ template "datadog.hostprofilerconfPath" . }}/host-profiler-config.yaml"
-    {{- end }}
-{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.hostProfiler.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
+{{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.hostProfiler.securityContext "targetSystem" .Values.targetSystem "seccomp" (include "host-profiler-seccomp-profile" .) "kubeversion" .Capabilities.KubeVersion.Version "apparmor" (and .Values.agents.podSecurity.apparmor.enabled .Values.datadog.hostProfiler.apparmor)) | nindent 2 }}
   resources:
 {{ toYaml .Values.agents.containers.hostProfiler.resources | indent 4 }}
 {{- if or .Values.datadog.envFrom .Values.agents.containers.hostProfiler.envFrom }}
@@ -42,11 +33,15 @@
     {{- include "additional-env-entries" .Values.agents.containers.hostProfiler.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.hostProfiler.envDict | indent 4 }}
   volumeMounts:
+    - name: logdatadog                                                                                                                                                 
+      mountPath: {{ template "datadog.logDirectoryPath" . }}                                                                                                           
+      readOnly: false                                                                                                                   
     - name: tracingfs
       mountPath: /sys/kernel/tracing
-      readOnly: false
-    - name: hostprofilerconfig
-      mountPath: {{ template "datadog.hostprofilerconfPath" . }}
+      # cilium/ebpf writes on /sys/kernel/tracing as fallback to old kernel limitations
+      # Upstream has (at the time of writing) as minimum kernel version 5.10 which does not have that limitation
+      # anymore; readOnly can be enforced.
+      # https://github.com/cilium/ebpf/blob/9f87aafaeb37c579ad1e3f5729462d8540200504/link/kprobe.go#L294-L299
       readOnly: true
     - name: config
       mountPath: {{ template "datadog.confPath" . }}

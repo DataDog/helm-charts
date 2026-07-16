@@ -33,8 +33,6 @@ datadog:
   workerAPI:
     # datadog.workerAPI.enabled -- Whether to enable the Worker's API.
     enabled: true
-    # datadog.workerAPI.playground -- Whether to enable the Worker's API GraphQL playground.
-    playground: false
     # datadog.workerAPI.address -- Local address to bind the Worker's API to.
     # if you change this port, you'll need to update the livenessProbe and readinessProbe
     address: "0.0.0.0:8686"
@@ -48,12 +46,23 @@ datadog:
     # and correctly setup the bootstrap to point to the secrets file in `bootstrap.config`.
     # eg: { "SOURCE_DATADOG_AGENT_ADDRESS" : " 0.0.0.0:8282" }
     secretFileContents: {}
+  # datadog.proxy -- Configure proxy settings for the Worker.
+  # ref: https://docs.datadoghq.com/observability_pipelines/setup/
+  proxy:
+    # datadog.proxy.http -- HTTP proxy URL. Sets the DD_PROXY_HTTP environment variable.
+    http: ""  # http://proxy.example.com:3128
+    # datadog.proxy.https -- HTTPS proxy URL. Sets the DD_PROXY_HTTPS environment variable.
+    https: ""  # https://proxy.example.com:3128
+    # datadog.proxy.noProxy -- List of hosts or CIDRs to bypass the proxy. Sets the DD_PROXY_NO_PROXY environment variable (comma-separated).
+    noProxy: []
+    #  - localhost
+    #  - 10.0.0.0/8
 
 image:
   # image.name -- Specify the image name to use (relative to `image.repository`).
   name: observability-pipelines-worker
   # image.tag -- Specify the image tag to use.
-  tag: 2.13.2
+  tag: 2.19.0
   # image.digest -- (string) Specify the image digest to use; takes precedence over `image.tag`.
   digest:
   ## Currently, we offer images at:
@@ -159,14 +168,20 @@ envFrom: []
 # containerPorts -- Manually define ContainerPort array, overriding automated generation of ContainerPorts.
 containerPorts: []
 
-# resources -- Specify resource requests and limits.
-resources: {}
-  # requests:
-  #   cpu: 200m
-  #   memory: 256Mi
+# resources -- Specify resource requests and limits. The default requests are conservative recommendations for typical Worker workloads; tune for your pipeline throughput. Limits are intentionally omitted by default — see the commented example below.
+resources:
+  requests:
+    cpu: 2
+    memory: 4Gi
+  # Limits are commented out by default:
+  #   - cpu: CFS throttling hurts bursty pipeline workloads and breaks
+  #     `autoscaling.targetCPUUtilizationPercentage` (HPA).
+  #   - memory: OPW absorbs downstream backpressure in memory, so a hard cap can
+  #     OOMKill the Worker exactly when buffering is most needed. Set `limits.memory`
+  #     only once you know your real memory ceiling.
   # limits:
-  #   cpu: 200m
-  #   memory: 256Mi
+  #   cpu: 2
+  #   memory: 4Gi
 
 # lifecycle -- Specify lifecycle hooks for Containers.
 lifecycle: {}
@@ -322,13 +337,13 @@ dnsConfig: {}
 
 # livenessProbe -- Specify the livenessProbe
 # [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
+# When no probe handler (`httpGet`, `tcpSocket`, `exec`, `grpc`) is provided, the chart
+# defaults to `tcpSocket` on the Worker API port (8686) — chosen because the Worker API
+# is a gRPC (HTTP/2) server and `tcpSocket` is compatible with every supported Kubernetes
+# version. Setting any handler in your values disables the default, so existing
+# overrides are not coalesced with it.
 livenessProbe:
   failureThreshold: 5
-  httpGet:
-    path: /health
-    # if you modify datadog.workerAPI.address to a different port you'll need to update here as well
-    port: 8686
-    scheme: HTTP
   initialDelaySeconds: 15
   timeoutSeconds: 15
   periodSeconds: 10
@@ -336,13 +351,13 @@ livenessProbe:
 
 # readinessProbe -- Specify the readinessProbe
 # [configuration](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#configure-probes).
+# When no probe handler (`httpGet`, `tcpSocket`, `exec`, `grpc`) is provided, the chart
+# defaults to `tcpSocket` on the Worker API port (8686) — chosen because the Worker API
+# is a gRPC (HTTP/2) server and `tcpSocket` is compatible with every supported Kubernetes
+# version. Setting any handler in your values disables the default, so existing
+# overrides are not coalesced with it.
 readinessProbe:
   failureThreshold: 3
-  httpGet:
-    path: /health
-    # if you modify datadog.workerAPI.address to a different port you'll need to update here as well
-    port: 8686
-    scheme: HTTP
   initialDelaySeconds: 15
   timeoutSeconds: 15
   periodSeconds: 10

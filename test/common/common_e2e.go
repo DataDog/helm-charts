@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/runner"
+	"github.com/DataDog/datadog-agent/test/e2e-framework/testing/runner"
 	"github.com/pulumi/pulumi/sdk/v3/go/auto"
 )
 
@@ -16,7 +16,7 @@ var (
 	clusterAgentVersion  = agentVersion
 	defaultImageRegistry = "gcr.io/datadoghq"
 	defaultPulumiConfigs = runner.ConfigMap{
-		"ddinfra:kubernetesVersion": auto.ConfigValue{Value: "1.32"},
+		"ddinfra:kubernetesVersion": auto.ConfigValue{Value: "1.34"},
 	}
 
 	defaultCIPulumiConfigs = runner.ConfigMap{

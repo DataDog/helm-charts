@@ -1,0 +1,131 @@
+{{- if .Values.intake.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "quickwit.fullname" . }}-intake
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+    {{- if .Values.azure.clientId }}
+    azure.workload.identity/use: "true"
+    {{- end }}
+  annotations:
+    {{- with .Values.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.intake.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if and (hasKey .Values.intake "replicaCount") (not .Values.intake.autoscaling.enabled) }}
+  replicas: {{ .Values.intake.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "quickwit.intake.selectorLabels" . | nindent 6 }}
+  {{- with .Values.intake.updateStrategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/intake-configmap.yaml") . | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.intake.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "quickwit.additionalLabels" . | nindent 8 }}
+        {{- include "quickwit.intake.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "quickwit.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.intake.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{ end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["pomsky-intake"]
+          {{- if $.Values.intake.args }}
+          args: {{- toYaml $.Values.intake.args | nindent 10 }}
+          {{- else }}
+          args: ["--config", "/quickwit/config.yaml"]
+          {{- end }}
+          env:
+            {{- include "quickwit.environment" . | nindent 12 }}
+            {{- with (include "quickwit.extraEnv" .Values.intake.extraEnv) }}
+            {{- . | nindent 12 }}
+            {{- end }}
+          {{- if or (.Values.environmentFrom) (.Values.intake.extraEnvFrom) }}
+          envFrom:
+          {{- with .Values.environmentFrom }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.intake.extraEnvFrom }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
+          ports:
+            {{- include "quickwit.intake.ports" . | nindent 12 }}
+          startupProbe:
+            {{- toYaml .Values.intake.startupProbe | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.intake.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.intake.readinessProbe | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /quickwit/
+            - name: data
+              mountPath: /quickwit/qwdata
+            {{- with concat (.Values.volumeMounts | default list) (.Values.intake.extraVolumeMounts | default list) }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.intake.resources | nindent 12 }}
+          {{- with .Values.intake.lifecycleHooks }}
+          lifecycle:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.intake.terminationGracePeriodSeconds }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "quickwit.fullname" . }}-intake
+        - name: data
+          emptyDir: {}
+        {{- with concat (.Values.volumes | default list) (.Values.intake.extraVolumes | default list) }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.intake.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with merge (dict) (.Values.intake.affinity | default dict) (.Values.affinity | default dict) }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- $tolerations := concat (.Values.tolerations | default list) (.Values.intake.tolerations | default list) | compact | uniq }}
+      tolerations:
+        {{- toYaml $tolerations | nindent 8 }}
+      {{- $tsc := concat (.Values.topologySpreadConstraints | default list) (.Values.intake.topologySpreadConstraints | default list) | compact }}
+      {{- if $tsc }}
+      topologySpreadConstraints:
+        {{- toYaml $tsc | nindent 8 }}
+      {{- end }}
+      {{- if .Values.intake.runtimeClassName }}
+      runtimeClassName: {{ .Values.intake.runtimeClassName | quote }}
+      {{- end }}
+{{- end }}

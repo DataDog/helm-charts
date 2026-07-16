@@ -4,20 +4,19 @@ package datadog
 
 import (
 	"context"
-	"fmt"
-	"github.com/DataDog/datadog-agent/test/new-e2e/pkg/e2e"
-	gcpkubernetes "github.com/DataDog/datadog-agent/test/new-e2e/pkg/provisioners/gcp/kubernetes"
-	"github.com/DataDog/helm-charts/test/common"
-	"github.com/DataDog/test-infra-definitions/components/datadog/kubernetesagentparams"
-	"github.com/DataDog/test-infra-definitions/components/kubernetes/k8sapply"
-	"github.com/DataDog/test-infra-definitions/scenarios/gcp/gke"
-	"github.com/stretchr/testify/assert"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"os"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/DataDog/datadog-agent/test/e2e-framework/components/datadog/kubernetesagentparams"
+	"github.com/DataDog/datadog-agent/test/e2e-framework/components/kubernetes/k8sapply"
+	"github.com/DataDog/datadog-agent/test/e2e-framework/scenarios/gcp/gke"
+	"github.com/DataDog/datadog-agent/test/e2e-framework/testing/e2e"
+	gcpkubernetes "github.com/DataDog/datadog-agent/test/e2e-framework/testing/provisioners/gcp/kubernetes"
+	"github.com/DataDog/helm-charts/test/common"
+	"github.com/stretchr/testify/assert"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type gkeAutopilotSuite struct {
@@ -59,30 +58,17 @@ func (s *gkeAutopilotSuite) TestGKEAutopilot() {
 	s.T().Log("Running GKE Autopilot test")
 	assert.EventuallyWithTf(s.T(), func(c *assert.CollectT) {
 		res, err := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
-		s.Assert().NoError(err)
-		var agent corev1.Pod
-		containsAgent := false
-		for _, pod := range res.Items {
-			if strings.Contains(pod.Name, "dda-linux-datadog") && !strings.Contains(pod.Name, "cluster-agent") {
-				containsAgent = true
-				agent = pod
-				break
-			}
+		assert.NoError(c, err)
+		if err != nil {
+			return
 		}
-		assert.True(c, containsAgent, "Agent not found")
-		assert.Equal(c, corev1.PodPhase("Running"), agent.Status.Phase, fmt.Sprintf("Agent is not running: %s", agent.Status.Phase))
+		if _, ok := assertRunningPod(c, res.Items, "Agent", isLinuxNodeAgentPod); !ok {
+			return
+		}
 
-		var clusterAgent corev1.Pod
-		containsClusterAgent := false
-		for _, pod := range res.Items {
-			if strings.Contains(pod.Name, "cluster-agent") {
-				containsClusterAgent = true
-				clusterAgent = pod
-				break
-			}
+		if _, ok := assertRunningPod(c, res.Items, "Cluster Agent", isClusterAgentPod); !ok {
+			return
 		}
-		assert.True(c, containsClusterAgent, "Cluster Agent not found")
-		assert.Equal(c, corev1.PodPhase("Running"), clusterAgent.Status.Phase, fmt.Sprintf("Cluster Agent is not running: %s", clusterAgent.Status.Phase))
 	}, 5*time.Minute, 30*time.Second, "GKE Autopilot readiness timed out")
 }
 

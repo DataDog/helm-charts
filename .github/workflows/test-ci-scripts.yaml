@@ -1,0 +1,23 @@
+name: Test CI Scripts
+
+on:
+  push:
+    paths:
+      - '.github/scripts/**'
+  pull_request:
+    paths:
+      - '.github/scripts/**'
+
+# Permission forced by repo-level setting; only elevate on job-level
+permissions:
+  contents: read
+
+jobs:
+  test-ci-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Run CI script unit tests
+        run: make unit-test-ci-scripts

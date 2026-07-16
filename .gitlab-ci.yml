@@ -3,40 +3,46 @@ stages:
   - e2e
 
 variables:
-  TEST_INFRA_DEFINITIONS_BUILDIMAGES: 83c23398aae9
+  # Image version from datadog-agent-buildimages (same as datadog-agent main branch)
+  CI_IMAGE_LINUX: v102144341-64dad9f8
+  CI_IMAGE_LINUX_SUFFIX: ""
 
 noop:
   stage: test
   script:
     - echo "No op job to get merge queue working"
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
+  image: registry.ddbuild.io/ci/datadog-agent-buildimages/linux$CI_IMAGE_LINUX_SUFFIX:$CI_IMAGE_LINUX
   tags: ["arch:amd64"]
 
 e2e:
   stage: e2e
   rules:
-    # Run on merge queue branches
+    # Run on merge queue branches; known-flaky test failures are ignored by the TestWasher.
     - if: '$CI_COMMIT_BRANCH =~ /^mq-working-branch-/'
       changes:
         paths:
           - charts/datadog/templates/**
           - charts/datadog/values.yaml
           - charts/datadog/Chart.yaml
+          - charts/datadog-csi-driver/templates/**
+          - charts/datadog-csi-driver/values.yaml
+          - charts/datadog-csi-driver/Chart.yaml
           - test/e2e/**/*
         compare_to: "refs/heads/main"
       when: always
-      allow_failure: true
-    # Run on main branch commits (after merge, compare to parent commit)
     - if: '$CI_COMMIT_BRANCH == "main"'
       changes:
         paths:
           - charts/datadog/templates/**
           - charts/datadog/values.yaml
           - charts/datadog/Chart.yaml
+          - charts/datadog-csi-driver/templates/**
+          - charts/datadog-csi-driver/values.yaml
+          - charts/datadog-csi-driver/Chart.yaml
           - test/e2e/**/*
       when: always
     - when: manual
-  image: 486234852809.dkr.ecr.us-east-1.amazonaws.com/ci/test-infra-definitions/runner:$TEST_INFRA_DEFINITIONS_BUILDIMAGES
+  image: registry.ddbuild.io/ci/datadog-agent-buildimages/linux$CI_IMAGE_LINUX_SUFFIX:$CI_IMAGE_LINUX
   tags: ["arch:amd64"]
   variables:
     E2E_GCP_PUBLIC_KEY_PATH: /tmp/agent-qa-gcp-ssh-key.pub
@@ -54,6 +60,11 @@ e2e:
         E2E_AGENT_VERSION:
           - "7-rc"
   before_script:
+    # Install helm: the datadog-agent-buildimages/linux runner does not ship
+    # it, unlike the deprecated test-infra-definitions runner. The e2e tests
+    # shell out to the `helm` binary (directly and via terratest).
+    - curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | DESIRED_VERSION=v3.21.0 bash
+
     # Initial credentials setup with default build-stable AWS profile
     - echo "Starting setup for E2E testing..."
 

@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 
 	"github.com/DataDog/helm-charts/test/common"
 )
@@ -102,7 +103,7 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "registryMigration auto: only ASIA override is set",
+			name: "registryMigration auto: ASIA, EU, and DEFAULT overrides are set",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
@@ -115,8 +116,8 @@ func Test_operator_chart(t *testing.T) {
 				common.Unmarshal(t, manifest, &deployment)
 				env := deployment.Spec.Template.Spec.Containers[0].Env
 				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_ASIA"), "ASIA should be set")
-				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_DEFAULT"), "DEFAULT should not be set")
-				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_EU"), "EU should not be set")
+				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_EU"), "EU should be set")
+				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_DEFAULT"), "DEFAULT should be set")
 				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_AZURE"), "AZURE should not be set")
 			},
 			skipTest: SkipTest,
@@ -188,6 +189,89 @@ func Test_operator_chart(t *testing.T) {
 				assert.Equal(t, "unknown", installToolEnv.Value)
 			},
 		},
+		{
+			name: "untaintController disabled by default",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Contains(t, operatorContainer.Args, "-untaintControllerEnabled=false")
+				assert.NotContains(t, operatorContainer.Args, "-untaintControllerEnabled=true")
+				// waitForCSIDriver flag and tuning env vars only render when the controller is enabled.
+				assert.NotContains(t, operatorContainer.Args, "-untaintControllerWaitForCSIDriver=false")
+				assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_TIMEOUT"))
+				assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_EVENTS_ENABLED"))
+			},
+		},
+		{
+			name: "untaintController enabled sets flags",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"untaintController.enabled": "true",
+				},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Contains(t, operatorContainer.Args, "-untaintControllerEnabled=true")
+				assert.Contains(t, operatorContainer.Args, "-untaintControllerWaitForCSIDriver=false")
+				// Tuning env vars are omitted (operator defaults apply) unless explicitly set.
+				assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_TIMEOUT"))
+				assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_EVENTS_ENABLED"))
+			},
+		},
+		{
+			name: "untaintController full configuration",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"untaintController.enabled":           "true",
+					"untaintController.waitForCSIDriver":  "true",
+					"untaintController.timeout":           "2m",
+					"untaintController.schedulingTimeout": "3m",
+					"untaintController.timeoutPolicy":     "keep",
+					"untaintController.eventsEnabled":     "true",
+				},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Contains(t, operatorContainer.Args, "-untaintControllerEnabled=true")
+				assert.Contains(t, operatorContainer.Args, "-untaintControllerWaitForCSIDriver=true")
+
+				timeout := FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_TIMEOUT")
+				assert.NotNil(t, timeout)
+				assert.Equal(t, "2m", timeout.Value)
+				schedulingTimeout := FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_SCHEDULING_TIMEOUT")
+				assert.NotNil(t, schedulingTimeout)
+				assert.Equal(t, "3m", schedulingTimeout.Value)
+				timeoutPolicy := FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_TIMEOUT_POLICY")
+				assert.NotNil(t, timeoutPolicy)
+				assert.Equal(t, "keep", timeoutPolicy.Value)
+				eventsEnabled := FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_EVENTS_ENABLED")
+				assert.NotNil(t, eventsEnabled)
+				assert.Equal(t, "true", eventsEnabled.Value)
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -208,7 +292,7 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "registry.datadoghq.com/operator:1.24.0", operatorContainer.Image)
+	assert.Equal(t, "registry.datadoghq.com/operator:1.29.0-rc.1", operatorContainer.Image)
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 }
@@ -252,6 +336,64 @@ func verifyWatchNamespaces(t *testing.T, manifest string) {
 	assert.Equal(t, "monitor-ns", monitorNsEnv.Value)
 	assert.Equal(t, "", sloNsEnv.Value)
 	assert.Nil(t, dapNsEnv)
+}
+
+func Test_operator_untaint_controller_rbac(t *testing.T) {
+	tests := []struct {
+		name      string
+		overrides map[string]string
+		wantPatch bool
+	}{
+		{
+			name:      "untaintController disabled -- no nodes patch rule",
+			overrides: map[string]string{},
+			wantPatch: false,
+		},
+		{
+			name:      "untaintController enabled -- nodes patch rule present",
+			overrides: map[string]string{"untaintController.enabled": "true"},
+			wantPatch: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/clusterrole.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   tt.overrides,
+			})
+			assert.Nil(t, err, "couldn't render template")
+
+			var clusterRole rbacv1.ClusterRole
+			common.Unmarshal(t, manifest, &clusterRole)
+			assert.Equal(t, tt.wantPatch, hasNodesPatchRule(clusterRole.Rules),
+				"unexpected presence of nodes patch rule")
+		})
+	}
+}
+
+func hasNodesPatchRule(rules []rbacv1.PolicyRule) bool {
+	for _, rule := range rules {
+		if !containsString(rule.APIGroups, "") || !containsString(rule.Resources, "nodes") {
+			continue
+		}
+		if len(rule.Verbs) == 1 && rule.Verbs[0] == "patch" {
+			return true
+		}
+	}
+	return false
+}
+
+func containsString(values []string, want string) bool {
+	for _, v := range values {
+		if v == want {
+			return true
+		}
+	}
+	return false
 }
 
 func FindEnvVarByName(envs []v1.EnvVar, name string) *v1.EnvVar {

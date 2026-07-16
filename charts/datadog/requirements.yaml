@@ -1,8 +1,11 @@
 dependencies:
   - name: datadog-crds
-    version: 2.13.1
+    version: 2.22.0
     repository: https://helm.datadoghq.com
-    condition: datadog.autoscaling.workload.enabled,clusterAgent.metricsProvider.useDatadogMetrics
+    # Ordering matters here. Helm uses the first condition with a defined (non-nil) value. Conditions with an
+    # explicit false default (e.g. clusterAgent.metricsProvider.useDatadogMetrics) must come last, otherwise
+    # the condition stops evaluation even if the subsequent condition would've been true.
+    condition: datadog.autoscaling.workload.enabled,datadog.instrumentationCrd.enabled,clusterAgent.metricsProvider.useDatadogMetrics
     tags:
     - install-crds
   - name: kube-state-metrics
@@ -10,11 +13,11 @@ dependencies:
     repository: https://prometheus-community.github.io/helm-charts
     condition: datadog.kubeStateMetricsEnabled
   - name: datadog-csi-driver
-    version: 0.9.0
+    version: 0.15.0
     repository: https://helm.datadoghq.com
     condition: datadog.csi.enabled
   - name: datadog-operator
-    version: 2.18.0
+    version: 2.24.0
     repository: https://helm.datadoghq.com
     condition: datadog.operator.enabled
     alias: operator

@@ -76,6 +76,11 @@
     type: DirectoryOrCreate
   name: apmsocket
 {{- end }}
+{{- if eq (include "should-enable-host-profiler-seccomp" .) "true" }}
+- hostPath:
+    path: {{ .Values.datadog.hostProfiler.seccompRoot }}
+  name: host-profiler-seccomp-root
+{{- end }}
 {{- if eq (include "should-enable-system-probe" .) "true" }}
 - name: sysprobe-config
   configMap:
@@ -189,11 +194,13 @@
     path: /var/lib/rpm
   name: host-rpm-dir
 {{- end }}
-{{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.compliance.enabled }}
+{{- if and (eq (include "should-add-host-path-for-etc-group" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.compliance.enabled) }}
 - hostPath:
     path: /etc/group
   name: group
+{{- end }}
+{{- if eq  (include "should-enable-security-agent" .) "true" }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.compliance.enabled }}
 {{- if .Values.datadog.securityAgent.compliance.configMap }}
 - name: complianceconfigdir
   configMap:
@@ -225,10 +232,10 @@
   name: logdockercontainerpath
 {{- end }}
 {{- end }}
-{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+{{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled .Values.providers.gke.autopilot .Values.providers.gke.gdc }}
 - hostPath:
     path: {{ template "datadog.hostMountRoot" . }}/logs
-  name: pointerdir
+  name: {{ include "datadog.agentRunVolumeName" . }}
 {{- else }}
 - name: datadogrun
   emptyDir: {}
@@ -242,6 +249,12 @@
 - name: gpu-devices
   hostPath:
     path: /dev/null
+{{- if .Values.providers.gke.cos }}
+- name: gke-nvidia-driver-lib64
+  hostPath:
+    path: /home/kubernetes/bin/nvidia/lib64
+    type: DirectoryOrCreate
+{{- end }}
 {{- end }}
 {{- if .Values.providers.openshift.controlPlaneMonitoring }}
 - name: etcd-certs
