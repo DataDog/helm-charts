@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 3.231.5
+
+* Add kubernetes use endpointslice config to the node Agent.
+
+## 3.231.4
+
+* Mount GKE COS NVIDIA driver libraries at system-probe's `HOST_ROOT` path so GPU monitoring can find NVML when `providers.gke.cos=true`.
+
 ## 3.231.3
 
 * Update Default Agent Version to 7.81.1.
