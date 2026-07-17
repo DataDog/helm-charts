@@ -1,0 +1,48 @@
+# Test values for Cluster Agent component override mappings
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  enabled: true
+  
+  priorityClassName: cluster-agent-critical # this is a custom priority class created by the test framework before helm install
+  
+  image:
+    name: cluster-agent
+    tag: 7.75.0
+    pullPolicy: Always
+  
+  replicas: 1
+    
+  useHostNetwork: false
+  
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  
+  # Note: ConfigMap 'cluster-agent-config' is created by the test framework before helm install
+  envFrom:
+    - configMapRef:
+        name: cluster-agent-config
+  
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    
+  env:
+    - name: DD_CLUSTER_AGENT_CUSTOM_VAR
+      value: "custom-value"
+

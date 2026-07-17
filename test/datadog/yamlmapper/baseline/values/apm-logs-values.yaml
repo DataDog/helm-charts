@@ -1,0 +1,38 @@
+# Test values for APM and Logs features
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  site: datadoghq.com
+  clusterName: production-cluster
+  tags:
+    - "env:production"
+    - "service:my-app"
+  
+  apm:
+    port: 8126
+    socketEnabled: true
+  
+  logs:
+    enabled: true
+    containerCollectAll: true
+    autoMultiLineDetection: true
+  
+  processAgent:
+    processCollection: true
+    processDiscovery: true
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true
+  admissionController:
+    enabled: true
+    mutateUnlabelled: false
+    configMode: socket
+
