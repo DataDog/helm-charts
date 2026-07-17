@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.232.0
+
+* Enable admission controller connectivity probe by default ([#2795](https://github.com/DataDog/helm-charts/pull/2795)).
+
 ## 3.231.4
 
 * Mount GKE COS NVIDIA driver libraries at system-probe's `HOST_ROOT` path so GPU monitoring can find NVML when `providers.gke.cos=true`.
