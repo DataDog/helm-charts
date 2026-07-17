@@ -1,0 +1,35 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+spec:
+  features:
+    remoteConfiguration:
+      enabled: true
+  global:
+    checksTagCardinality: high
+    clusterName: global-tags-config-cluster
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    kubelet:
+      tlsVerify: false
+    kubernetesResourcesLabelsAsTags:
+      pods:
+        app: application
+    namespaceLabelsAsTags:
+      team: team
+    nodeLabelsAsTags:
+      node-type: node_type
+    podAnnotationsAsTags:
+      annotation-key: annotation_tag
+    podLabelsAsTags:
+      app: kube_app
+    site: datadoghq.com
+  override:
+    clusterAgent:
+      image:
+        tag: 7.75.0
+    nodeAgent:
+      image:
+        tag: 7.75.0

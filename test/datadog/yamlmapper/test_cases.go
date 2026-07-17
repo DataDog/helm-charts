@@ -15,6 +15,12 @@ var baseTestCases = []BaseTestCase{
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
+		Name:               "global-tags-config-values.yaml",
+		ValuesFile:         valuesDir + "/global-tags-config-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
 		Name:               "admission-controller-values.yaml",
 		ValuesFile:         valuesDir + "/admission-controller-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),

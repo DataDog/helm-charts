@@ -1,0 +1,38 @@
+# Test values exercising global tag/config settings that surface in the node Agent config:
+# checks cardinality, *LabelsAsTags / *AnnotationsAsTags maps, and remote configuration.
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  site: datadoghq.com
+  clusterName: global-tags-config-cluster
+  kubelet:
+    tlsVerify: false
+
+  # Tag cardinality (-> DD_CHECKS_TAG_CARDINALITY)
+  checksCardinality: high
+
+  # Kubernetes labels/annotations as tags (-> DD_KUBERNETES_*_AS_TAGS)
+  podLabelsAsTags:
+    app: kube_app
+  podAnnotationsAsTags:
+    annotation-key: annotation_tag
+  nodeLabelsAsTags:
+    node-type: node_type
+  namespaceLabelsAsTags:
+    team: team
+  kubernetesResourcesLabelsAsTags:
+    pods:
+      app: application
+
+  # Remote configuration (-> DD_REMOTE_CONFIGURATION_ENABLED)
+  remoteConfiguration:
+    enabled: true
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true
