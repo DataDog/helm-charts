@@ -1884,6 +1884,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
@@ -2086,6 +2088,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
@@ -2197,6 +2201,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_LOG_LEVEL
@@ -2347,6 +2353,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
@@ -2452,6 +2460,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
           image: registry.datadoghq.com/agent:7.81.1
