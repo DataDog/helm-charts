@@ -1,0 +1,28 @@
+# Test values enabling the OTLP ingest receiver (gRPC + HTTP), which surfaces on the
+# node Agent as otlp_config.receiver.protocols.* in `agent config --all`.
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  site: datadoghq.com
+  clusterName: otlp-ingest-cluster
+  kubelet:
+    tlsVerify: false
+
+  otlp:
+    receiver:
+      protocols:
+        grpc:
+          enabled: true
+          endpoint: 0.0.0.0:4317
+        http:
+          enabled: true
+          endpoint: 0.0.0.0:4318
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true
