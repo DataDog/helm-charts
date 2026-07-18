@@ -53,6 +53,12 @@ var baseTestCases = []BaseTestCase{
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
+		Name:               "fips-proxy-values.yaml",
+		ValuesFile:         valuesDir + "/fips-proxy-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
 		Name:               "admission-controller-values.yaml",
 		ValuesFile:         valuesDir + "/admission-controller-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),

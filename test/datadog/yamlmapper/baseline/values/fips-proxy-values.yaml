@@ -1,0 +1,24 @@
+# Test values enabling the FIPS proxy sidecar, which surfaces on the node Agent as
+# fips.enabled / fips.local_address / fips.port / fips.https in `agent config --all`.
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  site: datadoghq.com
+  clusterName: fips-proxy-cluster
+  kubelet:
+    tlsVerify: false
+
+fips:
+  enabled: true
+  port: 9803
+  local_address: 127.0.0.1
+  use_https: false
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true

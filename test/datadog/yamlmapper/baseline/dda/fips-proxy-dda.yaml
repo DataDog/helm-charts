@@ -1,0 +1,25 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+spec:
+  global:
+    clusterName: fips-proxy-cluster
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    fips:
+      enabled: true
+      localAddress: 127.0.0.1
+      port: 9803
+      useHTTPS: false
+    kubelet:
+      tlsVerify: false
+    site: datadoghq.com
+  override:
+    clusterAgent:
+      image:
+        tag: 7.75.0
+    nodeAgent:
+      image:
+        tag: 7.75.0
