@@ -35,6 +35,18 @@ var baseTestCases = []BaseTestCase{
 		},
 	},
 	{
+		Name:               "secret-backend-values.yaml",
+		ValuesFile:         valuesDir + "/secret-backend-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
+		Name:               "asm-features-values.yaml",
+		ValuesFile:         valuesDir + "/asm-features-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
 		Name:               "admission-controller-values.yaml",
 		ValuesFile:         valuesDir + "/admission-controller-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),

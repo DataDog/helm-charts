@@ -1,0 +1,26 @@
+# Test values enabling Application Security (ASM): threats, IAST, and SCA, which map to
+# spec.features.asm.* and drive the library-injection defaults surfaced in the agent config.
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  site: datadoghq.com
+  clusterName: asm-features-cluster
+  kubelet:
+    tlsVerify: false
+
+  asm:
+    threats:
+      enabled: true
+    iast:
+      enabled: true
+    sca:
+      enabled: true
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true
