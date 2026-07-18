@@ -583,12 +583,20 @@ datadog.remoteConfiguration.enabled: spec.features.remoteConfiguration.enabled
 datadog.sbom.containerImage.analyzers: ""
 datadog.sbom.containerImage.containerExclude: ""
 datadog.sbom.containerImage.containerInclude: ""
-datadog.sbom.containerImage.enabled: spec.features.sbom.containerImage.enabled
+datadog.sbom.containerImage.enabled:
+  mapFunc: mapEnableParent
+  newPath: spec.features.sbom.containerImage.enabled
+  args:
+  - parentPath: spec.features.sbom.enabled
 datadog.sbom.containerImage.overlayFSDirectScan: spec.features.sbom.containerImage.overlayFSDirectScan
 datadog.sbom.containerImage.uncompressedLayersSupport: ""
 datadog.sbom.enrichment.usage.enabled: ""
 datadog.sbom.host.analyzers: ""
-datadog.sbom.host.enabled: spec.features.sbom.host.enabled
+datadog.sbom.host.enabled:
+  mapFunc: mapEnableParent
+  newPath: spec.features.sbom.host.enabled
+  args:
+  - parentPath: spec.features.sbom.enabled
 datadog.secretAnnotations: ""
 datadog.secretBackend.arguments: spec.global.secretBackend.args
 datadog.secretBackend.command: spec.global.secretBackend.command

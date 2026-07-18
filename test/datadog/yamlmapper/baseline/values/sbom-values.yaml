@@ -1,0 +1,24 @@
+# Test values enabling SBOM (container image + host), which map to spec.features.sbom.*
+# and surface as sbom.* / container_image collection settings in the node Agent config.
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  site: datadoghq.com
+  clusterName: sbom-cluster
+  kubelet:
+    tlsVerify: false
+
+  sbom:
+    containerImage:
+      enabled: true
+    host:
+      enabled: true
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true

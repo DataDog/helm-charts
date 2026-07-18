@@ -47,6 +47,12 @@ var baseTestCases = []BaseTestCase{
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
+		Name:               "sbom-values.yaml",
+		ValuesFile:         valuesDir + "/sbom-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+	},
+	{
 		Name:               "admission-controller-values.yaml",
 		ValuesFile:         valuesDir + "/admission-controller-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),

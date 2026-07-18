@@ -231,6 +231,13 @@ var skipFields = map[string]struct{}{
 	// See: datadog-operator/internal/controller/datadogagent/global/agent.go lines 39-75
 	// TODO: Consider filing operator enhancement to support agentCAPath without hostCAPath
 	"kubelet_client_ca": {},
+
+	// sbom.container_image.use_mount: Helm/Operator default divergence for SBOM container image
+	// scanning. When container image collection is on (and overlayFSDirectScan is off), Helm defaults
+	// use_mount=true while the Operator defaults it to false. There is no Helm value controlling this
+	// (no datadog.sbom.containerImage.useMount key), so it cannot be reconciled via the mapping.
+	// TODO: remove if the Operator aligns its default or exposes a field for it.
+	"sbom.container_image.use_mount": {},
 }
 
 // Label selectors for different agent installation types
