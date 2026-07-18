@@ -22,9 +22,10 @@ const (
 	apiKeyEnv = "API_KEY"
 	appKeyEnv = "APP_KEY"
 
-	containerAgent       = "agent"
-	containerTraceAgent  = "trace-agent"
-	containerSystemProbe = "system-probe"
+	containerAgent         = "agent"
+	containerTraceAgent    = "trace-agent"
+	containerSystemProbe   = "system-probe"
+	containerSecurityAgent = "security-agent"
 
 	// Helm release names
 	releaseDatadog         = "datadog"

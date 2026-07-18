@@ -27,6 +27,14 @@ var baseTestCases = []BaseTestCase{
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 	{
+		Name:         "cspm-compliance-values.yaml",
+		ValuesFile:   valuesDir + "/cspm-compliance-values.yaml",
+		ExpectedPods: defaultExpectedPods(),
+		ExpectedComponentContainers: ExpectedComponentContainers{
+			Agent: []string{containerSecurityAgent},
+		},
+	},
+	{
 		Name:               "admission-controller-values.yaml",
 		ValuesFile:         valuesDir + "/admission-controller-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),
