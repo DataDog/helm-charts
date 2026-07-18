@@ -1,0 +1,25 @@
+# Test values selecting a cloud provider (GKE COS). Helm implements providers via chart logic;
+# the mapper translates them to the operator's agent.datadoghq.com/cluster-provider annotation
+# (see datadog-operator pkg/kubernetes/provider.go).
+# SKIPPED on kind: provider selection applies cloud-specific node affinity, so the agent DaemonSet
+# schedules onto no nodes on a local kind cluster. The mapping is covered by operator unit tests.
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  site: datadoghq.com
+  clusterName: providers-cluster
+  kubelet:
+    tlsVerify: false
+
+providers:
+  gke:
+    cos: true
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true

@@ -747,12 +747,24 @@ otelAgentGateway.topologySpreadConstraints: ""
 otelAgentGateway.useHostNetwork: ""
 otelAgentGateway.volumeMounts: ""
 otelAgentGateway.volumes: ""
-providers.aks.enabled: ""
+providers.aks.enabled:
+  mapFunc: mapProviderAnnotation
+  args:
+  - provider: aks
 providers.eks.controlPlaneMonitoring: ""
-providers.eks.ec2.useHostnameFromFile: ""
+providers.eks.ec2.useHostnameFromFile:
+  mapFunc: mapProviderAnnotation
+  args:
+  - provider: eks-ec2-use-hostname-from-file
 providers.flatcar.enabled: ""
-providers.gke.autopilot: ""
-providers.gke.cos: ""
+providers.gke.autopilot:
+  mapFunc: mapProviderAnnotation
+  args:
+  - provider: gke-autopilot
+providers.gke.cos:
+  mapFunc: mapProviderAnnotation
+  args:
+  - provider: gke-cos
 providers.gke.gdc: ""
 providers.openshift.controlPlaneMonitoring: ""
 providers.talos.enabled: ""

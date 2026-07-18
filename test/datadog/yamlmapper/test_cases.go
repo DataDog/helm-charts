@@ -122,7 +122,14 @@ var baseTestCases = []BaseTestCase{
 		ExpectedComponentContainers: defaultExpectedComponentContainers(),
 	},
 
-	// Skipped tests (require kernel features not available in kind)
+	// Skipped tests (require kernel features or cloud-specific nodes not available in kind)
+	{
+		Name:               "providers-values.yaml",
+		ValuesFile:         valuesDir + "/providers-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+		SkipReason:         "Provider selection applies cloud-specific node affinity; the agent DaemonSet schedules onto no nodes on kind. Mapping covered by operator unit tests.",
+	},
 	{
 		Name:               "npm-values.yaml",
 		ValuesFile:         valuesDir + "/npm-values.yaml",
