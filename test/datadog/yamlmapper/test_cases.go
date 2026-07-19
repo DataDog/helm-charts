@@ -130,6 +130,29 @@ var baseTestCases = []BaseTestCase{
 
 	// Skipped tests (require kernel features or cloud-specific nodes not available in kind)
 	{
+		Name:         "agent-data-plane-values.yaml",
+		ValuesFile:   valuesDir + "/agent-data-plane-values.yaml",
+		ExpectedPods: defaultExpectedPods(),
+		ExpectedComponentContainers: ExpectedComponentContainers{
+			Agent: []string{containerAgentDataPlane},
+		},
+		SkipReason: "Agent Data Plane (agent-data-plane container) does not become ready on kind; requires agent >=7.74 and a runnable ADP environment.",
+	},
+	{
+		Name:               "dynamic-instrumentation-values.yaml",
+		ValuesFile:         valuesDir + "/dynamic-instrumentation-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+		SkipReason:         "Dynamic Instrumentation runs in system-probe and requires kernel features not available in kind.",
+	},
+	{
+		Name:               "autoscaling-workload-values.yaml",
+		ValuesFile:         valuesDir + "/autoscaling-workload-values.yaml",
+		ExpectedPods:       defaultExpectedPods(),
+		ExpectedComponentContainers: defaultExpectedComponentContainers(),
+		SkipReason:         "Workload autoscaling requires the DatadogPodAutoscaler CRD and Cluster Agent controller, not installed in this test env.",
+	},
+	{
 		Name:               "providers-values.yaml",
 		ValuesFile:         valuesDir + "/providers-values.yaml",
 		ExpectedPods:       defaultExpectedPods(),

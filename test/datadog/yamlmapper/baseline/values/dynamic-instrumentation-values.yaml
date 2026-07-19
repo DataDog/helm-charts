@@ -1,0 +1,18 @@
+# Test values enabling Dynamic Instrumentation (Go), mapping to spec.features.dynamicInstrumentation.enabled.
+# SKIPPED on kind: DI runs in system-probe and requires kernel features not available on kind.
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  site: datadoghq.com
+  clusterName: dynamic-instrumentation-cluster
+  kubelet:
+    tlsVerify: false
+  dynamicInstrumentationGo:
+    enabled: true
+agents:
+  image:
+    tag: 7.75.0
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true

@@ -421,7 +421,7 @@ datadog.appsec.injector.sidecar.resources.requests.memory: ""
 datadog.asm.iast.enabled: spec.features.asm.iast.enabled
 datadog.asm.sca.enabled: spec.features.asm.sca.enabled
 datadog.asm.threats.enabled: spec.features.asm.threats.enabled
-datadog.autoscaling.workload.enabled: ""
+datadog.autoscaling.workload.enabled: spec.features.autoscaling.workload.enabled
 datadog.celWorkloadExclude: ""
 datadog.checksCardinality: spec.global.checksTagCardinality
 datadog.checksd: spec.override.nodeAgent.extraChecksd
@@ -458,7 +458,9 @@ datadog.dogstatsd.tags: ""
 datadog.dogstatsd.useHostPID: ""
 datadog.dogstatsd.useHostPort: spec.features.dogstatsd.hostPortConfig.enabled
 datadog.dogstatsd.useSocketVolume: spec.features.dogstatsd.unixDomainSocketConfig.enabled
-datadog.dynamicInstrumentationGo.enabled: ""
+datadog.dynamicInstrumentationGo.enabled: spec.features.dynamicInstrumentation.enabled
+datadog.dataPlane.dogstatsd.enabled: spec.features.dataPlane.dogstatsd.enabled
+datadog.dataPlane.enabled: spec.features.dataPlane.enabled
 datadog.env: spec.global.env
 datadog.envDict: ""
 datadog.envFrom: spec.override.nodeAgent.envFrom
@@ -601,7 +603,7 @@ datadog.secretAnnotations: ""
 datadog.secretBackend.arguments: spec.global.secretBackend.args
 datadog.secretBackend.command: spec.global.secretBackend.command
 datadog.secretBackend.enableGlobalPermissions: spec.global.secretBackend.enableGlobalPermissions
-datadog.secretBackend.refreshInterval: ""
+datadog.secretBackend.refreshInterval: spec.global.secretBackend.refreshInterval
 datadog.secretBackend.roles: spec.global.secretBackend.roles
 datadog.secretBackend.timeout: spec.global.secretBackend.timeout
 datadog.securityAgent.compliance.checkInterval: spec.features.cspm.checkInterval

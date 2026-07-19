@@ -1,0 +1,22 @@
+# Test values enabling the Agent Data Plane (ADP) with the DogStatsD pipeline. Helm gates ADP on
+# datadog.dataPlane.enabled + a pipeline (dataPlane.dogstatsd.enabled) and requires agent >= 7.74;
+# the mapper maps these to spec.features.dataPlane.{enabled,dogstatsd.enabled}. ADP adds the
+# agent-data-plane container to the node Agent.
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  site: datadoghq.com
+  clusterName: agent-data-plane-cluster
+  kubelet:
+    tlsVerify: false
+  dataPlane:
+    enabled: true
+    dogstatsd:
+      enabled: true
+agents:
+  image:
+    tag: 7.75.0
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true

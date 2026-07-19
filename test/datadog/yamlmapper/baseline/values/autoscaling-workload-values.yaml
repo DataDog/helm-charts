@@ -1,0 +1,20 @@
+# Test values enabling workload autoscaling, mapping to spec.features.autoscaling.workload.enabled.
+# SKIPPED on kind: requires the DatadogPodAutoscaler CRD and the Cluster Agent autoscaling controller,
+# which are not installed in this test environment.
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  site: datadoghq.com
+  clusterName: autoscaling-workload-cluster
+  kubelet:
+    tlsVerify: false
+  autoscaling:
+    workload:
+      enabled: true
+agents:
+  image:
+    tag: 7.75.0
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true

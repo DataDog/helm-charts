@@ -3,17 +3,16 @@ kind: DatadogAgent
 metadata:
   name: datadog
 spec:
+  features:
+    dynamicInstrumentation:
+      enabled: true
   global:
-    clusterName: secret-backend-cluster
+    clusterName: dynamic-instrumentation-cluster
     credentials:
       apiKey: "00000000000000000000000000000000"
       appKey: "0000000000000000000000000000000000000000"
     kubelet:
       tlsVerify: false
-    secretBackend:
-      command: /readsecret_multiple_providers.sh
-      refreshInterval: 60
-      timeout: 30
     site: datadoghq.com
   override:
     clusterAgent:
