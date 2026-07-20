@@ -2376,6 +2376,9 @@ spec:
             - mountPath: /etc/otel-agent
               name: otelconfig
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
+              readOnly: false
             - mountPath: /tmp
               name: tmpdir
               readOnly: false
