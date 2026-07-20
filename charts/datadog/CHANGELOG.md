@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.231.5
+
+* Mount run socket for host profiler/ ddot ([#2802](https://github.com/DataDog/helm-charts/pull/2802)).
+
 ## 3.231.4
 
 * Mount GKE COS NVIDIA driver libraries at system-probe's `HOST_ROOT` path so GPU monitoring can find NVML when `providers.gke.cos=true`.
