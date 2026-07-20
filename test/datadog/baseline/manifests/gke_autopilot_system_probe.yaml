@@ -1888,6 +1888,8 @@ spec:
               value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: HELM_FORCE_RENDER
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
@@ -2069,6 +2071,8 @@ spec:
               value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: HELM_FORCE_RENDER
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
@@ -2180,6 +2184,8 @@ spec:
               value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: HELM_FORCE_RENDER
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
@@ -2342,6 +2348,8 @@ spec:
               value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: HELM_FORCE_RENDER
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED

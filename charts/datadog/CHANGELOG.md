@@ -1,8 +1,11 @@
 # Datadog changelog
+## 3.231.6
+
+* Mount run socket for host profiler/ ddot ([#2802](https://github.com/DataDog/helm-charts/pull/2802)).
 
 ## 3.231.5
 
-* Mount run socket for host profiler/ ddot ([#2802](https://github.com/DataDog/helm-charts/pull/2802)).
+* Add kubernetes use endpointslice config to the node Agent.
 
 ## 3.231.4
 
