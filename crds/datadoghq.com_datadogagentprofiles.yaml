@@ -812,6 +812,11 @@ spec:
                                   type: string
                               type: object
                           type: object
+                        dynamicInstrumentation:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         ebpfCheck:
                           properties:
                             enabled:
@@ -1408,6 +1413,11 @@ spec:
                           type: object
                         clusterName:
                           type: string
+                        commonLabels:
+                          additionalProperties:
+                            type: string
+                          type: object
+                          x-kubernetes-map-type: granular
                         containerStrategy:
                           type: string
                         credentials:
