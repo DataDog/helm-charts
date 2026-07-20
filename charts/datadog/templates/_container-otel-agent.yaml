@@ -103,10 +103,10 @@
     - name: otelconfig
       mountPath: {{ template "datadog.otelconfPath" . }}
       readOnly: true
+    {{- if eq .Values.targetSystem "linux" }}
     - name: {{ include "datadog.agentRunVolumeName" . }}
       mountPath: /opt/datadog-agent/run
       readOnly: false
-    {{- if eq .Values.targetSystem "linux" }}
     {{- if not .Values.providers.gke.autopilot }}
     - name: procdir
       mountPath: /host/proc
@@ -138,6 +138,12 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- end }}
+    {{- end }}
+    {{- else if eq .Values.targetSystem "windows" }}
+    {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
+    - name: {{ include "datadog.agentRunVolumeName" . }}
+      mountPath: c:/programdata/datadog/run
+      readOnly: false
     {{- end }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
