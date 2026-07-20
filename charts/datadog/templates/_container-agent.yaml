@@ -149,8 +149,16 @@
     - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
       value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
     {{- end }}
+    {{- $autoMultiLineOverridden := false }}
+    {{- range .Values.agents.containers.agent.env }}
+    {{- if eq .name "DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION" }}
+    {{- $autoMultiLineOverridden = true }}
+    {{- end }}
+    {{- end }}
+    {{- if not $autoMultiLineOverridden }}
     - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
       value: {{ .Values.datadog.logs.autoMultiLineDetection | quote }}
+    {{- end }}
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}
