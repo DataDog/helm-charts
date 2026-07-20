@@ -578,8 +578,8 @@ datadog:
 
     # datadog.logs.autoMultiLineDetection -- Allows the Agent to detect common multi-line patterns automatically.
 
-    ## ref: https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
-    autoMultiLineDetection: false
+    ## ref: https://docs.datadoghq.com/agent/logs/auto_multiline_detection/
+    autoMultiLineDetection: true
 
   ## Enable apm agent and provide custom configs
   ##
