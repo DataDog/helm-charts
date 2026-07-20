@@ -51,6 +51,9 @@
       mountPath: {{ template "datadog.confPath" . }}/auth
       readOnly: true
     {{- end }}
+    - name: {{ include "datadog.agentRunVolumeName" . }}
+      mountPath: /opt/datadog-agent/run
+      readOnly: false
     - name: tmpdir
       mountPath: /tmp
       readOnly: false # Need RW for tmp directory
