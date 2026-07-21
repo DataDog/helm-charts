@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.231.6
+
+* Add `privateActionRunner.apiKeyOnlyEnrollment` for node agent and cluster agent, wiring it to `api_key_only_enrollment` in the PAR ConfigMap and `DD_PRIVATE_ACTION_RUNNER_API_KEY_ONLY_ENROLLMENT` in the cluster agent deployment respectively.
+
 ## 3.231.5
 
 * Add kubernetes use endpointslice config to the node Agent.
