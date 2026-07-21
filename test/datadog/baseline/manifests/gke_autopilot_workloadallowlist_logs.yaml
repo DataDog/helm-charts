@@ -1967,7 +1967,7 @@ spec:
             - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
               value: "true"
             - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
-              value: "false"
+              value: "true"
             - name: DD_HEALTH_PORT
               value: "5555"
             - name: DD_EXTRA_CONFIG_PROVIDERS

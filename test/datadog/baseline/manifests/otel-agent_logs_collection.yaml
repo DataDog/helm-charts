@@ -1979,7 +1979,7 @@ spec:
             - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
               value: "false"
             - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
-              value: "false"
+              value: "true"
             - name: DD_HEALTH_PORT
               value: "5555"
             - name: DD_EXTRA_CONFIG_PROVIDERS
