@@ -103,6 +103,14 @@ app.kubernetes.io/component: metastore
 {{- end }}
 
 {{/*
+Read-only metastore Selector labels
+*/}}
+{{- define "quickwit.metastore_ro.selectorLabels" -}}
+{{ include "quickwit.selectorLabels" . }}
+app.kubernetes.io/component: metastore-ro
+{{- end }}
+
+{{/*
 Control Plane Selector labels
 */}}
 {{- define "quickwit.control_plane.selectorLabels" -}}
@@ -183,6 +191,14 @@ storage.k8s.io/v1beta1
 {{- else -}}
 {{- fail "VolumeAttributesClass is not available on this cluster (requires Kubernetes >= 1.31)" }}
 {{- end -}}
+{{- end }}
+
+{{/*
+Compactor Selector labels
+*/}}
+{{- define "quickwit.compactor.selectorLabels" -}}
+{{ include "quickwit.selectorLabels" . }}
+app.kubernetes.io/component: compactor
 {{- end }}
 
 {{/*
@@ -343,39 +359,37 @@ Quickwit environment
       {{- end }}
       key: api-key
 {{- end }}
-{{- if or .Values.datadog.byocTelemetry.enabled .Values.tracingEnabled }}
-- name: QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER
-  value: "true"
-{{- end }}
 {{- if .Values.datadog.byocTelemetry.enabled }}
 {{- $byocTelemetryHost := include "quickwit.byocTelemetryHost" . }}
 {{- $clusterID := .Values.config.cluster_id | default (include "quickwit.defaultClusterID" .) }}
+- name: QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER
+  value: "true"
 - name: BYOC_TELEMETRY_ENABLED
   value: "true"
 - name: OTEL_RESOURCE_ATTRIBUTES
   value: {{ printf "cluster_id=%s,node_id=$(QW_NODE_ID),host.name=$(KUBERNETES_NODE_NAME)" $clusterID | quote }}
-- name: OTEL_EXPORTER_OTLP_LOGS_PROTOCOL
+- name: OTEL_EXPORTER_OTLP_PROTOCOL
   value: "http/protobuf"
 - name: OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
   value: {{ printf "https://%s/api/unstable/byoc-telemetry-intake/v1/logs" $byocTelemetryHost | quote }}
-- name: OTEL_EXPORTER_OTLP_METRICS_PROTOCOL
-  value: "http/protobuf"
 - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
   value: "delta"
 - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
   value: {{ printf "https://%s/api/unstable/byoc-telemetry-intake/v1/metrics" $byocTelemetryHost | quote }}
-{{- end }}
-{{- if .Values.tracingEnabled }}
 - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-  value: http://{{ include "quickwit.fullname" $ }}-indexer:7281
-- name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
-  value: "grpc"
-- name: OTEL_EXPORTER_OTLP_TRACES_TIMEOUT
-  value: "10"
+  value: {{ printf "https://%s/api/unstable/byoc-telemetry-intake/v1/traces" $byocTelemetryHost | quote }}
+- name: OTEL_TRACES_SAMPLER
+  value: "parentbased_traceidratio"
+- name: OTEL_TRACES_SAMPLER_ARG
+  value: "0.2"
 - name: IMAGE_NAME
   value: {{ .Values.image.repository }}
 - name: IMAGE_TAG
   value: {{ .Values.image.tag }}
+{{- end }}
+{{- if .Values.enableStandaloneCompactors }}
+- name: QW_ENABLE_STANDALONE_COMPACTORS
+  value: "true"
 {{- end }}
 {{- with (include "quickwit.environmentDefaults" .Values.environment) }}
 {{ . }}
@@ -383,14 +397,14 @@ Quickwit environment
 {{- end }}
 
 {{/*
-Merge default environment variables (NO_COLOR, QW_DISABLE_TELEMETRY, QW_LOG_FORMAT) with
-user-provided values. Supports both legacy map and list formats. User-provided values
-take precedence over defaults.
+Merge default environment variables (NO_COLOR, QW_DISABLE_INGEST_V1, QW_DISABLE_TELEMETRY,
+QW_LOG_FORMAT) with user-provided values. Supports both legacy map and list formats.
+User-provided values take precedence over defaults.
 Defaults are stored as a list (not a dict) to guarantee deterministic rendering order
 and avoid spurious rollouts from manifest drift.
 */}}
 {{- define "quickwit.environmentDefaults" -}}
-{{- $defaults := list (dict "name" "NO_COLOR" "value" "true") (dict "name" "QW_DISABLE_TELEMETRY" "value" "true") (dict "name" "QW_LOG_FORMAT" "value" "DDG") -}}
+{{- $defaults := list (dict "name" "NO_COLOR" "value" "true") (dict "name" "QW_DISABLE_INGEST_V1" "value" "true") (dict "name" "QW_DISABLE_TELEMETRY" "value" "true") (dict "name" "QW_LOG_FORMAT" "value" "DDG") -}}
 {{- $envs := list -}}
 {{- $keys := list -}}
 {{- if kindIs "map" . -}}
