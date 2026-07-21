@@ -2480,6 +2480,9 @@ agents:
         readOnlyRootFilesystem: true
         allowPrivilegeEscalation: false
         privileged: false
+        # spc_t so SELinux-enforcing nodes don't block host-profiler's cross-process /proc access.
+        seLinuxOptions:
+          type: spc_t
         capabilities:
           drop:
             - ALL
