@@ -1,0 +1,9 @@
+{{- if .Values.metastore_ro.enabled -}}
+{{- include "quickwit.metastore.deployment" (dict
+  "root" .
+  "component" "metastore-ro"
+  "selectorLabels" "quickwit.metastore_ro.selectorLabels"
+  "values" .Values.metastore_ro
+  "service" "metastore_read_replica"
+) }}
+{{- end -}}

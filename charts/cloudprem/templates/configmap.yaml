@@ -25,6 +25,12 @@
 {{- $_ := set $cloudpremConfig "create_dd_traces_index" .Values.signals.traces.enabled }}
 {{- $config = merge $config (dict "cloudprem" $cloudpremConfig) }}
 
+{{- if .Values.metastore_ro.enabled }}
+  {{- $searcherConfig := $config.searcher | default dict }}
+  {{- $_ := set $searcherConfig "use_metastore_read_replica" true }}
+  {{- $_ := set $config "searcher" $searcherConfig }}
+{{- end }}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
