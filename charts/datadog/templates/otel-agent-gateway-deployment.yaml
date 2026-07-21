@@ -187,7 +187,7 @@ spec:
             value: "kubernetes"
           - name: DD_OTELCOLLECTOR_GATEWAY_MODE
             value: "true"
-          - name: DD_STANDALONE_MODE
+          - name: DD_OTEL_STANDALONE
             value: "false"
           - name: DD_HOSTNAME
             valueFrom:
