@@ -139,12 +139,6 @@
       readOnly: true
     {{- end }}
     {{- end }}
-    {{- else if eq .Values.targetSystem "windows" }}
-    {{- if or .Values.datadog.logs.enabled .Values.datadog.logsEnabled }}
-    - name: {{ include "datadog.agentRunVolumeName" . }}
-      mountPath: c:/programdata/datadog/run
-      readOnly: false
-    {{- end }}
     {{- end }}
     {{- include "container-crisocket-volumemounts" . | nindent 4 }}
     {{- include "container-cloudinit-volumemounts" . | nindent 4 }}
