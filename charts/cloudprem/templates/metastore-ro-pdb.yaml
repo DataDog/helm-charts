@@ -1,0 +1,13 @@
+{{- if and .Values.metastore_ro.enabled .Values.metastore_ro.podDisruptionBudget -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "quickwit.fullname" . }}-metastore-ro
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "quickwit.metastore_ro.selectorLabels" . | nindent 6 }}
+  {{- toYaml .Values.metastore_ro.podDisruptionBudget | nindent 2 }}
+{{- end -}}

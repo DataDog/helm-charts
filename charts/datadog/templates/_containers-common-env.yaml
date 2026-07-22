@@ -34,6 +34,8 @@
 - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
   value: "0"
 {{- end }}
+- name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+  value: {{ .Values.datadog.kubernetesUseEndpointSlices | quote }}
 {{- if .Values.providers.gke.gdc }}
 - name: DD_NODE_NAME
   valueFrom:

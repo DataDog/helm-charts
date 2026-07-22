@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.230.0](https://img.shields.io/badge/Version-3.230.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.231.6](https://img.shields.io/badge/Version-3.231.6-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -555,7 +555,7 @@ helm install <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.80.1"` | Define the Agent version to use |
+| agents.image.tag | string | `"7.81.1"` | Define the Agent version to use |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | agents.instanceLabelOverride | string | `nil` | Override the `app.kubernetes.io/instance` label on the Agent daemonset and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label. |
 | agents.lifecycle | object | `{}` | Configure the lifecycle of the Agent. Note: The `exec` lifecycle handler is not supported in GKE Autopilot. |
@@ -649,7 +649,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterAgent.image.repository | string | `nil` | Override default registry + image.name for Cluster Agent |
-| clusterAgent.image.tag | string | `"7.80.1"` | Cluster Agent image tag to use |
+| clusterAgent.image.tag | string | `"7.81.1"` | Cluster Agent image tag to use |
 | clusterAgent.instanceLabelOverride | string | `nil` | Override the `app.kubernetes.io/instance` label on the Cluster Agent deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label. |
 | clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus | bool | `false` | Set this to true to disable use_component_status for the kube_apiserver integration. |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
@@ -672,6 +672,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.podSecurity.securityContextConstraints.create | bool | `false` | If true, create a SCC resource for Cluster Agent pods |
 | clusterAgent.priorityClassName | string | `nil` | Name of the priorityClass to apply to the Cluster Agent |
 | clusterAgent.privateActionRunner.actionsAllowlist | list | `[]` | List of actions executable by the Private Action Runner |
+| clusterAgent.privateActionRunner.apiKeyOnlyEnrollment | bool | `false` | Enroll using only the API key, without requiring an app key |
 | clusterAgent.privateActionRunner.enabled | bool | `false` | Enable the Private Action Runner to execute workflow actions |
 | clusterAgent.privateActionRunner.identityFromExistingSecret | string | `nil` | Use existing Secret which stores the Private Action Runner URN and private key # The secret should contain 'urn' and 'private_key' keys # If set, this parameter takes precedence over "urn" and "privateKey" |
 | clusterAgent.privateActionRunner.identitySecretName | string | `"datadog-private-action-runner-identity"` | Name of the Kubernetes secret used to store PAR identity when self-enrollment is enabled # The Cluster Agent will create and manage this secret for storing the enrolled runner's URN and private key # RBAC permissions are granted specifically for this secret name |
@@ -717,7 +718,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
-| clusterChecksRunner.image.tag | string | `"7.80.1"` | Define the Agent version to use |
+| clusterChecksRunner.image.tag | string | `"7.81.1"` | Define the Agent version to use |
 | clusterChecksRunner.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | clusterChecksRunner.instanceLabelOverride | string | `nil` | Override the `app.kubernetes.io/instance` label on the cluster checks runner deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label. |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
@@ -852,6 +853,8 @@ helm install <RELEASE_NAME> \
 | datadog.hostProfiler.enabled | bool | `false` | Enable the Host Profiler. This feature is experimental and subject to change. |
 | datadog.hostProfiler.image | string | `""` | Image the Host Profiler. This parameter is experimental and will be removed once official image is available. |
 | datadog.hostProfiler.imagePullPolicy | string | `""` | Pull policy for the Host Profiler image. Defaults to agents.image.pullPolicy when unset. |
+| datadog.hostProfiler.seccomp | object | `{"enabled":true}` | Seccomp profile configuration for the Host Profiler |
+| datadog.hostProfiler.seccomp.enabled | bool | `true` | Apply the localhost seccomp profile to the host-profiler container and run the init container that installs it on the node. Disable to run the host-profiler container Unconfined (no init container, no profile installed on the node). |
 | datadog.hostProfiler.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
 | datadog.hostVolumeMountPropagation | string | `"None"` | Allow to specify the `mountPropagation` value on all volumeMounts using HostPath |
 | datadog.ignoreAutoConfig | list | `[]` | List of integration to ignore auto_conf.yaml. |
@@ -950,6 +953,7 @@ helm install <RELEASE_NAME> \
 | datadog.podAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Annotations to Datadog Tags |
 | datadog.podLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Labels to Datadog Tags |
 | datadog.privateActionRunner.actionsAllowlist | list | `[]` | List of actions executable by the Private Action Runner |
+| datadog.privateActionRunner.apiKeyOnlyEnrollment | bool | `false` | Enroll using only the API key, without requiring an app key |
 | datadog.privateActionRunner.enabled | bool | `false` | Enable the Private Action Runner on the node agent to execute workflow actions |
 | datadog.privateActionRunner.identityFromExistingSecret | string | `nil` | Use existing Secret which stores the Private Action Runner URN and private key # The secret should contain 'urn' and 'private_key' keys # If set, this parameter takes precedence over "urn" and "privateKey" |
 | datadog.privateActionRunner.privateKey | string | `nil` | Private key for the Private Action Runner (required if selfEnroll is false) # This key is used to authenticate the runner with Datadog |
@@ -1050,7 +1054,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.27"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"1.1.28"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |

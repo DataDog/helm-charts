@@ -824,6 +824,11 @@ spec:
                                   type: string
                               type: object
                           type: object
+                        dynamicInstrumentation:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         ebpfCheck:
                           properties:
                             enabled:
@@ -1066,6 +1071,11 @@ spec:
                                       type: string
                                   type: object
                               type: object
+                            enabled:
+                              type: boolean
+                          type: object
+                        kubernetesActions:
+                          properties:
                             enabled:
                               type: boolean
                           type: object
@@ -1415,6 +1425,11 @@ spec:
                           type: object
                         clusterName:
                           type: string
+                        commonLabels:
+                          additionalProperties:
+                            type: string
+                          type: object
+                          x-kubernetes-map-type: granular
                         containerStrategy:
                           type: string
                         credentials:
@@ -1967,7 +1982,7 @@ spec:
                               type: string
                             config:
                               additionalProperties:
-                                type: string
+                                x-kubernetes-preserve-unknown-fields: true
                               type: object
                             enableGlobalPermissions:
                               type: boolean

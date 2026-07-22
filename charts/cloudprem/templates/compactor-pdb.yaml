@@ -1,0 +1,13 @@
+{{- if and .Values.enableStandaloneCompactors .Values.compactor.podDisruptionBudget -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "quickwit.fullname" . }}-compactor
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "quickwit.compactor.selectorLabels" . | nindent 6 }}
+  {{- toYaml .Values.compactor.podDisruptionBudget | nindent 2 }}
+{{- end -}}

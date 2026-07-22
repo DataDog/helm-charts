@@ -558,6 +558,9 @@ datadog:
     #   - "com.datadoghq.http.request"
     #   - "com.datadoghq.gitlab.branches.*"
 
+    # datadog.privateActionRunner.apiKeyOnlyEnrollment -- Enroll using only the API key, without requiring an app key
+    apiKeyOnlyEnrollment: false
+
   ## Enable logs agent and provide custom configs
   logs:
     # datadog.logs.enabled -- Enables this to activate Datadog Agent log collection
@@ -811,6 +814,10 @@ datadog:
     image: ""
     # datadog.hostProfiler.imagePullPolicy -- Pull policy for the Host Profiler image. Defaults to agents.image.pullPolicy when unset.
     imagePullPolicy: ""
+    # datadog.hostProfiler.seccomp -- Seccomp profile configuration for the Host Profiler
+    seccomp:
+      # datadog.hostProfiler.seccomp.enabled -- Apply the localhost seccomp profile to the host-profiler container and run the init container that installs it on the node. Disable to run the host-profiler container Unconfined (no init container, no profile installed on the node).
+      enabled: true
     # datadog.hostProfiler.seccompRoot -- Specify the seccomp profile root directory
     seccompRoot: /var/lib/kubelet/seccomp
     # datadog.hostProfiler.apparmor -- Specify an AppArmor profile for the host-profiler container (e.g. "localhost/datadog-host-profiler").
@@ -1517,7 +1524,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.80.1
+    tag: 7.81.1
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -1906,6 +1913,9 @@ clusterAgent:
     #   - "com.datadoghq.http.request"
     #   - "com.datadoghq.kubernetes.core.*"
 
+    # clusterAgent.privateActionRunner.apiKeyOnlyEnrollment -- Enroll using only the API key, without requiring an app key
+    apiKeyOnlyEnrollment: false
+
     # clusterAgent.privateActionRunner.k8sRemediationEnabled -- Enable k8s remediation RBAC for the Private Action Runner
     ## When enabled, a ClusterRole and ClusterRoleBinding are created granting the Cluster Agent
     ## permissions to read/patch workloads (Deployments, DaemonSets, StatefulSets, ReplicaSets, Pods)
@@ -2094,7 +2104,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.27
+    tag: 1.1.28
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -2137,7 +2147,7 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.80.1
+    tag: 7.81.1
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2829,7 +2839,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.80.1
+    tag: 7.81.1
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""

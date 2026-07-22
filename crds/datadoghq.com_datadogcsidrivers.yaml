@@ -43,6 +43,11 @@ spec:
                   type: object
                 apmSocketPath:
                   type: string
+                commonLabels:
+                  additionalProperties:
+                    type: string
+                  type: object
+                  x-kubernetes-map-type: granular
                 csiDriverImage:
                   properties:
                     jmxEnabled:

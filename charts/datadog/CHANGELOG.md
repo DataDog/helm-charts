@@ -1,5 +1,37 @@
 # Datadog changelog
 
+## 3.231.6
+
+* Add `privateActionRunner.apiKeyOnlyEnrollment` for node agent and cluster agent, wiring it to `api_key_only_enrollment` in the PAR ConfigMap and `DD_PRIVATE_ACTION_RUNNER_API_KEY_ONLY_ENROLLMENT` in the cluster agent deployment respectively.
+
+## 3.231.5
+
+* Add kubernetes use endpointslice config to the node Agent.
+
+## 3.231.4
+
+* Mount GKE COS NVIDIA driver libraries at system-probe's `HOST_ROOT` path so GPU monitoring can find NVML when `providers.gke.cos=true`.
+
+## 3.231.3
+
+* Update Default Agent Version to 7.81.1.
+
+## 3.231.2
+
+* Update the Go Dynamic Instrumentation cache volume mount to `/opt/datadog-agent/run/system-probe/dynamic-instrumentation`, matching the Agent's relocation of that writable state out of `/tmp`, so the SymDB upload cache, probe tombstone, and decompressed debug info persist across container restarts again.
+
+## 3.231.1
+
+* Fix `DD_LOGS_ENABLED` not being propagated to the `trace-agent` container, which caused Dynamic Instrumentation (Live Debugger) and Exception Replay payloads to be silently dropped when `datadog.logs.enabled` is `true`.
+
+## 3.231.0
+
+* [PROF-15238] Seccomp toggle for Host Profiler ([#2755](https://github.com/DataDog/helm-charts/pull/2755)).
+
+## 3.230.1
+
+* Update `fips.image.tag` to `1.1.28` fixing CVEs and updating packages.
+
 ## 3.230.0
 
 * Bump Datadog Operator chart dependency to 2.24.0.

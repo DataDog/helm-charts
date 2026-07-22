@@ -1,6 +1,6 @@
 apiVersion: v2
 name: observability-pipelines-worker
-version: 2.18.0
+version: 2.20.0
 description: Observability Pipelines Worker
 type: application
 keywords:
@@ -13,7 +13,7 @@ icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
 maintainers:
   - name: Datadog
     email: support@datadoghq.com
-appVersion: "2.18.0"
+appVersion: "2.20.0"
 annotations:
   artifacthub.io/links: |
     - name: Chart Source
