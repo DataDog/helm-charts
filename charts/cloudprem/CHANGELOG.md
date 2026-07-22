@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.7
+
+* Enable random split prefixes by default for all Quickwit processes with `QW_RANDOM_SPLIT_PREFIX=true`.
+* Add HorizontalPodAutoscaler support for compactors
+* Preserve an explicit `use_metastore_read_replica` setting instead of always defaulting it to `true`, allowing a read-only metastore to be disabled safely without disrupting searchers still using it.
+
 ## 0.4.6
 
 * Update Docker image to `v0.1.32`.

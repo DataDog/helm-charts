@@ -13,7 +13,9 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
+  {{- if and (hasKey .Values.compactor "replicaCount") (not .Values.compactor.autoscaling.enabled) }}
   replicas: {{ .Values.compactor.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "quickwit.compactor.selectorLabels" . | nindent 6 }}
