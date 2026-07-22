@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.231.6](https://img.shields.io/badge/Version-3.231.6-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.232.0](https://img.shields.io/badge/Version-3.232.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -498,7 +498,7 @@ helm install <RELEASE_NAME> \
 | agents.containers.hostProfiler.envDict | object | `{}` | Set environment variables specific to host-profiler defined in a dict |
 | agents.containers.hostProfiler.envFrom | list | `[]` | Set environment variables specific to host-profiler from configMaps and/or secrets |
 | agents.containers.hostProfiler.resources | object | `{}` | Resource requests and limits for the host-profiler container |
-| agents.containers.hostProfiler.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"add":["BPF","PERFMON","SYS_PTRACE","SYS_RESOURCE","DAC_READ_SEARCH","SYSLOG","CHECKPOINT_RESTORE","IPC_LOCK"],"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the host-profiler container. |
+| agents.containers.hostProfiler.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"add":["BPF","PERFMON","SYS_PTRACE","SYS_RESOURCE","DAC_READ_SEARCH","SYSLOG","CHECKPOINT_RESTORE","IPC_LOCK"],"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"seLinuxOptions":{"type":"spc_t"}}` | Allows you to overwrite the default container SecurityContext for the host-profiler container. |
 | agents.containers.hostProfiler.volumeMounts | list | `[]` | Specify additional volumes to mount in the host-profiler container |
 | agents.containers.initContainers.resources | object | `{}` | Resource requests and limits for the init containers |
 | agents.containers.initContainers.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the init containers. |
