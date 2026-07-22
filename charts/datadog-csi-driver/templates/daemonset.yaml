@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   {{- if (eq (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") }}
   labels:
-    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.1.0"
+    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.1.1"
   {{- end }}
 spec:
   {{- with .Values.updateStrategy }}
