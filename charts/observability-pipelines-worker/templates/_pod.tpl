@@ -74,7 +74,7 @@ containers:
         value: {{ .Values.datadog.proxy.noProxy | join "," | quote }}
       {{- end }}
       - name: DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS
-        value: {{ max 10 (sub (.Values.terminationGracePeriodSeconds | int) 10) | quote }}
+        value: {{ max 10 (sub (.Values.terminationGracePeriodSeconds | default 30 | int) 10) | quote }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}
@@ -136,7 +136,7 @@ containers:
 {{- if .Values.extraContainers }}
 {{ toYaml .Values.extraContainers | indent 2 }}
 {{- end }}
-terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds | default 30 }}
 {{- if .Values.nodeSelector }}
 nodeSelector: {{ toYaml .Values.nodeSelector | nindent 2 }}
 {{- end }}
