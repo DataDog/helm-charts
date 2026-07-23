@@ -1,6 +1,6 @@
 # Observability Pipelines Worker
 
-![Version: 2.20.0](https://img.shields.io/badge/Version-2.20.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.20.0](https://img.shields.io/badge/AppVersion-2.20.0-informational?style=flat-square)
+![Version: 2.20.1](https://img.shields.io/badge/Version-2.20.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.20.0](https://img.shields.io/badge/AppVersion-2.20.0-informational?style=flat-square)
 
 ## How to use Datadog Helm repository
 
@@ -162,7 +162,7 @@ The command removes all the Kubernetes components associated with the chart and 
 | serviceAccount.create | bool | `true` | If **true**, create a ServiceAccount. |
 | serviceAccount.name | string | `"default"` | Specify a preexisting ServiceAccount to use if `serviceAccount.create` is **false**. |
 | serviceHeadless.enabled | bool | `true` | If **true**, create a "headless" Service resource. |
-| terminationGracePeriodSeconds | int | `60` | Override terminationGracePeriodSeconds. |
+| terminationGracePeriodSeconds | int | `70` | Override terminationGracePeriodSeconds. This is also used to derive the DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS env var (set to this value minus 10 seconds, capped to a minimum of 10 seconds), which tells a worker how long it can wait for the pipeline components to gracefully shut down before killing them. Giving replicas enough time to terminate is especially important when they are configured with large sink buffers so that they can drain them before exiting.  Note: DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS is supported since OP Worker version 2.19.0. Prior versions always set this value to 60 seconds. |
 | tolerations | list | `[]` | Configure [taints and tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/). |
 | topologySpreadConstraints | list | `[]` | Configure [topology spread constraints](https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/). |
 | updateStrategy | object | `{}` | Customize the [updateStrategy](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/stateful-set-v1/#StatefulSetSpec). |
