@@ -200,7 +200,7 @@ updateStrategy: {}
 
 # terminationGracePeriodSeconds -- Override terminationGracePeriodSeconds.
 # This is also used to derive the DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS env var (set to this value minus 10 seconds,
-# capped to a minimum of 10 seconds), which tells a worker how long it can wait for the pipeline components to 
+# capped to a minimum of 10 seconds), which tells a worker how long it can wait for the pipeline components to
 # gracefully shut down before killing them. Giving replicas enough time to terminate is especially important
 # when they are configured with large sink buffers so that they can drain them before exiting.
 #
