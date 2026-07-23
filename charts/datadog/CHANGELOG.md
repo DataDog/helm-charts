@@ -1,4 +1,8 @@
 # Datadog changelog
+## 3.231.10
+
+* Add `datadog.gpuMonitoring.enableEbpfProbes` (defaults to `false`) to control `gpu_monitoring.enable_ebpf_probes` in the system-probe config and `DD_GPU_MONITORING_ENABLE_EBPF_PROBES` on the core Agent container.
+
 ## 3.231.9
 
 * Mount run socket for host profiler/ ddot ([#2802](https://github.com/DataDog/helm-charts/pull/2802)).
