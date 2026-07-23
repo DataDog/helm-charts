@@ -199,7 +199,13 @@ updateStrategy: {}
 #     maxUnavailable: 1
 
 # terminationGracePeriodSeconds -- Override terminationGracePeriodSeconds.
-terminationGracePeriodSeconds: 60
+# This is also used to derive the DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS env var (set to this value minus 10 seconds,
+# capped to a minimum of 10 seconds), which tells a worker how long it can wait for the pipeline components to 
+# gracefully shut down before killing them. Giving replicas enough time to terminate is especially important
+# when they are configured with large sink buffers so that they can drain them before exiting.
+#
+# Note: DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS is supported since OP Worker version 2.19.0. Prior versions always set this value to 60 seconds.
+terminationGracePeriodSeconds: 70
 
 # nodeSelector -- Configure
 # [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector).
