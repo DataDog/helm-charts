@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.8
+
+* Lower indexer HorizontalPodAutoscaler CPU target from 80% to 70% and remove the 60s scale-up stabilization window so indexers scale out immediately under load.
+
 ## 0.4.7
 
 * Enable random split prefixes by default for all Quickwit processes with `QW_RANDOM_SPLIT_PREFIX=true`.
