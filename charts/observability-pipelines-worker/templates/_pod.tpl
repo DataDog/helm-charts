@@ -136,7 +136,7 @@ containers:
 {{- if .Values.extraContainers }}
 {{ toYaml .Values.extraContainers | indent 2 }}
 {{- end }}
-terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds | default 30 }}
+terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
 {{- if .Values.nodeSelector }}
 nodeSelector: {{ toYaml .Values.nodeSelector | nindent 2 }}
 {{- end }}
