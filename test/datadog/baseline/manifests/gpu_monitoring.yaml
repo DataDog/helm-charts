@@ -1978,6 +1978,8 @@ spec:
               value: "true"
             - name: DD_GPU_ENABLED
               value: "true"
+            - name: DD_GPU_MONITORING_ENABLE_EBPF_PROBES
+              value: "false"
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED

@@ -2,7 +2,7 @@
 
 ## 3.231.7
 
-* Force `gpu_monitoring.enable_ebpf_probes` to `false` in the system-probe config when `datadog.gpuMonitoring.privilegedMode` is enabled.
+* Force `gpu_monitoring.enable_ebpf_probes` to `false` in the system-probe config and set `DD_GPU_MONITORING_ENABLE_EBPF_PROBES=false` on the core agent container when `datadog.gpuMonitoring.privilegedMode` is enabled, keeping both containers in agreement so the core GPU check does not poll system-probe's disabled eBPF module.
 
 ## 3.231.6
 
