@@ -450,10 +450,10 @@ indexer:
           name: cpu
           target:
             type: Utilization
-            averageUtilization: 80
+            averageUtilization: 70
     behavior:
       scaleUp:
-        stabilizationWindowSeconds: 60
+        stabilizationWindowSeconds: 0
         # selectPolicy: Max
         # policies:
         # - type: Percent
@@ -990,8 +990,6 @@ compactor:
     behavior:
       scaleUp:
         stabilizationWindowSeconds: 60
-      # scaleDown:
-      #   stabilizationWindowSeconds: 300
 
   # Extra env for compactor
   # Legacy map format (e.g. extraEnv: { KEY: VALUE }) is also supported for backward compatibility.
