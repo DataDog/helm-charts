@@ -268,6 +268,13 @@
       value: "true"
     - name: DD_GPU_ENABLED
       value: "true"
+    {{- if .Values.datadog.gpuMonitoring.privilegedMode }}
+    # Keep the core GPU check in sync with system-probe, which has eBPF probes force-disabled in privileged mode.
+    # Without this, the core check would poll system-probe's disabled GPU module and hit 503s, producing recurring
+    # refresh warnings and empty process metrics.
+    - name: DD_GPU_MONITORING_ENABLE_EBPF_PROBES
+      value: "false"
+    {{- end }}
     {{- end }}
     {{- if eq  (include "should-enable-process-agent" .) "true" }}
     - name: DD_SYSTEM_PROBE_ENABLED
