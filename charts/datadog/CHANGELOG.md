@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.232.0
+
+* Add the `cumulativetodelta` processor to the default DDOT Collector metrics pipelines (standalone Agent and Gateway), converting cumulative counters and histograms to delta upstream of the Datadog exporter. This prepares DDOT for the metrics v3 payload format, where the exporter no longer performs this conversion internally.
+
 ## 3.231.6
 
 * Add `privateActionRunner.apiKeyOnlyEnrollment` for node agent and cluster agent, wiring it to `api_key_only_enrollment` in the PAR ConfigMap and `DD_PRIVATE_ACTION_RUNNER_API_KEY_ONLY_ENROLLMENT` in the cluster agent deployment respectively.
