@@ -2449,6 +2449,8 @@ spec:
               value: "60"
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
+            - name: DD_OTEL_STANDALONE
+              value: "false"
             - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
               value: kubernetes
             - name: DD_LOG_LEVEL

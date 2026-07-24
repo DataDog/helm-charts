@@ -187,6 +187,8 @@ spec:
             value: "kubernetes"
           - name: DD_OTELCOLLECTOR_GATEWAY_MODE
             value: "true"
+          - name: DD_OTEL_STANDALONE
+            value: "false"
           - name: DD_HOSTNAME
             valueFrom:
               fieldRef:
@@ -212,7 +214,7 @@ spec:
           - name: DD_TAGS
             value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
           {{- end }}
-          
+
           # Disable features that are not needed / won't work in standalone ddot-collector
           - name: DD_ENABLE_METADATA_COLLECTION
             value: "false"
