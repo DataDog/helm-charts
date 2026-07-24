@@ -820,6 +820,8 @@ datadog:
       enabled: true
     # datadog.hostProfiler.seccompRoot -- Specify the seccomp profile root directory
     seccompRoot: /var/lib/kubelet/seccomp
+    # datadog.hostProfiler.loggingSeccomp -- Use the seccomp profile that also permits logging syscalls
+    loggingSeccomp: false
     # datadog.hostProfiler.apparmor -- Specify an AppArmor profile for the host-profiler container (e.g. "localhost/datadog-host-profiler").
     ## Only used when agents.podSecurity.apparmor.enabled is true.
     apparmor: unconfined
