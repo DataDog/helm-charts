@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.231.6](https://img.shields.io/badge/Version-3.231.6-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.232.0](https://img.shields.io/badge/Version-3.232.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -561,6 +561,7 @@ helm install <RELEASE_NAME> \
 | agents.lifecycle | object | `{}` | Configure the lifecycle of the Agent. Note: The `exec` lifecycle handler is not supported in GKE Autopilot. |
 | agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
 | agents.localService.overrideName | string | `""` | Name of the internal traffic service to target the agent running on the local node |
+| agents.localService.trafficDistribution | string | `""` | Use `spec.trafficDistribution` with the given value (e.g. `PreferSameNode`) instead of `internalTrafficPolicy: Local` on the local service. Unlike `internalTrafficPolicy: Local`, `PreferSameNode` (Kubernetes 1.33+, enabled by default since 1.34, GA in 1.35) keeps routing to the node-local agent but falls back to agents on other nodes while the local agent has no ready endpoint (e.g. during a DaemonSet rollout), instead of black-holing the traffic. Caveat: while traffic is failed over, telemetry whose host attribution or origin detection depends on the receiving agent (DogStatsD, APM) is attributed to the wrong host and tagger-based enrichment is incomplete. OTLP traffic can be made fallback-safe by sending resource attributes that keep attribution independent of the receiving agent: both `k8s.node.name` and `k8s.cluster.name` (required together for hostname resolution to match the agent's registered host alias `<node>-<cluster>`), plus `k8s.namespace.name` / `k8s.pod.name` for pod-level tags. |
 | agents.networkPolicy.create | bool | `false` | If true, create a NetworkPolicy for the agents. DEPRECATED. Use datadog.networkPolicy.create instead |
 | agents.nodeSelector | object | `{}` | Allow the DaemonSet to schedule on selected nodes |
 | agents.podAnnotations | object | `{}` | Annotations to add to the DaemonSet's Pods |
