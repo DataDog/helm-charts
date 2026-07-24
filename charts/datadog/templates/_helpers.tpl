@@ -511,7 +511,7 @@ Return agent config path
 /etc/otel-agent
 {{- end -}}
 {{- if eq .Values.targetSystem "windows" -}}
-C:/ProgramData/Datadog
+C:/ProgramData/Datadog/otel-agent
 {{- end -}}
 {{- end -}}
 
