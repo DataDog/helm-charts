@@ -110,6 +110,38 @@ func TestHostProfilerSeccompDifferentImages(t *testing.T) {
 	assert.NotEqual(t, profile1, profile2, "different images should produce different seccomp profile names")
 }
 
+func TestHostProfilerSELinux(t *testing.T) {
+	t.Run("default_spc_t", func(t *testing.T) {
+		// SELinux defaults to spc_t so SELinux-enforcing nodes don't block the cross-process
+		// /proc access the host-profiler needs.
+		ds := renderHostProfilerDaemonSet(t, hostProfilerBaseOverrides)
+
+		hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+		require.True(t, ok)
+		require.NotNil(t, hpContainer.SecurityContext)
+		selinux := hpContainer.SecurityContext.SELinuxOptions
+		if assert.NotNil(t, selinux, "host-profiler seLinuxOptions") {
+			assert.Equal(t, "spc_t", selinux.Type)
+		}
+	})
+
+	t.Run("user_securityContext_overrides_default", func(t *testing.T) {
+		// A user-provided securityContext.seLinuxOptions takes precedence over the spc_t default.
+		overrides := copyMap(hostProfilerBaseOverrides)
+		overrides["agents.containers.hostProfiler.securityContext.seLinuxOptions.type"] = "custom_t"
+
+		ds := renderHostProfilerDaemonSet(t, overrides)
+
+		hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+		require.True(t, ok)
+		require.NotNil(t, hpContainer.SecurityContext)
+		selinux := hpContainer.SecurityContext.SELinuxOptions
+		if assert.NotNil(t, selinux, "host-profiler seLinuxOptions") {
+			assert.Equal(t, "custom_t", selinux.Type)
+		}
+	})
+}
+
 func TestHostProfilerSCC(t *testing.T) {
 	overrides := copyMap(hostProfilerBaseOverrides)
 	overrides["agents.podSecurity.securityContextConstraints.create"] = "true"
