@@ -184,6 +184,7 @@ data:
           batch:
             flush_timeout: 10s
     processors:
+      cumulativetodelta:
     extensions:
       health_check:
         endpoint: 0.0.0.0:13133
@@ -200,6 +201,7 @@ data:
           exporters: [datadog]
         metrics:
           receivers: [otlp]
+          processors: [cumulativetodelta]
           exporters: [datadog]
         logs:
           receivers: [otlp]
