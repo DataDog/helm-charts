@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.231.7
+
+* Add `endpointslices` to the `kubernetes_state_core` check's collector list, and grant the corresponding RBAC permissions.
+
 ## 3.231.6
 
 * Add `privateActionRunner.apiKeyOnlyEnrollment` for node agent and cluster agent, wiring it to `api_key_only_enrollment` in the PAR ConfigMap and `DD_PRIVATE_ACTION_RUNNER_API_KEY_ONLY_ENROLLMENT` in the cluster agent deployment respectively.
