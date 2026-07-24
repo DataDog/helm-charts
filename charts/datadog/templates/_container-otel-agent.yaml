@@ -104,6 +104,9 @@
       mountPath: {{ template "datadog.otelconfPath" . }}
       readOnly: true
     {{- if eq .Values.targetSystem "linux" }}
+    - name: {{ include "datadog.agentRunVolumeName" . }}
+      mountPath: /opt/datadog-agent/run
+      readOnly: false
     {{- if not .Values.providers.gke.autopilot }}
     - name: procdir
       mountPath: /host/proc

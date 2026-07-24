@@ -1,4 +1,7 @@
 # Datadog changelog
+## 3.231.6
+
+* Mount run socket for host profiler/ ddot ([#2802](https://github.com/DataDog/helm-charts/pull/2802)).
 
 ## 3.231.6
 
