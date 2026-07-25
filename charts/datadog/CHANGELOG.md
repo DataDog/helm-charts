@@ -2,7 +2,7 @@
 
 ## 3.232.0
 
-* Add `agents.localService.trafficDistribution` to set `spec.trafficDistribution` (e.g. `PreferSameNode`) on the agent local service instead of `internalTrafficPolicy: Local`, so that traffic falls back to agents on other nodes while the node-local agent has no ready endpoint (e.g. during a DaemonSet rollout) instead of being black-holed.
+* Add `agents.localService.trafficDistribution` to set `spec.trafficDistribution` (e.g. `PreferSameNode`) on the agent local service instead of `internalTrafficPolicy: Local`, so that traffic falls back to agents on other nodes while the node-local agent has no ready endpoint (e.g. during a DaemonSet rollout) instead of being black-holed. Only applied on Kubernetes 1.34+; older clusters keep `internalTrafficPolicy: Local`.
 
 ## 3.231.6
 

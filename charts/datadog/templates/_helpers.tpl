@@ -1225,6 +1225,19 @@ false
 {{- end -}}
 
 {{/*
+Return true if the local service can use trafficDistribution instead of internalTrafficPolicy: Local.
+PreferSameNode requires Kubernetes 1.33+ behind the PreferSameTrafficDistribution feature gate; it is
+enabled by default in 1.34 and GA in 1.35, so gate on 1.34+ where the value is accepted out of the box.
+*/}}
+{{- define "enable-local-service-traffic-distribution" -}}
+{{- if and .Values.agents.localService.trafficDistribution (semverCompare "^1.34-0" .Capabilities.KubeVersion.GitVersion) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the local service name
 */}}
 {{- define "localService.name" -}}

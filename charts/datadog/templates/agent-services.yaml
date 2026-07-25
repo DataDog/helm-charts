@@ -110,7 +110,7 @@ spec:
       name: {{ .name }}
 {{- end }}
 {{- end }}
-{{- if .Values.agents.localService.trafficDistribution }}
+{{- if eq (include "enable-local-service-traffic-distribution" .) "true" }}
   trafficDistribution: {{ .Values.agents.localService.trafficDistribution }}
 {{- else }}
   internalTrafficPolicy: Local
