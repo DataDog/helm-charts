@@ -138,15 +138,18 @@ func TestHostProfilerLoggingSeccomp(t *testing.T) {
 	overrides := copyMap(hostProfilerBaseOverrides)
 	overrides["datadog.hostProfiler.loggingSeccomp"] = "true"
 	ds := renderHostProfilerDaemonSet(t, overrides)
+
 	initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
 	require.True(t, ok)
-
-	// Prefer the logging profile, falling back to the default if the image predates it.
 	cmd := strings.Join(initContainer.Command, " ")
-	assert.Contains(t, cmd, "if [ -f /etc/dd-host-profiler/logging-seccomp.json ]",
-		"init container should guard the logging profile copy; command: %v", initContainer.Command)
 	assert.Contains(t, cmd, "cp /etc/dd-host-profiler/logging-seccomp.json")
-	assert.Contains(t, cmd, "cp /etc/dd-host-profiler/seccomp.json", "should fall back to the default profile")
+	assert.Contains(t, cmd, "cp /etc/dd-host-profiler/seccomp.json")
+	assert.Contains(t, cmd, "WARNING: logging-seccomp.json not found in image, falling back to default seccomp profile")
+
+	hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+	require.True(t, ok)
+	require.NotNil(t, hpContainer.SecurityContext.SeccompProfile)
+	assert.Regexp(t, `^host-profiler-[0-9a-f]{8}-logging$`, *hpContainer.SecurityContext.SeccompProfile.LocalhostProfile)
 }
 
 func containsString(slice []string, s string) bool {

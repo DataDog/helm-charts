@@ -6,10 +6,9 @@
   {{- $dst := printf "/host%s/%s" .Values.datadog.hostProfiler.seccompRoot (include "host-profiler-seccomp-name" .) }}
   command:
   {{- if .Values.datadog.hostProfiler.loggingSeccomp }}
-  # Prefer the logging profile, falling back to the default if the image predates it.
   - sh
   - -c
-  - if [ -f /etc/dd-host-profiler/logging-seccomp.json ]; then cp /etc/dd-host-profiler/logging-seccomp.json {{ $dst }}; else cp /etc/dd-host-profiler/seccomp.json {{ $dst }}; fi
+  - "if [ -f /etc/dd-host-profiler/logging-seccomp.json ]; then cp /etc/dd-host-profiler/logging-seccomp.json {{ $dst }}; else echo 'WARNING: logging-seccomp.json not found in image, falling back to default seccomp profile'; cp /etc/dd-host-profiler/seccomp.json {{ $dst }}; fi"
   {{- else }}
   - cp
   - /etc/dd-host-profiler/seccomp.json

@@ -301,7 +301,7 @@ Return the seccomp profile filename for the host-profiler, scoped to the image r
 to avoid races when multiple host-profiler versions coexist on the same node.
 */}}
 {{- define "host-profiler-seccomp-name" -}}
-host-profiler-{{ include "ddot-ebpf-image" . | sha256sum | trunc 8 }}
+host-profiler-{{ include "ddot-ebpf-image" . | sha256sum | trunc 8 }}{{- if .Values.datadog.hostProfiler.loggingSeccomp }}-logging{{- end }}
 {{- end -}}
 
 {{/*
