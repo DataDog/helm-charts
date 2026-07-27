@@ -177,6 +177,48 @@ spec:
   selector:
     {{- include "quickwit.metastore.selectorLabels" . | nindent 4 }}
 ---
+{{- if .Values.metastore_ro.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "quickwit.fullname" . }}-metastore-ro
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.metastore_ro.serviceAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.metastore_ro.serviceType | default .Values.service.type }}
+  {{- if .Values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
+  {{- end }}
+  {{- if .Values.service.ipFamilies }}
+  ipFamilies: {{ .Values.service.ipFamilies | toYaml | nindent 2 }}
+  {{- end }}
+  ports:
+    - port: 7280
+      targetPort: rest
+      protocol: TCP
+      name: rest
+      {{- $type := .Values.metastore_ro.serviceType | default .Values.service.type }}
+      {{- if and (eq $type "NodePort") .Values.metastore_ro.restNodePort }}
+      nodePort: {{ .Values.metastore_ro.restNodePort }}
+      {{- end }}
+    - port: 7281
+      targetPort: grpc
+      name: grpc
+      {{- $type := .Values.metastore_ro.serviceType | default .Values.service.type }}
+      {{- if and (eq $type "NodePort") .Values.metastore_ro.grpcNodePort }}
+      nodePort: {{ .Values.metastore_ro.grpcNodePort }}
+      {{- end }}
+  selector:
+    {{- include "quickwit.metastore_ro.selectorLabels" . | nindent 4 }}
+---
+{{- end }}
 {{- if .Values.control_plane.enabled }}
 apiVersion: v1
 kind: Service
@@ -267,4 +309,46 @@ spec:
       name: health
   selector:
     {{- include "quickwit.janitor.selectorLabels" . | nindent 4 }}
+{{- end }}
+---
+{{- if .Values.enableStandaloneCompactors }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "quickwit.fullname" . }}-compactor
+  labels:
+    {{- include "quickwit.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .Values.compactor.serviceAnnotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.compactor.serviceType | default .Values.service.type }}
+  {{- if .Values.service.ipFamilyPolicy }}
+  ipFamilyPolicy: {{ .Values.service.ipFamilyPolicy }}
+  {{- end }}
+  {{- if .Values.service.ipFamilies }}
+  ipFamilies: {{ .Values.service.ipFamilies | toYaml | nindent 2 }}
+  {{- end }}
+  ports:
+    - port: 7280
+      targetPort: rest
+      protocol: TCP
+      name: rest
+      {{- $type := .Values.compactor.serviceType | default .Values.service.type }}
+      {{- if and (eq $type "NodePort") .Values.compactor.restNodePort }}
+      nodePort: {{ .Values.compactor.restNodePort }}
+      {{- end }}
+    - port: 7281
+      targetPort: grpc
+      name: grpc
+      {{- $type := .Values.compactor.serviceType | default .Values.service.type }}
+      {{- if and (eq $type "NodePort") .Values.compactor.grpcNodePort }}
+      nodePort: {{ .Values.compactor.grpcNodePort }}
+      {{- end }}
+  selector:
+    {{- include "quickwit.compactor.selectorLabels" . | nindent 4 }}
 {{- end }}

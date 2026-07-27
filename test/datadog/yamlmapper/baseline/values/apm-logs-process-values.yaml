@@ -1,0 +1,41 @@
+# Test values for APM, Logs, and Process Agent features
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  
+  # APM configuration
+  apm:
+    socketEnabled: true
+    socketPath: /var/run/datadog/apm.socket
+    errorTrackingStandalone:
+      enabled: true
+    instrumentation:
+      enabled: true
+  
+  # Logs configuration
+  logs:
+    enabled: true
+    containerCollectAll: true
+    containerCollectUsingFiles: true
+    autoMultiLineDetection: true
+  
+  # Process Agent configuration
+  processAgent:
+    processCollection: true
+    containerCollection: true
+    processDiscovery: true
+    stripProcessArguments: true
+
+agents:
+  image:
+    tag: 7.75.0
+
+clusterAgent:
+  image:
+    tag: 7.75.0
+  enabled: true
+  admissionController:
+    enabled: true
+

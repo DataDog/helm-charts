@@ -182,5 +182,8 @@ spec:
       {{- if .Values.indexer.persistentVolume.storageClass }}
         storageClassName: "{{ .Values.indexer.persistentVolume.storageClass }}"
       {{- end }}
+      {{- if .Values.indexer.volumeAttributesClass.enabled }}
+        volumeAttributesClassName: {{ include "quickwit.indexer.vacName" . | quote }}
+      {{- end }}
   {{- end }}
 {{- end }}

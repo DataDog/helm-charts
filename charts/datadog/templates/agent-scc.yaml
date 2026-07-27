@@ -29,7 +29,7 @@ seLinuxContext:
 # system-probe requires some specific seccomp and capabilities
 seccompProfiles:
 {{ toYaml .Values.agents.podSecurity.seccompProfiles | indent 2 }}
-{{- if eq (include "should-enable-host-profiler" .) "true" }}
+{{- if eq (include "should-enable-host-profiler-seccomp" .) "true" }}
   - "localhost/{{ include "host-profiler-seccomp-name" . }}"
 {{- end }}
 allowedCapabilities:

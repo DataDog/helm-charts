@@ -205,10 +205,14 @@ func Test_operator_chart(t *testing.T) {
 				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 				assert.Contains(t, operatorContainer.Args, "-untaintControllerEnabled=false")
 				assert.NotContains(t, operatorContainer.Args, "-untaintControllerEnabled=true")
+				// waitForCSIDriver flag and tuning env vars only render when the controller is enabled.
+				assert.NotContains(t, operatorContainer.Args, "-untaintControllerWaitForCSIDriver=false")
+				assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_TIMEOUT"))
+				assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_EVENTS_ENABLED"))
 			},
 		},
 		{
-			name: "untaintController enabled sets flag",
+			name: "untaintController enabled sets flags",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
@@ -224,6 +228,48 @@ func Test_operator_chart(t *testing.T) {
 				common.Unmarshal(t, manifest, &deployment)
 				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 				assert.Contains(t, operatorContainer.Args, "-untaintControllerEnabled=true")
+				assert.Contains(t, operatorContainer.Args, "-untaintControllerWaitForCSIDriver=false")
+				// Tuning env vars are omitted (operator defaults apply) unless explicitly set.
+				assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_TIMEOUT"))
+				assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_EVENTS_ENABLED"))
+			},
+		},
+		{
+			name: "untaintController full configuration",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"untaintController.enabled":           "true",
+					"untaintController.waitForCSIDriver":  "true",
+					"untaintController.timeout":           "2m",
+					"untaintController.schedulingTimeout": "3m",
+					"untaintController.timeoutPolicy":     "keep",
+					"untaintController.eventsEnabled":     "true",
+				},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Contains(t, operatorContainer.Args, "-untaintControllerEnabled=true")
+				assert.Contains(t, operatorContainer.Args, "-untaintControllerWaitForCSIDriver=true")
+
+				timeout := FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_TIMEOUT")
+				assert.NotNil(t, timeout)
+				assert.Equal(t, "2m", timeout.Value)
+				schedulingTimeout := FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_SCHEDULING_TIMEOUT")
+				assert.NotNil(t, schedulingTimeout)
+				assert.Equal(t, "3m", schedulingTimeout.Value)
+				timeoutPolicy := FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_TIMEOUT_POLICY")
+				assert.NotNil(t, timeoutPolicy)
+				assert.Equal(t, "keep", timeoutPolicy.Value)
+				eventsEnabled := FindEnvVarByName(operatorContainer.Env, "DD_UNTAINT_CONTROLLER_EVENTS_ENABLED")
+				assert.NotNil(t, eventsEnabled)
+				assert.Equal(t, "true", eventsEnabled.Value)
 			},
 		},
 	}
@@ -246,7 +292,7 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "registry.datadoghq.com/operator:1.28.0", operatorContainer.Image)
+	assert.Equal(t, "registry.datadoghq.com/operator:1.29.0-rc.2", operatorContainer.Image)
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 }

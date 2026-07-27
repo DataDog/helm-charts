@@ -10,7 +10,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.80.1" -}}
+{{- $version = "7.81.1" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -267,6 +267,32 @@ Return true if the Host Profiler needs to be deployed
 true
 {{- else -}}
 false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the host-profiler seccomp profile (and its setup init container) should be
+applied. Requires the host-profiler to be enabled and the seccomp toggle to not be disabled
+(defaults to enabled).
+*/}}
+{{- define "should-enable-host-profiler-seccomp" -}}
+{{- if and (eq (include "should-enable-host-profiler" .) "true") (ne (toString .Values.datadog.hostProfiler.seccomp.enabled) "false") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the seccomp profile to apply to the host-profiler container: the hashed localhost
+profile when seccomp is enabled, otherwise "unconfined" so the container runs without a
+seccomp profile.
+*/}}
+{{- define "host-profiler-seccomp-profile" -}}
+{{- if eq (include "should-enable-host-profiler-seccomp" .) "true" -}}
+localhost/{{ include "host-profiler-seccomp-name" . }}
+{{- else -}}
+unconfined
 {{- end -}}
 {{- end -}}
 
