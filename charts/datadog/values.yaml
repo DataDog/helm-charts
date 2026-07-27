@@ -558,6 +558,9 @@ datadog:
     #   - "com.datadoghq.http.request"
     #   - "com.datadoghq.gitlab.branches.*"
 
+    # datadog.privateActionRunner.apiKeyOnlyEnrollment -- Enroll using only the API key, without requiring an app key
+    apiKeyOnlyEnrollment: false
+
   ## Enable logs agent and provide custom configs
   logs:
     # datadog.logs.enabled -- Enables this to activate Datadog Agent log collection
@@ -1909,6 +1912,9 @@ clusterAgent:
     actionsAllowlist: []
     #   - "com.datadoghq.http.request"
     #   - "com.datadoghq.kubernetes.core.*"
+
+    # clusterAgent.privateActionRunner.apiKeyOnlyEnrollment -- Enroll using only the API key, without requiring an app key
+    apiKeyOnlyEnrollment: false
 
     # clusterAgent.privateActionRunner.k8sRemediationEnabled -- Enable k8s remediation RBAC for the Private Action Runner
     ## When enabled, a ClusterRole and ClusterRoleBinding are created granting the Cluster Agent

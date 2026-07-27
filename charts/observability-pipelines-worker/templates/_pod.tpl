@@ -73,6 +73,8 @@ containers:
       - name: DD_PROXY_NO_PROXY
         value: {{ .Values.datadog.proxy.noProxy | join "," | quote }}
       {{- end }}
+      - name: DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS
+        value: {{ max 10 (sub (.Values.terminationGracePeriodSeconds | default 30 | int) 10) | quote }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}
