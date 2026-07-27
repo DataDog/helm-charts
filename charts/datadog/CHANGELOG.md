@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.231.8
+## 3.232.0
 
 * Enable admission controller connectivity probe by default ([#2795](https://github.com/DataDog/helm-charts/pull/2795)).
 
