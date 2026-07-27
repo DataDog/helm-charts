@@ -149,11 +149,15 @@
     - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
       value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
     {{- end }}
+    {{- $autoMultiLineEnvName := "DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION" }}
     {{- $autoMultiLineOverridden := false }}
-    {{- range .Values.agents.containers.agent.env }}
-    {{- if eq .name "DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION" }}
+    {{- range (concat .Values.datadog.env .Values.agents.containers.agent.env) }}
+    {{- if eq .name $autoMultiLineEnvName }}
     {{- $autoMultiLineOverridden = true }}
     {{- end }}
+    {{- end }}
+    {{- if or (hasKey .Values.datadog.envDict $autoMultiLineEnvName) (hasKey .Values.agents.containers.agent.envDict $autoMultiLineEnvName) }}
+    {{- $autoMultiLineOverridden = true }}
     {{- end }}
     {{- if not $autoMultiLineOverridden }}
     - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
