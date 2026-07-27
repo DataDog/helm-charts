@@ -1640,6 +1640,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "true"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: HELM_FORCE_RENDER
               value: "false"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
@@ -1827,6 +1829,8 @@ spec:
                 fieldRef:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
+              value: "true"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
               value: "true"
             - name: HELM_FORCE_RENDER
               value: "false"

@@ -394,6 +394,10 @@ spec:
           - name: DD_PRIVATE_ACTION_RUNNER_ACTIONS_ALLOWLIST
             value: {{ .Values.clusterAgent.privateActionRunner.actionsAllowlist | join "," | quote }}
           {{- end }}
+          {{- if .Values.clusterAgent.privateActionRunner.apiKeyOnlyEnrollment }}
+          - name: DD_PRIVATE_ACTION_RUNNER_API_KEY_ONLY_ENROLLMENT
+            value: "true"
+          {{- end }}
           {{- end }}
           {{- if .Values.datadog.clusterChecks.enabled }}
           - name: DD_CLUSTER_CHECKS_ENABLED

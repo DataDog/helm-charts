@@ -25,6 +25,9 @@ data:
       private_key: {{ .Values.datadog.privateActionRunner.privateKey | quote }}
       {{- end }}
       {{- end }}
+      {{- if .Values.datadog.privateActionRunner.apiKeyOnlyEnrollment }}
+      api_key_only_enrollment: true
+      {{- end }}
       {{- if .Values.datadog.privateActionRunner.actionsAllowlist }}
       actions_allowlist:
         {{- range .Values.datadog.privateActionRunner.actionsAllowlist }}

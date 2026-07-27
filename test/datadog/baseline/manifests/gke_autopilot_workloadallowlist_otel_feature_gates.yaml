@@ -2000,6 +2000,8 @@ spec:
               value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: HELM_FORCE_RENDER
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
@@ -2183,6 +2185,8 @@ spec:
               value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: HELM_FORCE_RENDER
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
@@ -2322,6 +2326,8 @@ spec:
               value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: HELM_FORCE_RENDER
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
@@ -2343,6 +2349,8 @@ spec:
               value: "60"
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
+            - name: DD_OTEL_STANDALONE
+              value: "false"
             - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
               value: kubernetes
             - name: DD_LOG_LEVEL
@@ -2432,6 +2440,8 @@ spec:
               value: "false"
             - name: DD_KUBERNETES_HTTPS_KUBELET_PORT
               value: "0"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: HELM_FORCE_RENDER
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED

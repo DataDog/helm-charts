@@ -1,0 +1,41 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: datadog
+spec:
+  features:
+    admissionController:
+      agentCommunicationMode: socket
+      enabled: true
+      mutateUnlabelled: false
+    apm:
+      hostPortConfig:
+        hostPort: 8126
+      unixDomainSocketConfig:
+        enabled: true
+    liveProcessCollection:
+      enabled: true
+    logCollection:
+      autoMultiLineDetection: true
+      containerCollectAll: true
+      enabled: true
+    processDiscovery:
+      enabled: true
+  global:
+    clusterName: production-cluster
+    credentials:
+      apiKey: "00000000000000000000000000000000"
+      appKey: "0000000000000000000000000000000000000000"
+    kubelet:
+      tlsVerify: false
+    site: datadoghq.com
+    tags:
+    - env:production
+    - service:my-app
+  override:
+    clusterAgent:
+      image:
+        tag: 7.75.0
+    nodeAgent:
+      image:
+        tag: 7.75.0

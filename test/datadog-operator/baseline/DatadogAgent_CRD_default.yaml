@@ -7,7 +7,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.17.3
   name: datadogagents.datadoghq.com
   labels:
-    helm.sh/chart: 'datadogCRDs-2.23.0-dev.1'
+    helm.sh/chart: 'datadogCRDs-2.23.0-dev.2'
     app.kubernetes.io/managed-by: 'Helm'
     app.kubernetes.io/name: 'datadogCRDs'
     app.kubernetes.io/instance: 'datadog-operator'
@@ -823,6 +823,11 @@ spec:
                               type: string
                           type: object
                       type: object
+                    dynamicInstrumentation:
+                      properties:
+                        enabled:
+                          type: boolean
+                      type: object
                     ebpfCheck:
                       properties:
                         enabled:
@@ -1419,6 +1424,11 @@ spec:
                       type: object
                     clusterName:
                       type: string
+                    commonLabels:
+                      additionalProperties:
+                        type: string
+                      type: object
+                      x-kubernetes-map-type: granular
                     containerStrategy:
                       type: string
                     credentials:
@@ -5297,6 +5307,11 @@ spec:
                                 path:
                                   type: string
                               type: object
+                          type: object
+                        dynamicInstrumentation:
+                          properties:
+                            enabled:
+                              type: boolean
                           type: object
                         ebpfCheck:
                           properties:
