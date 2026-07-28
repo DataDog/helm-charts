@@ -73,6 +73,7 @@ data:
         - persistentvolumes
         - namespaces
         - endpoints
+        - endpointslices
         - daemonsets
         - deployments
         - replicasets
@@ -1290,6 +1291,13 @@ rules:
       - list
       - watch
   - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - extensions
     resources:
       - daemonsets
@@ -2406,6 +2414,9 @@ spec:
             - mountPath: /etc/otel-agent
               name: otelconfig
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
+              readOnly: false
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir

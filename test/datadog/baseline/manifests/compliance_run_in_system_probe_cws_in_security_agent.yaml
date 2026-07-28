@@ -73,6 +73,7 @@ data:
         - persistentvolumes
         - namespaces
         - endpoints
+        - endpointslices
         - daemonsets
         - deployments
         - replicasets
@@ -1316,6 +1317,13 @@ rules:
       - namespaces
       - endpoints
       - events
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
     verbs:
       - list
       - watch

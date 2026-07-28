@@ -1,4 +1,7 @@
 # Datadog changelog
+## 3.231.9
+
+* Mount run socket for host profiler/ ddot ([#2802](https://github.com/DataDog/helm-charts/pull/2802)).
 
 ## 3.232.0
 
@@ -7,6 +10,10 @@
 ## 3.231.7
 
 * DDOT: Explicitely disable standalone mode ([#2809](https://github.com/DataDog/helm-charts/pull/2809)).
+
+## 3.231.7
+
+* Add `endpointslices` to the `kubernetes_state_core` check's collector list, and grant the corresponding RBAC permissions.
 
 ## 3.231.6
 
