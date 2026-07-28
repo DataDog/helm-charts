@@ -843,7 +843,7 @@ helm install <RELEASE_NAME> \
 | datadog.excludePauseContainer | bool | `true` | Exclude pause containers from Agent Autodiscovery. |
 | datadog.expvarPort | int | `6000` | Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000 |
 | datadog.gpuMonitoring.configureCgroupPerms | bool | `false` | Configure cgroup permissions for GPU monitoring |
-| datadog.gpuMonitoring.enableEbpfProbes | bool | `false` | Enable the GPU monitoring eBPF probes in system-probe Only applies when `datadog.gpuMonitoring.privilegedMode` is enabled. |
+| datadog.gpuMonitoring.enableEbpfProbes | bool | `false` | DEPRECATED. Enable the GPU monitoring eBPF probes in system-probe The eBPF probes are deprecated and disabled by default, even when `datadog.gpuMonitoring.privilegedMode` is enabled. This option only applies in privileged mode and exists so that users who still rely on the probes can opt back in; expect it to be removed in a future release. |
 | datadog.gpuMonitoring.enabled | bool | `false` | Enable GPU monitoring core check |
 | datadog.gpuMonitoring.privilegedMode | bool | `false` | Enable advanced GPU metrics and monitoring via system-probe Note: system-probe component of the agent runs with elevated privileges |
 | datadog.gpuMonitoring.runtimeClassName | string | `"nvidia"` | Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class. |

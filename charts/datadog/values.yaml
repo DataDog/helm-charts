@@ -1209,8 +1209,10 @@ datadog:
     # datadog.gpuMonitoring.configureCgroupPerms -- Configure cgroup permissions for GPU monitoring
     configureCgroupPerms: false
 
-    # datadog.gpuMonitoring.enableEbpfProbes -- Enable the GPU monitoring eBPF probes in system-probe
-    # Only applies when `datadog.gpuMonitoring.privilegedMode` is enabled.
+    # datadog.gpuMonitoring.enableEbpfProbes -- DEPRECATED. Enable the GPU monitoring eBPF probes in system-probe
+    # The eBPF probes are deprecated and disabled by default, even when `datadog.gpuMonitoring.privilegedMode` is
+    # enabled. This option only applies in privileged mode and exists so that users who still rely on the probes can
+    # opt back in; expect it to be removed in a future release.
     enableEbpfProbes: false
 
     # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class.
