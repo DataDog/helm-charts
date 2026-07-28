@@ -1,7 +1,11 @@
 # Datadog changelog
-## 3.231.9
+## 3.232.0
 
 * Mount run socket for host profiler/ ddot ([#2802](https://github.com/DataDog/helm-charts/pull/2802)).
+
+## 3.232.0
+
+* Enable admission controller connectivity probe by default ([#2795](https://github.com/DataDog/helm-charts/pull/2795)).
 
 ## 3.231.7
 
