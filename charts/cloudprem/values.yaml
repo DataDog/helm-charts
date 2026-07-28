@@ -450,10 +450,10 @@ indexer:
           name: cpu
           target:
             type: Utilization
-            averageUtilization: 80
+            averageUtilization: 70
     behavior:
       scaleUp:
-        stabilizationWindowSeconds: 60
+        stabilizationWindowSeconds: 0
         # selectPolicy: Max
         # policies:
         # - type: Percent
@@ -969,7 +969,27 @@ enableStandaloneCompactors: false
 # Dedicated compactor workers. Only deployed when `enableStandaloneCompactors` is
 # true (there is intentionally no separate `compactor.enabled` toggle).
 compactor:
+  # When autoscaling is enabled, replicaCount is ignored.
   replicaCount: 1
+
+  # Enable and configure autoscaling using Horizontal Pod Autoscaler (HPA).
+  # Only takes effect when `enableStandaloneCompactors` is also true.
+  autoscaling:
+    enabled: false
+    annotations: {}
+    minReplicas: 1
+    maxReplicas: 10
+    metrics:
+      # Compaction is a "throughput game", so we aim for high CPU utilization
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 80
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 60
 
   # Extra env for compactor
   # Legacy map format (e.g. extraEnv: { KEY: VALUE }) is also supported for backward compatibility.

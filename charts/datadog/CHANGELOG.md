@@ -1,4 +1,11 @@
 # Datadog changelog
+## 3.231.8
+
+* Mount run socket for host profiler/ ddot ([#2802](https://github.com/DataDog/helm-charts/pull/2802)).
+
+## 3.231.7
+
+* DDOT: Explicitely disable standalone mode ([#2809](https://github.com/DataDog/helm-charts/pull/2809)).
 
 ## 3.231.7
 

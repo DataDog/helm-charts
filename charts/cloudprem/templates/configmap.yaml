@@ -27,10 +27,18 @@
 
 {{- if .Values.metastore_ro.enabled }}
   {{- $searcherConfig := $config.searcher | default dict }}
-  {{- $_ := set $searcherConfig "use_metastore_read_replica" true }}
+  {{- /*
+  Preserve an explicit value so a read-only metastore can be disabled safely:
+  first set use_metastore_read_replica to false while metastore_ro remains
+  enabled, wait for all searchers to use the primary metastore, then disable
+  metastore_ro. Disabling metastore_ro first would shut down a replica that
+  searchers may still be using.
+  */}}
+  {{- if not (hasKey $searcherConfig "use_metastore_read_replica") }}
+    {{- $_ := set $searcherConfig "use_metastore_read_replica" true }}
+  {{- end }}
   {{- $_ := set $config "searcher" $searcherConfig }}
 {{- end }}
-
 apiVersion: v1
 kind: ConfigMap
 metadata:

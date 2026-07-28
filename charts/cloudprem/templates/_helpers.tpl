@@ -398,13 +398,14 @@ Quickwit environment
 
 {{/*
 Merge default environment variables (NO_COLOR, QW_DISABLE_INGEST_V1, QW_DISABLE_TELEMETRY,
-QW_LOG_FORMAT) with user-provided values. Supports both legacy map and list formats.
+QW_LOG_FORMAT, QW_RANDOM_SPLIT_PREFIX) with user-provided values. Supports both legacy map
+and list formats.
 User-provided values take precedence over defaults.
 Defaults are stored as a list (not a dict) to guarantee deterministic rendering order
 and avoid spurious rollouts from manifest drift.
 */}}
 {{- define "quickwit.environmentDefaults" -}}
-{{- $defaults := list (dict "name" "NO_COLOR" "value" "true") (dict "name" "QW_DISABLE_INGEST_V1" "value" "true") (dict "name" "QW_DISABLE_TELEMETRY" "value" "true") (dict "name" "QW_LOG_FORMAT" "value" "DDG") -}}
+{{- $defaults := list (dict "name" "NO_COLOR" "value" "true") (dict "name" "QW_DISABLE_INGEST_V1" "value" "true") (dict "name" "QW_DISABLE_TELEMETRY" "value" "true") (dict "name" "QW_LOG_FORMAT" "value" "DDG") (dict "name" "QW_RANDOM_SPLIT_PREFIX" "value" "true") -}}
 {{- $envs := list -}}
 {{- $keys := list -}}
 {{- if kindIs "map" . -}}

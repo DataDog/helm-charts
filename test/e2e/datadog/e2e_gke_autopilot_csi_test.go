@@ -4,9 +4,11 @@ package datadog
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -84,13 +86,89 @@ func (v *gkeAutopilotCSISuite) logClusterInfo() {
 }
 
 // helmInstall installs the CSI driver chart via helm.
+//
+// The CSI driver DaemonSet uses the WorkloadAllowlist synchronized by the
+// chart's pre-install hook. GKE reconciles the AllowlistSynchronizer
+// asynchronously, while Helm proceeds with the DaemonSet as soon as the hook
+// resource has been created. On a fresh cluster, Warden can therefore reject
+// the DaemonSet before the matching allowlist is available.
+//
+// If that happens, wait for the synchronizer's version-independent Ready
+// condition, then upgrade the failed release without rerunning hooks. This
+// preserves the ready synchronizer and prevents Helm from deleting and
+// recreating it through the default before-hook-creation policy.
 func (v *gkeAutopilotCSISuite) helmInstall(chartPath, kubeconfigPath string) {
-	helmCmd := exec.Command("helm", "install", "datadog-csi-driver", chartPath,
-		"--kubeconfig", kubeconfigPath,
-		"--namespace", "datadog-agent", "--create-namespace")
-	output, err := helmCmd.CombinedOutput()
-	v.T().Logf("Helm install output: %s", string(output))
-	require.NoError(v.T(), err, "Helm install failed")
+	const (
+		releaseName = "datadog-csi-driver"
+		namespace   = "datadog-agent"
+	)
+
+	helm := func(args ...string) (string, error) {
+		args = append(args, "--kubeconfig", kubeconfigPath, "--namespace", namespace)
+		output, err := exec.Command("helm", args...).CombinedOutput()
+		return string(output), err
+	}
+
+	output, err := helm("install", releaseName, chartPath, "--create-namespace")
+	v.T().Logf("Initial Helm install output: %s", output)
+	if err == nil {
+		return
+	}
+
+	// Only Warden admission failures can be caused by the synchronization
+	// race. Every other Helm failure is a real error and fails immediately.
+	if !strings.Contains(output, "warden-validating") {
+		require.NoError(v.T(), err, "Helm install failed: %s", output)
+	}
+
+	v.waitForCSIAllowlistSynchronizer()
+
+	output, err = helm("upgrade", releaseName, chartPath, "--install", "--no-hooks")
+	v.T().Logf("Helm retry after AllowlistSynchronizer became ready: %s", output)
+	require.NoError(v.T(), err, "Helm install still failed after AllowlistSynchronizer became ready: %s", output)
+}
+
+// waitForCSIAllowlistSynchronizer waits until every allowlist path configured
+// by the chart has been installed and synchronized. It deliberately checks the
+// synchronizer's Ready condition rather than a specific WorkloadAllowlist name
+// so future allowlist versions require no test change.
+func (v *gkeAutopilotCSISuite) waitForCSIAllowlistSynchronizer() {
+	type synchronizer struct {
+		Metadata metav1.ObjectMeta `json:"metadata"`
+		Status   struct {
+			Conditions []metav1.Condition `json:"conditions"`
+		} `json:"status"`
+	}
+
+	const synchronizerPath = "/apis/auto.gke.io/v1/allowlistsynchronizers/datadog-csi-synchronizer"
+	require.EventuallyWithTf(v.T(), func(c *assert.CollectT) {
+		raw, err := v.Env().KubernetesCluster.Client().Discovery().RESTClient().
+			Get().
+			AbsPath(synchronizerPath).
+			Do(context.TODO()).
+			Raw()
+		if !assert.NoError(c, err, "failed to get CSI AllowlistSynchronizer") {
+			return
+		}
+
+		var resource synchronizer
+		if !assert.NoError(c, json.Unmarshal(raw, &resource), "failed to decode CSI AllowlistSynchronizer") {
+			return
+		}
+
+		for _, condition := range resource.Status.Conditions {
+			if condition.Type == "Ready" {
+				assert.Equal(c, resource.Metadata.Generation, condition.ObservedGeneration,
+					"CSI AllowlistSynchronizer Ready condition is stale: observedGeneration=%d generation=%d",
+					condition.ObservedGeneration, resource.Metadata.Generation)
+				assert.Equal(c, metav1.ConditionTrue, condition.Status,
+					"CSI AllowlistSynchronizer is not ready: reason=%s message=%s",
+					condition.Reason, condition.Message)
+				return
+			}
+		}
+		assert.Fail(c, "CSI AllowlistSynchronizer has no Ready condition")
+	}, 5*time.Minute, 5*time.Second, "CSI AllowlistSynchronizer readiness timed out")
 }
 
 // waitForPodsReady polls for CSI driver pods and asserts that every container

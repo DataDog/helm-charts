@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.16.1
+
+* Migrate the default CSI node driver registrar image from `k8s.gcr.io` to `registry.k8s.io`. The DaemonSet now matches the new `datadog-datadog-csi-driver-daemonset-exemption-v1.1.1` WorkloadAllowlist, and the `AllowlistSynchronizer` keeps `v1.1.0` while also syncing `v1.1.1`.
+
 ## 0.16.0
 
 * Set csi driver image to `1.3.0`

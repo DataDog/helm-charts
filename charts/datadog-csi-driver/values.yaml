@@ -39,7 +39,7 @@ registrar:
     tag: v2.0.1
 
     # registrar.image.repository -- Override default registry + image.name for the registrar
-    repository: k8s.gcr.io/sig-storage/csi-node-driver-registrar
+    repository: registry.k8s.io/sig-storage/csi-node-driver-registrar
 
     # registrar.image.pullPolicy -- CSI registrar image pullPolicy
     pullPolicy: IfNotPresent
