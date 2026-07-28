@@ -120,9 +120,8 @@ func TestHostProfilerSELinux(t *testing.T) {
 		require.True(t, ok)
 		require.NotNil(t, hpContainer.SecurityContext)
 		selinux := hpContainer.SecurityContext.SELinuxOptions
-		if assert.NotNil(t, selinux, "host-profiler seLinuxOptions") {
-			assert.Equal(t, "spc_t", selinux.Type)
-		}
+		require.NotNil(t, selinux, "host-profiler seLinuxOptions")
+		assert.Equal(t, "spc_t", selinux.Type)
 	})
 
 	t.Run("user_securityContext_overrides_default", func(t *testing.T) {
@@ -136,9 +135,8 @@ func TestHostProfilerSELinux(t *testing.T) {
 		require.True(t, ok)
 		require.NotNil(t, hpContainer.SecurityContext)
 		selinux := hpContainer.SecurityContext.SELinuxOptions
-		if assert.NotNil(t, selinux, "host-profiler seLinuxOptions") {
-			assert.Equal(t, "custom_t", selinux.Type)
-		}
+		require.NotNil(t, selinux, "host-profiler seLinuxOptions")
+		assert.Equal(t, "custom_t", selinux.Type)
 	})
 }
 
