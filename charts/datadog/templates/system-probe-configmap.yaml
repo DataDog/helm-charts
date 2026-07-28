@@ -90,7 +90,7 @@ data:
     gpu_monitoring:
       enabled: {{ and $.Values.datadog.gpuMonitoring.enabled $.Values.datadog.gpuMonitoring.privilegedMode }}
       configure_cgroup_perms: {{ $.Values.datadog.gpuMonitoring.configureCgroupPerms }}
-      {{- if $.Values.datadog.gpuMonitoring.privilegedMode }}
+      {{- if and $.Values.datadog.gpuMonitoring.enabled $.Values.datadog.gpuMonitoring.privilegedMode }}
       enable_ebpf_probes: {{ $.Values.datadog.gpuMonitoring.enableEbpfProbes }}
       {{- end }}
     event_monitoring_config:

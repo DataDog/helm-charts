@@ -43,6 +43,17 @@ func Test_gpuMonitoringEnableEbpfProbes(t *testing.T) {
 			},
 			expectKey: false,
 		},
+		{
+			name: "privileged mode without GPU monitoring does not render the setting",
+			overrides: map[string]string{
+				"datadog.gpuMonitoring.enabled":          "false",
+				"datadog.gpuMonitoring.privilegedMode":   "true",
+				"datadog.gpuMonitoring.enableEbpfProbes": "true",
+				// system-probe is pulled in by another feature here, so the gpu_monitoring block still renders.
+				"datadog.networkMonitoring.enabled": "true",
+			},
+			expectKey: false,
+		},
 	}
 
 	for _, tt := range tests {
