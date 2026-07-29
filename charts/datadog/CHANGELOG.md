@@ -1,4 +1,9 @@
 # Datadog changelog
+## 3.232.0
+
+* Deprecate the GPU monitoring eBPF probes. They are now disabled by default even when `datadog.gpuMonitoring.privilegedMode` is enabled, and are expected to be removed in a future release.
+* Add `datadog.gpuMonitoring.enableEbpfProbes` (defaults to `false`) to control `gpu_monitoring.enable_ebpf_probes` in the system-probe config and `DD_GPU_MONITORING_ENABLE_EBPF_PROBES` on the core Agent container, for users who need to opt back in to the deprecated behavior.
+
 ## 3.231.9
 
 * Mount run socket for host profiler/ ddot ([#2802](https://github.com/DataDog/helm-charts/pull/2802)).
