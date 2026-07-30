@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.234.0
+
+* [PROF-15441][Host Profiler] add SELinuxOptions.type defaults and setting for host profiler ([#2808](https://github.com/DataDog/helm-charts/pull/2808)).
+
 ## 3.233.0
 
 * [PROF-15317] allow helm to use logging seccomp ([#2775](https://github.com/DataDog/helm-charts/pull/2775)).
