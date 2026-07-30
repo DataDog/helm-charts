@@ -65,6 +65,7 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
     processors:
       infraattributes:
         cardinality: 2
+      cumulativetodelta:
       filter/drop-prometheus-internal-metrics:
         metrics:
           exclude:
@@ -87,11 +88,11 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
           exporters: [datadog, datadog/connector]
         metrics:
           receivers: [otlp, datadog/connector]
-          processors: [infraattributes]
+          processors: [infraattributes, cumulativetodelta]
           exporters: [datadog]
         metrics/prometheus:
           receivers: [prometheus]
-          processors: [filter/drop-prometheus-internal-metrics, infraattributes]
+          processors: [filter/drop-prometheus-internal-metrics, infraattributes, cumulativetodelta]
           exporters: [datadog]
         logs:
           receivers: [otlp]

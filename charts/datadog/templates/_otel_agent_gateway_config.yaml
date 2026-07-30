@@ -22,6 +22,7 @@ otel-gateway-config.yaml: {{- if .Values.otelAgentGateway.config }} {{ toYaml .V
           batch:
             flush_timeout: 10s
     processors:
+      cumulativetodelta:
     extensions:
       health_check:
         endpoint: 0.0.0.0:{{ .Values.otelAgentGateway.containers.otelAgent.healthPort }}
@@ -40,6 +41,7 @@ otel-gateway-config.yaml: {{- if .Values.otelAgentGateway.config }} {{ toYaml .V
           exporters: [datadog]
         metrics:
           receivers: [otlp]
+          processors: [cumulativetodelta]
           exporters: [datadog]
         logs:
           receivers: [otlp]
