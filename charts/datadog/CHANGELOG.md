@@ -16,6 +16,10 @@
 
 * Add `endpointslices` to the `kubernetes_state_core` check's collector list, and grant the corresponding RBAC permissions.
 
+## 3.232.0
+
+* Add `agents.localService.trafficDistribution` to set `spec.trafficDistribution` (e.g. `PreferSameNode`) on the agent local service instead of `internalTrafficPolicy: Local`, so that traffic falls back to agents on other nodes while the node-local agent has no ready endpoint (e.g. during a DaemonSet rollout) instead of being black-holed. Only applied on Kubernetes 1.34+; older clusters keep `internalTrafficPolicy: Local`.
+
 ## 3.231.6
 
 * Add `privateActionRunner.apiKeyOnlyEnrollment` for node agent and cluster agent, wiring it to `api_key_only_enrollment` in the PAR ConfigMap and `DD_PRIVATE_ACTION_RUNNER_API_KEY_ONLY_ENROLLMENT` in the cluster agent deployment respectively.
