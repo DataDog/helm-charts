@@ -135,6 +135,12 @@ rules:
 - apiGroups:
   - apps
   resources:
+  - deployments/status
+  verbs:
+  - get
+- apiGroups:
+  - apps
+  resources:
   - replicasets
   verbs:
   - get
