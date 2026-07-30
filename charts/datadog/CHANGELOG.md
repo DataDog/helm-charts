@@ -1,4 +1,9 @@
 # Datadog changelog
+
+## 3.233.0
+
+* [PROF-15317] allow helm to use logging seccomp ([#2775](https://github.com/DataDog/helm-charts/pull/2775)).
+
 ## 3.232.0
 
 * Deprecate the GPU monitoring eBPF probes. They are now disabled by default even when `datadog.gpuMonitoring.privilegedMode` is enabled, and are expected to be removed in a future release.
