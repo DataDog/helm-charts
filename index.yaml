@@ -43080,6 +43080,26 @@ entries:
     version: 0.1.0
   synthetics-private-location:
   - apiVersion: v2
+    appVersion: 1.71.0
+    created: "2026-07-31T14:24:36.731494941Z"
+    description: Datadog Synthetics Private Location
+    digest: 1fd29c836a7c3968bf88e90ec863bdc2be88ad5c8a63c45d07ce9d0e03873926
+    home: https://www.datadoghq.com
+    icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+    keywords:
+    - monitoring
+    - synthetics
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: synthetics-private-location
+    sources:
+    - https://docs.datadoghq.com/synthetics/private_locations
+    - https://app.datadoghq.com/synthetics/settings/private-locations
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.17.30/synthetics-private-location-0.17.30.tgz
+    version: 0.17.30
+  - apiVersion: v2
     appVersion: 1.70.0
     created: "2026-07-06T14:49:50.22668917Z"
     description: Datadog Synthetics Private Location
@@ -44919,4 +44939,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-30T17:56:15.721643338Z"
+generated: "2026-07-31T14:24:36.734743583Z"
