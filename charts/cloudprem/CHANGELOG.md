@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.5.1
+
+* Add the CloudPrem component name to OpenTelemetry resource attributes.
+
 ## 0.5.0
 
 * **Breaking**: remove the `medium` pod size. `indexer.podSize` / `searcher.podSize` now accept `large`, `xlarge`, `2xlarge`, `4xlarge`, `6xlarge`, and `8xlarge` only; rendering fails with an explicit error if any other size is set. Move to `large` before upgrading.
