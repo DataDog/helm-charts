@@ -76,9 +76,11 @@ apm:
   # apm.enabled -- Enable APM/SSI support for the CSI driver.
   enabled: true
 
-  # apm.pullSecrets -- Credentials used to download APM libraries from private
-  # registries. Falls back to image.pullSecrets when empty. Restart the CSI
-  # DaemonSet after rotating these Secrets. Not supported on GKE Autopilot.
+  # apm.pullSecrets -- kubernetes.io/dockerconfigjson Secrets used to download
+  # APM libraries from private registries. Falls back to image.pullSecrets when
+  # empty, but legacy kubernetes.io/dockercfg Secrets are ignored for APM
+  # authentication. Restart the CSI DaemonSet after rotating these Secrets.
+  # Not supported on GKE Autopilot.
   pullSecrets: []
   #   - name: "<REG_SECRET>"
 

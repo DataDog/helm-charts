@@ -228,18 +228,34 @@ func Test_csi_driver_registryAllowList_envVar_only_when_explicitly_configured(t 
 	}
 }
 
-func Test_csi_driver_registryAuth_envVar_not_rendered_on_gke_autopilot(t *testing.T) {
+func Test_csi_driver_registryAuth_envVar(t *testing.T) {
 	tests := []struct {
-		name        string
-		extraArgs   []string
-		wantPresent bool
+		name         string
+		overrides    map[string]string
+		extraArgs    []string
+		wantPresent  bool
+		wantOptional bool
 	}{
 		{
-			name:        "standard Kubernetes",
+			name: "standard Kubernetes with dedicated APM pull secret",
+			overrides: map[string]string{
+				"apm.pullSecrets[0].name": "apm-registry-auth",
+			},
 			wantPresent: true,
 		},
 		{
+			name: "standard Kubernetes with image pull secret fallback",
+			overrides: map[string]string{
+				"image.pullSecrets[0].name": "image-registry-auth",
+			},
+			wantPresent:  true,
+			wantOptional: true,
+		},
+		{
 			name: "legacy GKE Autopilot",
+			overrides: map[string]string{
+				"apm.pullSecrets[0].name": "apm-registry-auth",
+			},
 			extraArgs: []string{
 				"--api-versions=allowlistedv2workloads.auto.gke.io/v1/AllowlistedV2Workload",
 				"--kube-version=1.31.0-gke.0",
@@ -248,6 +264,9 @@ func Test_csi_driver_registryAuth_envVar_not_rendered_on_gke_autopilot(t *testin
 		},
 		{
 			name: "GKE Autopilot with WorkloadAllowlist",
+			overrides: map[string]string{
+				"apm.pullSecrets[0].name": "apm-registry-auth",
+			},
 			extraArgs: []string{
 				"--api-versions=auto.gke.io/v1/AllowlistSynchronizer",
 				"--api-versions=auto.gke.io/v1/WorkloadAllowlist",
@@ -264,10 +283,8 @@ func Test_csi_driver_registryAuth_envVar_not_rendered_on_gke_autopilot(t *testin
 				ChartPath:   "../../charts/datadog-csi-driver",
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog-csi-driver/values.yaml"},
-				Overrides: map[string]string{
-					"apm.pullSecrets[0].name": "apm-registry-auth",
-				},
-				ExtraArgs: tt.extraArgs,
+				Overrides:   tt.overrides,
+				ExtraArgs:   tt.extraArgs,
 			})
 			require.NoError(t, err, "failed to render chart")
 
@@ -275,8 +292,16 @@ func Test_csi_driver_registryAuth_envVar_not_rendered_on_gke_autopilot(t *testin
 			common.Unmarshal(t, manifest, &daemonSet)
 			require.NotEmpty(t, daemonSet.Spec.Template.Spec.Containers, "expected at least one container in csi driver daemonset")
 
-			_, found := findCSIDriverEnvVar(daemonSet.Spec.Template.Spec.Containers[0].Env, "DD_APM_REGISTRY_AUTH_0")
+			envVar, found := findCSIDriverEnvVar(daemonSet.Spec.Template.Spec.Containers[0].Env, "DD_APM_REGISTRY_AUTH_0")
 			require.Equal(t, tt.wantPresent, found)
+			if !tt.wantPresent {
+				return
+			}
+
+			require.NotNil(t, envVar.ValueFrom)
+			require.NotNil(t, envVar.ValueFrom.SecretKeyRef)
+			optional := envVar.ValueFrom.SecretKeyRef.Optional != nil && *envVar.ValueFrom.SecretKeyRef.Optional
+			require.Equal(t, tt.wantOptional, optional)
 		})
 	}
 }

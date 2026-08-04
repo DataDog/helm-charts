@@ -1,4 +1,9 @@
-{{- $registryPullSecrets := .Values.apm.pullSecrets | default .Values.image.pullSecrets }}
+{{- $registryPullSecrets := .Values.apm.pullSecrets }}
+{{- $registryPullSecretsOptional := false }}
+{{- if not $registryPullSecrets }}
+{{- $registryPullSecrets = .Values.image.pullSecrets }}
+{{- $registryPullSecretsOptional = true }}
+{{- end }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -105,6 +110,9 @@ spec:
                 secretKeyRef:
                   name: {{ $secret.name | quote }}
                   key: .dockerconfigjson
+                  {{- if $registryPullSecretsOptional }}
+                  optional: true
+                  {{- end }}
             {{- end }}
             {{- end }}
             {{- if .Values.global.apmRegistryAllowList }}

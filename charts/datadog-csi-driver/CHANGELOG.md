@@ -2,7 +2,7 @@
 
 ## 0.17.0
 
-* Add `apm.pullSecrets` for downloading SSI libraries from private registries, with fallback to `image.pullSecrets`. Registry authentication is not rendered on GKE Autopilot because it is not covered by the published WorkloadAllowlist.
+* Add `apm.pullSecrets` for downloading SSI libraries from private registries using `kubernetes.io/dockerconfigjson` Secrets, with fallback to compatible `image.pullSecrets`. Legacy `kubernetes.io/dockercfg` fallback Secrets are ignored for APM authentication without preventing the CSI driver from starting. Registry authentication is not rendered on GKE Autopilot because it is not covered by the published WorkloadAllowlist.
 
 ## 0.16.1
 
