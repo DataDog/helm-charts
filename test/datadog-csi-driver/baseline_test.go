@@ -244,6 +244,14 @@ func Test_csi_driver_registryAuth_envVar(t *testing.T) {
 			wantPresent: true,
 		},
 		{
+			name: "standard Kubernetes with APM disabled",
+			overrides: map[string]string{
+				"apm.enabled":             "false",
+				"apm.pullSecrets[0].name": "apm-registry-auth",
+			},
+			wantPresent: false,
+		},
+		{
 			name: "standard Kubernetes with image pull secret fallback",
 			overrides: map[string]string{
 				"image.pullSecrets[0].name": "image-registry-auth",
