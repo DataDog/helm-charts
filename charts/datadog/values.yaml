@@ -78,6 +78,8 @@ datadog:
   ## If set, this parameter takes precedence over "appKey".
   appKeyExistingSecret:  # <DATADOG_APP_KEY_SECRET>
 
+  installInfo: {}
+
   # agents.secretAnnotations -- Annotations to add to the Secrets
   secretAnnotations: {}
   #   key: "value"

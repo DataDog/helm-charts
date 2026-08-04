@@ -11,6 +11,9 @@
     "datadog": {
       "type": "object",
       "properties": {
+        "installInfo": {
+          "type": "object"
+        },
         "apm": {
           "type": "object",
           "properties": {
