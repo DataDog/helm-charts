@@ -50,7 +50,7 @@ rules:
   verbs:
   - list
   - watch
-{{- if .Values.datadog.instrumentationCrd.enabled }}
+{{- if eq (include "should-enable-instrumentation-crd-controller" .) "true" }}
 - apiGroups:
   - "datadoghq.com"
   resources:

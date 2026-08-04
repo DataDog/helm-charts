@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.236.0
+
+* [CONTP-1968] Require Agent and Cluster Agent version 7.82.0 or later before enabling the DatadogInstrumentation CRD controller.
+
 ## 3.235.0
 
 * Bump Datadog Operator chart dependency to 2.25.0.
