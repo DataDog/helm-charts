@@ -74,6 +74,8 @@
     {{- if .Values.datadog.otelCollector.enabled }}
     - name: DD_OTELCOLLECTOR_ENABLED
       value: "true"
+    - name: DD_OTEL_STANDALONE
+      value: "false"
     - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
       value: "kubernetes"
     {{- end }}
@@ -104,6 +106,11 @@
       mountPath: {{ template "datadog.otelconfPath" . }}
       readOnly: true
     {{- if eq .Values.targetSystem "linux" }}
+    {{- if not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
+    - name: {{ include "datadog.agentRunVolumeName" . }}
+      mountPath: /opt/datadog-agent/run
+      readOnly: false
+    {{- end }}
     {{- if not .Values.providers.gke.autopilot }}
     - name: procdir
       mountPath: /host/proc

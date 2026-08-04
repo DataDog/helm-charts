@@ -45,12 +45,53 @@ func TestHostProfilerSeccomp(t *testing.T) {
 	profileRef := *hpContainer.SecurityContext.SeccompProfile.LocalhostProfile
 	assert.Regexp(t, `^host-profiler-[0-9a-f]{8}$`, profileRef)
 
+	// seccomp-root volume must be present.
+	var seccompVolume *corev1.Volume
+	for i := range ds.Spec.Template.Spec.Volumes {
+		if ds.Spec.Template.Spec.Volumes[i].Name == "host-profiler-seccomp-root" {
+			seccompVolume = &ds.Spec.Template.Spec.Volumes[i]
+			break
+		}
+	}
+	require.NotNil(t, seccompVolume, "host-profiler-seccomp-root volume should be present when seccomp is enabled")
+	require.NotNil(t, seccompVolume.HostPath, "host-profiler-seccomp-root volume should be a hostPath volume")
+	assert.Equal(t, "/var/lib/kubelet/seccomp", seccompVolume.HostPath.Path)
+
 	// Init container copies to the matching hashed filename.
 	initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
-	require.True(t, ok, "host-profiler-seccomp-setup init container should be present")
+	require.True(t, ok, "host-profiler-seccomp-setup init container should be present when seccomp is enabled")
 	assert.Equal(t, "myreg/host-profiler:v1.2.3", initContainer.Image)
 	assert.True(t, containsString(initContainer.Command, "/host/var/lib/kubelet/seccomp/"+profileRef),
 		"init container cp destination should match the seccomp profile name; command: %v", initContainer.Command)
+
+}
+
+func TestHostProfilerSeccompDisabled(t *testing.T) {
+	overrides := copyMap(hostProfilerBaseOverrides)
+	overrides["datadog.hostProfiler.seccomp.enabled"] = "false"
+
+	ds := renderHostProfilerDaemonSet(t, overrides)
+
+	// Container must run Unconfined, but other hardening still applies.
+	hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+	require.True(t, ok, "host-profiler container should be present")
+	require.NotNil(t, hpContainer.SecurityContext)
+	require.NotNil(t, hpContainer.SecurityContext.SeccompProfile,
+		"host-profiler should carry a seccomp profile when datadog.hostProfiler.seccomp.enabled=false")
+	assert.Equal(t, corev1.SeccompProfileTypeUnconfined, hpContainer.SecurityContext.SeccompProfile.Type,
+		"host-profiler should run Unconfined when datadog.hostProfiler.seccomp.enabled=false")
+	assert.Nil(t, hpContainer.SecurityContext.SeccompProfile.LocalhostProfile,
+		"Unconfined profile should not reference a localhost profile")
+
+	// Seccomp setup init container must be absent.
+	_, ok = getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
+	assert.False(t, ok, "host-profiler-seccomp-setup init container should be absent when seccomp is disabled")
+
+	// seccomp-root volume must be absent.
+	for _, v := range ds.Spec.Template.Spec.Volumes {
+		assert.NotEqual(t, "host-profiler-seccomp-root", v.Name,
+			"host-profiler-seccomp-root volume should be absent when seccomp is disabled")
+	}
 }
 
 func TestHostProfilerSeccompDifferentImages(t *testing.T) {
@@ -67,6 +108,36 @@ func TestHostProfilerSeccompDifferentImages(t *testing.T) {
 	profile1 := *c1.SecurityContext.SeccompProfile.LocalhostProfile
 	profile2 := *c2.SecurityContext.SeccompProfile.LocalhostProfile
 	assert.NotEqual(t, profile1, profile2, "different images should produce different seccomp profile names")
+}
+
+func TestHostProfilerSELinux(t *testing.T) {
+	t.Run("default_spc_t", func(t *testing.T) {
+		// SELinux defaults to spc_t so SELinux-enforcing nodes don't block the cross-process
+		// /proc access the host-profiler needs.
+		ds := renderHostProfilerDaemonSet(t, hostProfilerBaseOverrides)
+
+		hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+		require.True(t, ok)
+		require.NotNil(t, hpContainer.SecurityContext)
+		selinux := hpContainer.SecurityContext.SELinuxOptions
+		require.NotNil(t, selinux, "host-profiler seLinuxOptions")
+		assert.Equal(t, "spc_t", selinux.Type)
+	})
+
+	t.Run("user_securityContext_overrides_default", func(t *testing.T) {
+		// A user-provided securityContext.seLinuxOptions takes precedence over the spc_t default.
+		overrides := copyMap(hostProfilerBaseOverrides)
+		overrides["agents.containers.hostProfiler.securityContext.seLinuxOptions.type"] = "custom_t"
+
+		ds := renderHostProfilerDaemonSet(t, overrides)
+
+		hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+		require.True(t, ok)
+		require.NotNil(t, hpContainer.SecurityContext)
+		selinux := hpContainer.SecurityContext.SELinuxOptions
+		require.NotNil(t, selinux, "host-profiler seLinuxOptions")
+		assert.Equal(t, "custom_t", selinux.Type)
+	})
 }
 
 func TestHostProfilerSCC(t *testing.T) {
@@ -91,6 +162,24 @@ func TestHostProfilerSCC(t *testing.T) {
 	require.NoError(t, err)
 	assert.Contains(t, manifest, "localhost/"+profileRef,
 		"SCC should allow the hashed seccomp profile")
+}
+
+func TestHostProfilerLoggingSeccomp(t *testing.T) {
+	overrides := copyMap(hostProfilerBaseOverrides)
+	overrides["datadog.hostProfiler.loggingSeccomp"] = "true"
+	ds := renderHostProfilerDaemonSet(t, overrides)
+
+	initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
+	require.True(t, ok)
+	cmd := strings.Join(initContainer.Command, " ")
+	assert.Contains(t, cmd, "cp /etc/dd-host-profiler/logging-seccomp.json")
+	assert.Contains(t, cmd, "cp /etc/dd-host-profiler/seccomp.json")
+	assert.Contains(t, cmd, "WARNING: logging-seccomp.json not found in image, falling back to default seccomp profile")
+
+	hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+	require.True(t, ok)
+	require.NotNil(t, hpContainer.SecurityContext.SeccompProfile)
+	assert.Regexp(t, `^host-profiler-[0-9a-f]{8}-logging$`, *hpContainer.SecurityContext.SeccompProfile.LocalhostProfile)
 }
 
 func containsString(slice []string, s string) bool {

@@ -1,6 +1,23 @@
 # Changelog
 
-## Unreleased
+## 0.4.8
+
+* Lower indexer HorizontalPodAutoscaler CPU target from 80% to 70% and remove the 60s scale-up stabilization window so indexers scale out immediately under load.
+
+## 0.4.7
+
+* Enable random split prefixes by default for all Quickwit processes with `QW_RANDOM_SPLIT_PREFIX=true`.
+* Add HorizontalPodAutoscaler support for compactors
+* Preserve an explicit `use_metastore_read_replica` setting instead of always defaulting it to `true`, allowing a read-only metastore to be disabled safely without disrupting searchers still using it.
+
+## 0.4.6
+
+* Update Docker image to `v0.1.32`.
+* Add `metastore_ro` values to deploy a read-only metastore replica pool (dedicated Deployment, PDB, and Service) for scaling metastore reads independently of the writer.
+* Add `enableStandaloneCompactors` cluster-wide flag and a dedicated compactor Deployment/PDB/Service; when enabled, indexers stop merging locally and the janitor drives compaction via the dedicated workers instead.
+* Disable ingest v1 by default (`QW_DISABLE_INGEST_V1=true`), overridable via `environment`.
+* Route BYOC service traces to the Datadog telemetry intake, gated the same way as logs and metrics (via `datadog.byocTelemetry.enabled`), sampled at a fixed 20% rate.
+* Use a dedicated `health` port for liveness/startup probes instead of the `rest` port.
 
 ## 0.4.5
 

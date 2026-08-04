@@ -45,6 +45,7 @@ data:
         - persistentvolumes
         - namespaces
         - endpoints
+        - endpointslices
         - daemonsets
         - deployments
         - replicasets
@@ -1138,6 +1139,13 @@ rules:
       - list
       - watch
   - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - extensions
     resources:
       - daemonsets
@@ -1501,6 +1509,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
@@ -1704,6 +1714,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
@@ -1712,6 +1724,8 @@ spec:
               value: INFO
             - name: DD_APM_ENABLED
               value: "true"
+            - name: DD_LOGS_ENABLED
+              value: "false"
             - name: DD_APM_NON_LOCAL_TRAFFIC
               value: "true"
             - name: DD_APM_RECEIVER_PORT
@@ -1806,6 +1820,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_LOG_LEVEL
@@ -1945,6 +1961,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
@@ -1955,6 +1973,8 @@ spec:
               value: "60"
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
+            - name: DD_OTEL_STANDALONE
+              value: "false"
             - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
               value: kubernetes
             - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
@@ -1987,6 +2007,9 @@ spec:
             - mountPath: /etc/otel-agent
               name: otelconfig
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
+              readOnly: false
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
@@ -2049,6 +2072,8 @@ spec:
                   fieldPath: status.hostIP
             - name: DD_KUBELET_USE_API_SERVER
               value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_LEADER_ELECTION
@@ -2355,6 +2380,8 @@ spec:
               value: kubernetes
             - name: DD_OTELCOLLECTOR_GATEWAY_MODE
               value: "true"
+            - name: DD_OTEL_STANDALONE
+              value: "false"
             - name: DD_HOSTNAME
               valueFrom:
                 fieldRef:

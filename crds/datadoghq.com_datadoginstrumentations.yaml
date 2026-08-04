@@ -62,12 +62,9 @@ spec:
                       items:
                         description: DatadogInstrumentationCheckConfig defines an Autodiscovery check configuration.
                         properties:
-                          containerImage:
-                            description: ContainerImage identifies container image names this check applies to.
-                            items:
-                              type: string
-                            type: array
-                            x-kubernetes-list-type: set
+                          containerName:
+                            description: ContainerName identifies the container name this check applies to.
+                            type: string
                           initConfig:
                             description: InitConfig is the integration-specific Autodiscovery init_config payload.
                             type: object
@@ -82,81 +79,86 @@ spec:
                           integration:
                             description: Integration is the Datadog integration name, for example redisdb.
                             type: string
-                          logs:
-                            description: Logs contains log collection configuration payloads for this integration.
+                        required:
+                          - integration
+                        type: object
+                      type: array
+                      x-kubernetes-list-type: atomic
+                    logs:
+                      description: Logs configures Datadog Agent log collection for the target workload.
+                      items:
+                        description: DatadogInstrumentationLogConfig defines Agent log collection configuration fields.
+                        properties:
+                          channel_path:
+                            description: ChannelPath is the Windows event channel path when type is windows_event.
+                            type: string
+                          containerName:
+                            description: ContainerName identifies the container name this log configuration applies to.
+                            type: string
+                          encoding:
+                            description: |-
+                              Encoding sets the file encoding when type is file.
+                              Common values include utf-16-le, utf-16-be, and shift-jis.
+                            type: string
+                          exclude_paths:
+                            description: ExcludePaths lists matching files to exclude when type is file and path contains a wildcard.
                             items:
-                              description: DatadogInstrumentationLogConfig defines Agent log collection configuration fields.
-                              properties:
-                                channel_path:
-                                  description: ChannelPath is the Windows event channel path when type is windows_event.
-                                  type: string
-                                encoding:
-                                  description: |-
-                                    Encoding sets the file encoding when type is file.
-                                    Common values include utf-16-le, utf-16-be, and shift-jis.
-                                  type: string
-                                exclude_paths:
-                                  description: ExcludePaths lists matching files to exclude when type is file and path contains a wildcard.
-                                  items:
-                                    type: string
-                                  type: array
-                                  x-kubernetes-list-type: set
-                                exclude_units:
-                                  description: ExcludeUnits lists journald units to exclude when type is journald.
-                                  items:
-                                    type: string
-                                  type: array
-                                  x-kubernetes-list-type: set
-                                include_units:
-                                  description: IncludeUnits lists journald units to include when type is journald.
-                                  items:
-                                    type: string
-                                  type: array
-                                  x-kubernetes-list-type: set
-                                log_processing_rules:
-                                  description: LogProcessingRules contains Agent log processing rules for this log source.
-                                  items:
-                                    type: object
-                                    x-kubernetes-preserve-unknown-fields: true
-                                  type: array
-                                  x-kubernetes-list-type: atomic
-                                path:
-                                  description: Path is the file path for gathering logs when type is file or journald.
-                                  type: string
-                                port:
-                                  description: Port is the port for listening to logs when type is tcp or udp.
-                                  format: int32
-                                  type: integer
-                                service:
-                                  description: Service sets the log service name.
-                                  type: string
-                                source:
-                                  description: Source sets the log source name.
-                                  type: string
-                                sourcecategory:
-                                  description: SourceCategory sets the source category attribute.
-                                  type: string
-                                start_position:
-                                  description: |-
-                                    StartPosition sets where the Agent starts reading for file and journald tailers.
-                                    Common values include beginning, end, forceBeginning, and forceEnd.
-                                  type: string
-                                tags:
-                                  description: Tags sets additional tags on collected logs.
-                                  items:
-                                    type: string
-                                  type: array
-                                  x-kubernetes-list-type: set
-                                type:
-                                  description: Type is the type of log input source. Common values include tcp, udp, file, windows_event, docker, and journald.
-                                  type: string
+                              type: string
+                            type: array
+                            x-kubernetes-list-type: set
+                          exclude_units:
+                            description: ExcludeUnits lists journald units to exclude when type is journald.
+                            items:
+                              type: string
+                            type: array
+                            x-kubernetes-list-type: set
+                          include_units:
+                            description: IncludeUnits lists journald units to include when type is journald.
+                            items:
+                              type: string
+                            type: array
+                            x-kubernetes-list-type: set
+                          log_processing_rules:
+                            description: LogProcessingRules contains Agent log processing rules for this log source.
+                            items:
                               type: object
                               x-kubernetes-preserve-unknown-fields: true
                             type: array
                             x-kubernetes-list-type: atomic
+                          path:
+                            description: Path is the file path for gathering logs when type is file or journald.
+                            type: string
+                          port:
+                            description: Port is the port for listening to logs when type is tcp or udp.
+                            format: int32
+                            type: integer
+                          service:
+                            description: Service sets the log service name.
+                            type: string
+                          source:
+                            description: Source sets the log source name.
+                            type: string
+                          sourcecategory:
+                            description: SourceCategory sets the source category attribute.
+                            type: string
+                          start_position:
+                            description: |-
+                              StartPosition sets where the Agent starts reading for file and journald tailers.
+                              Common values include beginning, end, forceBeginning, and forceEnd.
+                            type: string
+                          tags:
+                            description: Tags sets additional tags on collected logs.
+                            items:
+                              type: string
+                            type: array
+                            x-kubernetes-list-type: set
+                          type:
+                            description: Type is the type of log input source. Common values include tcp, udp, file, windows_event, docker, and journald.
+                            type: string
                         required:
-                          - integration
+                          - containerName
                         type: object
+                        x-kubernetes-preserve-unknown-fields: true
                       type: array
                       x-kubernetes-list-type: atomic
                   type: object

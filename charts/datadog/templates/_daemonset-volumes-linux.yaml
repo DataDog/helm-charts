@@ -76,7 +76,7 @@
     type: DirectoryOrCreate
   name: apmsocket
 {{- end }}
-{{- if eq (include "should-enable-host-profiler" .) "true" }}
+{{- if eq (include "should-enable-host-profiler-seccomp" .) "true" }}
 - hostPath:
     path: {{ .Values.datadog.hostProfiler.seccompRoot }}
   name: host-profiler-seccomp-root
