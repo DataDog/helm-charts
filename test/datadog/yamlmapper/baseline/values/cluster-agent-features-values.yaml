@@ -5,6 +5,7 @@ datadog:
   kubelet:
     tlsVerify: false
   logs:
+    enabled: true
     autoMultiLineDetection: true
 
   # Event Collection

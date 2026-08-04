@@ -10,6 +10,7 @@ datadog:
   logLevel: DEBUG
 
   logs:
+    enabled: true
     autoMultiLineDetection: true
 
   # Tags and env
