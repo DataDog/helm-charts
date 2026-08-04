@@ -4,7 +4,9 @@ datadog:
   appKey: "0000000000000000000000000000000000000000"
   kubelet:
     tlsVerify: false
-  
+  logs:
+    autoMultiLineDetection: true
+
   # Event Collection
   collectEvents: true
   kubernetesEvents:
