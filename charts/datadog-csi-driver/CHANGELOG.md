@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* Add `apm.pullSecrets` for downloading SSI libraries from private registries, with fallback to `image.pullSecrets`. Registry authentication is not rendered on GKE Autopilot because it is not covered by the published WorkloadAllowlist.
+
 ## 0.15.0
 
 * Enable Single Step Instrumentation (SSI) on GKE Autopilot >= 1.32.1-gke.1729000 by rendering `storage-dir` and `DD_APM_ENABLED`. The DaemonSet now matches the new `datadog-datadog-csi-driver-daemonset-exemption-v1.1.0` WorkloadAllowlist (which exempts the new `storage-dir` hostPath and the `DD_APM_ENABLED` env var), replacing `v1.0.1` in the `AllowlistSynchronizer`.

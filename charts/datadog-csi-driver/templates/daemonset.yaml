@@ -1,3 +1,4 @@
+{{- $registryPullSecrets := .Values.apm.pullSecrets | default .Values.image.pullSecrets }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -34,7 +35,7 @@ spec:
       {{- end }}
       {{- if .Values.image.pullSecrets }}
       imagePullSecrets:
-    {{ toYaml .Values.image.pullSecrets | indent 8 }}
+        {{- toYaml .Values.image.pullSecrets | nindent 8 }}
       {{- end }}
       {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName }}
@@ -95,6 +96,17 @@ spec:
             # no updated exemption is published for it in that mode.
             - name: DD_APM_ENABLED
               value: {{ .Values.apm.enabled | quote }}
+            {{- if ne (include "csi.gke-autopilot" .) "true" }}
+            # Registry authentication variables are skipped on GKE Autopilot
+            # because they are not part of the published WorkloadAllowlist.
+            {{- range $index, $secret := $registryPullSecrets }}
+            - name: DD_APM_REGISTRY_AUTH_{{ $index }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $secret.name | quote }}
+                  key: .dockerconfigjson
+            {{- end }}
+            {{- end }}
             {{- if .Values.global.apmRegistryAllowList }}
             - name: DD_REGISTRY_ALLOW_LIST
               value: {{ join "," .Values.global.apmRegistryAllowList | quote }}

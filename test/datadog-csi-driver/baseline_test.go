@@ -201,3 +201,56 @@ func Test_csi_driver_registryAllowList_envVar_only_when_explicitly_configured(t 
 		})
 	}
 }
+
+func Test_csi_driver_registryAuth_envVar_not_rendered_on_gke_autopilot(t *testing.T) {
+	tests := []struct {
+		name        string
+		extraArgs   []string
+		wantPresent bool
+	}{
+		{
+			name:        "standard Kubernetes",
+			wantPresent: true,
+		},
+		{
+			name: "legacy GKE Autopilot",
+			extraArgs: []string{
+				"--api-versions=allowlistedv2workloads.auto.gke.io/v1/AllowlistedV2Workload",
+				"--kube-version=1.31.0-gke.0",
+			},
+			wantPresent: false,
+		},
+		{
+			name: "GKE Autopilot with WorkloadAllowlist",
+			extraArgs: []string{
+				"--api-versions=auto.gke.io/v1/AllowlistSynchronizer",
+				"--api-versions=auto.gke.io/v1/WorkloadAllowlist",
+				"--kube-version=1.32.1-gke.1729000",
+			},
+			wantPresent: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog-csi-driver",
+				ChartPath:   "../../charts/datadog-csi-driver",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog-csi-driver/values.yaml"},
+				Overrides: map[string]string{
+					"apm.pullSecrets[0].name": "apm-registry-auth",
+				},
+				ExtraArgs: tt.extraArgs,
+			})
+			require.NoError(t, err, "failed to render chart")
+
+			var daemonSet appsv1.DaemonSet
+			common.Unmarshal(t, manifest, &daemonSet)
+			require.NotEmpty(t, daemonSet.Spec.Template.Spec.Containers, "expected at least one container in csi driver daemonset")
+
+			_, found := findCSIDriverEnvVar(daemonSet.Spec.Template.Spec.Containers[0].Env, "DD_APM_REGISTRY_AUTH_0")
+			require.Equal(t, tt.wantPresent, found)
+		})
+	}
+}
