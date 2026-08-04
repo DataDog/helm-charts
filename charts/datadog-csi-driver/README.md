@@ -1,6 +1,6 @@
 # datadog-csi-driver
 
-![Version: 0.16.1](https://img.shields.io/badge/Version-0.16.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
+![Version: 0.17.0](https://img.shields.io/badge/Version-0.17.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
 
 Datadog CSI Driver helm chart
 
@@ -16,6 +16,7 @@ Datadog CSI Driver helm chart
 |-----|------|---------|-------------|
 | annotations | object | `{}` | Configure the annotations for the csi driver daemonset pods. |
 | apm.enabled | bool | `true` | Enable APM/SSI support for the CSI driver. |
+| apm.pullSecrets | list | `[]` | Credentials used to download APM libraries from private registries. Falls back to image.pullSecrets when empty. Restart the CSI DaemonSet after rotating these Secrets. Not supported on GKE Autopilot. |
 | driver.resources | object | `{}` | Resource requests and limits for the CSI driver container. |
 | driver.securityContext | object | `{"privileged":true,"readOnlyRootFilesystem":true}` | CSI driver securityContext |
 | fullnameOverride | string | `""` | Allows overriding the full name of resources created by the chart. If set, this value completely replaces the generated name, ignoring the standard naming convention. |
