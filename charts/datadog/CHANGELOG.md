@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.237.1
+
+* Update `fips.image.tag` to `1.1.29` fixing CVEs and updating packages.
+
 ## 3.237.0
 
 * Default `datadog.logs.autoMultiLineDetection` to `true`. Automatic multi-line log detection (V2) is now enabled by default. See https://docs.datadoghq.com/agent/logs/auto_multiline_detection/ To restore the previous behavior, set `datadog.logs.autoMultiLineDetection: false`.
