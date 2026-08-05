@@ -110,6 +110,20 @@ func Test_instrumentationCRDControllerVersionGate(t *testing.T) {
 	}
 }
 
+func Test_instrumentationCRDControllerRejectsStringEnabled(t *testing.T) {
+	_, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides:   instrumentationCRDOverrides(nil),
+		OverridesJson: map[string]string{
+			"datadog.instrumentationCrd.enabled": `"false"`,
+		},
+	})
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "datadog.instrumentationCrd.enabled")
+}
+
 func instrumentationCRDOverrides(overrides map[string]string) map[string]string {
 	merged := map[string]string{
 		"datadog.apiKeyExistingSecret": "datadog-secret",
