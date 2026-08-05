@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.235.0
+
+* Bump Datadog Operator chart dependency to 2.25.0.
+* Bump Datadog CRD chart dependency to 2.23.0.
+* Bump Operator image tag to 1.29.0.
+
 ## 3.234.0
 
 * [PROF-15441][Host Profiler] add SELinuxOptions.type defaults and setting for host profiler ([#2808](https://github.com/DataDog/helm-charts/pull/2808)).
