@@ -4,6 +4,7 @@
 
 * Default `datadog.logs.autoMultiLineDetection` to `true`. Automatic multi-line log detection (V2) is now enabled by default. See https://docs.datadoghq.com/agent/logs/auto_multiline_detection/ To restore the previous behavior, set `datadog.logs.autoMultiLineDetection: false`.
 * Fix `DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION` being rendered twice with conflicting values when both `datadog.logs.autoMultiLineDetection` and a manual override via `datadog.env`, `datadog.envDict`, `agents.containers.agent.env`, or `agents.containers.agent.envDict` set the same variable. The chart-driven entry is now skipped if the user already supplies one via any of those.
+* Add a `helm install`/`helm upgrade` NOTES.txt notice when `datadog.logs.autoMultiLineDetection` is enabled, explaining the change and how to disable it.
 
 ## 3.236.0
 
