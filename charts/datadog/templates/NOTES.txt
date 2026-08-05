@@ -1026,3 +1026,20 @@ To revert to the previous registry, set registryMigrationMode to "" in your valu
 For more details, see: https://docs.datadoghq.com/containers/guide/changing_container_registry/
 
 {{- end }}
+
+{{- if .Values.datadog.logs.autoMultiLineDetection }}
+
+###################################################################################
+####          INFO: Automatic multi-line log detection is enabled              ####
+###################################################################################
+
+Automatic multi-line log detection (V2) is now enabled by default.
+
+Learn more: https://docs.datadoghq.com/agent/logs/auto_multiline_detection/
+
+To disable it, set `datadog.logs.autoMultiLineDetection` to `false`:
+
+    helm upgrade {{ .Release.Name }} datadog/datadog \
+        --set datadog.logs.autoMultiLineDetection=false
+
+{{- end }}

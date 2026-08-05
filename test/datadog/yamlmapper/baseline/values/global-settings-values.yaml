@@ -8,7 +8,11 @@ datadog:
   site: datadoghq.eu
   dd_url: https://custom-intake.datadoghq.eu
   logLevel: DEBUG
-  
+
+  logs:
+    enabled: true
+    autoMultiLineDetection: true
+
   # Tags and env
   tags:
     - "env:production"
