@@ -2,9 +2,6 @@ apiVersion: v2
 name: cloudprem
 description: Datadog CloudPrem
 type: application
-# The metastore topologySpreadConstraints default uses matchLabelKeys, which is
-# only enabled by default on Kubernetes >= 1.27.
-kubeVersion: ">= 1.27.0-0"
 version: 0.4.9
 # This is the version of the "application". Right now, we follow the image version.
 appVersion: v0.1.32
