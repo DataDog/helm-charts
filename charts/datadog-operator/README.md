@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.25.0](https://img.shields.io/badge/Version-2.25.0-informational?style=flat-square) ![AppVersion: 1.29.0](https://img.shields.io/badge/AppVersion-1.29.0-informational?style=flat-square)
+![Version: 2.25.1](https://img.shields.io/badge/Version-2.25.1-informational?style=flat-square) ![AppVersion: 1.29.0](https://img.shields.io/badge/AppVersion-1.29.0-informational?style=flat-square)
 
 ## Values
 
@@ -56,6 +56,7 @@
 | operatorMetricsEnabled | string | `"true"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
+| priorityClassName | string | `nil` | Allows setting the priority class name for Datadog Operator PODs |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
 | registryMigrationMode | string | `"auto"` | Controls gradual migration of Agent image pulls to registry.datadoghq.com. When enabled, DD_REGISTRY_OVERRIDE_* environment variables are added to the Datadog Operator deployment to pull Agent images from the global CDN-backed registry.datadoghq.com based on the global.site setting, unless global.registry is specified in the DatadogAgent custom resource (which takes precedence). This has no effect on sites not covered by the active overrides. More sites will be enabled by default in future helm-chart releases. "auto" (default): enable overrides for sites where migration is rolled out.   Currently enabled: AP1 (ap1.datadoghq.com), EU1 (datadoghq.eu), US1 (datadoghq.com), US5 (us5.datadoghq.com). "all": enable all per-site overrides (AP1, US1, EU1, US3, US5). "" or unset: disable all overrides. |
 | remoteConfiguration.enabled | bool | `false` | If true, enables Remote Configuration in the Datadog Operator (beta). Requires clusterName, API and App keys to be set. |
