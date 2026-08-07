@@ -1,6 +1,6 @@
 # CloudPrem
 
-![Version: 0.4.8](https://img.shields.io/badge/Version-0.4.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.32](https://img.shields.io/badge/AppVersion-v0.1.32-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.32](https://img.shields.io/badge/AppVersion-v0.1.32-informational?style=flat-square)
 
 ## Using the Datadog Helm repository
 
@@ -37,6 +37,28 @@ kubectl create secret generic <secret name> --from-literal QW_METASTORE_URI=post
 
 Create a `datadog-values.yaml` file to override the default values with your custom configuration. This is where you define environment-specific settings such as the image tag, AWS account ID, service account, ingress setup, resource requests and limits, and more.
 Any parameters not explicitly overridden in `datadog-values.yaml` will fall back to the defaults defined in the chart’s `values.yaml`. Here is an example of a `datadog-values.yaml` file with such overrides:
+
+#### Pod sizes and resource requirements
+
+`podSize` selects a predefined resource tier and related Quickwit tuning parameters for indexer and searcher pods. The default `podSize` is `xlarge` for both components. Each preset is designed to leave room on a matching node for Kubernetes system components, DaemonSets, and add-ons.
+
+The presets account for resources reserved for Kubernetes system components. The reservation amounts are based on the [GKE node reservation calculation](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/plan-node-sizes#resource_reservations). An additional 250m CPU and 512Mi memory per node is reserved for DaemonSets and add-ons:
+
+```text
+Actual CPU request = (nominal pod CPU - Kubernetes system CPU reservation - 250m), rounded down to the nearest 100m
+Actual memory request/limit = (nominal pod memory - Kubernetes system memory reservation - 512Mi), rounded down to the nearest 100Mi
+```
+
+| `podSize` | Nominal CPU request | Actual CPU request | Nominal memory request/limit | Actual memory request/limit |
+|---|---:|---:|---:|---:|
+| `large` | 2 | 1600m | 8Gi | 5700Mi |
+| `xlarge` | 4 | 3600m | 16Gi | 13100Mi |
+| `2xlarge` | 8 | 7600m | 32Gi | 28500Mi |
+| `4xlarge` | 16 | 15600m | 64Gi | 59300Mi |
+| `6xlarge` | 24 | 23600m | 96Gi | 90100Mi |
+| `8xlarge` | 32 | 31600m | 128Gi | 120900Mi |
+
+The presets do not set a CPU limit, allowing a pod to use idle CPU on its node without being throttled. Memory requests and limits are equal to keep memory usage within the allocatable node capacity.
 
 ```yaml
 datadog:

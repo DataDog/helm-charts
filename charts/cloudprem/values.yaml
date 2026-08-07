@@ -117,6 +117,18 @@ securityContext:
   runAsUser: 1005
   readOnlyRootFilesystem: true
 
+# -- Pod-level DNS config, applied to every workload's pod spec. Additive on
+# top of the default dnsPolicy (ClusterFirst). ndots defaults to 5 in
+# Kubernetes, which makes glibc's resolver try every cluster search-domain
+# suffix before trying already-qualified external hostnames (S3, etc.) as
+# absolute, adding 4 wasted DNS round trips per cold lookup. ndots: 1 skips
+# that for any hostname with at least one dot, while unqualified in-cluster
+# service names (0 dots) are unaffected.
+dnsConfig:
+  options:
+    - name: ndots
+      value: "1"
+
 dogstatsdServer:
   host:
     # if `value` is non-empty, then it takes precedence over `valueFrom`
@@ -175,7 +187,7 @@ volumes: []
 volumeMounts: []
 
 searcher:
-  # -- Pod size for the searcher. Determines resource limits/requests and config tuning parameters. Valid values: medium, large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
+  # -- Pod size for the searcher. Determines resource limits/requests and config tuning parameters. Valid values: large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
   podSize: xlarge
   enabled: true
   # When autoscaling is enabled, replicaCount is ignored.
@@ -216,6 +228,8 @@ searcher:
     annotations: {}
     # storage: "1Gi"
     # storageClass: ""
+    # -- Name of an externally managed VolumeAttributesClass to use for the persistent volume.
+    volumeAttributesClassName: ""
 
   volumeAttributesClass:
     enabled: false
@@ -330,7 +344,7 @@ searcher:
 
 indexer:
   enabled: true
-  # -- Pod size for the indexer. Determines resource limits/requests and config tuning parameters. Valid values: medium, large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
+  # -- Pod size for the indexer. Determines resource limits/requests and config tuning parameters. Valid values: large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
   podSize: xlarge
   # When autoscaling is enabled, replicaCount is ignored.
   replicaCount: 2
@@ -478,6 +492,8 @@ indexer:
     annotations: {}
     # storage: "1Gi"
     # storageClass: ""
+    # -- Name of an externally managed VolumeAttributesClass to use for the persistent volume.
+    volumeAttributesClassName: ""
 
   volumeAttributesClass:
     enabled: false
@@ -515,9 +531,12 @@ metastore:
       cpu: 2
       memory: 4Gi
 
-  ## Pod distruption budget
-  podDisruptionBudget: {}
-    # maxUnavailable: 1
+  ## Pod disruption budget
+  # Keep at least one metastore available during voluntary disruptions (node
+  # drains, Karpenter consolidation, etc.) so the cluster never loses all
+  # metastores at once.
+  podDisruptionBudget:
+    maxUnavailable: 1
     # minAvailable: 2
 
   strategy: {}

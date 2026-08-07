@@ -47,6 +47,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "quickwit.serviceAccountName" . }}
+      {{- with .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- with .Values.indexer.initContainers }}
@@ -182,7 +186,9 @@ spec:
       {{- if .Values.indexer.persistentVolume.storageClass }}
         storageClassName: "{{ .Values.indexer.persistentVolume.storageClass }}"
       {{- end }}
-      {{- if .Values.indexer.volumeAttributesClass.enabled }}
+      {{- if .Values.indexer.persistentVolume.volumeAttributesClassName }}
+        volumeAttributesClassName: {{ .Values.indexer.persistentVolume.volumeAttributesClassName | quote }}
+      {{- else if .Values.indexer.volumeAttributesClass.enabled }}
         volumeAttributesClassName: {{ include "quickwit.indexer.vacName" . | quote }}
       {{- end }}
   {{- end }}
