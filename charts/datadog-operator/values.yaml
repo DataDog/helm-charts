@@ -136,8 +136,6 @@ registryMigrationMode: "auto"
 deployment:
   # deployment.annotations -- Allows setting additional annotations for the deployment resource
   annotations: {}
-  # deployment.priorityClassName -- Allows setting the priority class name for the deployment resource
-  priorityClassName:
 rbac:
   # rbac.create -- Specifies whether the RBAC resources should be created
   create: true
@@ -170,7 +168,8 @@ nodeSelector:
 tolerations: []
 # affinity -- Allows to specify affinity for Datadog Operator PODs
 affinity: {}
-
+# priorityClassName -- Allows setting the priority class name for Datadog Operator PODs
+priorityClassName:
 # dnsConfig -- Specify DNS configuration options for Datadog Operator PODs
 dnsConfig: {}
 #  options:

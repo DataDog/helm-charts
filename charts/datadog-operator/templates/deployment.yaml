@@ -256,7 +256,7 @@ spec:
       dnsConfig:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.deployment.priorityClassName }}
+    {{- with .Values.priorityClassName }}
       priorityClassName: {{ . }}
     {{- end }}
       volumes:
