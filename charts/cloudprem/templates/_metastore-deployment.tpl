@@ -55,6 +55,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "quickwit.serviceAccountName" $root }}
+      {{- with $root.Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       securityContext:
         {{- toYaml $root.Values.podSecurityContext | nindent 8 }}
       {{- with $values.initContainers }}
@@ -143,7 +147,16 @@ spec:
       {{- if $values.runtimeClassName }}
       runtimeClassName: {{ $values.runtimeClassName | quote }}
       {{- end }}
-      {{- $tsc := concat ($root.Values.topologySpreadConstraints | default list) ($values.topologySpreadConstraints | default list) | compact }}
+      {{- /*
+        Use the component's topologySpreadConstraints when set, otherwise fall back to
+        the global list. The two are not merged, so the metastore default never
+        combines with a global entry into a duplicate {topologyKey, whenUnsatisfiable}
+        tuple (which Kubernetes rejects).
+      */}}
+      {{- $tsc := $values.topologySpreadConstraints | default list | compact }}
+      {{- if not $tsc }}
+      {{- $tsc = $root.Values.topologySpreadConstraints | default list | compact }}
+      {{- end }}
       {{- if $tsc }}
       topologySpreadConstraints:
         {{- toYaml $tsc | nindent 8 }}

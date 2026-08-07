@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.9
+
+* **Breaking**: remove the `medium` pod size. `indexer.podSize` / `searcher.podSize` now accept `large`, `xlarge`, `2xlarge`, `4xlarge`, `6xlarge`, and `8xlarge` only; rendering fails with an explicit error if any other size is set. Move to `large` before upgrading.
+* **Breaking**: lower the CPU and memory requests/limits of every pod size so a pod fits on its intended node alongside Kubernetes system components. Each preset now subtracts the [GKE node reservation](https://docs.cloud.google.com/kubernetes-engine/docs/concepts/plan-node-sizes#resource_reservations) plus 250m CPU / 512Mi memory for DaemonSets and add-ons, rounded down to the nearest 100m/100Mi — for example `xlarge` goes from `4` CPU / `16Gi` to `3600m` / `13100Mi`. Quickwit's memory tuning parameters (caches, ingest queues, concurrent split searches) are rescaled to match the reduced allocation. Pods previously sized to their full node capacity should now schedule where they were pending; see the pod size table in the README for the full mapping.
+* Add Helm chart version as an OpenTelemetry resource attribute (`chart.version`).
+* Enable a metastore `PodDisruptionBudget` (`maxUnavailable: 1`) by default so at most one metastore replica is voluntarily disrupted at a time (node drains, Karpenter consolidation, etc.), preventing all metastores from being terminated at once.
+* Add a default metastore `topologySpreadConstraints` (`maxSkew: 1` over `kubernetes.io/hostname`, `whenUnsatisfiable: ScheduleAnyway`) to spread replicas across nodes best-effort. The spread is scoped to this release's metastore pods via `matchLabelKeys` (`app.kubernetes.io/name`, `app.kubernetes.io/instance`) so pods from other releases/canaries in the same namespace do not skew it. Set `whenUnsatisfiable: DoNotSchedule` in your values for a hard guarantee. The metastore uses its own `topologySpreadConstraints` when set (the default) and only falls back to the global `topologySpreadConstraints` when the metastore list is empty; the two are not merged, so the rendered Pod never carries a duplicate `{topologyKey, whenUnsatisfiable}` constraint (which Kubernetes rejects).
+* Require Kubernetes >= 1.27 (`kubeVersion` in `Chart.yaml`), since the metastore `topologySpreadConstraints` default relies on `matchLabelKeys`, which is only enabled by default from 1.27 onward.
+* Add a global `dnsConfig` applied to every workload and default DNS resolver `ndots` to `1`, avoiding unnecessary cluster search-domain lookups for qualified external hostnames and reducing CoreDNS traffic.
+* Add `indexer.persistentVolume.volumeAttributesClassName` and `searcher.persistentVolume.volumeAttributesClassName` to reference a `VolumeAttributesClass` managed outside the chart. When set, the name is used directly on the volume claim template and takes precedence over the class the chart creates from `volumeAttributesClass`, so volume attributes such as IOPS and throughput can be tuned without the chart owning the object.
+
 ## 0.4.8
 
 * Lower indexer HorizontalPodAutoscaler CPU target from 80% to 70% and remove the 60s scale-up stabilization window so indexers scale out immediately under load.
