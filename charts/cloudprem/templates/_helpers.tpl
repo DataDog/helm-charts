@@ -367,7 +367,7 @@ Quickwit environment
 - name: BYOC_TELEMETRY_ENABLED
   value: "true"
 - name: OTEL_RESOURCE_ATTRIBUTES
-  value: {{ printf "cluster_id=%s,node_id=$(QW_NODE_ID),host.name=$(KUBERNETES_NODE_NAME),chart.version=%s" $clusterID .Chart.Version | quote }}
+  value: {{ printf "cluster_id=%s,node_id=$(QW_NODE_ID),host.name=$(KUBERNETES_NODE_NAME),component=$(KUBERNETES_COMPONENT),chart.version=%s" $clusterID .Chart.Version | quote }}
 - name: OTEL_EXPORTER_OTLP_PROTOCOL
   value: "http/protobuf"
 - name: OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
