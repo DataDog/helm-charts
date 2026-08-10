@@ -25,6 +25,9 @@ charts/synthetics-private-location/                    @Datadog/synthetics
 charts/observability-pipelines-worker                  @DataDog/observability-pipelines
 charts/private-action-runner                           @DataDog/action-platform
 
+# CRDs
+crds/ @DataDog/container-platform @DataDog/agent-delivery
+
 # Tests
 test/datadog-operator                                  @DataDog/container-platform
 test/private-action-runner                             @DataDog/action-platform
