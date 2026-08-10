@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.26.0-dev.1
+
+* Update Datadog Operator chart for 1.30.0-rc.1.
+
 ## 2.25.1
 
 * Add the ability to configure `priorityClassName` in the operator deployment
