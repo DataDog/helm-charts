@@ -29,5 +29,8 @@ charts/private-action-runner                           @DataDog/action-platform
 crds/ @DataDog/container-platform @DataDog/agent-delivery
 
 # Tests
-test/datadog-operator                                  @DataDog/container-platform
-test/private-action-runner                             @DataDog/action-platform
+test/datadog-operator                                           @DataDog/container-platform
+test/datadog-operator/baseline/DatadogAgent_CRD_default.yaml    @DataDog/container-platform @DataDog/agent-delivery
+test/datadog-operator/baseline/Operator_Deployment_default.yaml @DataDog/container-platform @DataDog/agent-delivery
+test/datadog-operator/operator_deployment_test.go               @DataDog/container-platform @DataDog/agent-delivery
+test/private-action-runner                                      @DataDog/action-platform
