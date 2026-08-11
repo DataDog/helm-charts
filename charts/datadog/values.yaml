@@ -2452,6 +2452,10 @@ agents:
       # agents.containers.otelAgent.ports -- Allows to specify extra ports (hostPorts for instance) for this container
       ports: []
 
+      # agents.containers.otelAgent.syncDelay -- How long otel-agent waits for the core agent to be ready on startup.
+      # Increase this value if the core agent takes longer to initialize (e.g. agent >= 7.81.1).
+      syncDelay: 30s
+
       # agents.containers.otelAgent.volumeMounts -- Specify additional volumes to mount in the otel-agent container
       volumeMounts: []
       #   - name: <VOLUME_NAME>
