@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.237.2
+
+* Fix `otel-agent` (and other Agent DaemonSet containers) intermittently failing to start with `StartError` / exit code 128 and `mkdirat .../etc/datadog-agent/auth: read-only file system`. The `auth-token` volume is mounted nested inside the read-only `config` volume, so the container runtime could not create the `auth` mountpoint. It is now pre-created by the `init-volume` init container instead of relying on the `agent` container being started first.
+
 ## 3.237.1
 
 * Update `fips.image.tag` to `1.1.29` fixing CVEs and updating packages.

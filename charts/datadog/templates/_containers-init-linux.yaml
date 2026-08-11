@@ -5,7 +5,16 @@
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
   command: ["bash", "-c"]
   args:
+    {{- if (not .Values.providers.gke.autopilot) }}
+    {{- /*
+    The `auth-token` volume is mounted at `/etc/datadog-agent/auth`, nested inside the `config` volume.
+    Containers that mount `config` read-only (otel-agent, trace-agent, process-agent, ...) cannot have that mountpoint
+    created for them by the runtime, so pre-create it here instead of relying on the agent container being started first.
+    */}}
+    - cp -r /etc/datadog-agent /opt && mkdir -p /opt/datadog-agent/auth
+    {{- else }}
     - cp -r /etc/datadog-agent /opt
+    {{- end }}
   volumeMounts:
     - name: config
       mountPath: /opt/datadog-agent
