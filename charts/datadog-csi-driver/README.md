@@ -25,7 +25,7 @@ Datadog CSI Driver helm chart
 | image.pullPolicy | string | `"IfNotPresent"` | CSI driver image pullPolicy |
 | image.pullSecrets | list | `[]` | CSI driver repository pullSecret (for example: specify Docker registry credentials) |
 | image.repository | string | `"gcr.io/datadoghq/csi-driver"` | Override default registry + image.name for CSI driver |
-| image.tag | string | `"1.3.0"` | CSI driver image tag to use |
+| image.tag | string | `"1.4.0"` | CSI driver image tag to use |
 | labels | object | `{}` | Configure the labels for the csi driver daemonset pods. |
 | nameOverride | string | `""` | Allows overriding the name of the chart. If set, this value replaces the default chart name. |
 | nodeAffinity | object | `{}` | Configure the nodeAffinity for the csi driver daemonset pods. |
