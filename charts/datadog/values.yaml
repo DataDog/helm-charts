@@ -1470,6 +1470,10 @@ datadog:
     # Requires version 7.82.0 or later of both cluster and node agent.
     enabled:
 
+    # datadog.instrumentationCrd.customWorkloadTargets -- (list) Namespaced custom workload resources that DatadogInstrumentation can target.
+    # Each target and via entry requires apiVersion, kind, and the plural Kubernetes resource; via is optional.
+    customWorkloadTargets: []
+
   dataPlane:
     # datadog.dataPlane.enabled -- Whether or not the data plane is enabled
     #

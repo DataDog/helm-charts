@@ -501,6 +501,10 @@ spec:
           {{- if eq (include "should-enable-instrumentation-crd-controller" .) "true" }}
           - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
             value: "true"
+          {{- with .Values.datadog.instrumentationCrd.customWorkloadTargets }}
+          - name: DD_INSTRUMENTATION_CRD_CONTROLLER_CUSTOM_WORKLOAD_TARGETS
+            value: {{ . | toJson | quote }}
+          {{- end }}
           {{- end }}
           {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
           - name: DD_AUTOSCALING_WORKLOAD_ENABLED

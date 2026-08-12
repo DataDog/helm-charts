@@ -66,6 +66,29 @@ rules:
   verbs:
   - patch
   - update
+{{- $customWorkloadResourcesByAPIGroup := dict }}
+{{- range $customWorkloadTarget := .Values.datadog.instrumentationCrd.customWorkloadTargets }}
+{{- range $via := $customWorkloadTarget.via }}
+  {{- $apiVersionParts := splitList "/" $via.apiVersion }}
+  {{- $apiGroup := "" }}
+  {{- if gt (len $apiVersionParts) 1 }}
+    {{- $apiGroup = first $apiVersionParts }}
+  {{- end }}
+  {{- $resources := get $customWorkloadResourcesByAPIGroup $apiGroup | default (dict) }}
+  {{- $resources = set $resources $via.resource true }}
+  {{- $customWorkloadResourcesByAPIGroup = set $customWorkloadResourcesByAPIGroup $apiGroup $resources }}
+{{- end }}
+{{- end }}
+{{- range $apiGroup, $resources := $customWorkloadResourcesByAPIGroup }}
+- apiGroups:
+  - {{ $apiGroup | quote }}
+  resources:
+  {{- range $resource, $_ := $resources }}
+  - {{ $resource | quote }}
+  {{- end }}
+  verbs:
+  - get
+{{- end }}
 {{- end }}
 {{- if .Values.datadog.collectEvents }}
 - apiGroups:

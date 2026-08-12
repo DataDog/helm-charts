@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.238.0
+
+* Add configurable custom workload targets for the DatadogInstrumentation CRD controller.
+
 ## 3.237.1
 
 * Update `fips.image.tag` to `1.1.29` fixing CVEs and updating packages.

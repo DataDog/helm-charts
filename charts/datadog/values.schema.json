@@ -19,6 +19,27 @@
                 "boolean",
                 "null"
               ]
+            },
+            "customWorkloadTargets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "target": {
+                    "$ref": "#/$defs/instrumentationWorkloadResource"
+                  },
+                  "via": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/instrumentationWorkloadResource"
+                    }
+                  }
+                },
+                "required": [
+                  "target"
+                ],
+                "additionalProperties": false
+              }
             }
           }
         },
@@ -405,6 +426,29 @@
     }
   },
   "$defs": {
+    "instrumentationWorkloadResource": {
+      "type": "object",
+      "properties": {
+        "apiVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resource": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "apiVersion",
+        "kind",
+        "resource"
+      ],
+      "additionalProperties": false
+    },
     "stringArray": {
       "type": "array",
       "items": {
