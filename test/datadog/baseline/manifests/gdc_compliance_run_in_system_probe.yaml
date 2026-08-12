@@ -1776,7 +1776,7 @@ spec:
               name: kubelet-cert-volume
       initContainers:
         - args:
-            - cp -r /etc/datadog-agent /opt && mkdir -p /opt/datadog-agent/auth
+            - cp -r /etc/datadog-agent /opt
           command:
             - bash
             - -c
