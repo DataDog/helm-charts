@@ -2548,7 +2548,7 @@ spec:
       hostPID: true
       initContainers:
         - args:
-            - cp -r /etc/datadog-agent /opt
+            - cp -r /etc/datadog-agent /opt && mkdir -p /opt/datadog-agent/auth
           command:
             - bash
             - -c
