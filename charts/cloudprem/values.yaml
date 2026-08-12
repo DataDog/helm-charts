@@ -1175,6 +1175,20 @@ config:
     keep_alive:
       interval: 30s
       timeout: 10s
+  # Docs clustering configuration
+  # This is used to cluster the documents by their structure at ingestion time to reduce the index size.
+  docs_clustering:
+    - fingerprint:
+      - kind: structure
+    - fingerprint:
+      - kind: raw
+        path: source
+    - fingerprint:
+      - kind: raw
+        path: status
+    - fingerprint:
+      - kind: tokenized
+        path: message
 
   # postgres:
   #   max_num_connections: 50
