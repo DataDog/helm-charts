@@ -772,6 +772,13 @@ spec:
                                   x-kubernetes-int-or-string: true
                                 description: Requests describes the requested amount of compute resources.
                                 type: object
+                              runtime:
+                                description: Runtime holds extensible runtime configuration for the container.
+                                properties:
+                                  gomemlimit:
+                                    description: Gomemlimit is the GOMEMLIMIT environment variable value for the container.
+                                    type: string
+                                type: object
                             required:
                               - name
                             type: object
@@ -1858,6 +1865,13 @@ spec:
                                   pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                                   x-kubernetes-int-or-string: true
                                 description: Requests describes the requested amount of compute resources.
+                                type: object
+                              runtime:
+                                description: Runtime holds extensible runtime configuration for the container.
+                                properties:
+                                  gomemlimit:
+                                    description: Gomemlimit is the GOMEMLIMIT environment variable value for the container.
+                                    type: string
                                 type: object
                             required:
                               - name

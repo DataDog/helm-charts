@@ -1,34 +1,17 @@
-medium:
-  resources:
-    limits:
-      memory: 4Gi
-    requests:
-      cpu: 1
-      memory: 4Gi
-  config:
-    # Indexer settings
-    indexer:
-      split_store_max_num_bytes: 200G
-      split_store_max_num_splits: 10000
-    # Ingest API settings
-    ingest_api:
-      max_queue_memory_usage: 1.2GiB
-      max_queue_disk_usage: 2.4GiB
-    # Searcher settings
-    searcher:
-      fast_field_cache_capacity: 1.625G
-      split_footer_cache_capacity: 125M
-      partial_request_cache_capacity: 62.5M
-      max_num_concurrent_split_searches: 13
-      aggregation_memory_limit: 500M
-
+# CPU requests and memory requests/limits subtract GKE node reservations plus a
+# fixed per-node budget of 250m CPU and 512Mi memory for DaemonSets and add-ons.
+# CPU reservation by size: 70m, 80m, 90m, 110m, 130m, 150m.
+# Memory reservation is GKE's tiered memory reservation plus 100Mi eviction.
+# Memory reservation by size: 1944Mi, 2763Mi, 3746Mi, 5712Mi, 7678Mi, 9644Mi.
+# Resource requests/limits are rounded down to the nearest 100m/Mi to preserve headroom.
+# Quickwit memory tuning below uses the allocatable memory rounded down to Gi.
 large:
   resources:
     limits:
-      memory: 8Gi
+      memory: 5700Mi
     requests:
-      cpu: 2
-      memory: 8Gi
+      cpu: 1600m
+      memory: 5700Mi
   config:
     # Indexer settings
     indexer:
@@ -36,23 +19,23 @@ large:
       split_store_max_num_splits: 10000
     # Ingest API settings
     ingest_api:
-      max_queue_memory_usage: 2.4GiB
-      max_queue_disk_usage: 4.8GiB
+      max_queue_memory_usage: 1.5GiB
+      max_queue_disk_usage: 3GiB
     # Searcher settings
     searcher:
-      fast_field_cache_capacity: 3.25G
-      split_footer_cache_capacity: 250M
-      partial_request_cache_capacity: 125M
-      max_num_concurrent_split_searches: 25
+      fast_field_cache_capacity: 2.03125G
+      split_footer_cache_capacity: 156.25M
+      partial_request_cache_capacity: 78.125M
+      max_num_concurrent_split_searches: 16
       aggregation_memory_limit: 500M
 
 xlarge:
   resources:
     limits:
-      memory: 16Gi
+      memory: 13100Mi
     requests:
-      cpu: 4
-      memory: 16Gi
+      cpu: 3600m
+      memory: 13100Mi
   config:
     # Indexer settings
     indexer:
@@ -60,23 +43,23 @@ xlarge:
       split_store_max_num_splits: 10000
     # Ingest API settings
     ingest_api:
-      max_queue_memory_usage: 4.8GiB
-      max_queue_disk_usage: 9.6GiB
+      max_queue_memory_usage: 3.6GiB
+      max_queue_disk_usage: 7.2GiB
     # Searcher settings
     searcher:
-      fast_field_cache_capacity: 6.5G
-      split_footer_cache_capacity: 500M
-      partial_request_cache_capacity: 250M
-      max_num_concurrent_split_searches: 50
+      fast_field_cache_capacity: 4.875G
+      split_footer_cache_capacity: 375M
+      partial_request_cache_capacity: 187.5M
+      max_num_concurrent_split_searches: 40
       aggregation_memory_limit: 500M
 
 2xlarge:
   resources:
     limits:
-      memory: 32Gi
+      memory: 28500Mi
     requests:
-      cpu: 8
-      memory: 32Gi
+      cpu: 7600m
+      memory: 28500Mi
   config:
     # Indexer settings
     indexer:
@@ -84,23 +67,23 @@ xlarge:
       split_store_max_num_splits: 10000
     # Ingest API settings
     ingest_api:
-      max_queue_memory_usage: 9.6GiB
-      max_queue_disk_usage: 19.2GiB
+      max_queue_memory_usage: 8.1GiB
+      max_queue_disk_usage: 16.2GiB
     # Searcher settings
     searcher:
-      fast_field_cache_capacity: 13G
-      split_footer_cache_capacity: 1G
-      partial_request_cache_capacity: 500M
-      max_num_concurrent_split_searches: 100
+      fast_field_cache_capacity: 10.96875G
+      split_footer_cache_capacity: 843.75M
+      partial_request_cache_capacity: 421.875M
+      max_num_concurrent_split_searches: 85
       aggregation_memory_limit: 500M
 
 4xlarge:
   resources:
     limits:
-      memory: 64Gi
+      memory: 59300Mi
     requests:
-      cpu: 16
-      memory: 64Gi
+      cpu: 15600m
+      memory: 59300Mi
   config:
     # Indexer settings
     indexer:
@@ -108,23 +91,23 @@ xlarge:
       split_store_max_num_splits: 10000
     # Ingest API settings
     ingest_api:
-      max_queue_memory_usage: 19.2GiB
-      max_queue_disk_usage: 38.4GiB
+      max_queue_memory_usage: 17.1GiB
+      max_queue_disk_usage: 34.2GiB
     # Searcher settings
     searcher:
-      fast_field_cache_capacity: 26G
-      split_footer_cache_capacity: 2G
-      partial_request_cache_capacity: 1G
-      max_num_concurrent_split_searches: 200
+      fast_field_cache_capacity: 23.15625G
+      split_footer_cache_capacity: 1.78125G
+      partial_request_cache_capacity: 890.625M
+      max_num_concurrent_split_searches: 180
       aggregation_memory_limit: 500M
 
 6xlarge:
   resources:
     limits:
-      memory: 96Gi
+      memory: 90100Mi
     requests:
-      cpu: 24
-      memory: 96Gi
+      cpu: 23600m
+      memory: 90100Mi
   config:
     # Indexer settings
     indexer:
@@ -132,23 +115,23 @@ xlarge:
       split_store_max_num_splits: 10000
     # Ingest API settings
     ingest_api:
-      max_queue_memory_usage: 28.8GiB
-      max_queue_disk_usage: 57.6GiB
+      max_queue_memory_usage: 26.4GiB
+      max_queue_disk_usage: 52.8GiB
     # Searcher settings
     searcher:
-      fast_field_cache_capacity: 39G
-      split_footer_cache_capacity: 3G
-      partial_request_cache_capacity: 1.5G
-      max_num_concurrent_split_searches: 300
+      fast_field_cache_capacity: 35.75G
+      split_footer_cache_capacity: 2.75G
+      partial_request_cache_capacity: 1.375G
+      max_num_concurrent_split_searches: 275
       aggregation_memory_limit: 500M
 
 8xlarge:
   resources:
     limits:
-      memory: 128Gi
+      memory: 120900Mi
     requests:
-      cpu: 32
-      memory: 128Gi
+      cpu: 31600m
+      memory: 120900Mi
   config:
     # Indexer settings
     indexer:
@@ -156,12 +139,12 @@ xlarge:
       split_store_max_num_splits: 10000
     # Ingest API settings
     ingest_api:
-      max_queue_memory_usage: 38.4GiB
-      max_queue_disk_usage: 76.8GiB
+      max_queue_memory_usage: 35.4GiB
+      max_queue_disk_usage: 70.8GiB
     # Searcher settings
     searcher:
-      fast_field_cache_capacity: 52G
-      split_footer_cache_capacity: 4G
-      partial_request_cache_capacity: 2G
-      max_num_concurrent_split_searches: 400
+      fast_field_cache_capacity: 47.9375G
+      split_footer_cache_capacity: 3.6875G
+      partial_request_cache_capacity: 1.84375G
+      max_num_concurrent_split_searches: 370
       aggregation_memory_limit: 500M
