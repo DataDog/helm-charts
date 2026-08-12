@@ -581,8 +581,8 @@ datadog:
 
     # datadog.logs.autoMultiLineDetection -- Allows the Agent to detect common multi-line patterns automatically.
 
-    ## ref: https://docs.datadoghq.com/agent/logs/advanced_log_collection/?tab=configurationfile#automatic-multi-line-aggregation
-    autoMultiLineDetection: false
+    ## ref: https://docs.datadoghq.com/agent/logs/auto_multiline_detection/
+    autoMultiLineDetection: true
 
   ## Enable apm agent and provide custom configs
   ##
@@ -820,6 +820,8 @@ datadog:
       enabled: true
     # datadog.hostProfiler.seccompRoot -- Specify the seccomp profile root directory
     seccompRoot: /var/lib/kubelet/seccomp
+    # datadog.hostProfiler.loggingSeccomp -- Use the seccomp profile that also permits logging syscalls
+    loggingSeccomp: false
     # datadog.hostProfiler.apparmor -- Specify an AppArmor profile for the host-profiler container (e.g. "localhost/datadog-host-profiler").
     ## Only used when agents.podSecurity.apparmor.enabled is true.
     apparmor: unconfined
@@ -1209,6 +1211,12 @@ datadog:
     # datadog.gpuMonitoring.configureCgroupPerms -- Configure cgroup permissions for GPU monitoring
     configureCgroupPerms: false
 
+    # datadog.gpuMonitoring.enableEbpfProbes -- DEPRECATED. Enable the GPU monitoring eBPF probes in system-probe
+    # The eBPF probes are deprecated and disabled by default, even when `datadog.gpuMonitoring.privilegedMode` is
+    # enabled. This option only applies in privileged mode and exists so that users who still rely on the probes can
+    # opt back in; expect it to be removed in a future release.
+    enableEbpfProbes: false
+
     # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class.
     runtimeClassName: "nvidia"
 
@@ -1458,8 +1466,8 @@ datadog:
     enabled: false
 
   instrumentationCrd:
-    # datadog.instrumentationCrd.enabled -- Enable the DatadogInstrumentation CRD controller and reconciliation platform.
-    # Requires version 7.80.0 or later of both cluster and node agent.
+    # datadog.instrumentationCrd.enabled -- (bool) Enable the DatadogInstrumentation CRD controller and reconciliation platform.
+    # Requires version 7.82.0 or later of both cluster and node agent.
     enabled:
 
   dataPlane:
@@ -2104,7 +2112,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.28
+    tag: 1.1.29
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -2472,6 +2480,9 @@ agents:
         readOnlyRootFilesystem: true
         allowPrivilegeEscalation: false
         privileged: false
+        # spc_t so SELinux-enforcing nodes don't block host-profiler's cross-process /proc access.
+        seLinuxOptions:
+          type: spc_t
         capabilities:
           drop:
             - ALL
@@ -3083,7 +3094,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.28.0
+    tag: 1.29.0
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller

@@ -7,9 +7,9 @@
 
 # Charts
 charts/cloudprem                                       @DataDog/logs-cloudprem
-charts/datadog-crds                                    @DataDog/container-platform
+charts/datadog-crds                                    @DataDog/container-platform @DataDog/agent-delivery
 charts/datadog-csi-driver                              @Datadog/container-platform @DataDog/container-helm-chart-maintainers
-charts/datadog-operator                                @DataDog/container-platform
+charts/datadog-operator                                @DataDog/container-platform @DataDog/agent-delivery
 charts/extended-daemon-set                             @DataDog/container-platform
 charts/datadog                                         @DataDog/telemetry-onboarding @DataDog/container-helm-chart-maintainers 
 charts/datadog/templates/_container-process-agent.yaml @DataDog/container-experiences @DataDog/container-helm-chart-maintainers
@@ -25,6 +25,12 @@ charts/synthetics-private-location/                    @Datadog/synthetics
 charts/observability-pipelines-worker                  @DataDog/observability-pipelines
 charts/private-action-runner                           @DataDog/action-platform
 
+# CRDs
+crds/ @DataDog/container-platform @DataDog/agent-delivery
+
 # Tests
-test/datadog-operator                                  @DataDog/container-platform
-test/private-action-runner                             @DataDog/action-platform
+test/datadog-operator                                           @DataDog/container-platform
+test/datadog-operator/baseline/DatadogAgent_CRD_default.yaml    @DataDog/container-platform @DataDog/agent-delivery
+test/datadog-operator/baseline/Operator_Deployment_default.yaml @DataDog/container-platform @DataDog/agent-delivery
+test/datadog-operator/operator_deployment_test.go               @DataDog/container-platform @DataDog/agent-delivery
+test/private-action-runner                                      @DataDog/action-platform

@@ -1,12 +1,53 @@
 # Datadog changelog
 
-## 3.232.0
+## 3.238.0
 
 * Add `operator.untaintController.enabled` (default `false`). When enabled, the node Agent DaemonSet tolerates the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint and the Datadog Operator untaint controller is enabled to remove that taint once the Agent is ready. Requires Operator v1.28.0+.
+
+## 3.237.1
+
+* Update `fips.image.tag` to `1.1.29` fixing CVEs and updating packages.
+
+## 3.237.0
+
+* Default `datadog.logs.autoMultiLineDetection` to `true`. Automatic multi-line log detection (V2) is now enabled by default. See https://docs.datadoghq.com/agent/logs/auto_multiline_detection/ To restore the previous behavior, set `datadog.logs.autoMultiLineDetection: false`.
+* Fix `DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION` being rendered twice with conflicting values when both `datadog.logs.autoMultiLineDetection` and a manual override via `datadog.env`, `datadog.envDict`, `agents.containers.agent.env`, or `agents.containers.agent.envDict` set the same variable. The chart-driven entry is now skipped if the user already supplies one via any of those.
+* Add a `helm install`/`helm upgrade` NOTES.txt notice when `datadog.logs.autoMultiLineDetection` is enabled, explaining the change and how to disable it.
+
+## 3.236.0
+
+* [CONTP-1968] Require Agent and Cluster Agent version 7.82.0 or later before enabling the DatadogInstrumentation CRD controller.
+
+## 3.235.0
+
+* Bump Datadog Operator chart dependency to 2.25.0.
+* Bump Datadog CRD chart dependency to 2.23.0.
+* Bump Operator image tag to 1.29.0.
+
+## 3.234.0
+
+* [PROF-15441][Host Profiler] add SELinuxOptions.type defaults and setting for host profiler ([#2808](https://github.com/DataDog/helm-charts/pull/2808)).
+
+## 3.233.0
+
+* [PROF-15317] allow helm to use logging seccomp ([#2775](https://github.com/DataDog/helm-charts/pull/2775)).
+
+## 3.232.0
+
+* Deprecate the GPU monitoring eBPF probes. They are now disabled by default even when `datadog.gpuMonitoring.privilegedMode` is enabled, and are expected to be removed in a future release.
+* Add `datadog.gpuMonitoring.enableEbpfProbes` (defaults to `false`) to control `gpu_monitoring.enable_ebpf_probes` in the system-probe config and `DD_GPU_MONITORING_ENABLE_EBPF_PROBES` on the core Agent container, for users who need to opt back in to the deprecated behavior.
+
+## 3.231.9
+
+* Mount run socket for host profiler/ ddot ([#2802](https://github.com/DataDog/helm-charts/pull/2802)).
 
 ## 3.231.7
 
 * DDOT: Explicitely disable standalone mode ([#2809](https://github.com/DataDog/helm-charts/pull/2809)).
+
+## 3.231.7
+
+* Add `endpointslices` to the `kubernetes_state_core` check's collector list, and grant the corresponding RBAC permissions.
 
 ## 3.231.6
 

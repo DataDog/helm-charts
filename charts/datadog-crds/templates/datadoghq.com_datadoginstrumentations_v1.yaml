@@ -101,12 +101,81 @@ spec:
                       items:
                         description: DatadogInstrumentationLogConfig defines Agent log collection configuration fields.
                         properties:
+                          allowed_ips:
+                            description: AllowedIPs lists IP addresses or CIDR ranges allowed to send TCP or UDP logs.
+                            items:
+                              type: string
+                            type: array
+                            x-kubernetes-list-type: set
+                          attribute_parsing:
+                            description: AttributeParsing controls whether the full syslog parser is enabled for this source.
+                            type: boolean
+                          auto_multi_line:
+                            description: AutoMultiLine defines detailed automatic multi-line detection options for this source.
+                            properties:
+                              enable_datetime_detection:
+                                description: EnableDatetimeDetection controls detection of multi-line logs based on leading timestamps.
+                                type: boolean
+                              enable_json_aggregation:
+                                description: EnableJSONAggregation controls aggregation of multi-line JSON logs.
+                                type: boolean
+                              enable_json_detection:
+                                description: EnableJSONDetection controls detection of JSON logs so they are not aggregated as unstructured multi-line logs.
+                                type: boolean
+                              pattern_table_max_size:
+                                description: PatternTableMaxSize sets the maximum number of patterns used by automatic multi-line detection.
+                                format: int32
+                                minimum: 1
+                                type: integer
+                              stack_trace_parsers:
+                                description: StackTraceParsers overrides the enabled stack trace parsers. An empty list disables stack trace aggregation.
+                                items:
+                                  type: string
+                                type: array
+                                x-kubernetes-list-type: atomic
+                              tag_aggregated_json:
+                                description: TagAggregatedJSON controls whether aggregated JSON logs are tagged.
+                                type: boolean
+                              tokenizer_max_input_bytes:
+                                description: TokenizerMaxInputBytes sets the maximum number of bytes tokenized from each log line.
+                                format: int32
+                                type: integer
+                            type: object
+                          auto_multi_line_detection:
+                            description: AutoMultiLineDetection enables automatic multi-line detection for this source.
+                            type: boolean
+                          auto_multi_line_detection_custom_samples:
+                            description: AutoMultiLineDetectionCustomSamples defines samples and regular expressions used by automatic multi-line detection.
+                            items:
+                              description: DatadogInstrumentationLogAutoMultiLineSample defines a sample or regular expression used by automatic multi-line detection.
+                              properties:
+                                label:
+                                  description: Label is applied when the sample or regular expression matches.
+                                  type: string
+                                regex:
+                                  description: Regex is a regular expression used to identify the start of a multi-line log.
+                                  type: string
+                                sample:
+                                  description: Sample is a representative raw log message used to identify the start of a multi-line log.
+                                  type: string
+                              type: object
+                            type: array
+                            x-kubernetes-list-type: atomic
+                          bind_host:
+                            description: BindHost is the host or IP address on which a TCP or UDP log source listens.
+                            type: string
                           channel_path:
                             description: ChannelPath is the Windows event channel path when type is windows_event.
                             type: string
                           containerName:
                             description: ContainerName identifies the container name this log configuration applies to.
                             type: string
+                          denied_ips:
+                            description: DeniedIPs lists IP addresses or CIDR ranges denied from sending TCP or UDP logs.
+                            items:
+                              type: string
+                            type: array
+                            x-kubernetes-list-type: set
                           encoding:
                             description: |-
                               Encoding sets the file encoding when type is file.
@@ -124,6 +193,40 @@ spec:
                               type: string
                             type: array
                             x-kubernetes-list-type: set
+                          fingerprint_config:
+                            description: FingerprintConfig defines per-source file fingerprinting options.
+                            properties:
+                              count:
+                                description: Count is the number of lines or bytes used to compute the fingerprint.
+                                format: int32
+                                minimum: 1
+                                type: integer
+                              count_to_skip:
+                                description: CountToSkip is the number of lines or bytes skipped before computing the fingerprint.
+                                format: int32
+                                minimum: 0
+                                type: integer
+                              fingerprint_strategy:
+                                description: FingerprintStrategy sets the fingerprinting strategy.
+                                enum:
+                                  - line_checksum
+                                  - byte_checksum
+                                  - disabled
+                                type: string
+                              max_bytes:
+                                description: MaxBytes limits the number of bytes used for line-based fingerprinting.
+                                format: int32
+                                minimum: 1
+                                type: integer
+                            required:
+                              - fingerprint_strategy
+                            type: object
+                          format:
+                            description: Format sets the parsing format for this log source. The supported structured format is syslog.
+                            type: string
+                          idle_timeout:
+                            description: IdleTimeout is the duration before an idle TCP connection is closed.
+                            type: string
                           include_units:
                             description: IncludeUnits lists journald units to include when type is journald.
                             items:
@@ -137,6 +240,15 @@ spec:
                               x-kubernetes-preserve-unknown-fields: true
                             type: array
                             x-kubernetes-list-type: atomic
+                          max_connections:
+                            description: MaxConnections is the maximum number of concurrent TCP connections.
+                            format: int32
+                            type: integer
+                          max_message_size_bytes:
+                            description: MaxMessageSizeBytes overrides the global maximum message size for this source.
+                            format: int32
+                            minimum: 1
+                            type: integer
                           path:
                             description: Path is the file path for gathering logs when type is file or journald.
                             type: string
@@ -170,7 +282,6 @@ spec:
                         required:
                           - containerName
                         type: object
-                        x-kubernetes-preserve-unknown-fields: true
                       type: array
                       x-kubernetes-list-type: atomic
                   type: object

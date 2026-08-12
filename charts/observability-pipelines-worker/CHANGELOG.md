@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.20.5
+
+* Official image `2.20.4`
+
+## 2.20.4
+
+* Official image `2.20.3`
+
+## 2.20.3
+
+* Official image `2.20.2`
+
+## 2.20.2
+
+* Official image `2.20.1`
+
 ## 2.20.1
 
 * Set the worker environment variable DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS (supported since worker version 2.19.0) based on the value of terminationGracePeriodSeconds with a 10 seconds margin. This allows a worker configured with a large sink buffer to drain it gracefully before exiting.

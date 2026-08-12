@@ -11,6 +11,17 @@
     "datadog": {
       "type": "object",
       "properties": {
+        "instrumentationCrd": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        },
         "apm": {
           "type": "object",
           "properties": {

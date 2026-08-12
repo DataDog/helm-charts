@@ -149,8 +149,20 @@
     - name: DD_LOGS_CONFIG_K8S_CONTAINER_USE_FILE
       value: {{ .Values.datadog.logs.containerCollectUsingFiles | quote }}
     {{- end }}
+    {{- $autoMultiLineEnvName := "DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION" }}
+    {{- $autoMultiLineOverridden := false }}
+    {{- range (concat .Values.datadog.env .Values.agents.containers.agent.env) }}
+    {{- if eq .name $autoMultiLineEnvName }}
+    {{- $autoMultiLineOverridden = true }}
+    {{- end }}
+    {{- end }}
+    {{- if or (hasKey .Values.datadog.envDict $autoMultiLineEnvName) (hasKey .Values.agents.containers.agent.envDict $autoMultiLineEnvName) }}
+    {{- $autoMultiLineOverridden = true }}
+    {{- end }}
+    {{- if not $autoMultiLineOverridden }}
     - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
       value: {{ .Values.datadog.logs.autoMultiLineDetection | quote }}
+    {{- end }}
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}
@@ -268,6 +280,13 @@
       value: "true"
     - name: DD_GPU_ENABLED
       value: "true"
+    {{- if .Values.datadog.gpuMonitoring.privilegedMode }}
+    # Keep the core GPU check in sync with system-probe. When eBPF probes are disabled, the core check must know
+    # about it, otherwise it polls system-probe's disabled GPU module and hits 503s, producing recurring refresh
+    # warnings and empty process metrics.
+    - name: DD_GPU_MONITORING_ENABLE_EBPF_PROBES
+      value: {{ .Values.datadog.gpuMonitoring.enableEbpfProbes | quote }}
+    {{- end }}
     {{- end }}
     {{- if eq  (include "should-enable-process-agent" .) "true" }}
     - name: DD_SYSTEM_PROBE_ENABLED
@@ -277,9 +296,9 @@
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- end }}
     {{- end }}
-    {{- if .Values.datadog.instrumentationCrd.enabled }}
+    {{- if eq (include "should-enable-instrumentation-crd-controller" .) "true" }}
     - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
-      value: {{ .Values.datadog.instrumentationCrd.enabled | quote }}
+      value: "true"
     {{- end }}
     {{- if (((.Values.datadog.autoscaling).workload).enabled) }}
     - name: DD_AUTOSCALING_FAILOVER_ENABLED

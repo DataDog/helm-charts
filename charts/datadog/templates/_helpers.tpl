@@ -16,6 +16,18 @@
 {{- end -}}
 
 {{/*
+  Returns Cluster Agent version based on image tag. This assumes `clusterAgent.image.doNotCheckTag` is false.
+*/}}
+{{- define "get-cluster-agent-version" -}}
+{{- $version := .Values.clusterAgent.image.tag | toString -}}
+{{- $length := len (split "." $version) -}}
+{{- if and (eq $length 1) (eq $version "latest") -}}
+{{- $version = "7.81.1" -}}
+{{- end -}}
+{{- $version -}}
+{{- end -}}
+
+{{/*
   Returns a semver-ish version for discovery defaulting.
   Discovery reuses the chart's existing agent-version resolution for supported tags.
   If that resolution still returns a non-semver-ish value, discovery treats it as latest.
@@ -120,11 +132,7 @@ false
 
 {{- define "check-dca-version" -}}
 {{- if not .Values.clusterAgent.image.doNotCheckTag -}}
-{{- $version := .Values.clusterAgent.image.tag | toString -}}
-{{- $length := len (split "." $version) -}}
-{{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "1.20.0" -}}
-{{- end -}}
+{{- $version := include "get-cluster-agent-version" . -}}
 {{- if not (semverCompare ">=1.20.0-0" $version) -}}
 {{- fail "This version of the chart requires a cluster agent image 1.20.0 or greater. If you want to force and skip this check, use `--set clusterAgent.image.doNotCheckTag=true`" -}}
 {{- end -}}
@@ -249,6 +257,25 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Return true if the DatadogInstrumentation CRD controller should be enabled.
+Requires datadog.instrumentationCrd.enabled and both the node Agent and Cluster Agent to be
+version 7.82.0 or newer; otherwise falls back to disabled.
+*/}}
+{{- define "should-enable-instrumentation-crd-controller" -}}
+{{- if .Values.datadog.instrumentationCrd.enabled -}}
+{{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+{{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+{{- if and $agentVersionOK $dcaVersionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the OTelAgent needs to be deployed
 */}}
 {{- define "should-enable-otel-agent" -}}
@@ -301,7 +328,7 @@ Return the seccomp profile filename for the host-profiler, scoped to the image r
 to avoid races when multiple host-profiler versions coexist on the same node.
 */}}
 {{- define "host-profiler-seccomp-name" -}}
-host-profiler-{{ include "ddot-ebpf-image" . | sha256sum | trunc 8 }}
+host-profiler-{{ include "ddot-ebpf-image" . | sha256sum | trunc 8 }}{{- if .Values.datadog.hostProfiler.loggingSeccomp }}-logging{{- end }}
 {{- end -}}
 
 {{/*

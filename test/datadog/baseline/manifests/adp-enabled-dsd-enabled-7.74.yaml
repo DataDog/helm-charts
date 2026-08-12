@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.28.0
+    app.kubernetes.io/version: 1.29.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -73,6 +73,7 @@ data:
         - persistentvolumes
         - namespaces
         - endpoints
+        - endpointslices
         - daemonsets
         - deployments
         - replicasets
@@ -148,7 +149,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.28.0
+    app.kubernetes.io/version: 1.29.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -275,6 +276,12 @@ rules:
       - patch
       - update
       - watch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments/status
+    verbs:
+      - get
   - apiGroups:
       - apps
     resources:
@@ -1037,6 +1044,13 @@ rules:
       - list
       - watch
   - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - extensions
     resources:
       - daemonsets
@@ -1709,7 +1723,7 @@ spec:
             - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
               value: "false"
             - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
-              value: "false"
+              value: "true"
             - name: DD_HEALTH_PORT
               value: "5555"
             - name: DD_EXTRA_CONFIG_PROVIDERS
@@ -2150,7 +2164,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.28.0
+    app.kubernetes.io/version: 1.29.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2190,6 +2204,7 @@ spec:
             - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
             - -datadogCSIDriverEnabled=true
+            - -untaintControllerEnabled=false
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -2215,7 +2230,7 @@ spec:
               value: "true"
             - name: DD_REGISTRY_OVERRIDE_DEFAULT
               value: "true"
-          image: registry.datadoghq.com/operator:1.28.0
+          image: registry.datadoghq.com/operator:1.29.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:

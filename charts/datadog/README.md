@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.232.0](https://img.shields.io/badge/Version-3.232.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.238.0](https://img.shields.io/badge/Version-3.238.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -31,9 +31,9 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://helm.datadoghq.com | datadog-crds | 2.22.0 |
+| https://helm.datadoghq.com | datadog-crds | 2.23.0 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.15.0 |
-| https://helm.datadoghq.com | operator(datadog-operator) | 2.24.0 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.25.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -498,7 +498,7 @@ helm install <RELEASE_NAME> \
 | agents.containers.hostProfiler.envDict | object | `{}` | Set environment variables specific to host-profiler defined in a dict |
 | agents.containers.hostProfiler.envFrom | list | `[]` | Set environment variables specific to host-profiler from configMaps and/or secrets |
 | agents.containers.hostProfiler.resources | object | `{}` | Resource requests and limits for the host-profiler container |
-| agents.containers.hostProfiler.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"add":["BPF","PERFMON","SYS_PTRACE","SYS_RESOURCE","DAC_READ_SEARCH","SYSLOG","CHECKPOINT_RESTORE","IPC_LOCK"],"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the host-profiler container. |
+| agents.containers.hostProfiler.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"add":["BPF","PERFMON","SYS_PTRACE","SYS_RESOURCE","DAC_READ_SEARCH","SYSLOG","CHECKPOINT_RESTORE","IPC_LOCK"],"drop":["ALL"]},"privileged":false,"readOnlyRootFilesystem":true,"seLinuxOptions":{"type":"spc_t"}}` | Allows you to overwrite the default container SecurityContext for the host-profiler container. |
 | agents.containers.hostProfiler.volumeMounts | list | `[]` | Specify additional volumes to mount in the host-profiler container |
 | agents.containers.initContainers.resources | object | `{}` | Resource requests and limits for the init containers |
 | agents.containers.initContainers.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the init containers. |
@@ -843,6 +843,7 @@ helm install <RELEASE_NAME> \
 | datadog.excludePauseContainer | bool | `true` | Exclude pause containers from Agent Autodiscovery. |
 | datadog.expvarPort | int | `6000` | Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000 |
 | datadog.gpuMonitoring.configureCgroupPerms | bool | `false` | Configure cgroup permissions for GPU monitoring |
+| datadog.gpuMonitoring.enableEbpfProbes | bool | `false` | DEPRECATED. Enable the GPU monitoring eBPF probes in system-probe The eBPF probes are deprecated and disabled by default, even when `datadog.gpuMonitoring.privilegedMode` is enabled. This option only applies in privileged mode and exists so that users who still rely on the probes can opt back in; expect it to be removed in a future release. |
 | datadog.gpuMonitoring.enabled | bool | `false` | Enable GPU monitoring core check |
 | datadog.gpuMonitoring.privilegedMode | bool | `false` | Enable advanced GPU metrics and monitoring via system-probe Note: system-probe component of the agent runs with elevated privileges |
 | datadog.gpuMonitoring.runtimeClassName | string | `"nvidia"` | Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class. |
@@ -853,12 +854,13 @@ helm install <RELEASE_NAME> \
 | datadog.hostProfiler.enabled | bool | `false` | Enable the Host Profiler. This feature is experimental and subject to change. |
 | datadog.hostProfiler.image | string | `""` | Image the Host Profiler. This parameter is experimental and will be removed once official image is available. |
 | datadog.hostProfiler.imagePullPolicy | string | `""` | Pull policy for the Host Profiler image. Defaults to agents.image.pullPolicy when unset. |
+| datadog.hostProfiler.loggingSeccomp | bool | `false` | Use the seccomp profile that also permits logging syscalls |
 | datadog.hostProfiler.seccomp | object | `{"enabled":true}` | Seccomp profile configuration for the Host Profiler |
 | datadog.hostProfiler.seccomp.enabled | bool | `true` | Apply the localhost seccomp profile to the host-profiler container and run the init container that installs it on the node. Disable to run the host-profiler container Unconfined (no init container, no profile installed on the node). |
 | datadog.hostProfiler.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
 | datadog.hostVolumeMountPropagation | string | `"None"` | Allow to specify the `mountPropagation` value on all volumeMounts using HostPath |
 | datadog.ignoreAutoConfig | list | `[]` | List of integration to ignore auto_conf.yaml. |
-| datadog.instrumentationCrd.enabled | string | `nil` | Enable the DatadogInstrumentation CRD controller and reconciliation platform. Requires version 7.80.0 or later of both cluster and node agent. |
+| datadog.instrumentationCrd.enabled | bool | `nil` | Enable the DatadogInstrumentation CRD controller and reconciliation platform. Requires version 7.82.0 or later of both cluster and node agent. |
 | datadog.kubeStateMetricsCore.annotationsAsTags | object | `{}` | Extra annotations to collect from resources and to turn into datadog tag. |
 | datadog.kubeStateMetricsCore.collectApiServicesMetrics | bool | `false` | Enable watching apiservices objects and collecting their corresponding metrics kubernetes_state.apiservice.* (Requires Cluster Agent 7.45.0+) |
 | datadog.kubeStateMetricsCore.collectConfigMaps | bool | `true` | Enable watching configmap objects and collecting their corresponding metrics kubernetes_state.configmap.* |
@@ -900,7 +902,7 @@ helm install <RELEASE_NAME> \
 | datadog.leaderElectionResource | string | `"configmap"` | Selects the default resource to use for leader election. Can be: * "lease" / "leases". Only supported in agent 7.47+ * "configmap" / "configmaps". "" to automatically detect which one to use. |
 | datadog.leaderLeaseDuration | string | `nil` | Set the lease time for leader election in second |
 | datadog.logLevel | string | `"INFO"` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, off |
-| datadog.logs.autoMultiLineDetection | bool | `false` | Allows the Agent to detect common multi-line patterns automatically. |
+| datadog.logs.autoMultiLineDetection | bool | `true` | Allows the Agent to detect common multi-line patterns automatically. |
 | datadog.logs.containerCollectAll | bool | `false` | Enable this to allow log collection for all containers |
 | datadog.logs.containerCollectUsingFiles | bool | `true` | Collect logs from files in /var/log/pods instead of using container runtime API |
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
@@ -1054,7 +1056,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.28"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"1.1.29"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |
@@ -1088,7 +1090,7 @@ helm install <RELEASE_NAME> \
 | operator.datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | operator.datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
-| operator.image.tag | string | `"1.28.0"` | Define the Datadog Operator version to use |
+| operator.image.tag | string | `"1.29.0"` | Define the Datadog Operator version to use |
 | operator.untaintController.enabled | bool | `false` | Enables the Datadog Operator untaint controller (removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint once the Agent is ready) and adds the matching toleration to the Agent DaemonSet so it can schedule on tainted nodes. Requires Operator v1.28.0+ |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |

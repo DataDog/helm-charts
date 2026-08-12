@@ -110,6 +110,36 @@ func TestHostProfilerSeccompDifferentImages(t *testing.T) {
 	assert.NotEqual(t, profile1, profile2, "different images should produce different seccomp profile names")
 }
 
+func TestHostProfilerSELinux(t *testing.T) {
+	t.Run("default_spc_t", func(t *testing.T) {
+		// SELinux defaults to spc_t so SELinux-enforcing nodes don't block the cross-process
+		// /proc access the host-profiler needs.
+		ds := renderHostProfilerDaemonSet(t, hostProfilerBaseOverrides)
+
+		hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+		require.True(t, ok)
+		require.NotNil(t, hpContainer.SecurityContext)
+		selinux := hpContainer.SecurityContext.SELinuxOptions
+		require.NotNil(t, selinux, "host-profiler seLinuxOptions")
+		assert.Equal(t, "spc_t", selinux.Type)
+	})
+
+	t.Run("user_securityContext_overrides_default", func(t *testing.T) {
+		// A user-provided securityContext.seLinuxOptions takes precedence over the spc_t default.
+		overrides := copyMap(hostProfilerBaseOverrides)
+		overrides["agents.containers.hostProfiler.securityContext.seLinuxOptions.type"] = "custom_t"
+
+		ds := renderHostProfilerDaemonSet(t, overrides)
+
+		hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+		require.True(t, ok)
+		require.NotNil(t, hpContainer.SecurityContext)
+		selinux := hpContainer.SecurityContext.SELinuxOptions
+		require.NotNil(t, selinux, "host-profiler seLinuxOptions")
+		assert.Equal(t, "custom_t", selinux.Type)
+	})
+}
+
 func TestHostProfilerSCC(t *testing.T) {
 	overrides := copyMap(hostProfilerBaseOverrides)
 	overrides["agents.podSecurity.securityContextConstraints.create"] = "true"
@@ -132,6 +162,24 @@ func TestHostProfilerSCC(t *testing.T) {
 	require.NoError(t, err)
 	assert.Contains(t, manifest, "localhost/"+profileRef,
 		"SCC should allow the hashed seccomp profile")
+}
+
+func TestHostProfilerLoggingSeccomp(t *testing.T) {
+	overrides := copyMap(hostProfilerBaseOverrides)
+	overrides["datadog.hostProfiler.loggingSeccomp"] = "true"
+	ds := renderHostProfilerDaemonSet(t, overrides)
+
+	initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
+	require.True(t, ok)
+	cmd := strings.Join(initContainer.Command, " ")
+	assert.Contains(t, cmd, "cp /etc/dd-host-profiler/logging-seccomp.json")
+	assert.Contains(t, cmd, "cp /etc/dd-host-profiler/seccomp.json")
+	assert.Contains(t, cmd, "WARNING: logging-seccomp.json not found in image, falling back to default seccomp profile")
+
+	hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+	require.True(t, ok)
+	require.NotNil(t, hpContainer.SecurityContext.SeccompProfile)
+	assert.Regexp(t, `^host-profiler-[0-9a-f]{8}-logging$`, *hpContainer.SecurityContext.SeccompProfile.LocalhostProfile)
 }
 
 func containsString(slice []string, s string) bool {
