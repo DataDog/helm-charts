@@ -11,4 +11,3 @@ spec:
   allowlistPaths:
   - Datadog/datadog-csi-driver/datadog-datadog-csi-driver-daemonset-exemption-v1.1.0.yaml
   - Datadog/datadog-csi-driver/datadog-datadog-csi-driver-daemonset-exemption-v1.1.1.yaml
-

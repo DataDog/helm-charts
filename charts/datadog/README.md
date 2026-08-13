@@ -509,6 +509,7 @@ helm install <RELEASE_NAME> \
 | agents.containers.otelAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container |
 | agents.containers.otelAgent.securityContext | object | `{"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. |
+| agents.containers.otelAgent.syncDelay | string | `"30s"` | How long otel-agent waits for the core agent to be ready on startup. Increase this value if the core agent takes longer to initialize (e.g. agent >= 7.81.1). |
 | agents.containers.otelAgent.volumeMounts | list | `[]` | Specify additional volumes to mount in the otel-agent container |
 | agents.containers.privateActionRunner.env | list | `[]` | Additional environment variables for the private-action-runner container |
 | agents.containers.privateActionRunner.envDict | object | `{}` | Set environment variables specific to private-action-runner defined in a dict |
