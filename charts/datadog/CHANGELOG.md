@@ -1,5 +1,12 @@
 # Datadog changelog
 
+## 3.238.0
+
+* Update `datadog-csi-driver` chart dependency from `0.15.0` to `0.17.0`:
+  * `0.16.0`: set CSI driver image to `1.3.0`.
+  * `0.16.1`: migrate CSI registrar image from `k8s.gcr.io` to `registry.k8s.io`.
+  * `0.17.0`: set CSI driver image to `1.4.0` and add `apm.pullSecrets` for downloading SSI libraries from private registries.
+
 ## 3.237.1
 
 * Update `fips.image.tag` to `1.1.29` fixing CVEs and updating packages.
