@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.5.2
+
+* Update the CloudPrem Docker image to `v0.1.33`.
+* Enable document clustering by default to reduce index size.
+
 ## 0.5.1
 
 * Add the CloudPrem component name to OpenTelemetry resource attributes.
