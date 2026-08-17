@@ -737,6 +737,10 @@ datadog:
       # - istio-gateway: Watches native Istio Gateway resources for AppSec injection
       # - ingress-nginx: Watches IngressClass resources to discover ingress-nginx controllers and injects the nginx-datadog module via an init container
 
+      rbac:
+        # datadog.appsec.injector.rbac.create -- If true, add AppSec injector RBAC rules to the Cluster Agent ClusterRole. Disable only when AppSec injector is not used, generated resources are already cleaned up, or equivalent RBAC is managed externally.
+        create: true
+
       sidecar:
         # datadog.appsec.injector.sidecar.image -- Container image for the AppSec sidecar processor
         image: "ghcr.io/datadog/dd-trace-go/service-extensions-callout"
