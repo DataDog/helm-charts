@@ -61,6 +61,9 @@ spec:
           args: ["run", "--service", "compactor"]
           {{- end }}
           env:
+            {{- /* Supported by Quickwit edge and the upcoming 0.10 release. */}}
+            - name: QW_COMPACTOR_DECOMMISSION_TIMEOUT
+              value: {{ printf "%ds" (div (mul .Values.compactor.terminationGracePeriodSeconds 9) 10) | quote }}
             {{- include "quickwit.environment" . | nindent 12 }}
             {{- with (include "quickwit.extraEnv" .Values.compactor.extraEnv) }}
             {{- . | nindent 12 }}

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 0.5.2
+
+* Update Docker image to `v0.1.33`.
+* Enable document clustering by default (`config.docs_clustering`) so indexers group similar logs together for better compression, using structure plus `source`, `status`, and tokenized `message` fingerprints.
+* Set indexer `QW_INGEST_DECOMMISSION_TIMEOUT` and standalone-compactor `QW_COMPACTOR_DECOMMISSION_TIMEOUT` to 90% of each workload's `terminationGracePeriodSeconds` so decommission finishes before Kubernetes sends SIGKILL (from oss/main, quickwit-oss/helm-charts#184).
+
 ## 0.5.1
 
 * Add the CloudPrem component name to OpenTelemetry resource attributes.

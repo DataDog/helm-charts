@@ -72,6 +72,9 @@ spec:
           args: ["run", "--service", "indexer"]
           {{- end }}
           env:
+            {{- /* Supported by Quickwit edge and the upcoming 0.10 release. */}}
+            - name: QW_INGEST_DECOMMISSION_TIMEOUT
+              value: {{ printf "%ds" (div (mul .Values.indexer.terminationGracePeriodSeconds 9) 10) | quote }}
             {{- include "quickwit.environment" . | nindent 12 }}
             {{- if .Values.indexer.persistentVolume.enabled }}
             {{- if .Values.indexer.persistentVolume.storageClass }}

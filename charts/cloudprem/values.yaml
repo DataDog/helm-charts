@@ -445,7 +445,9 @@ indexer:
     #       - -c
     #       - sleep 30
 
-  # Long grace period is recommended to wait for all index commit_timeout_secs and splits to be published
+  # Long grace period is recommended to wait for all index commit_timeout_secs and splits to be published.
+  # With Quickwit edge or the upcoming 0.10 release, the ingester decommission timeout
+  # is set to 90% of this value.
   # See https://quickwit.io/docs/configuration/index-config#indexing-settings
   terminationGracePeriodSeconds: 300
 
@@ -1092,7 +1094,8 @@ compactor:
 
   # Grace period to let in-flight merges finish publishing on shutdown. Unfinished
   # merges are simply rescheduled by the planner after a heartbeat timeout, so this
-  # does not need to be as long as the indexer's.
+  # does not need to be as long as the indexer's. With Quickwit edge or the upcoming
+  # 0.10 release, the compactor decommission timeout is set to 90% of this value.
   terminationGracePeriodSeconds: 60
 
   runtimeClassName: ""
@@ -1176,9 +1179,6 @@ config:
       interval: 30s
       timeout: 10s
 
-  # postgres:
-  #   max_num_connections: 50
-
   # storage:
     # s3:
       # endpoint: "http://custom-s3-endpoint"
@@ -1195,6 +1195,19 @@ config:
   # indexer:
   #   split_store_max_num_bytes: 200G
   #   split_store_max_num_splits: 10000
+  # Docs clustering settings
+  docs_clustering:
+  - fingerprint:
+      - kind: structure
+  - fingerprint:
+      - kind: raw
+        path: source
+  - fingerprint:
+      - kind: raw
+        path: status
+  - fingerprint:
+      - kind: tokenized
+        path: message
   # Ingest API settings
   # ingest_api:
   #   max_queue_memory_usage: 2GiB
@@ -1204,6 +1217,10 @@ config:
   #   fast_field_cache_capacity: 10G
   #   split_footer_cache_capacity: 1G
   #   max_num_concurrent_split_streams: 100
+  # Metastore settings
+  # metastore:
+  #   postgres:
+  #     max_num_connections: 50
 
 # Seed configuration
 seed:
