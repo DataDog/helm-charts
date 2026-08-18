@@ -44,6 +44,12 @@
     - name: DD_SBOM_ENRICHMENT_USAGE_ENABLED
       value: "true"
     {{- end }}
+    {{- if eq (include "should-enable-config-sync-for-direct-send" .) "true" }}
+    - name: DD_AGENT_IPC_PORT
+      value: "5009"
+    - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+      value: "60"
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.systemProbe.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.systemProbe.envDict | indent 4 }}
   resources:
