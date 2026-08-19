@@ -326,6 +326,62 @@ func Test_AppSecInjector_RBAC_Disabled_StillIncludesEnvoyGatewayRule(t *testing.
 		"AppSec gateway.envoyproxy.io/backends RBAC must remain present when the injector is disabled so the controller retains cleanup permissions for resources it created")
 }
 
+func Test_AppSecInjector_RBAC_CreateFalse_OmitsAppSecRules(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-rbac.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.apiKeyExistingSecret":        "datadog-secret",
+			"datadog.appKeyExistingSecret":        "datadog-secret",
+			"datadog.appsec.injector.rbac.create": "false",
+		},
+	})
+	require.NoError(t, err, "failed to render cluster-agent-rbac.yaml")
+
+	var clusterRole rbacv1.ClusterRole
+	for _, doc := range strings.Split(manifest, "---") {
+		if strings.Contains(doc, "kind: ClusterRole") && strings.Contains(doc, "name: datadog-cluster-agent\n") {
+			common.Unmarshal(t, doc, &clusterRole)
+			break
+		}
+	}
+	require.NotEmpty(t, clusterRole.Rules, "cluster-agent ClusterRole should still have non-AppSec rules")
+
+	var hasGatewayAPIGroup, hasEnvoyGatewayGroup, hasIstioGroup, hasIngressClassesRule, hasAppSecConfigMapsRule bool
+	for _, rule := range clusterRole.Rules {
+		for _, apiGroup := range rule.APIGroups {
+			switch apiGroup {
+			case "gateway.networking.k8s.io":
+				hasGatewayAPIGroup = true
+			case "gateway.envoyproxy.io":
+				hasEnvoyGatewayGroup = true
+			case "networking.istio.io":
+				hasIstioGroup = true
+			case "networking.k8s.io":
+				for _, resource := range rule.Resources {
+					if resource == "ingressclasses" {
+						hasIngressClassesRule = true
+					}
+				}
+			case "":
+				for _, resource := range rule.Resources {
+					if resource == "configmaps" && len(rule.Verbs) == 6 {
+						hasAppSecConfigMapsRule = true
+					}
+				}
+			}
+		}
+	}
+
+	assert.False(t, hasGatewayAPIGroup, "did not expect AppSec Gateway API RBAC when datadog.appsec.injector.rbac.create=false")
+	assert.False(t, hasEnvoyGatewayGroup, "did not expect AppSec Envoy Gateway RBAC when datadog.appsec.injector.rbac.create=false")
+	assert.False(t, hasIstioGroup, "did not expect AppSec Istio RBAC when datadog.appsec.injector.rbac.create=false")
+	assert.False(t, hasIngressClassesRule, "did not expect AppSec ingress-nginx RBAC when datadog.appsec.injector.rbac.create=false")
+	assert.False(t, hasAppSecConfigMapsRule, "did not expect AppSec configmaps RBAC when datadog.appsec.injector.rbac.create=false")
+}
+
 func Test_AppSecInjector_RBAC_IncludesNginxRules(t *testing.T) {
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
