@@ -35,6 +35,12 @@ func TestGKEAutopilotSystemProbeSuite(t *testing.T) {
 datadog:
   kubelet:
     tlsVerify: false
+  # NPM/USM gate the config sync env vars on system-probe; without them the
+  # WorkloadAllowlist is never exercised against those names.
+  networkMonitoring:
+    enabled: true
+  serviceMonitoring:
+    enabled: true
   systemProbe:
     enableTCPQueueLength: true
     enableOOMKill: true
