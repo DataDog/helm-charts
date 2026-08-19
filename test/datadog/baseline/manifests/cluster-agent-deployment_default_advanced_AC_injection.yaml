@@ -2060,7 +2060,9 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_PROFILES
               value: '[{"env":[{"name":"DD_ORCHESTRATOR_EXPLORER_ENABLED","value":"false"},{"name":"DD_TAGS","value":"key1:value1 key2:value2"}],"resources":{"limits":{"cpu":"2","memory":"1024Mi"},"requests":{"cpu":"1","memory":"512Mi"}}}]'
             - name: DD_REMOTE_CONFIGURATION_ENABLED
-              value: "false"
+              value: "true"
+            - name: DD_APM_INSTRUMENTATION_ON_DEMAND
+              value: "true"
             - name: DD_CLUSTER_CHECKS_ENABLED
               value: "true"
             - name: DD_EXTRA_CONFIG_PROVIDERS

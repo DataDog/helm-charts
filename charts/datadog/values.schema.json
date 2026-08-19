@@ -39,6 +39,9 @@
                 "enabled": {
                   "type": "boolean"
                 },
+                "onDemand": {
+                  "type": "boolean"
+                },
                 "enabledNamespaces": {
                   "$ref": "#/$defs/stringArray"
                 },

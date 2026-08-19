@@ -311,6 +311,8 @@ spec:
           - name: DD_APM_INSTRUMENTATION_ENABLED
             value: {{ .Values.datadog.apm.instrumentation.enabled | quote }}
           {{- end }}
+          - name: DD_APM_INSTRUMENTATION_ON_DEMAND
+            value: {{ .Values.datadog.apm.instrumentation.onDemand | quote }}
           {{- if .Values.datadog.apm.instrumentation.enabledNamespaces }}
           - name: DD_APM_INSTRUMENTATION_ENABLED_NAMESPACES
             value: {{ .Values.datadog.apm.instrumentation.enabledNamespaces | toJson | quote }}
