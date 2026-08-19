@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.239.0](https://img.shields.io/badge/Version-3.239.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.239.1](https://img.shields.io/badge/Version-3.239.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -765,6 +765,7 @@ helm install <RELEASE_NAME> \
 | datadog.apm.instrumentation.injector.imageTag | string | `""` | The image tag to use for the APM Injector (preview). |
 | datadog.apm.instrumentation.language_detection.enabled | bool | `true` | Run language detection to automatically detect languages of user workloads (preview). |
 | datadog.apm.instrumentation.libVersions | object | `{}` | Inject specific version of tracing libraries with Single Step Instrumentation. |
+| datadog.apm.instrumentation.onDemand | bool | `true` | Keep the SSI admission webhook available for runtime workload selection (annotations and Remote Config APM_POLICIES). Matches the agent default (true). |
 | datadog.apm.instrumentation.skipKPITelemetry | bool | `false` | Disable generating Configmap for APM Instrumentation KPIs |
 | datadog.apm.instrumentation.targets | list | `[]` | Enable target based workload selection. Requires Cluster Agent 7.64.0+.  ddTraceConfigs[]valueFrom Requires Cluster Agent 7.66.0+. |
 | datadog.apm.port | int | `8126` | Override the trace Agent port |

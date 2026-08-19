@@ -638,6 +638,10 @@ datadog:
       # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster.
       enabled: false
 
+      # datadog.apm.instrumentation.onDemand -- Keep the SSI admission webhook available for runtime workload
+      # selection (annotations and Remote Config APM_POLICIES). Matches the agent default (true).
+      onDemand: true
+
       # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces.
       enabledNamespaces: []
 

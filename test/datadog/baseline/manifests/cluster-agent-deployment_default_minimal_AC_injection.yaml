@@ -2056,7 +2056,9 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
               value: 7.81.1
             - name: DD_REMOTE_CONFIGURATION_ENABLED
-              value: "false"
+              value: "true"
+            - name: DD_APM_INSTRUMENTATION_ON_DEMAND
+              value: "true"
             - name: DD_CLUSTER_CHECKS_ENABLED
               value: "true"
             - name: DD_EXTRA_CONFIG_PROVIDERS
