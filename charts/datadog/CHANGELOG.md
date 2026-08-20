@@ -4,6 +4,10 @@
 
 * Enable config sync by default when CNM direct send is active, by setting `DD_AGENT_IPC_PORT` (`5009`) and `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL` (`60`) on the Agent and System Probe containers when `datadog.networkMonitoring.enabled` or `datadog.serviceMonitoring.enabled` is `true` on Agent 7.81.0+. Direct send makes System Probe submit network payloads itself, and System Probe cannot resolve an `ENC[...]` secret handle, so without config sync a secret-backed `datadog.apiKey` prevented the network tracer from starting. These values match the ones already set for the OTel Agent and Host Profiler.
 
+## 3.239.1
+
+* Add `datadog.appsec.injector.rbac.create` (default `true`).
+
 ## 3.239.0
 
 * Add `operator.untaintController.enabled` (default `false`). When enabled, the node Agent DaemonSet tolerates the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint and the Datadog Operator untaint controller is enabled to remove that taint once the Agent is ready. Requires Operator v1.28.0+. See [documentation](https://github.com/DataDog/datadog-operator/blob/main/docs/untaint_controller.md) for more details.

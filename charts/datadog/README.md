@@ -784,6 +784,7 @@ helm install <RELEASE_NAME> \
 | datadog.appsec.injector.processor.service.name | string | `""` | Name of the AppSec processor service |
 | datadog.appsec.injector.processor.service.namespace | string | `""` | Namespace where the AppSec processor service is deployed |
 | datadog.appsec.injector.proxies | list | `[]` | Manually specify which proxy types to inject. Valid values: "envoy-gateway", "istio", "istio-gateway", "ingress-nginx" When autoDetect is true, detected proxies are added to this list When autoDetect is false, only proxies in this list are enabled |
+| datadog.appsec.injector.rbac.create | bool | `true` | If true, add AppSec injector RBAC rules to the Cluster Agent ClusterRole. Disable only when AppSec injector is not used, generated resources are already cleaned up, or equivalent RBAC is managed externally. |
 | datadog.appsec.injector.sidecar.bodyParsingSizeLimit | int | `0` | Request body parsing size limit in bytes for the AppSec sidecar processor. Set to 0 to leave it unset (default agent behavior). Set to a negative value (e.g. -1) to disable body parsing entirely. |
 | datadog.appsec.injector.sidecar.healthPort | int | `8081` | Health check port for the AppSec sidecar processor |
 | datadog.appsec.injector.sidecar.image | string | `"ghcr.io/datadog/dd-trace-go/service-extensions-callout"` | Container image for the AppSec sidecar processor |
