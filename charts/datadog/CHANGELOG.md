@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.240.1
+
+* default to true for direct send if doNotCheckTag ([#2861](https://github.com/DataDog/helm-charts/pull/2861)).
+
 ## 3.240.0
 
 * Enable config sync by default when CNM direct send is active, by setting `DD_AGENT_IPC_PORT` (`5009`) and `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL` (`60`) on the Agent and System Probe containers when `datadog.networkMonitoring.enabled` or `datadog.serviceMonitoring.enabled` is `true` on Agent 7.81.0+. Direct send makes System Probe submit network payloads itself, and System Probe cannot resolve an `ENC[...]` secret handle, so without config sync a secret-backed `datadog.apiKey` prevented the network tracer from starting. These values match the ones already set for the OTel Agent and Host Profiler.
