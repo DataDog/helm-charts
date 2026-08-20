@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.26.0-dev.2
+
+* Add `previewFleetRollouts` configuration to enable Fleet Automation rollout support in the Datadog Operator (private preview, requires operator v1.24.0+). Available only to customers enrolled in the Fleet Automation private preview program.
+
 ## 2.26.0-dev.1
 
 * Update Datadog Operator chart for 1.30.0-rc.1.
