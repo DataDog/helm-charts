@@ -544,6 +544,47 @@ entries:
   datadog:
   - apiVersion: v1
     appVersion: "7"
+    created: "2026-08-20T19:11:11.639434955Z"
+    dependencies:
+    - condition: datadog.autoscaling.workload.enabled,datadog.instrumentationCrd.enabled,clusterAgent.metricsProvider.useDatadogMetrics
+      name: datadog-crds
+      repository: https://helm.datadoghq.com
+      tags:
+      - install-crds
+      version: 2.23.0
+    - condition: datadog.kubeStateMetricsEnabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.13.2
+    - condition: datadog.csi.enabled
+      name: datadog-csi-driver
+      repository: https://helm.datadoghq.com
+      version: 0.17.0
+    - alias: operator
+      condition: datadog.operator.enabled
+      name: datadog-operator
+      repository: https://helm.datadoghq.com
+      version: 2.25.0
+    description: Datadog Agent
+    digest: 6eab0afbf5a1561eb481e3bc1cff825374303b98f9844aced6e79c25d33aa8f3
+    home: https://www.datadoghq.com
+    icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+    keywords:
+    - monitoring
+    - alerting
+    - metric
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog
+    sources:
+    - https://app.datadoghq.com/account/settings#agent/kubernetes
+    - https://github.com/DataDog/datadog-agent
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-3.240.0/datadog-3.240.0.tgz
+    version: 3.240.0
+  - apiVersion: v1
+    appVersion: "7"
     created: "2026-08-19T20:38:16.810922434Z"
     dependencies:
     - condition: datadog.autoscaling.workload.enabled,datadog.instrumentationCrd.enabled,clusterAgent.metricsProvider.useDatadogMetrics
@@ -45507,4 +45548,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2026-08-19T20:38:16.81428536Z"
+generated: "2026-08-20T19:11:11.642082721Z"
