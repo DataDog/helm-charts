@@ -121,6 +121,19 @@ false
 {{- end -}}
 {{- end -}}
 
+{{/*
+Return true if config sync must be enabled for CNM direct send. With direct send, system-probe
+submits network payloads itself, and it cannot resolve an ENC[...] api_key because it wires the
+no-op secrets component. Config sync is what hands it the value the core agent already resolved.
+*/}}
+{{- define "should-enable-config-sync-for-direct-send" -}}
+{{- if and (eq (include "cnm-use-direct-send" .) "true") (or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
 {{- define "check-version" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
 {{- $version := (include "get-agent-version" .) -}}
