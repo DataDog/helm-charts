@@ -1,0 +1,9 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+  networkPolicy:
+    create: true
+
+  otelCollector:
+    enabled: true

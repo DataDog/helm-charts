@@ -208,6 +208,24 @@ specs:
               - port: "{{  .Values.datadog.otlp.receiver.protocols.http.endpoint | regexFind ":[0-9]+$" | trimPrefix ":" }}"
                 protocol: TCP
 {{- end }}
+{{- if eq (include "should-enable-otel-agent" .) "true" }}
+{{- range .Values.datadog.otelCollector.ports }}
+  - description: "Ingress for DDOT OTel Collector ({{ .name }})"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" $ }}
+        {{- if $.Values.agents.podLabels }}
+        {{ toYaml $.Values.agents.podLabels | indent 8 }}
+        {{- end }}
+    ingress:
+      - fromEndpoints:
+          - {}
+        toPorts:
+          - ports:
+              - port: "{{ .containerPort }}"
+                protocol: {{ .protocol | default "TCP" }}
+{{- end }}
+{{- end }}
 # The agents are susceptible to an issue connecting to any pod that
 # is annotated with auto-discovery annotations.
 #
