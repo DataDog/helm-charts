@@ -268,8 +268,9 @@ rules:
   resources: ["secrets"]
   verbs: ["get"]
 {{- end }}
+{{- if .Values.datadog.appsec.injector.rbac.create }}
 # Used by datadog.appsec.injector feature.
-# These rules are intentionally always present, not gated behind
+# These rules are intentionally present by default, not gated behind
 # `datadog.appsec.injector.enabled`: the cluster-agent injector controller
 # creates cluster resources (Backend / EnvoyExtensionPolicy / EnvoyFilter /
 # ReferenceGrant / ConfigMap copies) and patches user Gateways. Retaining
@@ -337,6 +338,7 @@ rules:
 - apiGroups: [""]
   resources: ["configmaps"]
   verbs: ["get", "list", "watch", "create", "update", "delete"]
+{{- end }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRoleBinding
