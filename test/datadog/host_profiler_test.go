@@ -140,6 +140,12 @@ func TestHostProfilerSELinux(t *testing.T) {
 		selinux := hpContainer.SecurityContext.SELinuxOptions
 		require.NotNil(t, selinux, "host-profiler seLinuxOptions")
 		assert.Equal(t, "custom_t", selinux.Type)
+
+		initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
+		require.True(t, ok)
+		require.NotNil(t, initContainer.SecurityContext)
+		require.NotNil(t, initContainer.SecurityContext.SELinuxOptions)
+		assert.Equal(t, "custom_t", initContainer.SecurityContext.SELinuxOptions.Type)
 	})
 }
 
