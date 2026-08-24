@@ -63,6 +63,9 @@ func TestHostProfilerSeccomp(t *testing.T) {
 	assert.Equal(t, "myreg/host-profiler:v1.2.3", initContainer.Image)
 	assert.True(t, containsString(initContainer.Command, "/host/var/lib/kubelet/seccomp/"+profileRef),
 		"init container cp destination should match the seccomp profile name; command: %v", initContainer.Command)
+	require.NotNil(t, initContainer.SecurityContext)
+	require.NotNil(t, initContainer.SecurityContext.SELinuxOptions)
+	assert.Equal(t, "spc_t", initContainer.SecurityContext.SELinuxOptions.Type)
 
 }
 
