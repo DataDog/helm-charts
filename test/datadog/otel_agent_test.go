@@ -189,6 +189,294 @@ func Test_ddotCollectorImage(t *testing.T) {
 			},
 		},
 		{
+			name: "useStandaloneImage true with floating 7 agent tag",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "7",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7")
+			},
+		},
+		{
+			name: "useStandaloneImage true with floating 7-jmx agent tag",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "7-jmx",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7-jmx")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7")
+			},
+		},
+		{
+			name: "useStandaloneImage true with floating 7 agent tag and jmx tagSuffix",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "7",
+					"agents.image.tagSuffix":                   "jmx",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7-jmx")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7")
+			},
+		},
+		{
+			name: "useStandaloneImage true with latest agent tag and full tagSuffix",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "latest",
+					"agents.image.tagSuffix":                   "full",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:latest-full")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:latest")
+			},
+		},
+		{
+			name: "useStandaloneImage true with latest agent tag and FIPS",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "latest",
+					"useFIPSAgent":                             "true",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:latest-fips")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:latest-fips")
+			},
+		},
+		{
+			name: "useStandaloneImage true with latest agent tag, jmx tagSuffix and FIPS",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "latest",
+					"agents.image.tagSuffix":                   "jmx",
+					"useFIPSAgent":                             "true",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:latest-fips-jmx")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:latest-fips")
+			},
+		},
+		{
+			name: "useStandaloneImage true with latest agent tag, full tagSuffix and FIPS",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "latest",
+					"agents.image.tagSuffix":                   "full",
+					"useFIPSAgent":                             "true",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:latest-fips-full")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:latest-fips")
+			},
+		},
+		{
+			name: "useStandaloneImage true with latest-jmx agent tag and FIPS",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "latest-jmx",
+					"useFIPSAgent":                             "true",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:latest-jmx-fips")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:latest-fips")
+			},
+		},
+		{
+			name: "useStandaloneImage true with floating 7 agent tag and full tagSuffix",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "7",
+					"agents.image.tagSuffix":                   "full",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7-full")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7")
+			},
+		},
+		{
+			name: "useStandaloneImage true with floating 7 agent tag and FIPS",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "7",
+					"useFIPSAgent":                             "true",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7-fips")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7-fips")
+			},
+		},
+		{
+			name: "useStandaloneImage true with floating 7 agent tag, jmx tagSuffix and FIPS",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "7",
+					"agents.image.tagSuffix":                   "jmx",
+					"useFIPSAgent":                             "true",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7-fips-jmx")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7-fips")
+			},
+		},
+		{
+			name: "useStandaloneImage true with floating 7 agent tag, full tagSuffix and FIPS",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "7",
+					"agents.image.tagSuffix":                   "full",
+					"useFIPSAgent":                             "true",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7-fips-full")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7-fips")
+			},
+		},
+		{
+			name: "useStandaloneImage true with floating 7-jmx agent tag and FIPS",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"datadog.appKeyExistingSecret":             "datadog-secret",
+					"datadog.otelCollector.enabled":            "true",
+					"datadog.otelCollector.useStandaloneImage": "true",
+					"agents.image.tag":                         "7-jmx",
+					"useFIPSAgent":                             "true",
+				},
+			},
+			expectError: false,
+			assertion: func(t *testing.T, manifest string) {
+				verifyAgentImage(t, manifest, "registry.datadoghq.com/agent:7-jmx-fips")
+				verifyOtelImage(t, manifest, "registry.datadoghq.com/ddot-collector:7-fips")
+			},
+		},
+		{
 			name: "useStandaloneImage true with agent version 7.66.0 should fail",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
