@@ -3,6 +3,7 @@
 ## 2.26.0-dev.3
 
 * Update Datadog Operator chart for 1.30.0-rc.2.
+* Enable ADP by default for Linux Operator-managed workloads when `spec.features.dataPlane.enabled` is unset. Opt out with `defaultDataPlaneEnabled.linux: false` or an explicit `spec.features.dataPlane.enabled: false` in the DatadogAgent CRD.
 
 ## 2.26.0-dev.2
 
