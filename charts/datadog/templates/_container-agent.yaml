@@ -77,7 +77,7 @@
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
-    {{- if or (eq (include "should-enable-otel-agent" .) "true") (eq (include "should-enable-host-profiler" .) "true") }}
+    {{- if or (eq (include "should-enable-otel-agent" .) "true") (eq (include "should-enable-host-profiler" .) "true") (eq (include "should-enable-config-sync-for-direct-send" .) "true") }}
     - name: DD_AGENT_IPC_PORT
       value: "5009"
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
