@@ -123,6 +123,9 @@ untaintController:
   # untaintController.eventsEnabled -- Emit Kubernetes Events on Nodes for taint removals and timeout decisions.
   eventsEnabled: false
 deployment:
+  # deployment.additionalLabels -- Additional labels to be added to the deployment resource
+  additionalLabels: {}
+    # key: "value"
   # deployment.annotations -- Allows setting additional annotations for the deployment resource
   annotations: {}
 rbac:

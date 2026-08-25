@@ -9,6 +9,9 @@ metadata:
 {{- end }}
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
+{{- if .Values.deployment.additionalLabels }}
+{{ toYaml .Values.deployment.additionalLabels | indent 4 }}
+{{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
