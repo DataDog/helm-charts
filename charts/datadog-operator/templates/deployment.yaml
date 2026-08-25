@@ -168,7 +168,9 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
           args:
-            - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
+          {{- if and (eq (toString .Values.supportExtendedDaemonset) "true") (semverCompare "<1.31.0-0" $version) }}
+            - "-supportExtendedDaemonset=true"
+          {{- end }}
             - "-logEncoder=json"
             - "-metrics-addr=:{{ .Values.metricsPort }}"
             - "-loglevel={{ .Values.logLevel }}"
