@@ -173,6 +173,7 @@ spec:
             - "-metrics-addr=:{{ .Values.metricsPort }}"
             - "-loglevel={{ .Values.logLevel }}"
             - "-operatorMetricsEnabled={{ .Values.operatorMetricsEnabled }}"
+            - "-defaultDataPlaneLinuxEnabled={{ .Values.defaultDataPlaneEnabled.linux }}"
           {{- if .Values.secretBackend.command }}
             - "-secretBackendCommand={{ .Values.secretBackend.command }}"
           {{- end }}

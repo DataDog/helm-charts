@@ -36,6 +36,7 @@
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
+| defaultDataPlaneEnabled.linux | bool | `true` | Enables Agent Data Plane by default for Linux Operator-managed workloads when `spec.features.dataPlane.enabled` is absent. An explicit `spec.features.dataPlane.enabled` setting overrides this value. Windows is not affected and is handled separately. |
 | deployment.annotations | object | `{}` | Allows setting additional annotations for the deployment resource |
 | dnsConfig | object | `{}` | Specify DNS configuration options for Datadog Operator PODs |
 | env | list | `[]` | Define any environment variables to be passed to the operator. |

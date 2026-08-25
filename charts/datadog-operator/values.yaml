@@ -74,6 +74,9 @@ datadogAgentProfile:
 supportExtendedDaemonset: "false"
 # operatorMetricsEnabled -- Enable forwarding of Datadog Operator metrics and events to Datadog.
 operatorMetricsEnabled: "true"
+defaultDataPlaneEnabled:
+  # defaultDataPlaneEnabled.linux -- Enables Agent Data Plane by default for Linux Operator-managed workloads when `spec.features.dataPlane.enabled` is absent. An explicit `spec.features.dataPlane.enabled` setting overrides this value. Windows is not affected and is handled separately.
+  linux: true
 # metricsPort -- Port used for OpenMetrics endpoint
 metricsPort: 8383
 secretBackend:

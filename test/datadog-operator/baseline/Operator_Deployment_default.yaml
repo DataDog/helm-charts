@@ -68,6 +68,7 @@ spec:
             - "-metrics-addr=:8383"
             - "-loglevel=info"
             - "-operatorMetricsEnabled=true"
+            - "-defaultDataPlaneLinuxEnabled=true"
             - "-introspectionEnabled=false"
             - "-datadogAgentProfileEnabled=false"
             - "-datadogMonitorEnabled=false"
