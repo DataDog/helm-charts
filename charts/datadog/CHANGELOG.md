@@ -2,7 +2,7 @@
 
 ## 3.241.0
 
-* [CONTP-1931] Enable the DatadogInstrumentation CRD controller by default. The controller remains disabled when either the Agent or Cluster Agent version is earlier than 7.82.0, and can be disabled explicitly with `datadog.instrumentationCrd.enabled: false`.
+* Enable the DatadogInstrumentation CRD controller (`datadog.instrumentationCrd.enabled`) by default for all Agent versions at or above 7.82.0.
 
 ## 3.240.1
 
