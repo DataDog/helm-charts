@@ -1,8 +1,14 @@
 {{- define "host-profiler-seccomp-init" -}}
+{{- $hostProfilerSecurityContext := .Values.agents.containers.hostProfiler.securityContext | default dict -}}
+{{- $selinuxOptions := $hostProfilerSecurityContext.seLinuxOptions | default dict -}}
+{{- $selinuxType := $selinuxOptions.type | default "spc_t" -}}
+{{- $securityContext := mergeOverwrite
+      (deepCopy (.Values.agents.containers.initContainers.securityContext | default dict))
+      (dict "seLinuxOptions" (dict "type" $selinuxType))
+-}}
 - name: host-profiler-seccomp-setup
   securityContext:
-    seLinuxOptions:
-      type: {{ .Values.agents.containers.hostProfiler.securityContext.seLinuxOptions.type | default "spc_t" }}
+{{ toYaml $securityContext | indent 4 }}
   image: "{{ include "ddot-ebpf-image" . }}"
   imagePullPolicy: {{ .Values.datadog.hostProfiler.imagePullPolicy | default .Values.agents.image.pullPolicy }}
   {{- $dst := printf "/host%s/%s" .Values.datadog.hostProfiler.seccompRoot (include "host-profiler-seccomp-name" .) }}
