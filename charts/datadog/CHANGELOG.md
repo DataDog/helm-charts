@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.241.0
+
+* [CONTP-1931] Enable the DatadogInstrumentation CRD controller by default. The controller remains disabled when either the Agent or Cluster Agent version is earlier than 7.82.0, and can be disabled explicitly with `datadog.instrumentationCrd.enabled: false`.
+
 ## 3.240.1
 
 * Fix `otel-agent` (and other Agent DaemonSet containers) intermittently failing to start with `StartError` / exit code 128 and `mkdirat .../etc/datadog-agent/auth: read-only file system`. The `auth-token` volume is mounted nested inside the read-only `config` volume, so the container runtime could not create the `auth` mountpoint. It is now pre-created by the `init-volume` init container instead of relying on the `agent` container being started first.

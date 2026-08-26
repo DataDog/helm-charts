@@ -1472,7 +1472,7 @@ datadog:
   instrumentationCrd:
     # datadog.instrumentationCrd.enabled -- (bool) Enable the DatadogInstrumentation CRD controller and reconciliation platform.
     # Requires version 7.82.0 or later of both cluster and node agent.
-    enabled:
+    enabled: true
 
   dataPlane:
     # datadog.dataPlane.enabled -- Whether or not the data plane is enabled

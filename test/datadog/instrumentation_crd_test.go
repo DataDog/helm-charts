@@ -20,7 +20,7 @@ func Test_instrumentationCRDControllerVersionGate(t *testing.T) {
 		enabled   bool
 	}{
 		{
-			name: "disabled with supported versions",
+			name: "explicitly disabled with supported versions",
 			overrides: map[string]string{
 				"datadog.instrumentationCrd.enabled": "false",
 				"agents.image.tag":                   "7.82.0",
@@ -29,67 +29,60 @@ func Test_instrumentationCRDControllerVersionGate(t *testing.T) {
 			enabled: false,
 		},
 		{
-			name: "enabled at minimum versions",
+			name: "enabled by default at minimum versions",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "7.82.0",
-				"clusterAgent.image.tag":             "7.82.0",
+				"agents.image.tag":       "7.82.0",
+				"clusterAgent.image.tag": "7.82.0",
 			},
 			enabled: true,
 		},
 		{
-			name: "enabled with prerelease versions",
+			name: "enabled by default with prerelease versions",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "7.82.0-rc.1",
-				"clusterAgent.image.tag":             "7.82.0-rc.1",
+				"agents.image.tag":       "7.82.0-rc.1",
+				"clusterAgent.image.tag": "7.82.0-rc.1",
 			},
 			enabled: true,
 		},
 		{
-			name: "disabled below minimum node agent version",
+			name: "disabled by default below minimum node agent version",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "7.81.9",
-				"clusterAgent.image.tag":             "7.82.0",
+				"agents.image.tag":       "7.81.9",
+				"clusterAgent.image.tag": "7.82.0",
 			},
 			enabled: false,
 		},
 		{
-			name: "disabled below minimum cluster agent version",
+			name: "disabled by default below minimum cluster agent version",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "7.82.0",
-				"clusterAgent.image.tag":             "7.81.9",
+				"agents.image.tag":       "7.82.0",
+				"clusterAgent.image.tag": "7.81.9",
 			},
 			enabled: false,
 		},
 		{
 			name: "floating node agent tag follows get-agent-version policy",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "latest-jmx",
-				"clusterAgent.image.tag":             "7.82.0",
+				"agents.image.tag":       "latest-jmx",
+				"clusterAgent.image.tag": "7.82.0",
 			},
 			enabled: false,
 		},
 		{
 			name: "floating cluster agent tag follows get-cluster-agent-version policy",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "7.82.0",
-				"clusterAgent.image.tag":             "latest",
+				"agents.image.tag":       "7.82.0",
+				"clusterAgent.image.tag": "latest",
 			},
 			enabled: false,
 		},
 		{
-			name: "enabled when both tag checks are skipped",
+			name: "enabled by default when both tag checks are skipped",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "custom-agent-tag",
-				"agents.image.doNotCheckTag":         "true",
-				"clusterAgent.image.tag":             "custom-cluster-agent-tag",
-				"clusterAgent.image.doNotCheckTag":   "true",
+				"agents.image.tag":                 "custom-agent-tag",
+				"agents.image.doNotCheckTag":       "true",
+				"clusterAgent.image.tag":           "custom-cluster-agent-tag",
+				"clusterAgent.image.doNotCheckTag": "true",
 			},
 			enabled: true,
 		},
