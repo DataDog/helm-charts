@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.240.4
+
+* default to true for direct send if doNotCheckTag ([#2861](https://github.com/DataDog/helm-charts/pull/2861)).
+
 ## 3.240.3
 
 * Update the default Agent, Cluster Agent, and Cluster Checks Runner image version to 7.82.3.
