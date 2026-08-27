@@ -58,8 +58,8 @@ func Test_operator_chart(t *testing.T) {
 				var deployment appsv1.Deployment
 				common.Unmarshal(t, manifest, &deployment)
 				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-				assert.Contains(t, operatorContainer.Args, "-defaultDataPlaneLinuxEnabled=true")
-				assert.NotContains(t, operatorContainer.Args, "-defaultDataPlaneLinuxEnabled=false")
+				assert.Contains(t, operatorContainer.Env, v1.EnvVar{Name: "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED", Value: "true"})
+				assert.NotContains(t, operatorContainer.Env, v1.EnvVar{Name: "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED", Value: "false"})
 			},
 			skipTest: SkipTest,
 		},
@@ -78,8 +78,8 @@ func Test_operator_chart(t *testing.T) {
 				var deployment appsv1.Deployment
 				common.Unmarshal(t, manifest, &deployment)
 				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-				assert.Contains(t, operatorContainer.Args, "-defaultDataPlaneLinuxEnabled=false")
-				assert.NotContains(t, operatorContainer.Args, "-defaultDataPlaneLinuxEnabled=true")
+				assert.Contains(t, operatorContainer.Env, v1.EnvVar{Name: "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED", Value: "false"})
+				assert.NotContains(t, operatorContainer.Env, v1.EnvVar{Name: "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED", Value: "true"})
 			},
 			skipTest: SkipTest,
 		},
