@@ -1985,7 +1985,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.81.1
+          image: registry.datadoghq.com/agent:7.82.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2143,7 +2143,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/agent:7.81.1
+          image: registry.datadoghq.com/agent:7.82.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -2222,7 +2222,7 @@ spec:
               value: INFO
             - name: DD_DOGSTATSD_PORT
               value: "8125"
-          image: registry.datadoghq.com/agent:7.81.1
+          image: registry.datadoghq.com/agent:7.82.3
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -2332,7 +2332,7 @@ spec:
           command:
             - bash
             - -c
-          image: registry.datadoghq.com/agent:7.81.1
+          image: registry.datadoghq.com/agent:7.82.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -2373,7 +2373,7 @@ spec:
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: registry.datadoghq.com/agent:7.81.1
+          image: registry.datadoghq.com/agent:7.82.3
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2400,7 +2400,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: registry.datadoghq.com/agent:7.81.1
+          image: registry.datadoghq.com/agent:7.82.3
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -2789,7 +2789,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.81.1
+          image: registry.datadoghq.com/cluster-agent:7.82.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2862,7 +2862,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/cluster-agent:7.81.1
+          image: registry.datadoghq.com/cluster-agent:7.82.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.240.3
+
+* Update the default Agent, Cluster Agent, and Cluster Checks Runner image version to 7.82.3.
+
 ## 3.240.2
 
 * [PROF-15646] selinux annotation on install-seccomp ([#2873](https://github.com/DataDog/helm-charts/pull/2873)).
