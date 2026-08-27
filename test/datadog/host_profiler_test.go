@@ -63,6 +63,9 @@ func TestHostProfilerSeccomp(t *testing.T) {
 	assert.Equal(t, "myreg/host-profiler:v1.2.3", initContainer.Image)
 	assert.True(t, containsString(initContainer.Command, "/host/var/lib/kubelet/seccomp/"+profileRef),
 		"init container cp destination should match the seccomp profile name; command: %v", initContainer.Command)
+	require.NotNil(t, initContainer.SecurityContext)
+	require.NotNil(t, initContainer.SecurityContext.SELinuxOptions)
+	assert.Equal(t, "spc_t", initContainer.SecurityContext.SELinuxOptions.Type)
 
 }
 
@@ -128,6 +131,7 @@ func TestHostProfilerSELinux(t *testing.T) {
 		// A user-provided securityContext.seLinuxOptions takes precedence over the spc_t default.
 		overrides := copyMap(hostProfilerBaseOverrides)
 		overrides["agents.containers.hostProfiler.securityContext.seLinuxOptions.type"] = "custom_t"
+		overrides["agents.containers.initContainers.securityContext.allowPrivilegeEscalation"] = "false"
 
 		ds := renderHostProfilerDaemonSet(t, overrides)
 
@@ -137,7 +141,27 @@ func TestHostProfilerSELinux(t *testing.T) {
 		selinux := hpContainer.SecurityContext.SELinuxOptions
 		require.NotNil(t, selinux, "host-profiler seLinuxOptions")
 		assert.Equal(t, "custom_t", selinux.Type)
+
+		initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
+		require.True(t, ok)
+		require.NotNil(t, initContainer.SecurityContext)
+		require.NotNil(t, initContainer.SecurityContext.SELinuxOptions)
+		assert.Equal(t, "custom_t", initContainer.SecurityContext.SELinuxOptions.Type)
+		require.NotNil(t, initContainer.SecurityContext.AllowPrivilegeEscalation)
+		assert.False(t, *initContainer.SecurityContext.AllowPrivilegeEscalation)
 	})
+}
+
+func TestHostProfilerNilSecurityContext(t *testing.T) {
+	overrides := copyMap(hostProfilerBaseOverrides)
+	overrides["agents.containers.hostProfiler.securityContext"] = "null"
+	ds := renderHostProfilerDaemonSet(t, overrides)
+
+	initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
+	require.True(t, ok)
+	require.NotNil(t, initContainer.SecurityContext)
+	require.NotNil(t, initContainer.SecurityContext.SELinuxOptions)
+	assert.Equal(t, "spc_t", initContainer.SecurityContext.SELinuxOptions.Type)
 }
 
 func TestHostProfilerSCC(t *testing.T) {

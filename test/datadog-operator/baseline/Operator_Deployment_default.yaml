@@ -56,14 +56,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-            - name: DD_REGISTRY_OVERRIDE_ASIA
-              value: "true"
-            - name: DD_REGISTRY_OVERRIDE_EU
-              value: "true"
-            - name: DD_REGISTRY_OVERRIDE_DEFAULT
-              value: "true"
           args:
-            - "-supportExtendedDaemonset=false"
             - "-logEncoder=json"
             - "-metrics-addr=:8383"
             - "-loglevel=info"

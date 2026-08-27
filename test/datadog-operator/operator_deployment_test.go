@@ -96,6 +96,87 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
+			name: "ExtendedDaemonSet support renders its flag when enabled on a supported prerelease Operator version",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"supportExtendedDaemonset": "true",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Contains(t, operatorContainer.Args, "-supportExtendedDaemonset=true")
+				assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=false")
+			},
+			skipTest: SkipTest,
+		},
+		{
+			name: "ExtendedDaemonSet support renders its flag when enabled on Operator 1.30.0",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"image.tag":                "1.30.0",
+					"supportExtendedDaemonset": "true",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Contains(t, operatorContainer.Args, "-supportExtendedDaemonset=true")
+			},
+			skipTest: SkipTest,
+		},
+		{
+			name: "ExtendedDaemonSet support does not render its flag on Operator 1.31.0",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"image.tag":                "1.31.0",
+					"supportExtendedDaemonset": "true",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=false")
+				assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=true")
+			},
+			skipTest: SkipTest,
+		},
+		{
+			name: "ExtendedDaemonSet support does not render its flag when explicitly disabled",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"supportExtendedDaemonset": "false",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=false")
+				assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=true")
+			},
+			skipTest: SkipTest,
+		},
+		{
 			name: "livenessProbe is correctly configured",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
@@ -139,70 +220,6 @@ func Test_operator_chart(t *testing.T) {
 			},
 			assertions: verifyWatchNamespaces,
 			skipTest:   SkipTest,
-		},
-		{
-			name: "registryMigration auto: ASIA, EU, and DEFAULT overrides are set",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides:   map[string]string{},
-			},
-			assertions: func(t *testing.T, manifest string) {
-				var deployment appsv1.Deployment
-				common.Unmarshal(t, manifest, &deployment)
-				env := deployment.Spec.Template.Spec.Containers[0].Env
-				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_ASIA"), "ASIA should be set")
-				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_EU"), "EU should be set")
-				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_DEFAULT"), "DEFAULT should be set")
-				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_AZURE"), "AZURE should not be set")
-			},
-			skipTest: SkipTest,
-		},
-		{
-			name: "registryMigration disabled: no overrides set",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"registryMigrationMode": "",
-				},
-			},
-			assertions: func(t *testing.T, manifest string) {
-				var deployment appsv1.Deployment
-				common.Unmarshal(t, manifest, &deployment)
-				env := deployment.Spec.Template.Spec.Containers[0].Env
-				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_ASIA"), "ASIA should not be set")
-				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_DEFAULT"), "DEFAULT should not be set")
-				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_EU"), "EU should not be set")
-				assert.Nil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_AZURE"), "AZURE should not be set")
-			},
-			skipTest: SkipTest,
-		},
-		{
-			name: "registryMigration all: all overrides set",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"registryMigrationMode": "all",
-				},
-			},
-			assertions: func(t *testing.T, manifest string) {
-				var deployment appsv1.Deployment
-				common.Unmarshal(t, manifest, &deployment)
-				env := deployment.Spec.Template.Spec.Containers[0].Env
-				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_ASIA"), "ASIA should be set")
-				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_DEFAULT"), "DEFAULT should be set")
-				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_EU"), "EU should be set")
-				assert.NotNil(t, FindEnvVarByName(env, "DD_REGISTRY_OVERRIDE_AZURE"), "AZURE should be set")
-			},
-			skipTest: SkipTest,
 		},
 		{
 			name: "Operator image tag with digest",
@@ -333,6 +350,12 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, "registry.datadoghq.com/operator:1.30.0-rc.2", operatorContainer.Image)
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
+	assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=false")
+	assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=true")
+	assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_REGISTRY_OVERRIDE_ASIA"))
+	assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_REGISTRY_OVERRIDE_EU"))
+	assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_REGISTRY_OVERRIDE_DEFAULT"))
+	assert.Nil(t, FindEnvVarByName(operatorContainer.Env, "DD_REGISTRY_OVERRIDE_AZURE"))
 }
 
 func verifyAll(t *testing.T, manifest string) {

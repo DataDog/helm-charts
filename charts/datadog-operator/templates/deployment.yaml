@@ -132,19 +132,6 @@ spec:
             - name: DD_URL
               value: {{ default .Values.dd_url (include "get-endpoint-config-data-key" (list . "dd-url")) }}
             {{- end }}
-            {{- $registryMode := include "datadog-registry-mode" . }}
-            {{- if or (eq $registryMode "auto") (eq $registryMode "all") }}
-            - name: DD_REGISTRY_OVERRIDE_ASIA
-              value: "true"
-            - name: DD_REGISTRY_OVERRIDE_EU
-              value: "true"
-            - name: DD_REGISTRY_OVERRIDE_DEFAULT
-              value: "true"
-            {{- end }}
-            {{- if eq $registryMode "all" }}
-            - name: DD_REGISTRY_OVERRIDE_AZURE
-              value: "true"
-            {{- end }}
             {{- if and (semverCompare ">=1.28.0-0" $version) .Values.untaintController.enabled }}
             {{- if .Values.untaintController.timeout }}
             - name: DD_UNTAINT_CONTROLLER_TIMEOUT
@@ -168,7 +155,9 @@ spec:
               value: {{ .value | quote }}
             {{- end }}
           args:
-            - "-supportExtendedDaemonset={{ .Values.supportExtendedDaemonset }}"
+          {{- if and (eq (toString .Values.supportExtendedDaemonset) "true") (semverCompare "<1.31.0-0" $version) }}
+            - "-supportExtendedDaemonset=true"
+          {{- end }}
             - "-logEncoder=json"
             - "-metrics-addr=:{{ .Values.metricsPort }}"
             - "-loglevel={{ .Values.logLevel }}"
