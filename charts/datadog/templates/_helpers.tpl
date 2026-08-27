@@ -10,7 +10,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.81.1" -}}
+{{- $version = "7.82.3" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -22,7 +22,7 @@
 {{- $version := .Values.clusterAgent.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.81.1" -}}
+{{- $version = "7.82.3" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
