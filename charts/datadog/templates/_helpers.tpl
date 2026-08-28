@@ -692,10 +692,13 @@ Return a remote otel-agent based on `.Values` (passed as .)
       {{- if semverCompare "<7.67.0" (include "get-agent-version" .) -}}
         {{- fail "datadog.otelCollector.useStandaloneImage is only supported for agent versions 7.67.0+. Please bump the agent version to 7.67.0+ or set datadog.otelCollector.useStandaloneImage to false and set agents.image.tagSuffix to `-full`" -}}
       {{- end -}}
-      {{- $ddotTag := include "get-agent-version" . -}}
-      {{- if eq (.Values.agents.image.tag | toString | trimSuffix "-jmx") "latest" -}}
-        {{- $ddotTag = "latest" -}}
-      {{- end -}}
+      {{/*
+      Preserve the raw Agent tag so floating tags (e.g. `latest`, `7`) stay in sync with the Agent image.
+      `get-agent-version` is only for the semver guards above; using it as the tag would pin floating tags
+      to the chart fallback version and produce a mismatched ddot-collector image. The `-jmx` suffix is
+      dropped since the ddot-collector image has no `-jmx` variant.
+      */}}
+      {{- $ddotTag := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
       {{- $ddotImage := dict "name" "ddot-collector" "tag" $ddotTag -}}
       {{- if and (eq (include "use-fips-images" .Values) "true") (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" .)) -}}
         {{- fail "The standalone FIPS ddot-collector image is not available before 7.78.0. Upgrade agents.image.tag to 7.78.0+, set useFIPSAgent to false, or set agents.image.doNotCheckTag to true." -}}
