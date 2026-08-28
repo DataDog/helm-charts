@@ -66,7 +66,7 @@ func Test_instrumentationCRDControllerVersionGate(t *testing.T) {
 				"agents.image.tag":       "latest-jmx",
 				"clusterAgent.image.tag": "7.82.0",
 			},
-			enabled: false,
+			enabled: true,
 		},
 		{
 			name: "floating cluster agent tag follows get-cluster-agent-version policy",
@@ -74,7 +74,7 @@ func Test_instrumentationCRDControllerVersionGate(t *testing.T) {
 				"agents.image.tag":       "7.82.0",
 				"clusterAgent.image.tag": "latest",
 			},
-			enabled: false,
+			enabled: true,
 		},
 		{
 			name: "enabled by default when both tag checks are skipped",

@@ -4,6 +4,18 @@
 
 * Enable the DatadogInstrumentation CRD controller (`datadog.instrumentationCrd.enabled`) by default for all Agent versions at or above 7.82.0.
 
+## 3.240.4
+
+* default to true for direct send if doNotCheckTag ([#2861](https://github.com/DataDog/helm-charts/pull/2861)).
+
+## 3.240.3
+
+* Update the default Agent, Cluster Agent, and Cluster Checks Runner image version to 7.82.3.
+
+## 3.240.2
+
+* [PROF-15646] selinux annotation on install-seccomp ([#2873](https://github.com/DataDog/helm-charts/pull/2873)).
+
 ## 3.240.1
 
 * Fix `otel-agent` (and other Agent DaemonSet containers) intermittently failing to start with `StartError` / exit code 128 and `mkdirat .../etc/datadog-agent/auth: read-only file system`. The `auth-token` volume is mounted nested inside the read-only `config` volume, so the container runtime could not create the `auth` mountpoint. It is now pre-created by the `init-volume` init container instead of relying on the `agent` container being started first.
