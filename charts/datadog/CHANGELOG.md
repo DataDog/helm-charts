@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.241.0
+
+* Enable config sync when CWS or CSPM direct send is active, by setting `DD_AGENT_IPC_PORT` (`5009`) and `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL` (`60`) on the Agent and System Probe containers when `datadog.securityAgent.runtime.directSendFromSystemProbe` or `datadog.securityAgent.compliance.runInSystemProbe` is `true`. As with CNM direct send, System Probe submits the payloads itself and cannot resolve an `ENC[...]` secret handle, so without config sync a secret-backed `datadog.apiKey` prevented those payloads from being sent. Config sync is now also skipped when no System Probe container is rendered.
+
 ## 3.240.4
 
 * default to true for direct send if doNotCheckTag ([#2861](https://github.com/DataDog/helm-charts/pull/2861)).

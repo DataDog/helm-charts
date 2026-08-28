@@ -122,12 +122,38 @@ true
 {{- end -}}
 
 {{/*
-Return true if config sync must be enabled for CNM direct send. With direct send, system-probe
-submits network payloads itself, and it cannot resolve an ENC[...] api_key because it wires the
-no-op secrets component. Config sync is what hands it the value the core agent already resolved.
+Return true if CWS direct send is enabled, meaning system-probe submits CWS events itself instead
+of handing them to security-agent. Unlike CNM this is an explicit opt-in, so there is no version gate.
+*/}}
+{{- define "cws-use-direct-send" -}}
+{{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.directSendFromSystemProbe -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if CSPM direct send is enabled, meaning compliance checks run in system-probe and their
+payloads are submitted from there instead of from security-agent. Explicit opt-in, so no version gate.
+*/}}
+{{- define "cspm-use-direct-send" -}}
+{{- if and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if config sync must be enabled because a feature submits its payloads directly from
+system-probe: CNM (network/service monitoring), CWS or CSPM. system-probe cannot resolve an ENC[...]
+api_key because it wires the no-op secrets component, so the payloads would never be sent. Config
+sync is what hands it the value the core agent already resolved. Gated on the system-probe container
+actually being rendered, so we never open the IPC port for a consumer that does not exist.
 */}}
 {{- define "should-enable-config-sync-for-direct-send" -}}
-{{- if and (eq (include "cnm-use-direct-send" .) "true") (or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled) -}}
+{{- if and (eq (include "should-enable-system-probe" .) "true") (or (and (eq (include "cnm-use-direct-send" .) "true") (or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled)) (eq (include "cws-use-direct-send" .) "true") (eq (include "cspm-use-direct-send" .) "true")) -}}
 true
 {{- else -}}
 false

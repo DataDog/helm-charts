@@ -1920,6 +1920,10 @@ spec:
               value: "false"
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
+            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+              value: "60"
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_DOGSTATSD_PORT
@@ -2097,6 +2101,10 @@ spec:
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
               value: "true"
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
+            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+              value: "60"
           image: gcr.io/datadoghq/agent:7.82.3
           imagePullPolicy: IfNotPresent
           name: system-probe
