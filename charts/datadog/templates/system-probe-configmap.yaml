@@ -1,6 +1,6 @@
 {{- if .Values.datadog.networkMonitoring.enabled }}
 {{- if not .Values.agents.image.doNotCheckTag -}}
-{{- $version := (.Values.agents.image.tag | toString | trimSuffix "-jmx") }}
+{{- $version := (include "get-agent-version" .) }}
 {{- $length := len (split "." $version ) -}}
 {{- if (gt $length 1) }}
 {{- if not (semverCompare "^6.24.1-0 || ^7.24.1-0" $version) -}}
