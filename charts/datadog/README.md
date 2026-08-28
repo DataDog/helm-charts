@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.240.4](https://img.shields.io/badge/Version-3.240.4-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.240.5](https://img.shields.io/badge/Version-3.240.5-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -555,8 +555,8 @@ helm install <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.82.3"` | Define the Agent version to use |
-| agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
+| agents.image.tag | string | `"7.82.3"` | Define the Agent version to use Set a pinned version here. Do not append build variants: put `full` or `jmx` in `agents.image.tagSuffix`, and enable FIPS with `useFIPSAgent`. To stay on the latest stable Agent, leave this unset and upgrade the chart periodically. |
+| agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag This is the supported place for build variants like `full` or `jmx`; set them here rather than appending them to `agents.image.tag`. |
 | agents.instanceLabelOverride | string | `nil` | Override the `app.kubernetes.io/instance` label on the Agent daemonset and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label. |
 | agents.lifecycle | object | `{}` | Configure the lifecycle of the Agent. Note: The `exec` lifecycle handler is not supported in GKE Autopilot. |
 | agents.localService.forceLocalServiceEnabled | bool | `false` | Force the creation of the internal traffic policy service to target the agent running on the local node. By default, the internal traffic service is created only on Kubernetes 1.22+ where the feature became beta and enabled by default. This option allows to force the creation of the internal traffic service on kubernetes 1.21 where the feature was alpha and required a feature gate to be explicitly enabled. |
@@ -1167,7 +1167,7 @@ helm install <RELEASE_NAME> \
 | registryMigrationMode | string | `"auto"` | Controls gradual migration of default image registry to registry.datadoghq.com, replacing site-specific regional mirrors (GCR, ACR). This setting has no effect when `registry` is explicitly set. GKE Autopilot and GKE GDC clusters are excluded and always use their site-specific gcr.io variant. US1-FED (ddog-gov.com) is excluded and always uses public.ecr.aws/datadog. US3 (us3.datadoghq.com) is excluded and always uses datadoghq.azurecr.io. |
 | remoteConfiguration.enabled | bool | `true` | Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent. Can be overridden if `datadog.remoteConfiguration.enabled` Preferred way to enable Remote Configuration. |
 | targetSystem | string | `"linux"` | Target OS for this deployment (possible values: linux, windows) |
-| useFIPSAgent | bool | `false` | Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments. Setting this to true disables the fips-proxy sidecar and is the recommended method for enabling FIPS compliance. |
+| useFIPSAgent | bool | `false` | Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments. Setting this to true disables the fips-proxy sidecar and is the recommended method for enabling FIPS compliance. Enable FIPS with this flag; do not embed `-fips` in `agents.image.tag`. |
 
 ## Configuration options for Windows deployments
 <a name="windows-config"></a>
