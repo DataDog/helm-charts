@@ -187,6 +187,21 @@ rules:
       - list
       - watch
   - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadoginstrumentations
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadoginstrumentations/status
+    verbs:
+      - patch
+      - update
+  - apiGroups:
       - ""
     resourceNames:
       - datadogtoken
@@ -1035,6 +1050,8 @@ spec:
               value: /var/lib/kubelet/pod-resources/kubelet.sock
             - name: DD_SYSTEM_PROBE_ENABLED
               value: "false"
+            - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
+              value: "true"
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
@@ -1415,6 +1432,8 @@ spec:
               value: "true"
             - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
               value: "false"
+            - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
+              value: "true"
             - name: DD_INSTRUMENTATION_INSTALL_TIME
               valueFrom:
                 configMapKeyRef:

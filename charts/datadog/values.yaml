@@ -1472,7 +1472,7 @@ datadog:
   instrumentationCrd:
     # datadog.instrumentationCrd.enabled -- (bool) Enable the DatadogInstrumentation CRD controller and reconciliation platform.
     # Requires version 7.82.0 or later of both cluster and node agent.
-    enabled:
+    enabled: true
 
   dataPlane:
     # datadog.dataPlane.enabled -- Whether or not the data plane is enabled
@@ -3167,7 +3167,10 @@ datadog-crds:
     datadogPodAutoscalers: true
     # crds.datadogPodAutoscalerClusterProfile -- Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD
     datadogPodAutoscalerClusterProfiles: true
-    # crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
+
+datadog-instrumentation-crd:
+  crds:
+    # datadog-instrumentation-crd.crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
     datadogInstrumentations: true
 
 kube-state-metrics:

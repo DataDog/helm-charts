@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.241.0
+
+* Enable the DatadogInstrumentation CRD controller (`datadog.instrumentationCrd.enabled`) by default for all Agent versions at or above 7.82.0, and install its CRD without unrelated Datadog CRDs.
+
 ## 3.240.5
 
 * DDOT should use the same tag as the agent unless overriden ([#2876](https://github.com/DataDog/helm-charts/pull/2876)).
