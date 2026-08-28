@@ -31,8 +31,8 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| file://../datadog-instrumentation-crd | datadog-instrumentation-crd | 0.1.0 |
 | https://helm.datadoghq.com | datadog-crds | 2.23.0 |
+| https://helm.datadoghq.com | datadog-instrumentation-crd(datadog-crds) | 2.23.0 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.17.0 |
 | https://helm.datadoghq.com | operator(datadog-operator) | 2.25.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
@@ -753,6 +753,7 @@ helm install <RELEASE_NAME> \
 | datadog-crds.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadog-crds.crds.datadogPodAutoscalerClusterProfiles | bool | `true` |  |
 | datadog-crds.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
+| datadog-instrumentation-crd.crds.datadogInstrumentations | bool | `true` | Set to true to deploy the DatadogInstrumentations CRD |
 | datadog.apiKey | string | `nil` | Your Datadog API key |
 | datadog.apiKeyExistingSecret | string | `nil` | Use existing Secret which stores API key instead of creating a new one. The value should be set with the `api-key` key inside the secret. |
 | datadog.apm.enabled | bool | `false` | Enable this to enable APM and tracing, on port 8126 DEPRECATED. Use datadog.apm.portEnabled instead |

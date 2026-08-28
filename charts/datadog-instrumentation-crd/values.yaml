@@ -1,5 +1,0 @@
-# annotations -- Annotations to add to the DatadogInstrumentation CRD.
-annotations: {}
-
-# keepCrds -- Instruct Helm to keep the DatadogInstrumentation CRD when the chart is uninstalled.
-keepCrds: false

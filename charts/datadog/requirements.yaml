@@ -8,9 +8,10 @@ dependencies:
     condition: datadog.autoscaling.workload.enabled,clusterAgent.metricsProvider.useDatadogMetrics
     tags:
     - install-crds
-  - name: datadog-instrumentation-crd
-    version: 0.1.0
-    repository: file://../datadog-instrumentation-crd
+  - name: datadog-crds
+    alias: datadog-instrumentation-crd
+    version: 2.23.0
+    repository: https://helm.datadoghq.com
     condition: datadog.instrumentationCrd.enabled
     tags:
     - install-crds

@@ -8,7 +8,6 @@
 # Charts
 charts/cloudprem                                       @DataDog/logs-cloudprem
 charts/datadog-crds                                    @DataDog/container-platform @DataDog/agent-delivery
-charts/datadog-instrumentation-crd                     @DataDog/container-platform @DataDog/agent-delivery
 charts/datadog-csi-driver                              @Datadog/container-platform @DataDog/container-helm-chart-maintainers
 charts/datadog-operator                                @DataDog/container-platform @DataDog/agent-delivery
 charts/extended-daemon-set                             @DataDog/container-platform

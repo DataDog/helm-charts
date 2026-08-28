@@ -113,7 +113,7 @@ func Test_instrumentationCRDDependency(t *testing.T) {
 		hasPodAutoscalerProfileCRD bool
 	}{
 		{
-			name:                  "default installs only the instrumentation CRD",
+			name:                  "default installs instrumentation without autoscaling CRDs",
 			hasInstrumentationCRD: true,
 		},
 		{
