@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.240.5
+
+* DDOT should use the same tag as the agent unless overriden ([#2876](https://github.com/DataDog/helm-charts/pull/2876)).
+
 ## 3.240.4
 
 * default to true for direct send if doNotCheckTag ([#2861](https://github.com/DataDog/helm-charts/pull/2861)).
