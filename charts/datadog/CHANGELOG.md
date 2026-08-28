@@ -2,7 +2,7 @@
 
 ## 3.241.0
 
-* Enable the DatadogInstrumentation CRD controller (`datadog.instrumentationCrd.enabled`) by default for all Agent versions at or above 7.82.0.
+* Enable the DatadogInstrumentation CRD controller (`datadog.instrumentationCrd.enabled`) by default for all Agent versions at or above 7.82.0, and install its CRD without unrelated Datadog CRDs.
 
 ## 3.240.4
 

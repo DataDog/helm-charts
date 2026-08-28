@@ -9,6 +9,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 )
 
 const instrumentationCRDControllerEnabledEnvVar = "DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED"
@@ -103,6 +104,52 @@ func Test_instrumentationCRDControllerVersionGate(t *testing.T) {
 	}
 }
 
+func Test_instrumentationCRDDependency(t *testing.T) {
+	tests := []struct {
+		name                       string
+		overrides                  map[string]string
+		hasInstrumentationCRD      bool
+		hasPodAutoscalerCRD        bool
+		hasPodAutoscalerProfileCRD bool
+	}{
+		{
+			name:                  "default installs only the instrumentation CRD",
+			hasInstrumentationCRD: true,
+		},
+		{
+			name: "instrumentation disabled installs no CRDs",
+			overrides: map[string]string{
+				"datadog.instrumentationCrd.enabled": "false",
+			},
+		},
+		{
+			name: "autoscaling installs its CRDs without the instrumentation CRD",
+			overrides: map[string]string{
+				"datadog.instrumentationCrd.enabled":   "false",
+				"datadog.autoscaling.workload.enabled": "true",
+			},
+			hasPodAutoscalerCRD:        true,
+			hasPodAutoscalerProfileCRD: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides:   instrumentationCRDOverrides(tt.overrides),
+			})
+			require.NoError(t, err, "couldn't render chart")
+
+			assert.Equal(t, tt.hasInstrumentationCRD, manifestHasCRD(t, manifest, "datadoginstrumentations.datadoghq.com"))
+			assert.Equal(t, tt.hasPodAutoscalerCRD, manifestHasCRD(t, manifest, "datadogpodautoscalers.datadoghq.com"))
+			assert.Equal(t, tt.hasPodAutoscalerProfileCRD, manifestHasCRD(t, manifest, "datadogpodautoscalerclusterprofiles.datadoghq.com"))
+		})
+	}
+}
+
 func Test_instrumentationCRDControllerRejectsStringEnabled(t *testing.T) {
 	_, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
@@ -167,4 +214,10 @@ func clusterRoleHasResource(rules []rbacv1.PolicyRule, resource string) bool {
 		}
 	}
 	return false
+}
+
+func manifestHasCRD(t *testing.T, manifest, name string) bool {
+	t.Helper()
+	var crd apiextensionsv1.CustomResourceDefinition
+	return decodeResourceByKindAndName(manifest, "CustomResourceDefinition", name, &crd)
 }
