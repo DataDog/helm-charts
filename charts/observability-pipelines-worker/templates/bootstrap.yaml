@@ -10,7 +10,7 @@ data:
   {{- if .Values.datadog.bootstrap.config }}
   {{- toYaml .Values.datadog.bootstrap.config | nindent 4 }}
   {{- end }}
-  {{- if and .Values.datadog.bootstrap.secretFileContents (not (dig "secret" nil .Values.datadog.bootstrap.config)) }}
+  {{- if and .Values.datadog.bootstrap.secretFileContents (not (hasKey (default dict .Values.datadog.bootstrap.config) "secret")) }}
     secret:
       backend_type: json
       backend_config:
