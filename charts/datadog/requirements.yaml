@@ -5,7 +5,14 @@ dependencies:
     # Ordering matters here. Helm uses the first condition with a defined (non-nil) value. Conditions with an
     # explicit false default (e.g. clusterAgent.metricsProvider.useDatadogMetrics) must come last, otherwise
     # the condition stops evaluation even if the subsequent condition would've been true.
-    condition: datadog.autoscaling.workload.enabled,datadog.instrumentationCrd.enabled,clusterAgent.metricsProvider.useDatadogMetrics
+    condition: datadog.autoscaling.workload.enabled,clusterAgent.metricsProvider.useDatadogMetrics
+    tags:
+    - install-crds
+  - name: datadog-crds
+    alias: datadog-instrumentation-crd
+    version: 2.23.0
+    repository: https://helm.datadoghq.com
+    condition: datadog.instrumentationCrd.enabled
     tags:
     - install-crds
   - name: kube-state-metrics

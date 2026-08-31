@@ -9,6 +9,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 )
 
 const instrumentationCRDControllerEnabledEnvVar = "DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED"
@@ -20,7 +21,7 @@ func Test_instrumentationCRDControllerVersionGate(t *testing.T) {
 		enabled   bool
 	}{
 		{
-			name: "disabled with supported versions",
+			name: "explicitly disabled with supported versions",
 			overrides: map[string]string{
 				"datadog.instrumentationCrd.enabled": "false",
 				"agents.image.tag":                   "7.82.0",
@@ -29,67 +30,60 @@ func Test_instrumentationCRDControllerVersionGate(t *testing.T) {
 			enabled: false,
 		},
 		{
-			name: "enabled at minimum versions",
+			name: "enabled by default at minimum versions",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "7.82.0",
-				"clusterAgent.image.tag":             "7.82.0",
+				"agents.image.tag":       "7.82.0",
+				"clusterAgent.image.tag": "7.82.0",
 			},
 			enabled: true,
 		},
 		{
-			name: "enabled with prerelease versions",
+			name: "enabled by default with prerelease versions",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "7.82.0-rc.1",
-				"clusterAgent.image.tag":             "7.82.0-rc.1",
+				"agents.image.tag":       "7.82.0-rc.1",
+				"clusterAgent.image.tag": "7.82.0-rc.1",
 			},
 			enabled: true,
 		},
 		{
-			name: "disabled below minimum node agent version",
+			name: "disabled by default below minimum node agent version",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "7.81.9",
-				"clusterAgent.image.tag":             "7.82.0",
+				"agents.image.tag":       "7.81.9",
+				"clusterAgent.image.tag": "7.82.0",
 			},
 			enabled: false,
 		},
 		{
-			name: "disabled below minimum cluster agent version",
+			name: "disabled by default below minimum cluster agent version",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "7.82.0",
-				"clusterAgent.image.tag":             "7.81.9",
+				"agents.image.tag":       "7.82.0",
+				"clusterAgent.image.tag": "7.81.9",
 			},
 			enabled: false,
 		},
 		{
 			name: "floating node agent tag follows get-agent-version policy",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "latest-jmx",
-				"clusterAgent.image.tag":             "7.82.0",
+				"agents.image.tag":       "latest-jmx",
+				"clusterAgent.image.tag": "7.82.0",
 			},
 			enabled: true,
 		},
 		{
 			name: "floating cluster agent tag follows get-cluster-agent-version policy",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "7.82.0",
-				"clusterAgent.image.tag":             "latest",
+				"agents.image.tag":       "7.82.0",
+				"clusterAgent.image.tag": "latest",
 			},
 			enabled: true,
 		},
 		{
-			name: "enabled when both tag checks are skipped",
+			name: "enabled by default when both tag checks are skipped",
 			overrides: map[string]string{
-				"datadog.instrumentationCrd.enabled": "true",
-				"agents.image.tag":                   "custom-agent-tag",
-				"agents.image.doNotCheckTag":         "true",
-				"clusterAgent.image.tag":             "custom-cluster-agent-tag",
-				"clusterAgent.image.doNotCheckTag":   "true",
+				"agents.image.tag":                 "custom-agent-tag",
+				"agents.image.doNotCheckTag":       "true",
+				"clusterAgent.image.tag":           "custom-cluster-agent-tag",
+				"clusterAgent.image.doNotCheckTag": "true",
 			},
 			enabled: true,
 		},
@@ -106,6 +100,52 @@ func Test_instrumentationCRDControllerVersionGate(t *testing.T) {
 			require.NoError(t, err, "couldn't render chart")
 
 			assertInstrumentationCRDControllerState(t, manifest, tt.enabled)
+		})
+	}
+}
+
+func Test_instrumentationCRDDependency(t *testing.T) {
+	tests := []struct {
+		name                       string
+		overrides                  map[string]string
+		hasInstrumentationCRD      bool
+		hasPodAutoscalerCRD        bool
+		hasPodAutoscalerProfileCRD bool
+	}{
+		{
+			name:                  "default installs instrumentation without autoscaling CRDs",
+			hasInstrumentationCRD: true,
+		},
+		{
+			name: "instrumentation disabled installs no CRDs",
+			overrides: map[string]string{
+				"datadog.instrumentationCrd.enabled": "false",
+			},
+		},
+		{
+			name: "autoscaling installs its CRDs without the instrumentation CRD",
+			overrides: map[string]string{
+				"datadog.instrumentationCrd.enabled":   "false",
+				"datadog.autoscaling.workload.enabled": "true",
+			},
+			hasPodAutoscalerCRD:        true,
+			hasPodAutoscalerProfileCRD: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides:   instrumentationCRDOverrides(tt.overrides),
+			})
+			require.NoError(t, err, "couldn't render chart")
+
+			assert.Equal(t, tt.hasInstrumentationCRD, manifestHasCRD(t, manifest, "datadoginstrumentations.datadoghq.com"))
+			assert.Equal(t, tt.hasPodAutoscalerCRD, manifestHasCRD(t, manifest, "datadogpodautoscalers.datadoghq.com"))
+			assert.Equal(t, tt.hasPodAutoscalerProfileCRD, manifestHasCRD(t, manifest, "datadogpodautoscalerclusterprofiles.datadoghq.com"))
 		})
 	}
 }
@@ -174,4 +214,10 @@ func clusterRoleHasResource(rules []rbacv1.PolicyRule, resource string) bool {
 		}
 	}
 	return false
+}
+
+func manifestHasCRD(t *testing.T, manifest, name string) bool {
+	t.Helper()
+	var crd apiextensionsv1.CustomResourceDefinition
+	return decodeResourceByKindAndName(manifest, "CustomResourceDefinition", name, &crd)
 }

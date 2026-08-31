@@ -1472,7 +1472,7 @@ datadog:
   instrumentationCrd:
     # datadog.instrumentationCrd.enabled -- (bool) Enable the DatadogInstrumentation CRD controller and reconciliation platform.
     # Requires version 7.82.0 or later of both cluster and node agent.
-    enabled:
+    enabled: true
 
   dataPlane:
     # datadog.dataPlane.enabled -- Whether or not the data plane is enabled
@@ -2073,6 +2073,7 @@ existingClusterAgent:
 
 # useFIPSAgent -- Setting useFIPSAgent to true makes the helm chart use Agent images that are FIPS-compliant for use in GOVCLOUD environments.
 # Setting this to true disables the fips-proxy sidecar and is the recommended method for enabling FIPS compliance.
+# Enable FIPS with this flag; do not embed `-fips` in `agents.image.tag`.
 useFIPSAgent: false
 
 ## fips is used to enable and configure the fips-proxy sidecar.
@@ -2159,17 +2160,19 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
+    # Set a pinned version here. Do not append build variants: put `full` or `jmx` in `agents.image.tagSuffix`, and enable FIPS with `useFIPSAgent`. To stay on the latest stable Agent, leave this unset and upgrade the chart periodically.
     tag: 7.82.3
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
 
     # agents.image.tagSuffix -- Suffix to append to Agent tag
+    # This is the supported place for build variants like `full` or `jmx`; set them here rather than appending them to `agents.image.tag`.
 
     ## Ex:
     ##  jmx        to enable jmx fetch collection
     ##  servercore to get Windows images based on servercore
-    ##  full       to get as many features as possible, currently ddot-collector and jmx (e.g. 7.67.0-full)
+    ##  full       to get as many features as possible, currently ddot-collector and jmx
     tagSuffix: ""
 
     # agents.image.repository -- Override default registry + image.name for Agent
@@ -3164,7 +3167,10 @@ datadog-crds:
     datadogPodAutoscalers: true
     # crds.datadogPodAutoscalerClusterProfile -- Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD
     datadogPodAutoscalerClusterProfiles: true
-    # crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
+
+datadog-instrumentation-crd:
+  crds:
+    # datadog-instrumentation-crd.crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
     datadogInstrumentations: true
 
 kube-state-metrics:
