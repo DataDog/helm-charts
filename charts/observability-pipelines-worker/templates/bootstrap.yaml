@@ -12,7 +12,6 @@ data:
   {{- end }}
   {{- if and .Values.datadog.bootstrap.secretFileContents (not (dig "secret" nil .Values.datadog.bootstrap.config)) }}
     secret:
-      sgc_path: /opt/datadog/observability-pipelines-worker/bin/sgc
       backend_type: json
       backend_config:
         file_path: /etc/observability-pipelines-secrets/secrets.json
