@@ -32,12 +32,7 @@ data:
       max_memory: 0
       max_cpu_percent: 0
 
-    {{ if semverCompare ">=6.15" (include "get-agent-version" .) }}
-    # Enable java container awareness (agent version >= 6.15)
+    # Enable java container awareness (`check-version` requires agent 6.36+/7.36+)
     jmx_use_container_support: true
-    {{ else }}
-    # Enable java cgroup memory awareness (agent version < 6.15)
-    jmx_use_cgroup_memory_limit: true
-    {{ end }}
   {{- end }}
 {{- end }}
