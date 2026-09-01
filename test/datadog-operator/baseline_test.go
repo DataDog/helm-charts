@@ -10,6 +10,8 @@ import (
 	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 )
 
+const baselineOperatorImageTag = "1.30.0"
+
 func Test_baseline_manifests(t *testing.T) {
 	tests := []struct {
 		name                 string
@@ -25,7 +27,9 @@ func Test_baseline_manifests(t *testing.T) {
 				ChartPath:   "../../charts/datadog-operator",
 				ShowOnly:    []string{"templates/deployment.yaml"},
 				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides:   map[string]string{},
+				Overrides: map[string]string{
+					"image.tag": baselineOperatorImageTag,
+				},
 			},
 			baselineManifestPath: "./baseline/Operator_Deployment_default.yaml",
 			assertions:           verifyOperatorDeployment,
