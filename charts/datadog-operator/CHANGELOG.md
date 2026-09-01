@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.32.0
+
+* Add `topologySpreadConstraints` and `strategy` parameters to the Datadog Operator Deployment.
+
 ## 2.31.0
 
 * Update Datadog Operator chart for 1.31.2.
