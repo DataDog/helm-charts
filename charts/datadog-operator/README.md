@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.26.0-dev.4](https://img.shields.io/badge/Version-2.26.0--dev.4-informational?style=flat-square) ![AppVersion: 1.30.0-rc.2](https://img.shields.io/badge/AppVersion-1.30.0--rc.2-informational?style=flat-square)
+![Version: 2.26.0-dev.5](https://img.shields.io/badge/Version-2.26.0--dev.5-informational?style=flat-square) ![AppVersion: 1.30.0-rc.2](https://img.shields.io/badge/AppVersion-1.30.0--rc.2-informational?style=flat-square)
 
 ## Values
 
@@ -69,8 +69,10 @@
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `nil` | The name of the service account to use. If not set name is generated using the fullname template |
 | site | string | `nil` | The site of the Datadog intake to send data to (documentation: https://docs.datadoghq.com/getting_started/site/) |
+| strategy | object | `{}` | Allows to specify the deployment strategy for the Datadog Operator Deployment |
 | supportExtendedDaemonset | string | `"false"` | If true, supports using ExtendedDaemonSet CRD |
 | tolerations | list | `[]` | Allows to schedule Datadog Operator on tainted nodes |
+| topologySpreadConstraints | list | `[]` | Allows the Datadog Operator Deployment to schedule using pod topology spreading |
 | untaintController.enabled | bool | `false` | Enables the Untaint controller, which removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint from nodes once the Agent is ready. Grants the operator `patch` permission on nodes. Requires v1.28.0+ |
 | untaintController.eventsEnabled | bool | `false` | Emit Kubernetes Events on Nodes for taint removals and timeout decisions. |
 | untaintController.schedulingTimeout | string | `""` | Scheduling timeout (Go duration, e.g. "5m") applied when no Agent pod has scheduled on the node. Empty uses the operator default (5m). |

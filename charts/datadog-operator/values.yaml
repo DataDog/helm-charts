@@ -157,6 +157,20 @@ nodeSelector:
 tolerations: []
 # affinity -- Allows to specify affinity for Datadog Operator PODs
 affinity: {}
+# topologySpreadConstraints -- Allows the Datadog Operator Deployment to schedule using pod topology spreading
+
+## By default, no constraints are set, allowing cluster defaults to be used for scheduling
+## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+topologySpreadConstraints: []
+# strategy -- Allows to specify the deployment strategy for the Datadog Operator Deployment
+
+## When unset, the Kubernetes default is used (RollingUpdate with maxSurge 25% and maxUnavailable 25%).
+## Ref: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy
+strategy: {}
+#   type: RollingUpdate
+#   rollingUpdate:
+#     maxSurge: 0
+#     maxUnavailable: 1
 # priorityClassName -- Allows setting the priority class name for Datadog Operator PODs
 priorityClassName:
 # dnsConfig -- Specify DNS configuration options for Datadog Operator PODs
