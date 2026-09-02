@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.243.0
+
+* Grant the Cluster Agent read access to KServe custom resources collected by the orchestrator explorer.
+
 ## 3.242.0
 
 * Grant the Cluster Agent read access to KubeRay and NVIDIA Dynamo custom resources collected by the orchestrator explorer.
