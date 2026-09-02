@@ -1577,6 +1577,24 @@ rules:
       - list
       - watch
       - get
+  - apiGroups:
+      - serving.kserve.io
+    resources:
+      - clusterstoragecontainers
+      - llminferenceserviceconfigs
+      - llminferenceservices
+      - localmodelcaches
+      - localmodelnamespacecaches
+      - localmodelnodegroups
+      - localmodelnodes
+      - clusterservingruntimes
+      - inferencegraphs
+      - inferenceservices
+      - servingruntimes
+      - trainedmodels
+    verbs:
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole

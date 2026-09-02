@@ -167,6 +167,24 @@ rules:
   - list
   - watch
   - get
+- apiGroups:
+  - serving.kserve.io
+  resources:
+  - clusterstoragecontainers
+  - llminferenceserviceconfigs
+  - llminferenceservices
+  - localmodelcaches
+  - localmodelnamespacecaches
+  - localmodelnodegroups
+  - localmodelnodes
+  - clusterservingruntimes
+  - inferencegraphs
+  - inferenceservices
+  - servingruntimes
+  - trainedmodels
+  verbs:
+  - list
+  - watch
 {{- if .Values.datadog.orchestratorExplorer.networkCRDs.enabled }}
 # Gateway API, service mesh, and ingress controller CRDs for internet-reachability analysis
 - apiGroups:

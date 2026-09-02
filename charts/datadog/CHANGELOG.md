@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.242.0
+
+* Grant the Cluster Agent read access to KServe custom resources collected by the orchestrator explorer.
+
 ## 3.241.0
 
 * Enable the DatadogInstrumentation CRD controller (`datadog.instrumentationCrd.enabled`) by default for all Agent versions at or above 7.82.0, and install its CRD without unrelated Datadog CRDs.
