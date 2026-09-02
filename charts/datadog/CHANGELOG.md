@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.242.1
+
+* Update `fips.image.tag` to `1.1.30` fixing CVEs and updating packages.
+
 ## 3.242.0
 
 * Grant the Cluster Agent read access to KubeRay and NVIDIA Dynamo custom resources collected by the orchestrator explorer.
