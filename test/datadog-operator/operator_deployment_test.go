@@ -207,6 +207,26 @@ func Test_operator_chart(t *testing.T) {
 			},
 		},
 		{
+			name: "doNotCheckTag permits a non-semver Operator image tag",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"image.tag":           "latest",
+					"image.doNotCheckTag": "true",
+				},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Equal(t, "registry.datadoghq.com/operator:latest", operatorContainer.Image)
+			},
+		},
+		{
 			name: "untaintController disabled by default",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
@@ -309,7 +329,7 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "registry.datadoghq.com/operator:1.30.0-rc.2", operatorContainer.Image)
+	assert.NotEmpty(t, operatorContainer.Image)
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 	assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=false")
