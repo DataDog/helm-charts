@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.26.0-dev.5
+
+* Add `topologySpreadConstraints` and `strategy` parameters to the Datadog Operator Deployment.
+
 ## 2.26.0-dev.4
 
 * Stop rendering unsupported ExtendedDaemonSet and registry override settings ([#2875](https://github.com/DataDog/helm-charts/pull/2875)).
