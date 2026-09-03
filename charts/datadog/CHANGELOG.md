@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.243.0
+
+* Expose `agents.containers.otelAgent.syncDelay` to configure how long otel-agent waits for the core agent on startup (default: `30s`). Ignored on GKE Autopilot to preserve WorkloadAllowlist compatibility ([#2895](https://github.com/DataDog/helm-charts/pull/2895)).
+
 ## 3.242.0
 
 * Grant the Cluster Agent read access to KubeRay and NVIDIA Dynamo custom resources collected by the orchestrator explorer.
