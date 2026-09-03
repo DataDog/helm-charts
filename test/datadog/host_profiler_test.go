@@ -33,6 +33,21 @@ func renderHostProfilerDaemonSet(t *testing.T, overrides map[string]string) apps
 	return ds
 }
 
+func TestHostProfilerSecurityContext(t *testing.T) {
+	overrides := copyMap(hostProfilerBaseOverrides)
+	overrides["datadog.hostProfiler.runAsNonRoot"] = "true"
+	ds := renderHostProfilerDaemonSet(t, overrides)
+	hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+	require.True(t, ok)
+	require.NotNil(t, hpContainer.SecurityContext)
+	require.NotNil(t, hpContainer.SecurityContext.RunAsUser)
+	require.NotNil(t, hpContainer.SecurityContext.RunAsGroup)
+	require.NotNil(t, hpContainer.SecurityContext.RunAsNonRoot)
+	assert.Equal(t, int64(100), *hpContainer.SecurityContext.RunAsUser)
+	assert.Equal(t, int64(100), *hpContainer.SecurityContext.RunAsGroup)
+	assert.True(t, *hpContainer.SecurityContext.RunAsNonRoot)
+}
+
 func TestHostProfilerSeccomp(t *testing.T) {
 	ds := renderHostProfilerDaemonSet(t, hostProfilerBaseOverrides)
 
