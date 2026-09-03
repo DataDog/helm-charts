@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.26.0-dev.5
+
+* feat(datadog-operator): enable Linux ADP default ([#2879](https://github.com/DataDog/helm-charts/pull/2879)).
+
 ## 2.26.0-dev.4
 
 * Stop rendering unsupported ExtendedDaemonSet and registry override settings ([#2875](https://github.com/DataDog/helm-charts/pull/2875)).
