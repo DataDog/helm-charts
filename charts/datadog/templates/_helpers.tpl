@@ -5,10 +5,8 @@
 */}}
 {{- define "get-agent-version" -}}
 {{- $version := .Values.agents.image.tag | toString -}}
-{{/* Strip build-variant suffixes (any combination/order) so version guards compare on a clean version. */}}
-{{- range until 3 -}}
-{{- $version = $version | trimSuffix "-jmx" | trimSuffix "-full" | trimSuffix "-fips" | trimSuffix "-servercore" -}}
-{{- end -}}
+{{/* Strip build-variant suffixes so version guards compare on a clean version. */}}
+{{- $version = regexReplaceAll "(-jmx|-full|-fips|-servercore)+$" $version "" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
 {{- $version = "6.55.1" -}}
