@@ -211,6 +211,12 @@
       value: {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
     - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
       value: {{ .Values.datadog.securityAgent.compliance.runInSystemProbe | quote }}
+    {{- /* Raw pair, like compliance above: streamed to the Security Agent and System Probe,
+           which derive different behaviour from it, so pre-composing here would break one. */}}
+    - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
+      value: {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
+    - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
+      value: {{ .Values.datadog.securityAgent.runtime.directSendFromSystemProbe | quote }}
     - name: DD_CONTAINER_IMAGE_ENABLED
       value: {{ include "should-enable-container-image-collection" . | quote }}
     {{- if or (eq (include "should-enable-sbom-host-fs-collection" .) "true") (eq (include "should-enable-sbom-container-image-collection" .) "true") (eq (include "should-enable-sbom-enrichment-usage" .) "true") }}
