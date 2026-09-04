@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.243.0
+
+* Collect Gateway API and Gateway API Inference Extension custom resources by default.
+
 ## 3.242.0
 
 * Grant the Cluster Agent read access to KubeRay and NVIDIA Dynamo custom resources collected by the orchestrator explorer.

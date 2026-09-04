@@ -1582,6 +1582,37 @@ rules:
     verbs:
       - list
       - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gatewayclasses
+      - gateways
+      - httproutes
+      - grpcroutes
+      - backendtlspolicies
+      - listenersets
+      - referencegrants
+      - tcproutes
+      - tlsroutes
+      - udproutes
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - inference.networking.k8s.io
+    resources:
+      - inferencepools
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - inference.networking.x-k8s.io
+    resources:
+      - inferencepools
+      - inferencepoolimports
+    verbs:
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
