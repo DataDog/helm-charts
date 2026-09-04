@@ -1,0 +1,14 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  networkMonitoring:
+    enabled: true
+  networkPath:
+    connectionsMonitoring:
+      enabled: true
+    collector:
+      workers: 8
+      pathtestTTL: 20m
+      pathtestInterval: 3m
+      pathtestContextsLimit: 5000
+      pathtestMaxPerMinute: 200

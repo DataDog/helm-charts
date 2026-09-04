@@ -144,7 +144,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: false\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: false\n  conntrack_init_timeout: 10s\n  direct_send: true\nservice_monitoring_config:\n  enabled: false\n  tls:\ntraceroute:\n  enabled: false\ndiscovery:\n  enabled: true\n  use_system_probe_lite: true\n  network_stats:\n    enabled: true\n  service_map:\n    enabled: false\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: true\n  use_secruntime_track: true\n  direct_send_from_system_probe: false\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: true \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: true\n  compliance_module:\n    enabled: true\ndynamic_instrumentation:\n  enabled: false\ncompliance_config:\n  enabled: true\n"
+  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: false\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: true\n  conntrack_init_timeout: 10s\n  direct_send: true\nservice_monitoring_config:\n  enabled: false\n  tls:\ntraceroute:\n  enabled: false\ndiscovery:\n  enabled: true\n  use_system_probe_lite: true\n  network_stats:\n    enabled: true\n  service_map:\n    enabled: false\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: false\n  use_secruntime_track: true\n  direct_send_from_system_probe: false\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: false \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: false\n  compliance_module:\n    enabled: false\ndynamic_instrumentation:\n  enabled: false\ncompliance_config:\n  enabled: false\n"
 kind: ConfigMap
 metadata:
   labels:
@@ -246,7 +246,6 @@ data:
             "inotify_rm_watch",
             "ioctl",
             "ipc",
-            "kill",
             "listen",
             "lseek",
             "lstat",
@@ -1211,35 +1210,6 @@ rules:
       - list
       - watch
   - apiGroups:
-      - ""
-    resources:
-      - serviceaccounts
-      - namespaces
-    verbs:
-      - list
-  - apiGroups:
-      - policy
-    resources:
-      - poddisruptionbudgets
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - rbac.authorization.k8s.io
-    resources:
-      - clusterrolebindings
-      - rolebindings
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - networking.k8s.io
-    resources:
-      - networkpolicies
-    verbs:
-      - list
-  - apiGroups:
       - security.openshift.io
     resourceNames:
       - datadog-cluster-agent
@@ -1979,6 +1949,10 @@ spec:
               value: "false"
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
+            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+              value: "60"
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_DOGSTATSD_PORT
@@ -2040,25 +2014,35 @@ spec:
             - name: DD_EXPVAR_PORT
               value: "6000"
             - name: DD_COMPLIANCE_CONFIG_ENABLED
-              value: "true"
+              value: "false"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
-              value: "true"
+              value: "false"
             - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
-              value: "true"
+              value: "false"
             - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
               value: "false"
-            - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
-              value: /etc/datadog-agent/runtime-security.d
-            - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
-              value: /var/run/sysprobe/runtime-security.sock
-            - name: DD_RUNTIME_SECURITY_CONFIG_USE_SECRUNTIME_TRACK
+            - name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
               value: "true"
+            - name: DD_NETWORK_PATH_COLLECTOR_WORKERS
+              value: "8"
+            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_TTL
+              value: 20m
+            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_INTERVAL
+              value: 3m
+            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_CONTEXTS_LIMIT
+              value: "5000"
+            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_MAX_PER_MINUTE
+              value: "200"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
+            - name: DD_SYSTEM_PROBE_ENABLED
+              value: "true"
+            - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
+              value: "true"
             - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
               value: "true"
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
@@ -2268,164 +2252,8 @@ spec:
               name: runtimesocketdir
               readOnly: true
         - command:
-            - system-probe
-            - --config=/etc/datadog-agent/system-probe.yaml
-          env:
-            - name: DD_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  key: api-key
-                  name: datadog-secret
-            - name: DD_REMOTE_CONFIGURATION_ENABLED
-              value: "true"
-            - name: DD_AUTH_TOKEN_FILE_PATH
-              value: /etc/datadog-agent/auth/token
-            - name: KUBERNETES
-              value: "yes"
-            - name: DD_CSI_ENABLED
-              value: "false"
-            - name: DD_LANGUAGE_DETECTION_ENABLED
-              value: "false"
-            - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
-              value: "false"
-            - name: DD_KUBERNETES_KUBELET_HOST
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-            - name: DD_KUBELET_USE_API_SERVER
-              value: "false"
-            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
-              value: "true"
-            - name: DD_OTLP_CONFIG_LOGS_ENABLED
-              value: "false"
-            - name: DD_LOG_LEVEL
-              value: INFO
-            - name: HOST_ROOT
-              value: /host/root
-            - name: DD_DOGSTATSD_PORT
-              value: "8125"
-            - name: DD_COMPLIANCE_CONFIG_ENABLED
-              value: "true"
-            - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
-              value: "true"
-          image: registry.datadoghq.com/agent:7.82.3
-          imagePullPolicy: IfNotPresent
-          name: system-probe
-          resources: {}
-          securityContext:
-            appArmorProfile:
-              type: Unconfined
-            capabilities:
-              add:
-                - SYS_ADMIN
-                - SYS_RESOURCE
-                - SYS_PTRACE
-                - NET_ADMIN
-                - NET_BROADCAST
-                - NET_RAW
-                - IPC_LOCK
-                - CHOWN
-                - DAC_READ_SEARCH
-                - KILL
-            privileged: false
-            readOnlyRootFilesystem: true
-            seccompProfile:
-              localhostProfile: system-probe
-              type: Localhost
-          volumeMounts:
-            - mountPath: /etc/datadog-agent/auth
-              name: auth-token
-              readOnly: true
-            - mountPath: /var/log/datadog
-              name: logdatadog
-              readOnly: false
-            - mountPath: /tmp
-              name: tmpdir
-              readOnly: false
-            - mountPath: /sys/kernel/debug
-              mountPropagation: None
-              name: debugfs
-              readOnly: false
-            - mountPath: /etc/datadog-agent
-              name: config
-              readOnly: true
-            - mountPath: /etc/datadog-agent/system-probe.yaml
-              name: sysprobe-config
-              readOnly: true
-              subPath: system-probe.yaml
-            - mountPath: /var/run/sysprobe
-              name: sysprobe-socket-dir
-              readOnly: false
-            - mountPath: /host/proc
-              mountPropagation: None
-              name: procdir
-              readOnly: true
-            - mountPath: /host/sys/fs/cgroup
-              mountPropagation: None
-              name: cgroups
-              readOnly: true
-            - mountPath: /etc/passwd
-              name: passwd
-              readOnly: true
-            - mountPath: /etc/group
-              name: group
-              readOnly: true
-            - mountPath: /host/etc/os-release
-              name: os-release-file
-              readOnly: true
-            - mountPath: /host/etc/redhat-release
-              name: etc-redhat-release
-              readOnly: true
-            - mountPath: /host/etc/fedora-release
-              name: etc-fedora-release
-              readOnly: true
-            - mountPath: /host/etc/lsb-release
-              name: etc-lsb-release
-              readOnly: true
-            - mountPath: /host/root
-              mountPropagation: None
-              name: hostroot
-              readOnly: true
-            - mountPath: /lib/modules
-              mountPropagation: None
-              name: modules
-              readOnly: true
-            - mountPath: /usr/src
-              mountPropagation: None
-              name: src
-              readOnly: true
-            - mountPath: /var/tmp/datadog-agent/system-probe/build
-              mountPropagation: None
-              name: runtime-compiler-output-dir
-              readOnly: false
-            - mountPath: /var/tmp/datadog-agent/system-probe/kernel-headers
-              name: kernel-headers-download-dir
-              readOnly: false
-            - mountPath: /host/etc/apt
-              name: apt-config-dir
-              readOnly: true
-            - mountPath: /host/etc/yum.repos.d
-              name: yum-repos-dir
-              readOnly: true
-            - mountPath: /host/etc/zypp
-              name: opensuse-repos-dir
-              readOnly: true
-            - mountPath: /host/etc/pki
-              name: public-key-dir
-              readOnly: true
-            - mountPath: /host/etc/yum/vars
-              name: yum-vars-dir
-              readOnly: true
-            - mountPath: /host/etc/dnf/vars
-              name: dnf-vars-dir
-              readOnly: true
-            - mountPath: /host/etc/rhsm
-              name: rhel-subscription-dir
-              readOnly: true
-        - command:
-            - security-agent
-            - start
-            - -c=/etc/datadog-agent/datadog.yaml
+            - process-agent
+            - --cfgpath=/etc/datadog-agent/datadog.yaml
           env:
             - name: DD_API_KEY
               valueFrom:
@@ -2463,23 +2291,41 @@ spec:
                 secretKeyRef:
                   key: token
                   name: datadog-cluster-agent
+            - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
+              value: "false"
+            - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
+              value: "true"
+            - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
+              value: "true"
+            - name: DD_STRIP_PROCESS_ARGS
+              value: "false"
+            - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+              value: "true"
             - name: DD_LOG_LEVEL
               value: INFO
-            - name: DD_COMPLIANCE_CONFIG_ENABLED
-              value: "false"
-            - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
+            - name: DD_SYSTEM_PROBE_ENABLED
               value: "true"
-            - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
-              value: /etc/datadog-agent/runtime-security.d
-            - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
-              value: /var/run/sysprobe/runtime-security.sock
-            - name: DD_RUNTIME_SECURITY_CONFIG_USE_SECRUNTIME_TRACK
+            - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
               value: "true"
+            - name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
+              value: "true"
+            - name: DD_NETWORK_PATH_COLLECTOR_WORKERS
+              value: "8"
+            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_TTL
+              value: 20m
+            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_INTERVAL
+              value: 3m
+            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_CONTEXTS_LIMIT
+              value: "5000"
+            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_MAX_PER_MINUTE
+              value: "200"
             - name: DD_DOGSTATSD_SOCKET
               value: /var/run/datadog/dsd.socket
+            - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
+              value: "true"
           image: registry.datadoghq.com/agent:7.82.3
           imagePullPolicy: IfNotPresent
-          name: security-agent
+          name: process-agent
           resources: {}
           securityContext:
             readOnlyRootFilesystem: true
@@ -2495,7 +2341,7 @@ spec:
               readOnly: true
             - mountPath: /var/run/datadog
               name: dsdsocket
-              readOnly: false
+              readOnly: true
             - mountPath: /tmp
               name: tmpdir
               readOnly: false
@@ -2506,13 +2352,170 @@ spec:
               mountPropagation: None
               name: runtimesocketdir
               readOnly: true
+            - mountPath: /host/sys/fs/cgroup
+              mountPropagation: None
+              name: cgroups
+              readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
+              readOnly: true
+            - mountPath: /host/proc
+              mountPropagation: None
+              name: procdir
+              readOnly: true
             - mountPath: /var/run/sysprobe
               name: sysprobe-socket-dir
-              readOnly: false
+              readOnly: true
             - mountPath: /etc/datadog-agent/system-probe.yaml
               name: sysprobe-config
               readOnly: true
               subPath: system-probe.yaml
+        - command:
+            - system-probe
+            - --config=/etc/datadog-agent/system-probe.yaml
+          env:
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: api-key
+                  name: datadog-secret
+            - name: DD_REMOTE_CONFIGURATION_ENABLED
+              value: "true"
+            - name: DD_AUTH_TOKEN_FILE_PATH
+              value: /etc/datadog-agent/auth/token
+            - name: KUBERNETES
+              value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
+            - name: DD_LANGUAGE_DETECTION_ENABLED
+              value: "false"
+            - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+              value: "false"
+            - name: DD_KUBERNETES_KUBELET_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
+            - name: DD_OTLP_CONFIG_LOGS_ENABLED
+              value: "false"
+            - name: DD_LOG_LEVEL
+              value: INFO
+            - name: DD_DOGSTATSD_PORT
+              value: "8125"
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
+            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+              value: "60"
+          image: registry.datadoghq.com/agent:7.82.3
+          imagePullPolicy: IfNotPresent
+          name: system-probe
+          resources: {}
+          securityContext:
+            appArmorProfile:
+              type: Unconfined
+            capabilities:
+              add:
+                - SYS_ADMIN
+                - SYS_RESOURCE
+                - SYS_PTRACE
+                - NET_ADMIN
+                - NET_BROADCAST
+                - NET_RAW
+                - IPC_LOCK
+                - CHOWN
+                - DAC_READ_SEARCH
+            privileged: false
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              localhostProfile: system-probe
+              type: Localhost
+          volumeMounts:
+            - mountPath: /etc/datadog-agent/auth
+              name: auth-token
+              readOnly: true
+            - mountPath: /var/log/datadog
+              name: logdatadog
+              readOnly: false
+            - mountPath: /tmp
+              name: tmpdir
+              readOnly: false
+            - mountPath: /sys/kernel/debug
+              mountPropagation: None
+              name: debugfs
+              readOnly: false
+            - mountPath: /sys/fs/bpf
+              mountPropagation: None
+              name: bpffs
+              readOnly: true
+            - mountPath: /etc/datadog-agent
+              name: config
+              readOnly: true
+            - mountPath: /etc/datadog-agent/system-probe.yaml
+              name: sysprobe-config
+              readOnly: true
+              subPath: system-probe.yaml
+            - mountPath: /var/run/sysprobe
+              name: sysprobe-socket-dir
+              readOnly: false
+            - mountPath: /host/proc
+              mountPropagation: None
+              name: procdir
+              readOnly: true
+            - mountPath: /host/sys/fs/cgroup
+              mountPropagation: None
+              name: cgroups
+              readOnly: true
+            - mountPath: /host/etc/os-release
+              name: os-release-file
+              readOnly: true
+            - mountPath: /host/etc/redhat-release
+              name: etc-redhat-release
+              readOnly: true
+            - mountPath: /host/etc/fedora-release
+              name: etc-fedora-release
+              readOnly: true
+            - mountPath: /host/etc/lsb-release
+              name: etc-lsb-release
+              readOnly: true
+            - mountPath: /lib/modules
+              mountPropagation: None
+              name: modules
+              readOnly: true
+            - mountPath: /usr/src
+              mountPropagation: None
+              name: src
+              readOnly: true
+            - mountPath: /var/tmp/datadog-agent/system-probe/build
+              mountPropagation: None
+              name: runtime-compiler-output-dir
+              readOnly: false
+            - mountPath: /var/tmp/datadog-agent/system-probe/kernel-headers
+              name: kernel-headers-download-dir
+              readOnly: false
+            - mountPath: /host/etc/apt
+              name: apt-config-dir
+              readOnly: true
+            - mountPath: /host/etc/yum.repos.d
+              name: yum-repos-dir
+              readOnly: true
+            - mountPath: /host/etc/zypp
+              name: opensuse-repos-dir
+              readOnly: true
+            - mountPath: /host/etc/pki
+              name: public-key-dir
+              readOnly: true
+            - mountPath: /host/etc/yum/vars
+              name: yum-vars-dir
+              readOnly: true
+            - mountPath: /host/etc/dnf/vars
+              name: dnf-vars-dir
+              readOnly: true
+            - mountPath: /host/etc/rhsm
+              name: rhel-subscription-dir
+              readOnly: true
       hostPID: true
       initContainers:
         - args:
@@ -2661,6 +2664,9 @@ spec:
         - hostPath:
             path: /sys/kernel/debug
           name: debugfs
+        - hostPath:
+            path: /sys/fs/bpf
+          name: bpffs
         - emptyDir: {}
           name: sysprobe-socket-dir
         - hostPath:
@@ -2701,12 +2707,6 @@ spec:
         - hostPath:
             path: /etc/passwd
           name: passwd
-        - hostPath:
-            path: /
-          name: hostroot
-        - hostPath:
-            path: /etc/group
-          name: group
         - hostPath:
             path: /var/run
           name: runtimesocketdir
@@ -2968,10 +2968,6 @@ spec:
               value: "true"
             - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
               value: "false"
-            - name: DD_COMPLIANCE_CONFIG_ENABLED
-              value: "true"
-            - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
-              value: 20m
             - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
               value: "true"
             - name: DD_INSTRUMENTATION_INSTALL_TIME

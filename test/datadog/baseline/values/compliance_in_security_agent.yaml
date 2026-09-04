@@ -1,0 +1,11 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  securityAgent:
+    compliance:
+      enabled: true
+      checkInterval: 10m
+      containerInclude: "kube_namespace:default"
+      containerExclude: "kube_namespace:kube-system"
+      xccdf:
+        enabled: true

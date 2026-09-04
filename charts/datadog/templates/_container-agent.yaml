@@ -218,6 +218,7 @@
       value: {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
     - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
       value: {{ .Values.datadog.securityAgent.runtime.directSendFromSystemProbe | quote }}
+    {{- include "remote-agent-hoisted-env" . | nindent 4 }}
     - name: DD_CONTAINER_IMAGE_ENABLED
       value: {{ include "should-enable-container-image-collection" . | quote }}
     {{- if or (eq (include "should-enable-sbom-host-fs-collection" .) "true") (eq (include "should-enable-sbom-container-image-collection" .) "true") (eq (include "should-enable-sbom-enrichment-usage" .) "true") }}
