@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.242.0
+
+* [Host Profiler][PROF-15459] add feature option to deploy as dd-agent ([#2894](https://github.com/DataDog/helm-charts/pull/2894)).
+
 ## 3.241.0
 
 * Enable the DatadogInstrumentation CRD controller (`datadog.instrumentationCrd.enabled`) by default for all Agent versions at or above 7.82.0, and install its CRD without unrelated Datadog CRDs.
