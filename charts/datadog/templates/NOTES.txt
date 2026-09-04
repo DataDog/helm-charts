@@ -1043,3 +1043,30 @@ To disable it, set `datadog.logs.autoMultiLineDetection` to `false`:
         --set datadog.logs.autoMultiLineDetection=false
 
 {{- end }}
+
+{{- $streamingContainers := dict "securityAgent" "security-agent" "processAgent" "process-agent" "systemProbe" "system-probe" "traceAgent" "trace-agent" }}
+{{- $withLocalEnv := list }}
+{{- range $key, $name := $streamingContainers }}
+{{- $c := index $.Values.agents.containers $key }}
+{{- if or $c.env $c.envDict $c.envFrom }}
+{{- $withLocalEnv = append $withLocalEnv $key }}
+{{- end }}
+{{- end }}
+{{- if $withLocalEnv }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The options `agents.containers.<name>.env`, `.envDict` and `.envFrom` are deprecated for the
+containers that take their configuration from the Agent: {{ join ", " (sortAlpha $withLocalEnv) }}.
+
+The Agent is the source of truth for these containers. They drop their own environment on
+startup and apply the configuration the Agent streams to them, so a DD_* variable set through
+these options has no effect.
+
+Set the variable on the Agent instead, through `datadog.env` or `agents.containers.agent.env`.
+Where a setting applies to one container only, the Agent has a namespaced key for it, for
+example `DD_SECURITY_AGENT_LOG_LEVEL` or `DD_APM_LOG_LEVEL`.
+
+{{- end }}
