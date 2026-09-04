@@ -253,7 +253,9 @@ spec:
 {{- if .Values.agents.volumes }}
 {{ toYaml .Values.agents.volumes | indent 6 }}
 {{- end }}
-      {{- if .Values.agents.terminationGracePeriodSeconds }}
+      {{- if and .Values.datadog.privateActionRunner.enabled .Values.datadog.privateActionRunner.splitEnabled }}
+      terminationGracePeriodSeconds: {{ max 190 (.Values.agents.terminationGracePeriodSeconds | default 0) }}
+      {{- else if .Values.agents.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.agents.terminationGracePeriodSeconds }}
       {{- end }}
       tolerations:
