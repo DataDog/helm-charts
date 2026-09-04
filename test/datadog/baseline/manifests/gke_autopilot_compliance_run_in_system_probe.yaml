@@ -2001,6 +2001,10 @@ spec:
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
               value: "true"
+            - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
+              value: "false"
+            - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
+              value: "false"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED

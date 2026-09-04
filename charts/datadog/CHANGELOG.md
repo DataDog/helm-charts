@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.243.0
+
+* Set `DD_RUNTIME_SECURITY_CONFIG_ENABLED` and `DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE` on the Agent container, mirroring the existing compliance pair. Agent 7.85.0+ streams configuration from the Agent to the Security Agent and System Probe and discards their local environment, so without this the Security Agent received the default (`false`) for `runtime_security_config.enabled` and exited with all components deactivated, crash-looping the pod.
+
 ## 3.242.0
 
 * Grant the Cluster Agent read access to KubeRay and NVIDIA Dynamo custom resources collected by the orchestrator explorer.
