@@ -1944,3 +1944,60 @@ core Agent's config, so it is never streamed; its container logLevel keeps worki
   value: {{ .Values.agents.containers.traceAgent.logLevel | quote }}
 {{- end }}
 {{- end -}}
+
+{{/*
+Settings the chart renders only on a remote agent's container, mirrored onto the Agent
+container so config streaming carries them: the remote agents drop their own environment
+and take their configuration from the Agent. Values stay raw and the guards match the
+remote containers' verbatim, so nothing here changes what a remote agent computes.
+*/}}
+{{- define "remote-agent-hoisted-env" -}}
+{{- if eq (include "should-enable-compliance" .) "true" }}
+- name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+  value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
+- name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+- name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
+  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+{{- if .Values.datadog.securityAgent.compliance.containerInclude }}
+- name: DD_COMPLIANCE_CONFIG_CONTAINER_INCLUDE
+  value: {{ .Values.datadog.securityAgent.compliance.containerInclude | quote }}
+{{- end }}
+{{- if .Values.datadog.securityAgent.compliance.containerExclude }}
+- name: DD_COMPLIANCE_CONFIG_CONTAINER_EXCLUDE
+  value: {{ .Values.datadog.securityAgent.compliance.containerExclude | quote }}
+{{- end }}
+{{- end }}
+{{- if eq (include "should-enable-security-agent-cws-integration" .) "true" }}
+- name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
+  value: "/etc/datadog-agent/runtime-security.d"
+- name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
+  value: /var/run/sysprobe/runtime-security.sock
+- name: DD_RUNTIME_SECURITY_CONFIG_USE_SECRUNTIME_TRACK
+  value: {{ .Values.datadog.securityAgent.runtime.useSecruntimeTrack | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.connectionsMonitoring.enabled }}
+- name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
+  value: {{ .Values.datadog.networkPath.connectionsMonitoring.enabled | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.workers }}
+- name: DD_NETWORK_PATH_COLLECTOR_WORKERS
+  value: {{ .Values.datadog.networkPath.collector.workers | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestTTL }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_TTL
+  value: {{ .Values.datadog.networkPath.collector.pathtestTTL | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestInterval }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_INTERVAL
+  value: {{ .Values.datadog.networkPath.collector.pathtestInterval | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestContextsLimit }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_CONTEXTS_LIMIT
+  value: {{ .Values.datadog.networkPath.collector.pathtestContextsLimit | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestMaxPerMinute }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_MAX_PER_MINUTE
+  value: {{ .Values.datadog.networkPath.collector.pathtestMaxPerMinute | quote }}
+{{- end }}
+{{- end -}}
