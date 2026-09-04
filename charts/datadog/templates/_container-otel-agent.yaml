@@ -10,7 +10,7 @@
   command:
     - "otel-agent"
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
-    - "--sync-delay=30s"
+    - "--sync-delay={{ if .Values.providers.gke.autopilot }}30s{{ else }}{{ .Values.agents.containers.otelAgent.syncDelay | default "30s" }}{{ end }}"
   args:
     {{- if .Values.datadog.otelCollector.configMap.items }}
     {{- range .Values.datadog.otelCollector.configMap.items }}
@@ -35,7 +35,7 @@
     - "-config={{ template "datadog.otelconfPath" . }}/otel-config.yaml"
     {{- end }}
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
-    - "--sync-delay=30s"
+    - "--sync-delay={{ if .Values.providers.gke.autopilot }}30s{{ else }}{{ .Values.agents.containers.otelAgent.syncDelay | default "30s" }}{{ end }}"
     {{- if .Values.datadog.otelCollector.featureGates }}
     - "--feature-gates={{ .Values.datadog.otelCollector.featureGates }}"
     {{- end }}
