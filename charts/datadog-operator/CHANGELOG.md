@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.26.0-dev.5
+
+* Update Datadog Operator chart for 1.30.0-rc.3.
+
 ## 2.26.0-dev.4
 
 * Stop rendering unsupported ExtendedDaemonSet and registry override settings ([#2875](https://github.com/DataDog/helm-charts/pull/2875)).
