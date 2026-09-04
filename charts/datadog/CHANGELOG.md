@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.254.0
+
+* Collect Gateway API and Gateway API Inference Extension custom resources by default.
+
 ## 3.253.2
 
 * Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.2 ([#2961](https://github.com/DataDog/helm-charts/pull/2961)).
