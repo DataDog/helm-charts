@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.245.2
+
+* Grant the Cluster Agent read access to KubeAI custom resources collected by the orchestrator explorer.
+
 ## 3.245.1
 
 * Configure the Core Agent for Private Action Runner split mode.
