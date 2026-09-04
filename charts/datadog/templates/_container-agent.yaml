@@ -88,6 +88,7 @@
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
     {{- end }}
+    {{- include "remote-agent-log-level-env" . | nindent 4 }}
     {{- if eq (include "should-enable-data-plane" .) "true" }}
     - name: DD_REMOTE_AGENT_REGISTRY_ENABLED
       value: "true"
