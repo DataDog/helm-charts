@@ -1,10 +1,13 @@
 package datadog_operator
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/DataDog/helm-charts/test/utils"
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -65,7 +68,31 @@ func Test_baseline_manifests(t *testing.T) {
 }
 
 func verifyOperatorDeployment(t *testing.T, baselineManifestPath, manifest string) {
-	utils.VerifyBaseline(t, baselineManifestPath, manifest, appsv1.Deployment{}, appsv1.Deployment{})
+	var actual appsv1.Deployment
+	common.Unmarshal(t, manifest, &actual)
+	var baseline appsv1.Deployment
+	common.LoadFromFile(t, baselineManifestPath, &baseline)
+
+	// The image tag changes with every Operator release and is not part of the
+	// chart structure this baseline is meant to protect, so it's stripped
+	// before comparing (see CONTP-2001).
+	stripImageTag(&actual)
+	stripImageTag(&baseline)
+
+	ops := cmp.Options{
+		cmpopts.IgnoreMapEntries(func(k, v string) bool {
+			return k == "helm.sh/chart"
+		}),
+	}
+	assert.True(t, cmp.Equal(baseline, actual, ops), cmp.Diff(baseline, actual))
+}
+
+func stripImageTag(d *appsv1.Deployment) {
+	for i, c := range d.Spec.Template.Spec.Containers {
+		if repo, _, ok := strings.Cut(c.Image, ":"); ok {
+			d.Spec.Template.Spec.Containers[i].Image = repo
+		}
+	}
 }
 
 func verifyDatadogAgent(t *testing.T, baselineManifestPath, manifest string) {
