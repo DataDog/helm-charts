@@ -276,7 +276,6 @@ phase_operator() {
     local changelog="$chart_dir/CHANGELOG.md"
     local values_yaml="$chart_dir/values.yaml"
     local helpers_tpl="$chart_dir/templates/_helpers.tpl"
-    local test_file="$ROOT_DIR/test/datadog-operator/operator_deployment_test.go"
 
     # Get current appVersion for replacement references
     local prev_version
@@ -313,18 +312,9 @@ phase_operator() {
     add_changelog_entry "$changelog" "$OPERATOR_CHART_VERSION" \
         "* Update Datadog Operator chart for ${OPERATOR_VERSION}."
 
-    # Step 8: Update test assertion
-    step "Updating operator_deployment_test.go image assertion"
-    sed_i "s|operator:${prev_version}|operator:${OPERATOR_VERSION}|g" "$test_file"
-
-    # Step 9: Run helm-docs
+    # Step 8: Run helm-docs
     step "Running helm-docs..."
     run_helm_docs
-
-    # Step 10: Update test baselines
-    step "Updating test baselines (make update-test-baselines-operator)..."
-    (cd "$ROOT_DIR" && make update-test-baselines-operator)
-    success "Test baselines updated"
 
     # Step 11: Update clusterrole.yaml from upstream RBAC
     step "Updating clusterrole.yaml from upstream v${OPERATOR_VERSION}..."

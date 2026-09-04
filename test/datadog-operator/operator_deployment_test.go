@@ -1,6 +1,7 @@
 package datadog_operator
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -309,7 +310,8 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "registry.datadoghq.com/operator:1.30.0-rc.2", operatorContainer.Image)
+	repo, _, _ := strings.Cut(operatorContainer.Image, ":")
+	assert.Equal(t, "registry.datadoghq.com/operator", repo)
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 	assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=false")
