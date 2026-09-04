@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.257.0
+
+* Grant the Cluster Agent read access to KubeAI custom resources collected by the orchestrator explorer.
+
 ## 3.256.0
 
 * Collect Gateway API and Gateway API Inference Extension custom resources by default.

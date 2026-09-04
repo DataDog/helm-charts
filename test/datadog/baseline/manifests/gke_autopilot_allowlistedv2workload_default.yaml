@@ -1401,6 +1401,13 @@ rules:
       - list
       - watch
   - apiGroups:
+      - kubeai.org
+    resources:
+      - models
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - nvidia.com
     resources:
       - dynamocheckpoints
