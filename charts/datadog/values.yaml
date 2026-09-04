@@ -814,6 +814,8 @@ datadog:
   hostProfiler:
     # datadog.hostProfiler.enabled -- Enable the Host Profiler. This feature is experimental and subject to change.
     enabled: false
+    # datadog.hostProfiler.runAsNonRoot -- Run the Host Profiler as the dd-agent user (UID/GID 100).
+    runAsNonRoot: false
     # datadog.hostProfiler.image -- Image the Host Profiler. This parameter is experimental and will be removed once official image is available.
     image: ""
     # datadog.hostProfiler.imagePullPolicy -- Pull policy for the Host Profiler image. Defaults to agents.image.pullPolicy when unset.
