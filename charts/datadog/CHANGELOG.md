@@ -1,5 +1,12 @@
 # Datadog changelog
 
+## 3.244.0
+
+* Set the per-remote-agent log levels (`DD_SECURITY_AGENT_LOG_LEVEL`, `DD_PROCESS_CONFIG_LOG_LEVEL`, `DD_APM_LOG_LEVEL`) on the Agent container when the corresponding `agents.containers.<name>.logLevel` is set. Under config streaming the remote agents take their log level from the Agent.
+* Mirror the settings that were rendered only on a remote agent's container -- five `DD_COMPLIANCE_CONFIG_*` and three `DD_RUNTIME_SECURITY_CONFIG_*` on the Security Agent, six `DD_NETWORK_PATH_*` on the Process Agent -- onto the Agent container, so config streaming carries them.
+* Exclude GKE Autopilot and GDC from the Agent container's `DD_COMPLIANCE_CONFIG_ENABLED` unless `datadog.securityAgent.compliance.runInSystemProbe` is set, matching the Security Agent's own gate. Without this, streaming would start compliance in the Security Agent on platforms where the chart disables it.
+* Deprecate `agents.containers.<name>.{env,envDict,envFrom}` for the Security Agent, Process Agent, System Probe and Trace Agent containers: they drop their own environment under config streaming, so variables set there have no effect.
+
 ## 3.243.0
 
 * Set `DD_RUNTIME_SECURITY_CONFIG_ENABLED` and `DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE` on the Agent container, mirroring the existing compliance pair. Agent 7.85.0+ streams configuration from the Agent to the Security Agent and System Probe and discards their local environment, so without this the Security Agent received the default (`false`) for `runtime_security_config.enabled` and exited with all components deactivated, crash-looping the pod.

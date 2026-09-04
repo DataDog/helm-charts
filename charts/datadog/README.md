@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.243.0](https://img.shields.io/badge/Version-3.243.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.244.0](https://img.shields.io/badge/Version-3.244.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -517,30 +517,30 @@ helm install <RELEASE_NAME> \
 | agents.containers.privateActionRunner.logLevel | string | `nil` | Set logging verbosity for the private-action-runner container |
 | agents.containers.privateActionRunner.resources | object | `{}` | Resource requests and limits for the private-action-runner container. |
 | agents.containers.privateActionRunner.securityContext | object | `{"capabilities":{"add":["NET_RAW"]},"readOnlyRootFilesystem":true}` | Specify securityContext on the private-action-runner container. |
-| agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
-| agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
-| agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |
+| agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
+| agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
+| agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
 | agents.containers.processAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
 | agents.containers.processAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.processAgent.resources | object | `{}` | Resource requests and limits for the process-agent container |
 | agents.containers.processAgent.securityContext | object | `{"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the process-agent container. |
-| agents.containers.securityAgent.env | list | `[]` | Additional environment variables for the security-agent container |
-| agents.containers.securityAgent.envDict | object | `{}` | Set environment variables specific to security-agent defined in a dict |
-| agents.containers.securityAgent.envFrom | list | `[]` | Set environment variables specific to security-agent from configMaps and/or secrets |
+| agents.containers.securityAgent.env | list | `[]` | Additional environment variables for the security-agent container DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
+| agents.containers.securityAgent.envDict | object | `{}` | Set environment variables specific to security-agent defined in a dict DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
+| agents.containers.securityAgent.envFrom | list | `[]` | Set environment variables specific to security-agent from configMaps and/or secrets DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
 | agents.containers.securityAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
 | agents.containers.securityAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.securityAgent.resources | object | `{}` | Resource requests and limits for the security-agent container |
 | agents.containers.securityAgent.securityContext | object | `{"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the security-agent container. |
-| agents.containers.systemProbe.env | list | `[]` | Additional environment variables for the system-probe container |
-| agents.containers.systemProbe.envDict | object | `{}` | Set environment variables specific to system-probe defined in a dict |
-| agents.containers.systemProbe.envFrom | list | `[]` | Set environment variables specific to system-probe from configMaps and/or secrets |
+| agents.containers.systemProbe.env | list | `[]` | Additional environment variables for the system-probe container DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
+| agents.containers.systemProbe.envDict | object | `{}` | Set environment variables specific to system-probe defined in a dict DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
+| agents.containers.systemProbe.envFrom | list | `[]` | Set environment variables specific to system-probe from configMaps and/or secrets DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
 | agents.containers.systemProbe.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
 | agents.containers.systemProbe.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.systemProbe.resources | object | `{}` | Resource requests and limits for the system-probe container |
 | agents.containers.systemProbe.securityContext | object | `{"capabilities":{"add":["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","DAC_READ_SEARCH"]},"privileged":false,"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the system-probe container. |
-| agents.containers.traceAgent.env | list | `[]` | Additional environment variables for the trace-agent container |
-| agents.containers.traceAgent.envDict | object | `{}` | Set environment variables specific to trace-agent defined in a dict |
-| agents.containers.traceAgent.envFrom | list | `[]` | Set environment variables specific to trace-agent from configMaps and/or secrets |
+| agents.containers.traceAgent.env | list | `[]` | Additional environment variables for the trace-agent container DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
+| agents.containers.traceAgent.envDict | object | `{}` | Set environment variables specific to trace-agent defined in a dict DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
+| agents.containers.traceAgent.envFrom | list | `[]` | Set environment variables specific to trace-agent from configMaps and/or secrets DEPRECATED: the Agent streams configuration to this container, so variables set here have no effect; set them on the Agent instead. |
 | agents.containers.traceAgent.livenessProbe | object | Every 15s | Override default agent liveness probe settings |
 | agents.containers.traceAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off |
 | agents.containers.traceAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |

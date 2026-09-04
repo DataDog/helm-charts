@@ -208,8 +208,11 @@
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     - name: DD_EXPVAR_PORT
       value: {{ .Values.datadog.expvarPort | quote }}
+    {{- /* The Security Agent's own gate excludes GKE Autopilot and GDC; streaming makes the
+           Agent's value win, so exclude them here too. runInSystemProbe is exempt: the System
+           Probe's gate is the raw value, and it still runs compliance on those platforms. */}}
     - name: DD_COMPLIANCE_CONFIG_ENABLED
-      value: {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
+      value: {{ and .Values.datadog.securityAgent.compliance.enabled (or .Values.datadog.securityAgent.compliance.runInSystemProbe (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc))) | quote }}
     - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
       value: {{ .Values.datadog.securityAgent.compliance.runInSystemProbe | quote }}
     {{- /* Raw pair, like compliance above: streamed to the Security Agent and System Probe,
