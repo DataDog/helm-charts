@@ -1,6 +1,6 @@
-{{- if and .Values.otelAgentGateway.enabled (ne .Values.otelAgentGateway.controller.type "StatefulSet") }}
+{{- if and .Values.otelAgentGateway.enabled (eq .Values.otelAgentGateway.controller.type "StatefulSet") }}
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ template "datadog.fullname" . }}-otel-agent-gateway
   namespace: {{ .Release.Namespace }}
@@ -15,17 +15,12 @@ metadata:
   annotations: {{ toYaml .Values.otelAgentGateway.deploymentAnnotations | nindent 4 }}
   {{- end }}
 spec:
+  serviceName: {{ template "datadog.fullname" . }}-otel-agent-gateway-headless
+  podManagementPolicy: Parallel
   replicas: {{ .Values.otelAgentGateway.replicas | default 1 }}
   revisionHistoryLimit: {{ .Values.otelAgentGateway.revisionHistoryLimit }}
-  strategy:
-{{- if .Values.otelAgentGateway.strategy }}
-{{ toYaml .Values.otelAgentGateway.strategy | indent 4 }}
-{{- else }}
+  updateStrategy:
     type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-{{- end }}
   selector:
     matchLabels:
       app: {{ template "datadog.fullname" . }}-otel-agent-gateway

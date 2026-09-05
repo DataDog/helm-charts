@@ -3261,6 +3261,10 @@ remoteConfiguration:
 otelAgentGateway:
   # otelAgentGateway.enabled -- Enable otel-agent Gateway
   enabled: false
+  ## otelAgentGateway.controller -- Controls the workload type used to deploy the Gateway
+  controller:
+    # otelAgentGateway.controller.type -- Workload type used to deploy the Gateway. Valid values are `Deployment` and `StatefulSet`
+    type: Deployment
   # otelAgentGateway.ports -- Ports that OTel Collector is listening on
   ports:
       # Default GRPC port of OTLP receiver

@@ -134,3 +134,25 @@ spec:
       name: {{ .name }}
 {{- end }}
 {{ end }}
+
+{{- if and .Values.otelAgentGateway.enabled (eq .Values.otelAgentGateway.controller.type "StatefulSet") }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "datadog.fullname" . }}-otel-agent-gateway-headless
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+spec:
+  clusterIP: None
+  selector:
+    app: {{ template "datadog.fullname" . }}-otel-agent-gateway
+  ports:
+{{- range .Values.otelAgentGateway.ports }}
+    - protocol: {{ .protocol | default "TCP" }}
+      port: {{ .containerPort }}
+      targetPort: {{ .containerPort }}
+      name: {{ .name }}
+{{- end }}
+{{ end }}
