@@ -13,7 +13,7 @@ metadata:
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: Deployment
+    kind: {{ .Values.otelAgentGateway.controller.type }}
     name: {{ template "datadog.fullname" . }}-otel-agent-gateway
   minReplicas: {{ .Values.otelAgentGateway.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.otelAgentGateway.autoscaling.maxReplicas }}
