@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.245.1
+
+* Enable `datadog.securityAgent.runtime.directSendFromSystemProbe` and `datadog.securityAgent.compliance.runInSystemProbe` by default. CWS events and CSPM compliance checks are now handled directly by `system-probe`, so the `security-agent` container is no longer created when only Workload Protection (CWS) and/or CSPM are enabled. Set either value back to `false` to restore the previous behaviour.
+
 ## 3.245.0
 
 * Add an option to choose between StatefulSet or Deployment for OTel gateways ([#2906](https://github.com/DataDog/helm-charts/pull/2906)).

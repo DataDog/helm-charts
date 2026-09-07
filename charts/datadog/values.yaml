@@ -1297,9 +1297,9 @@ datadog:
       host_benchmarks:
         enabled: true
 
-      # datadog.securityAgent.compliance.runInSystemProbe -- Set to true to run compliance checks in system-probe instead of security-agent.
+      # datadog.securityAgent.compliance.runInSystemProbe -- Set to false to run compliance checks in security-agent instead of system-probe.
       # When enabled in conjunction with datadog.securityAgent.runtime.directSendFromSystemProbe, the security-agent container will not be created.
-      runInSystemProbe: false
+      runInSystemProbe: true
 
     runtime:
       # datadog.securityAgent.runtime.enabled -- Set to true to enable Cloud Workload Security (CWS)
@@ -1312,9 +1312,9 @@ datadog:
       # datadog.securityAgent.runtime.useSecruntimeTrack -- Set to true to send Cloud Workload Security (CWS) events directly to the Agent events explorer. This value shouldn't be changed unless advised by Datadog support.
       useSecruntimeTrack: true
 
-      # datadog.securityAgent.runtime.directSendFromSystemProbe -- Set to true to enable direct sending of CWS events from system-probe to Datadog, bypassing security-agent.
+      # datadog.securityAgent.runtime.directSendFromSystemProbe -- Set to false to send CWS events through security-agent instead of directly from system-probe to Datadog.
       # When enabled, the security-agent container will not be created for CWS functionality (it may still be created if compliance features are enabled).
-      directSendFromSystemProbe: false
+      directSendFromSystemProbe: true
 
       ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
       containerExclude:  # "image:datadog/agent"

@@ -7,3 +7,4 @@ datadog:
       runInSystemProbe: true
     runtime:
       enabled: true
+      directSendFromSystemProbe: false
