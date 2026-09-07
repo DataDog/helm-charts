@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.245.0
+
+* Enable `datadog.securityAgent.runtime.directSendFromSystemProbe` and `datadog.securityAgent.compliance.runInSystemProbe` by default. CWS events and CSPM compliance checks are now handled directly by `system-probe`, so the `security-agent` container is no longer created when only Workload Protection (CWS) and/or CSPM are enabled. Set either value back to `false` to restore the previous behaviour.
+
 ## 3.244.0
 
 * Bump Datadog Operator chart dependency to 2.26.0.
