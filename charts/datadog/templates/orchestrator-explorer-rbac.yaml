@@ -190,8 +190,6 @@ rules:
   verbs:
   - list
   - watch
-{{- if .Values.datadog.orchestratorExplorer.networkCRDs.enabled }}
-# Gateway API, service mesh, and ingress controller CRDs for internet-reachability analysis
 - apiGroups:
   - gateway.networking.k8s.io
   resources:
@@ -199,12 +197,32 @@ rules:
   - gateways
   - httproutes
   - grpcroutes
-  - tlsroutes
+  - backendtlspolicies
   - listenersets
+  - referencegrants
+  - tcproutes
+  - tlsroutes
+  - udproutes
   verbs:
   - list
   - watch
-  - get
+- apiGroups:
+  - inference.networking.k8s.io
+  resources:
+  - inferencepools
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - inference.networking.x-k8s.io
+  resources:
+  - inferencepools
+  - inferencepoolimports
+  verbs:
+  - list
+  - watch
+{{- if .Values.datadog.orchestratorExplorer.networkCRDs.enabled }}
+# Service mesh and ingress controller CRDs for internet-reachability analysis
 - apiGroups:
   - networking.istio.io
   resources:
