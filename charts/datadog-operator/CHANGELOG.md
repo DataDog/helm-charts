@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.26.0-dev.6
+
+* Add `podDisruptionBudget.unhealthyPodEvictionPolicy` to configure the PodDisruptionBudget eviction policy for unhealthy Datadog Operator PODs.
+
 ## 2.26.0-dev.5
 
 * Update Datadog Operator chart for 1.30.0-rc.3.

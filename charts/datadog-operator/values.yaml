@@ -5,6 +5,11 @@
 # replicaCount -- Number of instances of Datadog Operator
 replicaCount: 1
 
+# podDisruptionBudget -- Set the PodDisruptionBudget spec of the Datadog Operator PODs, only created when replicaCount is greater than 1
+podDisruptionBudget:
+  # podDisruptionBudget.unhealthyPodEvictionPolicy -- Policy for evicting unhealthy pods: "IfHealthyBudget" or "AlwaysAllow". Requires Kubernetes 1.26+. Empty uses the Kubernetes default (IfHealthyBudget).
+  unhealthyPodEvictionPolicy: ""
+
 # apiKey -- Your Datadog API key
 apiKey:  # <DATADOG_API_KEY>
 

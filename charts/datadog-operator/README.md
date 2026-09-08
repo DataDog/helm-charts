@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.26.0-dev.5](https://img.shields.io/badge/Version-2.26.0--dev.5-informational?style=flat-square) ![AppVersion: 1.30.0-rc.3](https://img.shields.io/badge/AppVersion-1.30.0--rc.3-informational?style=flat-square)
+![Version: 2.26.0-dev.6](https://img.shields.io/badge/Version-2.26.0--dev.6-informational?style=flat-square) ![AppVersion: 1.30.0-rc.3](https://img.shields.io/badge/AppVersion-1.30.0--rc.3-informational?style=flat-square)
 
 ## Values
 
@@ -55,6 +55,8 @@
 | nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Allows to schedule Datadog Operator on specific nodes |
 | operatorMetricsEnabled | string | `"true"` | Enable forwarding of Datadog Operator metrics and events to Datadog. |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Datadog Operator PODs |
+| podDisruptionBudget | object | `{"unhealthyPodEvictionPolicy":""}` | Set the PodDisruptionBudget spec of the Datadog Operator PODs, only created when replicaCount is greater than 1 |
+| podDisruptionBudget.unhealthyPodEvictionPolicy | string | `""` | Policy for evicting unhealthy pods: "IfHealthyBudget" or "AlwaysAllow". Requires Kubernetes 1.26+. Empty uses the Kubernetes default (IfHealthyBudget). |
 | podLabels | object | `{}` | Allows setting additional labels for for Datadog Operator PODs |
 | priorityClassName | string | `nil` | Allows setting the priority class name for Datadog Operator PODs |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
