@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.29.0
+
+* Add `podDisruptionBudget.unhealthyPodEvictionPolicy` to configure the PodDisruptionBudget eviction policy for unhealthy Datadog Operator PODs.
+
 ## 2.28.1
 
 * Restore ExtendedDaemonSet RBAC when `supportExtendedDaemonset` is `true` and the Operator image is older than 1.31.0.
