@@ -7,9 +7,14 @@ import "strings"
 //
 // It only looks for the tag separator (":") after the last "/", so a
 // registry host with a port (e.g. "myregistry:5000/operator:1.2.3") isn't
-// mistaken for a tag.
+// mistaken for a tag. The digest separator ("@") is stripped first so a
+// digest-only reference (no tag, e.g. "operator@sha256:...") isn't mistaken
+// for one either.
 func ImageRepository(image string) string {
 	repo := image
+	if i := strings.Index(repo, "@"); i >= 0 {
+		repo = repo[:i]
+	}
 	if i := strings.LastIndex(repo, "/"); i >= 0 {
 		host, rest := repo[:i], repo[i:]
 		if j := strings.Index(rest, ":"); j >= 0 {

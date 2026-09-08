@@ -316,7 +316,7 @@ phase_operator() {
     step "Running helm-docs..."
     run_helm_docs
 
-    # Step 11: Update clusterrole.yaml from upstream RBAC
+    # Step 9: Update clusterrole.yaml from upstream RBAC
     step "Updating clusterrole.yaml from upstream v${OPERATOR_VERSION}..."
     update_clusterrole "$OPERATOR_VERSION"
 

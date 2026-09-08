@@ -38,6 +38,11 @@ func TestImageRepository(t *testing.T) {
 			image: "operator:1.2.3",
 			want:  "operator",
 		},
+		{
+			name:  "repository with digest, no tag",
+			image: "registry.datadoghq.com/operator@sha256:0000",
+			want:  "registry.datadoghq.com/operator",
+		},
 	}
 
 	for _, tt := range tests {
