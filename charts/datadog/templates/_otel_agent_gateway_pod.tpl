@@ -1,3 +1,11 @@
+{{- define "otel-agent-gateway.controllerType" -}}
+{{- $type := .Values.otelAgentGateway.controller.type -}}
+{{- if not (or (eq $type "Deployment") (eq $type "StatefulSet")) -}}
+{{- fail (printf "otelAgentGateway.controller.type must be \"Deployment\" or \"StatefulSet\", got %q" $type) -}}
+{{- end -}}
+{{- $type -}}
+{{- end -}}
+
 {{- define "otel-agent-gateway.podTemplate" }}
   template:
     metadata:

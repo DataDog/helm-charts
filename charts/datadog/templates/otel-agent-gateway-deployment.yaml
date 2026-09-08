@@ -1,4 +1,4 @@
-{{- if and .Values.otelAgentGateway.enabled (ne .Values.otelAgentGateway.controller.type "StatefulSet") }}
+{{- if and .Values.otelAgentGateway.enabled (eq (include "otel-agent-gateway.controllerType" .) "Deployment") }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
