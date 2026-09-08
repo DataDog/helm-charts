@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.244.0
+
+* Bump Datadog Operator chart dependency to 2.26.0.
+* Bump Datadog CRD chart dependency to 2.24.0.
+* Bump Operator image tag to 1.30.0.
+
 ## 3.243.0
 
 * Add support for the Private Action Runner in split deployment mode.

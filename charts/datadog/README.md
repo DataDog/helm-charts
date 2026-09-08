@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.243.0](https://img.shields.io/badge/Version-3.243.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.244.0](https://img.shields.io/badge/Version-3.244.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -31,10 +31,10 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://helm.datadoghq.com | datadog-crds | 2.23.0 |
-| https://helm.datadoghq.com | datadog-instrumentation-crd(datadog-crds) | 2.23.0 |
+| https://helm.datadoghq.com | datadog-crds | 2.24.0 |
+| https://helm.datadoghq.com | datadog-instrumentation-crd(datadog-crds) | 2.24.0 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.17.0 |
-| https://helm.datadoghq.com | operator(datadog-operator) | 2.25.0 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.26.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -1092,7 +1092,7 @@ helm install <RELEASE_NAME> \
 | operator.datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | operator.datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
-| operator.image.tag | string | `"1.29.0"` | Define the Datadog Operator version to use |
+| operator.image.tag | string | `"1.30.0"` | Define the Datadog Operator version to use |
 | operator.untaintController.enabled | bool | `false` | Enables the Datadog Operator untaint controller (removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint once the Agent is ready) and adds the matching toleration to the Agent DaemonSet so it can schedule on tainted nodes. Requires Operator v1.28.0+ |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
