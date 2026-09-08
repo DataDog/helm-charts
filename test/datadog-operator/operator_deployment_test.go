@@ -1,7 +1,6 @@
 package datadog_operator
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,6 +9,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 
 	"github.com/DataDog/helm-charts/test/common"
+	"github.com/DataDog/helm-charts/test/utils"
 )
 
 // This test will produce two renderings for two versions of DatadogAgent.
@@ -310,8 +310,7 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	repo, _, _ := strings.Cut(operatorContainer.Image, ":")
-	assert.Equal(t, "registry.datadoghq.com/operator", repo)
+	assert.Equal(t, "registry.datadoghq.com/operator", utils.ImageRepository(operatorContainer.Image))
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 	assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=false")
