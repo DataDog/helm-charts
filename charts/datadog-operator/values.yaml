@@ -5,6 +5,10 @@
 # replicaCount -- Number of instances of Datadog Operator
 replicaCount: 1
 
+# podDisruptionBudget -- Set the PodDisruptionBudget spec of the Datadog Operator PODs, only created when replicaCount is greater than 1
+podDisruptionBudget: {}
+# unhealthyPodEvictionPolicy: AlwaysAllow
+
 # apiKey -- Your Datadog API key
 apiKey:  # <DATADOG_API_KEY>
 
