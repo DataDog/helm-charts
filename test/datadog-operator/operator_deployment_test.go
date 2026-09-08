@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
+	policyv1 "k8s.io/api/policy/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 
 	"github.com/DataDog/helm-charts/test/common"
@@ -135,6 +136,44 @@ func Test_operator_chart(t *testing.T) {
 				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 				assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=false")
 				assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=true")
+			},
+			skipTest: SkipTest,
+		},
+		{
+			name: "PodDisruptionBudget does not set unhealthyPodEvictionPolicy by default",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/pod_disruption_budget.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"replicaCount": "2",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var pdb policyv1.PodDisruptionBudget
+				common.Unmarshal(t, manifest, &pdb)
+				assert.Nil(t, pdb.Spec.UnhealthyPodEvictionPolicy)
+			},
+			skipTest: SkipTest,
+		},
+		{
+			name: "PodDisruptionBudget sets unhealthyPodEvictionPolicy when configured",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/pod_disruption_budget.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"replicaCount": "2",
+					"podDisruptionBudget.unhealthyPodEvictionPolicy": "AlwaysAllow",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var pdb policyv1.PodDisruptionBudget
+				common.Unmarshal(t, manifest, &pdb)
+				assert.NotNil(t, pdb.Spec.UnhealthyPodEvictionPolicy)
+				assert.Equal(t, policyv1.AlwaysAllow, *pdb.Spec.UnhealthyPodEvictionPolicy)
 			},
 			skipTest: SkipTest,
 		},
