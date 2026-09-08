@@ -2359,6 +2359,34 @@ spec:
       serviceAccountName: datadog-operator
       volumes: null
 ---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app.kubernetes.io/component: otel-agent-gateway-hpa
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-otel-agent-gateway-hpa
+spec:
+  behavior:
+    scaleDown: {}
+    scaleUp: {}
+  maxReplicas: 10
+  metrics:
+    - resource:
+        name: cpu
+        target:
+          averageUtilization: 80
+          type: Utilization
+      type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: datadog-otel-agent-gateway
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
