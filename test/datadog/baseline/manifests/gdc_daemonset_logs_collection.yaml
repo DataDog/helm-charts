@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.29.0
+    app.kubernetes.io/version: 1.30.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -149,7 +149,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.29.0
+    app.kubernetes.io/version: 1.30.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -455,7 +455,6 @@ rules:
       - datadoghq.com
     resources:
       - datadoginstrumentations
-      - extendeddaemonsetreplicasets
       - watermarkpodautoscalers
     verbs:
       - get
@@ -487,6 +486,15 @@ rules:
       - datadogpodautoscalers/status
     verbs:
       - '*'
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - extendeddaemonsetreplicasets
+    verbs:
+      - delete
+      - get
+      - list
+      - watch
   - apiGroups:
       - discovery.k8s.io
     resources:
@@ -1937,7 +1945,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.29.0
+    app.kubernetes.io/version: 1.30.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -1963,7 +1971,6 @@ spec:
     spec:
       containers:
         - args:
-            - -supportExtendedDaemonset=false
             - -logEncoder=json
             - -metrics-addr=:8383
             - -loglevel=info
@@ -1997,13 +2004,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-            - name: DD_REGISTRY_OVERRIDE_ASIA
-              value: "true"
-            - name: DD_REGISTRY_OVERRIDE_EU
-              value: "true"
-            - name: DD_REGISTRY_OVERRIDE_DEFAULT
-              value: "true"
-          image: registry.datadoghq.com/operator:1.29.0
+          image: registry.datadoghq.com/operator:1.30.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
