@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.245.0
+
+* Add an option to choose between StatefulSet or Deployment for OTel gateways ([#2906](https://github.com/DataDog/helm-charts/pull/2906)).
+
 ## 3.244.0
 
 * Bump Datadog Operator chart dependency to 2.26.0.
