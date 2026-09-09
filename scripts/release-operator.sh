@@ -316,18 +316,16 @@ phase_operator() {
     step "Running helm-docs..."
     run_helm_docs
 
-    # Step 9: Update CRD test baseline
-    # The Deployment baseline comparison normalizes away the image tag and
-    # "app.kubernetes.io/version" label, but the CRD baseline is compared
-    # as-is, so it still needs regenerating whenever datadog-crds brings in
-    # a real schema change. Only the CRD baseline is regenerated here so a
-    # real Deployment template regression isn't silently absorbed into the
-    # baseline by this same automated commit (see CONTP-2001).
-    step "Updating CRD test baseline (make update-test-baselines-operator-crd)..."
-    (cd "$ROOT_DIR" && make update-test-baselines-operator-crd)
-    success "CRD test baseline updated"
+    # Note: this phase intentionally does not regenerate any test baseline.
+    # The Deployment baseline is normalized against release-version noise, so
+    # it never needs regenerating here. The CRD baseline is compared as a
+    # literal diff and is NOT regenerated automatically: if this release
+    # advances datadog-crds with a real schema change, unit-test-operator CI
+    # on the resulting release PR will fail by design, so a human reviews the
+    # CRD diff and runs `make update-test-baselines-operator-crd` themselves
+    # rather than this worker silently absorbing the change (see CONTP-2001).
 
-    # Step 10: Update clusterrole.yaml from upstream RBAC
+    # Step 9: Update clusterrole.yaml from upstream RBAC
     step "Updating clusterrole.yaml from upstream v${OPERATOR_VERSION}..."
     update_clusterrole "$OPERATOR_VERSION"
 
