@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.258.1
+
+* Extend config sync (`DD_AGENT_IPC_PORT` / `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL`) to CWS direct send and compliance running in `system-probe`, alongside the CNM direct send case it already covered. `system-probe` submits these payloads itself and cannot resolve an `ENC[...]` secret handle, so without config sync a secret-backed `datadog.apiKey` would prevent it from shipping CWS events or compliance findings.
+
 ## 3.258.0
 
 * Bump Datadog Operator chart dependency to 2.30.0.
