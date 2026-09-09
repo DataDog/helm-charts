@@ -2694,6 +2694,10 @@ spec:
               value: "true"
             - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
               value: "false"
+            - name: DD_COMPLIANCE_CONFIG_ENABLED
+              value: "true"
+            - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+              value: 20m
             - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
               value: "true"
             - name: DD_INSTRUMENTATION_INSTALL_TIME

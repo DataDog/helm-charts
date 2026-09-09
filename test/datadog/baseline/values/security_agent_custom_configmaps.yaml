@@ -1,0 +1,14 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  securityAgent:
+    compliance:
+      enabled: true
+      configMap: my-custom-benchmarks
+      checkInterval: 45m
+      containerInclude: "image:my-app"
+      containerExclude: "image:datadog/agent"
+    runtime:
+      enabled: true
+      policies:
+        configMap: my-custom-policies
