@@ -2282,11 +2282,15 @@ spec:
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
-              value: 20m
+              value: 45m
             - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
               value: "true"
+            - name: DD_COMPLIANCE_CONFIG_CONTAINER_INCLUDE
+              value: image:my-app
+            - name: DD_COMPLIANCE_CONFIG_CONTAINER_EXCLUDE
+              value: image:datadog/agent
             - name: DD_AGENT_IPC_PORT
               value: "5009"
             - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
@@ -2376,6 +2380,12 @@ spec:
             - mountPath: /usr/src
               mountPropagation: None
               name: src
+              readOnly: true
+            - mountPath: /etc/datadog-agent/runtime-security.d
+              name: runtimepoliciesdir
+              readOnly: true
+            - mountPath: /etc/datadog-agent/compliance.d
+              name: complianceconfigdir
               readOnly: true
             - mountPath: /var/tmp/datadog-agent/system-probe/build
               mountPropagation: None
@@ -2599,6 +2609,12 @@ spec:
         - hostPath:
             path: /etc/group
           name: group
+        - configMap:
+            name: my-custom-benchmarks
+          name: complianceconfigdir
+        - configMap:
+            name: my-custom-policies
+          name: runtimepoliciesdir
         - hostPath:
             path: /var/run
           name: runtimesocketdir
@@ -2856,7 +2872,7 @@ spec:
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
-              value: 20m
+              value: 45m
             - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
               value: "true"
             - name: DD_INSTRUMENTATION_INSTALL_TIME
@@ -2938,6 +2954,9 @@ spec:
             - mountPath: /conf.d
               name: confd
               readOnly: true
+            - mountPath: /etc/datadog-agent/compliance.d
+              name: complianceconfigdir
+              readOnly: true
             - mountPath: /etc/datadog-agent
               name: config
       initContainers:
@@ -2974,6 +2993,9 @@ spec:
                 path: kubernetes_apiserver.d/kubernetes_apiserver.yaml
             name: datadog-cluster-agent-confd
           name: confd
+        - configMap:
+            name: my-custom-benchmarks
+          name: complianceconfigdir
         - emptyDir: {}
           name: config
 ---

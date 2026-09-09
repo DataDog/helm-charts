@@ -171,7 +171,7 @@
     path: /etc/passwd
   name: passwd
 {{- end }}
-{{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) }}
+{{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) (eq (include "should-enable-compliance-in-system-probe" .) "true") }}
 - hostPath:
     path: /
   name: hostroot
@@ -203,19 +203,17 @@
     path: /etc/group
   name: group
 {{- end }}
-{{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.compliance.enabled }}
+{{- if or (eq (include "should-enable-compliance" .) "true") (eq (include "should-enable-compliance-in-system-probe" .) "true") }}
 {{- if .Values.datadog.securityAgent.compliance.configMap }}
 - name: complianceconfigdir
   configMap:
     name: {{ .Values.datadog.securityAgent.compliance.configMap }}
 {{- end }}
 {{- end }}
-{{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- if and (eq (include "should-enable-runtime-security" .) "true") .Values.datadog.securityAgent.runtime.policies.configMap }}
 - name: runtimepoliciesdir
   configMap:
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
-{{- end }}
 {{- end }}
 {{- if (eq (include  "container-runtime-support-enabled" .) "true") }}
 - hostPath:

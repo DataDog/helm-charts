@@ -2310,6 +2310,12 @@ spec:
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
               value: "true"
+            - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+              value: 20m
+            - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+              value: "true"
+            - name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
+              value: "true"
             - name: DD_AGENT_IPC_PORT
               value: "5009"
             - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL

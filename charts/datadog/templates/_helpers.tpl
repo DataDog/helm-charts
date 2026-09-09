@@ -842,6 +842,32 @@ false
 {{- end -}}
 
 {{/*
+Return true if the compliance features should be enabled in system-probe. Mirrors
+"should-enable-compliance" for the other execution path, so the two are mutually exclusive.
+*/}}
+{{- define "should-enable-compliance-in-system-probe" -}}
+{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the compliance feature is enabled, whichever container runs the host checks.
+Settings that belong to the feature itself rather than to an execution path - the Cluster Agent
+Kubernetes checks and the custom benchmarks ConfigMap - must be gated on this instead of on
+"should-enable-security-agent", or they silently disappear when compliance moves to system-probe.
+*/}}
+{{- define "should-enable-compliance-feature" -}}
+{{- if and (not .Values.providers.gke.gdc) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the runtime security features should be enabled.
 */}}
 {{- define "should-enable-runtime-security" -}}
@@ -870,7 +896,7 @@ Return true if the hostPid features should be enabled for the Agent pod.
 {{- define "should-enable-host-pid" -}}
 {{- if eq .Values.targetSystem "windows" -}}
 false
-{{- else if and (not .Values.providers.gke.gdc) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
+{{- else if and (not .Values.providers.gke.gdc) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-compliance-in-system-probe" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
 true
 {{- else -}}
 false

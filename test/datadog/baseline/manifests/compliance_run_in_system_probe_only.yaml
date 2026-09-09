@@ -2272,11 +2272,19 @@ spec:
               value: "false"
             - name: DD_LOG_LEVEL
               value: INFO
+            - name: HOST_ROOT
+              value: /host/root
             - name: DD_DOGSTATSD_PORT
               value: "8125"
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
+              value: "true"
+            - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+              value: 20m
+            - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+              value: "true"
+            - name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
               value: "true"
             - name: DD_AGENT_IPC_PORT
               value: "5009"
@@ -2337,6 +2345,12 @@ spec:
               mountPropagation: None
               name: cgroups
               readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
+              readOnly: true
+            - mountPath: /etc/group
+              name: group
+              readOnly: true
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true
@@ -2348,6 +2362,10 @@ spec:
               readOnly: true
             - mountPath: /host/etc/lsb-release
               name: etc-lsb-release
+              readOnly: true
+            - mountPath: /host/root
+              mountPropagation: None
+              name: hostroot
               readOnly: true
             - mountPath: /lib/modules
               mountPropagation: None
@@ -2573,6 +2591,9 @@ spec:
         - hostPath:
             path: /etc/passwd
           name: passwd
+        - hostPath:
+            path: /
+          name: hostroot
         - hostPath:
             path: /etc/group
           name: group
@@ -2830,6 +2851,10 @@ spec:
               value: "true"
             - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
               value: "false"
+            - name: DD_COMPLIANCE_CONFIG_ENABLED
+              value: "true"
+            - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+              value: 20m
             - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
               value: "true"
             - name: DD_INSTRUMENTATION_INSTALL_TIME
