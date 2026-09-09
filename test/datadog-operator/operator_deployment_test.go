@@ -9,7 +9,6 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 
 	"github.com/DataDog/helm-charts/test/common"
-	"github.com/DataDog/helm-charts/test/utils"
 )
 
 // This test will produce two renderings for two versions of DatadogAgent.
@@ -310,7 +309,12 @@ func verifyDeployment(t *testing.T, manifest string) {
 	assert.Equal(t, 1, len(deployment.Spec.Template.Spec.Containers))
 	operatorContainer := deployment.Spec.Template.Spec.Containers[0]
 	assert.Equal(t, v1.PullPolicy("IfNotPresent"), operatorContainer.ImagePullPolicy)
-	assert.Equal(t, "registry.datadoghq.com/operator", utils.ImageRepository(operatorContainer.Image))
+	// The default image tag should always track the chart's own appVersion,
+	// exposed on the Deployment via the "app.kubernetes.io/version" label -
+	// this catches a release bump that updates one but not the other.
+	version := deployment.Labels["app.kubernetes.io/version"]
+	assert.NotEmpty(t, version, "app.kubernetes.io/version label should be set")
+	assert.Equal(t, "registry.datadoghq.com/operator:"+version, operatorContainer.Image)
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=false")
 	assert.NotContains(t, operatorContainer.Args, "-webhookEnabled=true")
 	assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=false")

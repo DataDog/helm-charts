@@ -316,7 +316,16 @@ phase_operator() {
     step "Running helm-docs..."
     run_helm_docs
 
-    # Step 9: Update clusterrole.yaml from upstream RBAC
+    # Step 9: Update test baselines
+    # The Deployment baseline comparison normalizes away the image tag and
+    # "app.kubernetes.io/version" label, but the CRD baseline is compared
+    # as-is, so it still needs regenerating whenever datadog-crds brings in
+    # a real schema change (see CONTP-2001).
+    step "Updating test baselines (make update-test-baselines-operator)..."
+    (cd "$ROOT_DIR" && make update-test-baselines-operator)
+    success "Test baselines updated"
+
+    # Step 10: Update clusterrole.yaml from upstream RBAC
     step "Updating clusterrole.yaml from upstream v${OPERATOR_VERSION}..."
     update_clusterrole "$OPERATOR_VERSION"
 
