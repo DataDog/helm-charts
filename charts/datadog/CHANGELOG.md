@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.254.2
+
+* Extend config sync (`DD_AGENT_IPC_PORT` / `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL`) to CWS direct send and compliance running in `system-probe`, alongside the CNM direct send case it already covered. `system-probe` submits these payloads itself and cannot resolve an `ENC[...]` secret handle, so without config sync a secret-backed `datadog.apiKey` would prevent it from shipping CWS events or compliance findings.
+
 ## 3.254.1
 
 * Update `fips.image.tag` to `1.1.31` fixing CVEs and updating packages.
