@@ -85,6 +85,15 @@ update-test-baselines-operator:
 	helm dependency update ./charts/datadog-operator 2>/dev/null
 	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
 
+# The CRD baseline (unlike the Deployment baseline) isn't normalized against
+# version noise, so it's the only one that needs regenerating on every
+# Operator release - scoped with -run so a real Deployment template
+# regression isn't silently absorbed by the same automated release commit.
+.PHONY: update-test-baselines-operator-crd
+update-test-baselines-operator-crd:
+	helm dependency update ./charts/datadog-operator 2>/dev/null
+	go test -C test ./datadog-operator -count=1 -run 'Test_baseline_manifests/DatadogAgent_CRD_default' -args -updateBaselines=true
+
 .PHONY: update-test-baselines-datadog-agent
 update-test-baselines-datadog-agent:
 	helm dependency update ./charts/datadog 2>/dev/null
