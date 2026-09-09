@@ -10,58 +10,62 @@ import (
 	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 )
 
-func Test_baseline_manifests(t *testing.T) {
-	tests := []struct {
-		name                 string
-		command              common.HelmCommand
-		baselineManifestPath string
-		assertions           func(t *testing.T, baselineManifestPath, manifest string)
-		skipTest             bool
-	}{
-		{
-			name: "Operator Deployment default",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides:   map[string]string{},
-			},
-			baselineManifestPath: "./baseline/Operator_Deployment_default.yaml",
-			assertions:           verifyOperatorDeployment,
-			skipTest:             SkipTest,
-		},
-		{
-			name: "DatadogAgent CRD default",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator",
-				ChartPath:   "../../charts/datadog-operator",
-				// datadogCRDs is an alias defined in the chart dependency
-				ShowOnly:  []string{"charts/datadogCRDs/templates/datadoghq.com_datadogagents_v1.yaml"},
-				Values:    []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{},
-			},
-			baselineManifestPath: "./baseline/DatadogAgent_CRD_default.yaml",
-			assertions:           verifyDatadogAgent,
-			skipTest:             SkipTest,
-		},
+// Test_baseline_deployment and Test_baseline_crd used to be rows of one shared
+// table-driven test, but they have different baseline-regeneration semantics:
+// the Deployment baseline is normalized against release-version noise (see
+// stripReleaseVersion) so it never needs regenerating on a release, while the
+// CRD baseline is compared as a literal diff and must be regenerated whenever
+// datadog-crds brings in a real schema change. They're split into separate
+// top-level tests so release automation can regenerate only the CRD baseline
+// via `go test -run '^Test_baseline_crd$'` (see Makefile's
+// update-test-baselines-operator-crd) without a Deployment template regression
+// silently getting absorbed into that same automated commit (see CONTP-2001).
+
+func Test_baseline_deployment(t *testing.T) {
+	if SkipTest {
+		t.Skip()
+	}
+	command := common.HelmCommand{
+		ReleaseName: "datadog-operator",
+		ChartPath:   "../../charts/datadog-operator",
+		ShowOnly:    []string{"templates/deployment.yaml"},
+		Values:      []string{"../../charts/datadog-operator/values.yaml"},
+		Overrides:   map[string]string{},
+	}
+	baselineManifestPath := "./baseline/Operator_Deployment_default.yaml"
+
+	manifest, err := common.RenderChart(t, command)
+	assert.Nil(t, err, "couldn't render template")
+	t.Log("update baselines", common.UpdateBaselines)
+	if common.UpdateBaselines {
+		common.WriteToFile(t, baselineManifestPath, manifest)
 	}
 
-	for _, tt := range tests {
-		if tt.skipTest {
-			continue
-		}
-		t.Run(tt.name, func(t *testing.T) {
-			manifest, err := common.RenderChart(t, tt.command)
-			assert.Nil(t, err, "couldn't render template")
-			t.Log("update baselines", common.UpdateBaselines)
-			if common.UpdateBaselines {
-				common.WriteToFile(t, tt.baselineManifestPath, manifest)
-			}
+	verifyOperatorDeployment(t, baselineManifestPath, manifest)
+}
 
-			tt.assertions(t, tt.baselineManifestPath, manifest)
-		})
+func Test_baseline_crd(t *testing.T) {
+	if SkipTest {
+		t.Skip()
 	}
+	command := common.HelmCommand{
+		ReleaseName: "datadog-operator",
+		ChartPath:   "../../charts/datadog-operator",
+		// datadogCRDs is an alias defined in the chart dependency
+		ShowOnly:  []string{"charts/datadogCRDs/templates/datadoghq.com_datadogagents_v1.yaml"},
+		Values:    []string{"../../charts/datadog-operator/values.yaml"},
+		Overrides: map[string]string{},
+	}
+	baselineManifestPath := "./baseline/DatadogAgent_CRD_default.yaml"
+
+	manifest, err := common.RenderChart(t, command)
+	assert.Nil(t, err, "couldn't render template")
+	t.Log("update baselines", common.UpdateBaselines)
+	if common.UpdateBaselines {
+		common.WriteToFile(t, baselineManifestPath, manifest)
+	}
+
+	verifyDatadogAgent(t, baselineManifestPath, manifest)
 }
 
 func verifyOperatorDeployment(t *testing.T, baselineManifestPath, manifest string) {
