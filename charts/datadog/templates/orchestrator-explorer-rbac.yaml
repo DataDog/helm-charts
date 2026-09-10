@@ -167,6 +167,29 @@ rules:
   - list
   - watch
   - get
+- apiGroups:
+  - ray.io
+  resources:
+  - rayclusters
+  - raycronjobs
+  - rayjobs
+  - rayservices
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - nvidia.com
+  resources:
+  - dynamocheckpoints
+  - dynamocomponentdeployments
+  - dynamographdeploymentrequests
+  - dynamographdeployments
+  - dynamographdeploymentscalingadapters
+  - dynamomodels
+  - dynamoworkermetadatas
+  verbs:
+  - list
+  - watch
 {{- if .Values.datadog.orchestratorExplorer.networkCRDs.enabled }}
 # Gateway API, service mesh, and ingress controller CRDs for internet-reachability analysis
 - apiGroups:

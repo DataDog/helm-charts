@@ -1,5 +1,35 @@
 # Datadog changelog
 
+## 3.244.0
+
+* Bump Datadog Operator chart dependency to 2.26.0.
+* Bump Datadog CRD chart dependency to 2.24.0.
+* Bump Operator image tag to 1.30.0.
+
+## 3.243.0
+
+* Add support for the Private Action Runner in split deployment mode.
+
+## 3.242.0
+
+* Grant the Cluster Agent read access to KubeRay and NVIDIA Dynamo custom resources collected by the orchestrator explorer.
+
+## 3.241.0
+
+* Enable the DatadogInstrumentation CRD controller (`datadog.instrumentationCrd.enabled`) by default for all Agent versions at or above 7.82.0, and install its CRD without unrelated Datadog CRDs.
+
+## 3.240.5
+
+* DDOT should use the same tag as the agent unless overriden ([#2876](https://github.com/DataDog/helm-charts/pull/2876)).
+
+## 3.240.4
+
+* default to true for direct send if doNotCheckTag ([#2861](https://github.com/DataDog/helm-charts/pull/2861)).
+
+## 3.240.3
+
+* Update the default Agent, Cluster Agent, and Cluster Checks Runner image version to 7.82.3.
+
 ## 3.240.2
 
 * [PROF-15646] selinux annotation on install-seccomp ([#2873](https://github.com/DataDog/helm-charts/pull/2873)).

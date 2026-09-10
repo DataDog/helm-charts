@@ -10,9 +10,8 @@ data:
   {{- if .Values.datadog.bootstrap.config }}
   {{- toYaml .Values.datadog.bootstrap.config | nindent 4 }}
   {{- end }}
-  {{- if .Values.datadog.bootstrap.secretFileContents }}
+  {{- if and .Values.datadog.bootstrap.secretFileContents (not (hasKey (default dict .Values.datadog.bootstrap.config) "secret")) }}
     secret:
-      sgc_path: /opt/datadog/observability-pipelines-worker/bin/datadog-secret-backend
       backend_type: json
       backend_config:
         file_path: /etc/observability-pipelines-secrets/secrets.json

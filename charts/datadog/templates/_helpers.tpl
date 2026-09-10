@@ -10,7 +10,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.81.1" -}}
+{{- $version = "7.82.3" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -22,7 +22,7 @@
 {{- $version := .Values.clusterAgent.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.81.1" -}}
+{{- $version = "7.82.3" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -117,7 +117,7 @@ true
 false
 {{- end -}}
 {{- else -}}
-false
+true
 {{- end -}}
 {{- end -}}
 
@@ -692,10 +692,13 @@ Return a remote otel-agent based on `.Values` (passed as .)
       {{- if semverCompare "<7.67.0" (include "get-agent-version" .) -}}
         {{- fail "datadog.otelCollector.useStandaloneImage is only supported for agent versions 7.67.0+. Please bump the agent version to 7.67.0+ or set datadog.otelCollector.useStandaloneImage to false and set agents.image.tagSuffix to `-full`" -}}
       {{- end -}}
-      {{- $ddotTag := include "get-agent-version" . -}}
-      {{- if eq (.Values.agents.image.tag | toString | trimSuffix "-jmx") "latest" -}}
-        {{- $ddotTag = "latest" -}}
-      {{- end -}}
+      {{/*
+      Preserve the raw Agent tag so floating tags (e.g. `latest`, `7`) stay in sync with the Agent image.
+      `get-agent-version` is only for the semver guards above; using it as the tag would pin floating tags
+      to the chart fallback version and produce a mismatched ddot-collector image. The `-jmx` suffix is
+      dropped since the ddot-collector image has no `-jmx` variant.
+      */}}
+      {{- $ddotTag := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
       {{- $ddotImage := dict "name" "ddot-collector" "tag" $ddotTag -}}
       {{- if and (eq (include "use-fips-images" .Values) "true") (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" .)) -}}
         {{- fail "The standalone FIPS ddot-collector image is not available before 7.78.0. Upgrade agents.image.tag to 7.78.0+, set useFIPSAgent to false, or set agents.image.doNotCheckTag to true." -}}
@@ -1514,6 +1517,14 @@ Validate Node Agent Private Action Runner configuration
 */}}
 {{- define "validate-node-private-action-runner-config" -}}
 {{- if .Values.datadog.privateActionRunner.enabled -}}
+{{- if .Values.datadog.privateActionRunner.splitEnabled -}}
+{{- if or .Values.useFIPSAgent .Values.fips.enabled -}}
+{{- fail "Node Agent Private Action Runner split mode does not support FIPS." -}}
+{{- end -}}
+{{- if and (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.84.0-0" (include "get-agent-version" .)) -}}
+{{- fail "Node Agent Private Action Runner split mode requires Datadog Agent 7.84.0 or newer." -}}
+{{- end -}}
+{{- end -}}
 {{- if not .Values.datadog.privateActionRunner.selfEnroll -}}
 {{- if and (not .Values.datadog.privateActionRunner.identityFromExistingSecret) (or (not .Values.datadog.privateActionRunner.urn) (not .Values.datadog.privateActionRunner.privateKey)) -}}
 {{- fail "Node Agent Private Action Runner: when selfEnroll is disabled, you must provide either datadog.privateActionRunner.identityFromExistingSecret or both datadog.privateActionRunner.urn and datadog.privateActionRunner.privateKey" }}

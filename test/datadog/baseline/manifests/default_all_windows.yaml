@@ -187,6 +187,21 @@ rules:
       - list
       - watch
   - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadoginstrumentations
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadoginstrumentations/status
+    verbs:
+      - patch
+      - update
+  - apiGroups:
       - ""
     resourceNames:
       - datadogtoken
@@ -629,6 +644,29 @@ rules:
       - list
       - watch
       - get
+  - apiGroups:
+      - ray.io
+    resources:
+      - rayclusters
+      - raycronjobs
+      - rayjobs
+      - rayservices
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - nvidia.com
+    resources:
+      - dynamocheckpoints
+      - dynamocomponentdeployments
+      - dynamographdeploymentrequests
+      - dynamographdeployments
+      - dynamographdeploymentscalingadapters
+      - dynamomodels
+      - dynamoworkermetadatas
+    verbs:
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -1035,11 +1073,13 @@ spec:
               value: /var/lib/kubelet/pod-resources/kubelet.sock
             - name: DD_SYSTEM_PROBE_ENABLED
               value: "false"
+            - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
+              value: "true"
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.81.1
+          image: registry.datadoghq.com/agent:7.82.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1146,7 +1186,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.81.1
+          image: registry.datadoghq.com/agent:7.82.3
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources: {}
@@ -1172,7 +1212,7 @@ spec:
           command:
             - pwsh
             - -Command
-          image: registry.datadoghq.com/agent:7.81.1
+          image: registry.datadoghq.com/agent:7.82.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1216,7 +1256,7 @@ spec:
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: registry.datadoghq.com/agent:7.81.1
+          image: registry.datadoghq.com/agent:7.82.3
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1415,6 +1455,8 @@ spec:
               value: "true"
             - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
               value: "false"
+            - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
+              value: "true"
             - name: DD_INSTRUMENTATION_INSTALL_TIME
               valueFrom:
                 configMapKeyRef:
@@ -1430,7 +1472,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.81.1
+          image: registry.datadoghq.com/cluster-agent:7.82.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1503,7 +1545,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/cluster-agent:7.81.1
+          image: registry.datadoghq.com/cluster-agent:7.82.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

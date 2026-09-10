@@ -1,8 +1,12 @@
 # Changelog
 
+## 2.26.0
+
+* Update Datadog Operator chart for 1.30.0.
+
 ## 2.26.0-dev.5
 
-* feat(datadog-operator): enable Linux ADP default ([#2879](https://github.com/DataDog/helm-charts/pull/2879)).
+* Update Datadog Operator chart for 1.30.0-rc.3.
 
 ## 2.26.0-dev.4
 
