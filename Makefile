@@ -85,7 +85,7 @@ update-test-baselines-operator:
 	helm dependency update ./charts/datadog-operator 2>/dev/null
 	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
 
-# Scoped to Test_baseline_crd; called automatically by release-operator.sh (CONTP-2001).
+# Scoped to Test_baseline_crd; called automatically by release-operator.sh.
 .PHONY: update-test-baselines-operator-crd
 update-test-baselines-operator-crd:
 	helm dependency update ./charts/datadog-operator 2>/dev/null

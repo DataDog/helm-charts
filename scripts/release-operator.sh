@@ -316,7 +316,7 @@ phase_operator() {
     step "Running helm-docs..."
     run_helm_docs
 
-    # Step 9: Update CRD test baseline (CONTP-2001)
+    # Step 9: Regenerate CRD test baseline only
     step "Updating CRD test baseline (make update-test-baselines-operator-crd)..."
     (cd "$ROOT_DIR" && make update-test-baselines-operator-crd)
     success "CRD test baseline updated"

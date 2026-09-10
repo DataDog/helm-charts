@@ -12,7 +12,7 @@ import (
 
 // Split so release automation can regenerate just the CRD baseline (see
 // Makefile's update-test-baselines-operator-crd) without touching the
-// Deployment baseline (CONTP-2001).
+// Deployment baseline.
 
 func Test_baseline_deployment(t *testing.T) {
 	if SkipTest {
@@ -65,7 +65,7 @@ func verifyOperatorDeployment(t *testing.T, baselineManifestPath, manifest strin
 	// The image tag and the "app.kubernetes.io/version" label (sourced from
 	// Chart.AppVersion) both change with every Operator release and aren't
 	// part of the chart structure this baseline is meant to protect, so
-	// they're stripped before comparing (see CONTP-2001).
+	// they're stripped before comparing.
 	utils.VerifyBaseline(t, baselineManifestPath, manifest, appsv1.Deployment{}, appsv1.Deployment{}, stripReleaseVersion)
 }
 
