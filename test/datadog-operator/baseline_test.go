@@ -5,8 +5,6 @@ import (
 
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/DataDog/helm-charts/test/utils"
-	"github.com/google/go-cmp/cmp"
-	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/assert"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -18,11 +16,6 @@ func Test_baseline_manifests(t *testing.T) {
 		command              common.HelmCommand
 		baselineManifestPath string
 		assertions           func(t *testing.T, baselineManifestPath, manifest string)
-		// needsUpdate reports whether the baseline should actually be
-		// rewritten when regenerating. Nil means always rewrite. The
-		// Deployment baseline sets this so a routine Operator release
-		// (image tag / version bump only) doesn't touch the file.
-		needsUpdate func(t *testing.T, baselineManifestPath, manifest string) bool
 	}{
 		{
 			name: "Operator Deployment default",
@@ -35,7 +28,6 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			baselineManifestPath: "./baseline/Operator_Deployment_default.yaml",
 			assertions:           verifyOperatorDeployment,
-			needsUpdate:          deploymentNeedsUpdate,
 		},
 		{
 			name: "DatadogAgent CRD default",
@@ -49,8 +41,6 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			baselineManifestPath: "./baseline/DatadogAgent_CRD_default.yaml",
 			assertions:           verifyDatadogAgent,
-			// No needsUpdate: a real datadog-crds schema change is real
-			// content, so this baseline always regenerates.
 		},
 	}
 
@@ -62,29 +52,13 @@ func Test_baseline_manifests(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
 			assert.Nil(t, err, "couldn't render template")
 			t.Log("update baselines", common.UpdateBaselines)
-			if common.UpdateBaselines && (tt.needsUpdate == nil || tt.needsUpdate(t, tt.baselineManifestPath, manifest)) {
+			if common.UpdateBaselines {
 				common.WriteToFile(t, tt.baselineManifestPath, manifest)
 			}
 
 			tt.assertions(t, tt.baselineManifestPath, manifest)
 		})
 	}
-}
-
-// deploymentNeedsUpdate reports whether the rendered Deployment differs from
-// the baseline once release-specific fields (image tag, version label) are
-// stripped from both, so regenerating on a routine release is a no-op.
-func deploymentNeedsUpdate(t *testing.T, baselineManifestPath, manifest string) bool {
-	var actual, baseline appsv1.Deployment
-	common.Unmarshal(t, manifest, &actual)
-	common.LoadFromFile(t, baselineManifestPath, &baseline)
-	stripReleaseVersion(&actual)
-	stripReleaseVersion(&baseline)
-
-	ops := cmpopts.IgnoreMapEntries(func(k, v string) bool {
-		return k == "helm.sh/chart"
-	})
-	return !cmp.Equal(baseline, actual, ops)
 }
 
 func verifyOperatorDeployment(t *testing.T, baselineManifestPath, manifest string) {

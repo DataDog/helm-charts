@@ -11,7 +11,7 @@ import (
 
 // Normalizer mutates a loaded manifest in place before it's compared, e.g. to
 // strip out fields that are expected to vary independently of chart
-// structure (see stripImageTag in test/datadog-operator/baseline_test.go).
+// structure (see stripReleaseVersion in test/datadog-operator/baseline_test.go).
 type Normalizer[T any] func(*T)
 
 func VerifyBaseline[T any](t *testing.T, baselineManifestPath, manifest string, baseline, actual T, normalizers ...Normalizer[T]) {
