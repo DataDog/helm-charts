@@ -16,6 +16,7 @@ func Test_baseline_manifests(t *testing.T) {
 		command              common.HelmCommand
 		baselineManifestPath string
 		assertions           func(t *testing.T, baselineManifestPath, manifest string)
+		skipTest             bool
 	}{
 		{
 			name: "Operator Deployment default",
@@ -28,6 +29,7 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			baselineManifestPath: "./baseline/Operator_Deployment_default.yaml",
 			assertions:           verifyOperatorDeployment,
+			skipTest:             SkipTest,
 		},
 		{
 			name: "DatadogAgent CRD default",
@@ -41,12 +43,13 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			baselineManifestPath: "./baseline/DatadogAgent_CRD_default.yaml",
 			assertions:           verifyDatadogAgent,
+			skipTest:             SkipTest,
 		},
 	}
 
 	for _, tt := range tests {
-		if SkipTest {
-			t.Skip()
+		if tt.skipTest {
+			continue
 		}
 		t.Run(tt.name, func(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
