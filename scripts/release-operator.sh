@@ -316,10 +316,10 @@ phase_operator() {
     step "Running helm-docs..."
     run_helm_docs
 
-    # Step 9: Regenerate CRD test baseline only
-    step "Updating CRD test baseline (make update-test-baselines-operator-crd)..."
-    (cd "$ROOT_DIR" && make update-test-baselines-operator-crd)
-    success "CRD test baseline updated"
+    # Step 9: Update test baselines
+    step "Updating test baselines (make update-test-baselines-operator)..."
+    (cd "$ROOT_DIR" && make update-test-baselines-operator)
+    success "Test baselines updated"
 
     # Step 10: Update clusterrole.yaml from upstream RBAC
     step "Updating clusterrole.yaml from upstream v${OPERATOR_VERSION}..."
