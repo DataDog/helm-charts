@@ -10,16 +10,9 @@ import (
 	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 )
 
-// Test_baseline_deployment and Test_baseline_crd used to be rows of one shared
-// table-driven test, but they have different baseline-regeneration semantics:
-// the Deployment baseline is normalized against release-version noise (see
-// stripReleaseVersion) so it never needs regenerating on a release, while the
-// CRD baseline has no such normalization and must be regenerated whenever
-// datadog-crds brings in a real schema change. They're split into separate
-// top-level tests so release automation can regenerate only the CRD baseline
-// via `go test -run '^Test_baseline_crd$'` (see Makefile's
-// update-test-baselines-operator-crd) without a Deployment template regression
-// silently getting absorbed into that same automated commit (see CONTP-2001).
+// Split so release automation can regenerate just the CRD baseline (see
+// Makefile's update-test-baselines-operator-crd) without touching the
+// Deployment baseline (CONTP-2001).
 
 func Test_baseline_deployment(t *testing.T) {
 	if SkipTest {

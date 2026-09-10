@@ -85,11 +85,7 @@ update-test-baselines-operator:
 	helm dependency update ./charts/datadog-operator 2>/dev/null
 	go test -C test ./datadog-operator -count=1 -args -updateBaselines=true
 
-# The CRD baseline (unlike the Deployment baseline) isn't normalized against
-# version noise, so it's the only one that needs regenerating on a release -
-# release-operator.sh calls this automatically. Scoped to the Test_baseline_crd
-# function (see test/datadog-operator/baseline_test.go) so this can't also
-# regenerate the Deployment baseline and mask a real template regression.
+# Scoped to Test_baseline_crd; called automatically by release-operator.sh (CONTP-2001).
 .PHONY: update-test-baselines-operator-crd
 update-test-baselines-operator-crd:
 	helm dependency update ./charts/datadog-operator 2>/dev/null
