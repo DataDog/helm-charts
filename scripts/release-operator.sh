@@ -319,11 +319,14 @@ phase_operator() {
     # Step 9: Update CRD test baseline
     # The Deployment baseline is normalized against release-version noise (see
     # stripReleaseVersion), so it never needs regenerating here. The CRD
-    # baseline has no such normalization - it's a literal diff - so if this
-    # release advances datadog-crds with a schema change, it needs
-    # regenerating or unit-test-operator will fail on the resulting release
-    # PR. Scoped to Test_baseline_crd only, so this can't also mask a real
-    # Deployment template regression by regenerating that baseline too.
+    # baseline has no such normalization, so if this release advances
+    # datadog-crds with a schema change, it needs regenerating or
+    # unit-test-operator will fail on the resulting release PR. That schema
+    # change was already authored and reviewed in its own PR during the
+    # earlier `crds` phase (see phase_crds above) - this just mirrors the
+    # already-approved change into the downstream baseline. Scoped to
+    # Test_baseline_crd only, so this can't also mask a real Deployment
+    # template regression by regenerating that baseline too.
     step "Updating CRD test baseline (make update-test-baselines-operator-crd)..."
     (cd "$ROOT_DIR" && make update-test-baselines-operator-crd)
     success "CRD test baseline updated"

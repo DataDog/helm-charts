@@ -14,7 +14,7 @@ import (
 // table-driven test, but they have different baseline-regeneration semantics:
 // the Deployment baseline is normalized against release-version noise (see
 // stripReleaseVersion) so it never needs regenerating on a release, while the
-// CRD baseline is compared as a literal diff and must be regenerated whenever
+// CRD baseline has no such normalization and must be regenerated whenever
 // datadog-crds brings in a real schema change. They're split into separate
 // top-level tests so release automation can regenerate only the CRD baseline
 // via `go test -run '^Test_baseline_crd$'` (see Makefile's
