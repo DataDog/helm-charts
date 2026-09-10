@@ -316,16 +316,19 @@ phase_operator() {
     step "Running helm-docs..."
     run_helm_docs
 
-    # Note: this phase intentionally does not regenerate any test baseline.
-    # The Deployment baseline is normalized against release-version noise, so
-    # it never needs regenerating here. The CRD baseline is compared as a
-    # literal diff and is NOT regenerated automatically: if this release
-    # advances datadog-crds with a real schema change, unit-test-operator CI
-    # on the resulting release PR will fail by design, so a human reviews the
-    # CRD diff and runs `make update-test-baselines-operator-crd` themselves
-    # rather than this worker silently absorbing the change (see CONTP-2001).
+    # Step 9: Update CRD test baseline
+    # The Deployment baseline is normalized against release-version noise (see
+    # stripReleaseVersion), so it never needs regenerating here. The CRD
+    # baseline has no such normalization - it's a literal diff - so if this
+    # release advances datadog-crds with a schema change, it needs
+    # regenerating or unit-test-operator will fail on the resulting release
+    # PR. Scoped to Test_baseline_crd only, so this can't also mask a real
+    # Deployment template regression by regenerating that baseline too.
+    step "Updating CRD test baseline (make update-test-baselines-operator-crd)..."
+    (cd "$ROOT_DIR" && make update-test-baselines-operator-crd)
+    success "CRD test baseline updated"
 
-    # Step 9: Update clusterrole.yaml from upstream RBAC
+    # Step 10: Update clusterrole.yaml from upstream RBAC
     step "Updating clusterrole.yaml from upstream v${OPERATOR_VERSION}..."
     update_clusterrole "$OPERATOR_VERSION"
 
