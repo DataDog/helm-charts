@@ -46,6 +46,44 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
+			name: "defaultDataPlaneEnabled linux default renders true",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Contains(t, operatorContainer.Env, v1.EnvVar{Name: "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED", Value: "true"})
+				assert.NotContains(t, operatorContainer.Env, v1.EnvVar{Name: "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED", Value: "false"})
+			},
+			skipTest: SkipTest,
+		},
+		{
+			name: "defaultDataPlaneEnabled linux false renders false",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"defaultDataPlaneEnabled.linux": "false",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var deployment appsv1.Deployment
+				common.Unmarshal(t, manifest, &deployment)
+				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+				assert.Contains(t, operatorContainer.Env, v1.EnvVar{Name: "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED", Value: "false"})
+				assert.NotContains(t, operatorContainer.Env, v1.EnvVar{Name: "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED", Value: "true"})
+			},
+			skipTest: SkipTest,
+		},
+		{
 			name: "Rendering all does not fail",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
