@@ -384,11 +384,6 @@ phase_datadog() {
     step "Running helm-docs..."
     run_helm_docs
 
-    # Step 8: Update test baselines
-    step "Updating test baselines (make update-test-baselines-datadog-agent)..."
-    (cd "$ROOT_DIR" && make update-test-baselines-datadog-agent)
-    success "Test baselines updated"
-
     success "=== Datadog chart phase complete ==="
 }
 
