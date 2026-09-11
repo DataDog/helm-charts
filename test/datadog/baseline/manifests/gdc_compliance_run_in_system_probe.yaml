@@ -1709,6 +1709,10 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-gdc
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
+            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+              value: "60"
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_DOGSTATSD_PORT
