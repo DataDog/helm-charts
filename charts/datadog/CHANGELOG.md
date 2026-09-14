@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.245.1
+
+* Internal cleanup: Use get-agent-version for semverCompare ([#2885](https://github.com/DataDog/helm-charts/pull/2885)).
+
 ## 3.245.0
 
 * Add an option to choose between StatefulSet or Deployment for OTel gateways ([#2906](https://github.com/DataDog/helm-charts/pull/2906)).
