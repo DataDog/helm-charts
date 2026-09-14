@@ -1931,3 +1931,31 @@ Examples (assuming no overrides):
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return true if KSM node pod collection is supported
+*/}}
+{{- define "ksm-pod-collection-on-node-supported" -}}
+{{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+{{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+{{- if and $agentVersionOK $dcaVersionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if KSM pod collection on nodes is enabled and supported
+*/}}
+{{- define "ksm-pod-collection-on-node-enabled" -}}
+{{- if and
+  .Values.datadog.kubeStateMetricsCore.enabled
+  (eq .Values.datadog.kubeStateMetricsCore.podCollectionMode "node_kubelet")
+  (eq (include "ksm-pod-collection-on-node-supported" .) "true")
+-}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
