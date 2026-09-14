@@ -41,7 +41,11 @@
     - name: config
       mountPath: /etc/datadog-agent
       readOnly: false # Need RW for config path
-    {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+    {{- if or
+      .Values.datadog.confd
+      .Values.datadog.autoconf
+      (eq (include "ksm-pod-collection-on-node-enabled" .) "true")
+    }}
     - name: confd
       mountPath: /conf.d
       readOnly: true
