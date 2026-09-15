@@ -4,7 +4,9 @@
   Returns node agent version based on image tag. This assumes `agents.image.doNotCheckTag` is false.
 */}}
 {{- define "get-agent-version" -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
+{{- $version := .Values.agents.image.tag | toString -}}
+{{/* Strip build-variant suffixes so version guards compare on a clean version. */}}
+{{- $version = regexReplaceAll "(-jmx|-full|-fips|-servercore)+$" $version "" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
 {{- $version = "6.55.1" -}}
@@ -679,8 +681,8 @@ Return a remote otel-agent based on `.Values` (passed as .)
     */}}
     {{- $agentTag := .Values.agents.image.tag | toString -}}
     {{- if hasSuffix "-full" $agentTag -}}
-      {{- $cleanVersion := $agentTag | trimSuffix "-full" -}}
-      {{- if semverCompare "<7.67.0" $cleanVersion -}}
+      {{/* `get-agent-version` strips the `-full` suffix and resolves floating tags, so this compares on a clean version. */}}
+      {{- if semverCompare "<7.67.0" (include "get-agent-version" .) -}}
         {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
       {{- else -}}
         {{- fail "Setting `7.X.Y-full` in `agents.image.tag` with `datadog.otelCollector.useStandaloneImage=true` is not supported for agent versions >= 7.67.0. Options: (1) Remove the `-full` suffix from `agents.image.tag`, or (2) Set `datadog.otelCollector.useStandaloneImage=false`." -}}
@@ -1449,9 +1451,7 @@ In 7.36, `--config` was deprecated and `--cfgpath` should be used instead.
 {{- if  .Values.providers.gke.autopilot -}}
 -config
 {{- else if not .Values.agents.image.doNotCheckTag -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
-{{- $length := len (split "." $version ) -}}
-{{- if and (gt $length 1) (not (semverCompare "^6.36.0 || ^7.36.0" $version)) -}}
+{{- if not (semverCompare "^6.36.0 || ^7.36.0" (include "get-agent-version" .)) -}}
 --config
 {{- else -}}
 --cfgpath
