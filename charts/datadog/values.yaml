@@ -307,7 +307,8 @@ datadog:
     # on the cluster-side and node-side check instances, which silences those aggregate
     # metrics on both, and schedules a dedicated `cluster_aggregates_only`
     # instance on the cluster-side component to collect them instead.
-    # Requires Agent / Cluster Agent 7.82+.
+    # Requires Agent / Cluster Agent 7.82+, and Cluster Checks Runner 7.82+
+    # when datadog.kubeStateMetricsCore.useClusterCheckRunners is enabled.
     #
     # When `clusterAgent.confd` or `clusterAgent.advancedConfd` is also set, the
     # chart deploys the node-side check but does NOT modify the user-supplied
@@ -2901,6 +2902,13 @@ clusterChecksRunner:
 
     # clusterChecksRunner.image.repository -- Override default registry + image.name for Cluster Check Runners
     repository:
+
+    # clusterChecksRunner.image.doNotCheckTag -- Skip the version and chart compatibility check
+
+    ## By default, the version check is enabled. To disable the version check,
+    ## set this value to true. This is useful if you use a custom Agent image
+    ## whose version cannot be inferred from its tag.
+    doNotCheckTag:  # false
 
     # clusterChecksRunner.image.pullPolicy -- Datadog Agent image pull policy
     pullPolicy: IfNotPresent
