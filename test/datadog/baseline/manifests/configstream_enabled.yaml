@@ -14,12 +14,40 @@ automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
   labels:
+    app: datadog
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+    heritage: Helm
+    release: datadog
+  name: datadog-cluster-agent
+  namespace: datadog-agent
+---
+apiVersion: v1
+automountServiceAccountToken: true
+kind: ServiceAccount
+metadata:
+  labels:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
   name: datadog
   namespace: datadog-agent
+---
+apiVersion: v1
+data: {}
+kind: Secret
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-cluster-agent
+  namespace: datadog-agent
+type: Opaque
 ---
 apiVersion: v1
 data:
@@ -116,109 +144,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  otel-config.yaml: |
-    receivers:
-      otlp:
-        protocols:
-          grpc:
-             endpoint: 0.0.0.0:4317
-          http:
-             endpoint: 0.0.0.0:4318
-    exporters:
-      otlphttp:
-        endpoint: http://datadog-otel-agent-gateway:4318
-        tls:
-          insecure: true
-        sending_queue:
-          batch:
-            flush_timeout: 10s
-    processors:
-      infraattributes:
-        cardinality: 2
-    connectors:
-      datadog/connector:
-        traces:
-          compute_top_level_by_span_kind: true
-          peer_tags_aggregation: true
-          compute_stats_by_span_kind: true
-    service:
-      pipelines:
-        traces:
-          receivers: [otlp]
-          processors: [infraattributes]
-          exporters: [otlphttp, datadog/connector]
-        metrics:
-          receivers: [otlp, datadog/connector]
-          processors: [infraattributes]
-          exporters: [otlphttp]
-        logs:
-          receivers: [otlp]
-          processors: [infraattributes]
-          exporters: [otlphttp]
-kind: ConfigMap
-metadata:
-  annotations: {}
-  labels:
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
-  name: datadog-otel-config
-  namespace: datadog-agent
----
-apiVersion: v1
-data:
-  otel-gateway-config.yaml: |
-    receivers:
-      otlp:
-        protocols:
-          grpc:
-             endpoint: 0.0.0.0:4317
-          http:
-             endpoint: 0.0.0.0:4318
-    exporters:
-      datadog:
-        api:
-          key: ${env:DD_API_KEY}
-          site: "datadoghq.com"
-        sending_queue:
-          batch:
-            flush_timeout: 10s
-    processors:
-    extensions:
-      health_check:
-        endpoint: 0.0.0.0:13133
-      datadog:
-        api:
-          key: ${env:DD_API_KEY}
-          site: "datadoghq.com"
-        deployment_type: gateway
-    service:
-      extensions: [health_check, datadog]
-      pipelines:
-        traces:
-          receivers: [otlp]
-          exporters: [datadog]
-        metrics:
-          receivers: [otlp]
-          exporters: [datadog]
-        logs:
-          receivers: [otlp]
-          exporters: [datadog]
-kind: ConfigMap
-metadata:
-  annotations: {}
-  labels:
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
-  name: datadog-otel-gateway-config
-  namespace: datadog-agent
----
-apiVersion: v1
-data:
-  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: false\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: false\n  conntrack_init_timeout: 10s\n  direct_send: false\nservice_monitoring_config:\n  enabled: false\n  tls:\ntraceroute:\n  enabled: false\ndiscovery:\n  enabled: true\n  use_system_probe_lite: true\n  network_stats:\n    enabled: true\n  service_map:\n    enabled: false\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: false\n  use_secruntime_track: true\n  direct_send_from_system_probe: false\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: false \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: false\n  compliance_module:\n    enabled: false\ndynamic_instrumentation:\n  enabled: false\ncompliance_config:\n  enabled: false\n"
+  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: false\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: true\n  conntrack_init_timeout: 10s\n  direct_send: true\nservice_monitoring_config:\n  enabled: false\n  tls:\ntraceroute:\n  enabled: false\ndiscovery:\n  enabled: true\n  use_system_probe_lite: true\n  network_stats:\n    enabled: true\n  service_map:\n    enabled: false\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: true\n  use_secruntime_track: true\n  direct_send_from_system_probe: false\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: true \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: true\n  compliance_module:\n    enabled: false\ndynamic_instrumentation:\n  enabled: false\ncompliance_config:\n  enabled: false\n"
 kind: ConfigMap
 metadata:
   labels:
@@ -320,6 +246,7 @@ data:
             "inotify_rm_watch",
             "ioctl",
             "ipc",
+            "kill",
             "listen",
             "lseek",
             "lstat",
@@ -1123,6 +1050,276 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
+  name: datadog-cluster-agent
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - endpoints
+      - pods
+      - nodes
+      - namespaces
+      - componentstatuses
+      - limitranges
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - quota.openshift.io
+    resources:
+      - clusterresourcequotas
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadoginstrumentations
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - datadoginstrumentations/status
+    verbs:
+      - patch
+      - update
+  - apiGroups:
+      - ""
+    resourceNames:
+      - datadogtoken
+      - datadogtoken
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resourceNames:
+      - datadog-leader-election
+      - datadog-leader-election
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - coordination.k8s.io
+    resourceNames:
+      - datadog-leader-election
+    resources:
+      - leases
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - events
+    verbs:
+      - create
+  - nonResourceURLs:
+      - /version
+      - /healthz
+      - /metrics
+    verbs:
+      - get
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resourceNames:
+      - datadog-webhook
+    resources:
+      - validatingwebhookconfigurations
+      - mutatingwebhookconfigurations
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - delete
+  - apiGroups:
+      - admissionregistration.k8s.io
+    resources:
+      - validatingwebhookconfigurations
+      - mutatingwebhookconfigurations
+    verbs:
+      - create
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+      - cronjobs
+    verbs:
+      - get
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+      - replicasets
+      - deployments
+      - daemonsets
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - replicationcontrollers
+    verbs:
+      - get
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - csidrivers
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts
+      - namespaces
+    verbs:
+      - list
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - clusterrolebindings
+      - rolebindings
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - list
+  - apiGroups:
+      - security.openshift.io
+    resourceNames:
+      - datadog-cluster-agent
+      - hostnetwork
+    resources:
+      - securitycontextconstraints
+    verbs:
+      - use
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gateways
+      - gatewayclasses
+    verbs:
+      - get
+      - list
+      - watch
+      - patch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - referencegrants
+    verbs:
+      - get
+      - delete
+      - create
+      - patch
+  - apiGroups:
+      - gateway.envoyproxy.io
+    resources:
+      - envoyextensionpolicies
+      - backends
+    verbs:
+      - get
+      - delete
+      - create
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - envoyfilters
+    verbs:
+      - get
+      - create
+      - delete
+  - apiGroups:
+      - networking.istio.io
+    resources:
+      - gateways
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingressclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
   name: datadog-ksm-core
 rules:
   - apiGroups:
@@ -1224,83 +1421,203 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
-  name: datadog
+  name: datadog-orchestrator-explorer
 rules:
   - apiGroups:
       - ""
+    resourceNames:
+      - kube-system
     resources:
-      - services
-      - events
-      - endpoints
+      - namespaces
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resourceNames:
+      - datadog-cluster-id
+    resources:
+      - configmaps
+    verbs:
+      - create
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
       - pods
       - nodes
       - namespaces
-      - componentstatuses
+      - limitranges
+      - services
+      - persistentvolumes
+      - persistentvolumeclaims
+      - serviceaccounts
     verbs:
-      - get
       - list
+      - get
       - watch
   - apiGroups:
       - discovery.k8s.io
     resources:
       - endpointslices
     verbs:
+      - list
+      - watch
+  - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - replicasets
+      - daemonsets
+      - statefulsets
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - batch
+    resources:
+      - cronjobs
+      - jobs
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+      - networkpolicies
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - roles
+      - rolebindings
+      - clusterroles
+      - clusterrolebindings
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - storage.k8s.io
+    resources:
+      - storageclasses
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - autoscaling.k8s.io
+    resources:
+      - verticalpodautoscalers
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - list
+      - get
+      - watch
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
       - get
       - list
       - watch
   - apiGroups:
-      - quota.openshift.io
+      - datadoghq.com
+      - eks.amazonaws.com
+      - karpenter.azure.com
+      - karpenter.k8s.aws
+      - karpenter.sh
     resources:
-      - clusterresourcequotas
+      - '*'
     verbs:
-      - get
       - list
+      - watch
   - apiGroups:
-      - ""
-    resourceNames:
-      - datadogtoken
-      - datadogtoken
+      - argoproj.io
     resources:
-      - configmaps
+      - rollouts
+      - applications
+      - applicationsets
     verbs:
+      - list
+      - watch
       - get
-      - update
   - apiGroups:
-      - ""
-    resourceNames:
-      - datadog-leader-election
-      - datadog-leader-election
+      - source.toolkit.fluxcd.io
     resources:
-      - configmaps
+      - buckets
+      - helmcharts
+      - externalartifacts
+      - gitrepositories
+      - helmrepositories
+      - ocirepositories
     verbs:
+      - list
+      - watch
       - get
-      - update
   - apiGroups:
-      - ""
+      - kustomize.toolkit.fluxcd.io
     resources:
-      - configmaps
+      - kustomizations
     verbs:
-      - create
-  - apiGroups:
-      - coordination.k8s.io
-    resourceNames:
-      - datadog-leader-election
-    resources:
-      - leases
-    verbs:
+      - list
+      - watch
       - get
-      - update
   - apiGroups:
-      - coordination.k8s.io
+      - ray.io
     resources:
-      - leases
+      - rayclusters
+      - raycronjobs
+      - rayjobs
+      - rayservices
     verbs:
-      - create
-  - nonResourceURLs:
-      - /version
-      - /healthz
+      - list
+      - watch
+  - apiGroups:
+      - nvidia.com
+    resources:
+      - dynamocheckpoints
+      - dynamocomponentdeployments
+      - dynamographdeploymentrequests
+      - dynamographdeployments
+      - dynamographdeploymentscalingadapters
+      - dynamomodels
+      - dynamoworkermetadatas
     verbs:
-      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog
+rules:
   - nonResourceURLs:
       - /metrics
       - /metrics/slis
@@ -1366,11 +1683,47 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
+  name: datadog-cluster-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: datadog-cluster-agent
+subjects:
+  - kind: ServiceAccount
+    name: datadog-cluster-agent
+    namespace: datadog-agent
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
   name: datadog-ksm-core
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: datadog-ksm-core
+subjects:
+  - kind: ServiceAccount
+    name: datadog-cluster-agent
+    namespace: datadog-agent
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-orchestrator-explorer
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: datadog-orchestrator-explorer
 subjects:
   - kind: ServiceAccount
     name: datadog-cluster-agent
@@ -1393,6 +1746,135 @@ subjects:
   - kind: ServiceAccount
     name: datadog
     namespace: datadog-agent
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-cluster-agent-main
+  namespace: datadog-agent
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+      - create
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - update
+      - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-dca-flare
+  namespace: datadog-agent
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - configmaps
+    verbs:
+      - get
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-cluster-agent-main
+  namespace: datadog-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: datadog-cluster-agent-main
+subjects:
+  - kind: ServiceAccount
+    name: datadog-cluster-agent
+    namespace: datadog-agent
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-dca-flare
+  namespace: datadog-agent
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: datadog-dca-flare
+subjects:
+  - kind: ServiceAccount
+    name: datadog-cluster-agent
+    namespace: datadog-agent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-cluster-agent
+  namespace: datadog-agent
+spec:
+  ports:
+    - name: agentport
+      port: 5005
+      protocol: TCP
+  selector:
+    app: datadog-cluster-agent
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: datadog
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+    heritage: Helm
+    release: datadog
+  name: datadog-cluster-agent-admission-controller
+  namespace: datadog-agent
+spec:
+  ports:
+    - name: datadog-webhook
+      port: 443
+      protocol: TCP
+      targetPort: 8000
+  selector:
+    app: datadog-cluster-agent
 ---
 apiVersion: v1
 kind: Service
@@ -1418,40 +1900,8 @@ spec:
       port: 8126
       protocol: TCP
       targetPort: 8126
-    - name: otel-grpc
-      port: 4317
-      protocol: TCP
-      targetPort: 4317
-    - name: otel-http
-      port: 4318
-      protocol: TCP
-      targetPort: 4318
   selector:
     app: datadog
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
-  name: datadog-otel-agent-gateway
-  namespace: datadog-agent
-spec:
-  ports:
-    - name: otel-grpc
-      port: 4317
-      protocol: TCP
-      targetPort: 4317
-    - name: otel-http
-      port: 4318
-      protocol: TCP
-      targetPort: 4318
-  selector:
-    app: datadog-otel-agent-gateway
-  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -1520,7 +1970,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
-              value: "false"
+              value: "true"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
@@ -1545,12 +1995,15 @@ spec:
               value: low
             - name: DD_DOGSTATSD_SOCKET
               value: /var/run/datadog/dsd.socket
-            - name: DD_LEADER_ELECTION
+            - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
-            - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
-              value: configmap
-            - name: DD_COLLECT_KUBERNETES_EVENTS
-              value: "true"
+            - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
+              value: datadog-cluster-agent
+            - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: datadog-cluster-agent
             - name: DD_APM_ENABLED
               value: "true"
             - name: DD_APM_NON_LOCAL_TRAFFIC
@@ -1582,35 +2035,41 @@ spec:
               value: "true"
             - name: DD_HEALTH_PORT
               value: "5555"
+            - name: DD_EXTRA_CONFIG_PROVIDERS
+              value: clusterchecks endpointschecks
             - name: DD_IGNORE_AUTOCONF
               value: kubernetes_state
             - name: DD_CONTAINER_LIFECYCLE_ENABLED
               value: "true"
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
-              value: "false"
+              value: "true"
             - name: DD_EXPVAR_PORT
               value: "6000"
             - name: DD_COMPLIANCE_CONFIG_ENABLED
-              value: "false"
+              value: "true"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
               value: "false"
             - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
-              value: "false"
+              value: "true"
             - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
               value: "false"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
               value: "true"
-            - name: DD_OTELCOLLECTOR_ENABLED
-              value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
+            - name: DD_SYSTEM_PROBE_ENABLED
+              value: "true"
+            - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
+              value: "true"
+            - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
+              value: "true"
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.85.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1731,9 +2190,16 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
-              value: "false"
+              value: "true"
             - name: DD_CLUSTER_AGENT_ENABLED
-              value: "false"
+              value: "true"
+            - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
+              value: datadog-cluster-agent
+            - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: datadog-cluster-agent
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_APM_ENABLED
@@ -1763,7 +2229,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.85.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -1808,6 +2274,115 @@ spec:
               name: runtimesocketdir
               readOnly: true
         - command:
+            - process-agent
+            - --cfgpath=/etc/datadog-agent/datadog.yaml
+          env:
+            - name: DD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: api-key
+                  name: datadog-secret
+            - name: DD_REMOTE_CONFIGURATION_ENABLED
+              value: "true"
+            - name: DD_AUTH_TOKEN_FILE_PATH
+              value: /etc/datadog-agent/auth/token
+            - name: KUBERNETES
+              value: "yes"
+            - name: DD_CSI_ENABLED
+              value: "false"
+            - name: DD_LANGUAGE_DETECTION_ENABLED
+              value: "false"
+            - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+              value: "false"
+            - name: DD_KUBERNETES_KUBELET_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_KUBELET_USE_API_SERVER
+              value: "false"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
+            - name: DD_OTLP_CONFIG_LOGS_ENABLED
+              value: "false"
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
+              value: "true"
+            - name: DD_CLUSTER_AGENT_ENABLED
+              value: "true"
+            - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
+              value: datadog-cluster-agent
+            - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: datadog-cluster-agent
+            - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
+              value: "false"
+            - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
+              value: "true"
+            - name: DD_PROCESS_AGENT_DISCOVERY_ENABLED
+              value: "true"
+            - name: DD_STRIP_PROCESS_ARGS
+              value: "false"
+            - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
+              value: "true"
+            - name: DD_LOG_LEVEL
+              value: INFO
+            - name: DD_SYSTEM_PROBE_ENABLED
+              value: "true"
+            - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
+              value: "true"
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
+            - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
+              value: "true"
+          image: registry.datadoghq.com/agent:7.85.0
+          imagePullPolicy: IfNotPresent
+          name: process-agent
+          resources: {}
+          securityContext:
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - mountPath: /etc/datadog-agent
+              name: config
+              readOnly: true
+            - mountPath: /var/log/datadog
+              name: logdatadog
+              readOnly: false
+            - mountPath: /etc/datadog-agent/auth
+              name: auth-token
+              readOnly: true
+            - mountPath: /var/run/datadog
+              name: dsdsocket
+              readOnly: true
+            - mountPath: /tmp
+              name: tmpdir
+              readOnly: false
+            - mountPath: /host/etc/os-release
+              name: os-release-file
+              readOnly: true
+            - mountPath: /host/var/run
+              mountPropagation: None
+              name: runtimesocketdir
+              readOnly: true
+            - mountPath: /host/sys/fs/cgroup
+              mountPropagation: None
+              name: cgroups
+              readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
+              readOnly: true
+            - mountPath: /host/proc
+              mountPropagation: None
+              name: procdir
+              readOnly: true
+            - mountPath: /var/run/sysprobe
+              name: sysprobe-socket-dir
+              readOnly: true
+            - mountPath: /etc/datadog-agent/system-probe.yaml
+              name: sysprobe-config
+              readOnly: true
+              subPath: system-probe.yaml
+        - command:
             - system-probe
             - --config=/etc/datadog-agent/system-probe.yaml
           env:
@@ -1839,12 +2414,22 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
-              value: "false"
+              value: "true"
             - name: DD_LOG_LEVEL
               value: INFO
+            - name: HOST_ROOT
+              value: /host/root
             - name: DD_DOGSTATSD_PORT
               value: "8125"
-          image: registry.datadoghq.com/agent:7.78.0
+            - name: DD_COMPLIANCE_CONFIG_ENABLED
+              value: "true"
+            - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
+              value: "false"
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
+            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+              value: "60"
+          image: registry.datadoghq.com/agent:7.85.0
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -1862,6 +2447,7 @@ spec:
                 - IPC_LOCK
                 - CHOWN
                 - DAC_READ_SEARCH
+                - KILL
             privileged: false
             readOnlyRootFilesystem: true
             seccompProfile:
@@ -1881,6 +2467,10 @@ spec:
               mountPropagation: None
               name: debugfs
               readOnly: false
+            - mountPath: /sys/fs/bpf
+              mountPropagation: None
+              name: bpffs
+              readOnly: true
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: true
@@ -1899,6 +2489,12 @@ spec:
               mountPropagation: None
               name: cgroups
               readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
+              readOnly: true
+            - mountPath: /etc/group
+              name: group
+              readOnly: true
             - mountPath: /host/etc/os-release
               name: os-release-file
               readOnly: true
@@ -1910,6 +2506,10 @@ spec:
               readOnly: true
             - mountPath: /host/etc/lsb-release
               name: etc-lsb-release
+              readOnly: true
+            - mountPath: /host/root
+              mountPropagation: None
+              name: hostroot
               readOnly: true
             - mountPath: /lib/modules
               mountPropagation: None
@@ -1947,12 +2547,10 @@ spec:
             - mountPath: /host/etc/rhsm
               name: rhel-subscription-dir
               readOnly: true
-        - args:
-            - --config=/etc/otel-agent/otel-config.yaml
-          command:
-            - otel-agent
-            - --core-config=/etc/datadog-agent/datadog.yaml
-            - --sync-delay=30s
+        - command:
+            - security-agent
+            - start
+            - -c=/etc/datadog-agent/datadog.yaml
           env:
             - name: DD_API_KEY
               valueFrom:
@@ -1981,34 +2579,48 @@ spec:
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-            - name: DD_CLUSTER_AGENT_ENABLED
-              value: "false"
-            - name: DD_AGENT_IPC_PORT
-              value: "5009"
-            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
-              value: "60"
-            - name: DD_OTELCOLLECTOR_ENABLED
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
               value: "true"
-            - name: DD_OTEL_STANDALONE
-              value: "false"
-            - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
-              value: kubernetes
-            - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
-              value: health_check,zpages,pprof,ddflare,datadog
+            - name: DD_CLUSTER_AGENT_ENABLED
+              value: "true"
+            - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
+              value: datadog-cluster-agent
+            - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: datadog-cluster-agent
             - name: DD_LOG_LEVEL
               value: INFO
-          image: registry.datadoghq.com/ddot-collector:7.78.0
+            - name: DD_COMPLIANCE_CONFIG_ENABLED
+              value: "true"
+            - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+              value: 20m
+            - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+              value: "true"
+            - name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
+              value: "true"
+            - name: HOST_ROOT
+              value: /host/root
+            - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
+              value: "true"
+            - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
+              value: /etc/datadog-agent/runtime-security.d
+            - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
+              value: /var/run/sysprobe/runtime-security.sock
+            - name: DD_RUNTIME_SECURITY_CONFIG_USE_SECRUNTIME_TRACK
+              value: "true"
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
+          image: registry.datadoghq.com/agent:7.85.0
           imagePullPolicy: IfNotPresent
-          name: otel-agent
-          ports:
-            - containerPort: 4317
-              name: otel-grpc
-              protocol: TCP
-            - containerPort: 4318
-              name: otel-http
-              protocol: TCP
+          name: security-agent
           resources: {}
           securityContext:
+            capabilities:
+              add:
+                - AUDIT_CONTROL
+                - AUDIT_READ
             readOnlyRootFilesystem: true
           volumeMounts:
             - mountPath: /etc/datadog-agent
@@ -2020,30 +2632,41 @@ spec:
             - mountPath: /etc/datadog-agent/auth
               name: auth-token
               readOnly: true
-            - mountPath: /etc/otel-agent
-              name: otelconfig
-              readOnly: true
-            - mountPath: /opt/datadog-agent/run
-              name: datadogrun
+            - mountPath: /var/run/datadog
+              name: dsdsocket
               readOnly: false
-            - mountPath: /host/proc
-              mountPropagation: None
-              name: procdir
-              readOnly: true
-            - mountPath: /host/sys/fs/cgroup
-              mountPropagation: None
-              name: cgroups
-              readOnly: true
             - mountPath: /tmp
               name: tmpdir
               readOnly: false
-            - mountPath: /var/run/datadog
-              name: dsdsocket
+            - mountPath: /host/etc/os-release
+              name: os-release-file
               readOnly: true
             - mountPath: /host/var/run
               mountPropagation: None
               name: runtimesocketdir
               readOnly: true
+            - mountPath: /host/sys/fs/cgroup
+              name: cgroups
+              readOnly: true
+            - mountPath: /etc/passwd
+              name: passwd
+              readOnly: true
+            - mountPath: /etc/group
+              name: group
+              readOnly: true
+            - mountPath: /host/root
+              name: hostroot
+              readOnly: true
+            - mountPath: /host/proc
+              name: procdir
+              readOnly: true
+            - mountPath: /var/run/sysprobe
+              name: sysprobe-socket-dir
+              readOnly: false
+            - mountPath: /etc/datadog-agent/system-probe.yaml
+              name: sysprobe-config
+              readOnly: true
+              subPath: system-probe.yaml
       hostPID: true
       initContainers:
         - args:
@@ -2051,7 +2674,7 @@ spec:
           command:
             - bash
             - -c
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.85.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -2092,11 +2715,7 @@ spec:
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-            - name: DD_LEADER_ELECTION
-              value: "true"
-            - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
-              value: configmap
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.85.0
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2123,7 +2742,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: registry.datadoghq.com/agent:7.78.0
+          image: registry.datadoghq.com/agent:7.85.0
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -2196,6 +2815,9 @@ spec:
         - hostPath:
             path: /sys/kernel/debug
           name: debugfs
+        - hostPath:
+            path: /sys/fs/bpf
+          name: bpffs
         - emptyDir: {}
           name: sysprobe-socket-dir
         - hostPath:
@@ -2237,16 +2859,16 @@ spec:
             path: /etc/passwd
           name: passwd
         - hostPath:
+            path: /
+          name: hostroot
+        - hostPath:
+            path: /etc/group
+          name: group
+        - hostPath:
             path: /var/run
           name: runtimesocketdir
         - emptyDir: {}
           name: datadogrun
-        - configMap:
-            items:
-              - key: otel-config.yaml
-                path: otel-config.yaml
-            name: datadog-otel-config
-          name: otelconfig
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 10%
@@ -2349,19 +2971,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/component: otel-agent-gateway
-    app.kubernetes.io/instance: datadog
+    agent.datadoghq.com/component: cluster-agent
+    app.kubernetes.io/component: cluster-agent
+    app.kubernetes.io/instance: datadog-cluster-agent
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
+    app.kubernetes.io/part-of: datadog--agent-datadog
     app.kubernetes.io/version: "7"
-  name: datadog-otel-agent-gateway
+  name: datadog-cluster-agent
   namespace: datadog-agent
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: datadog-otel-agent-gateway
+      app: datadog-cluster-agent
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -2372,79 +2996,222 @@ spec:
       annotations: {}
       labels:
         admission.datadoghq.com/enabled: "false"
-        app: datadog-otel-agent-gateway
-        app.kubernetes.io/component: otel-agent-gateway
-        app.kubernetes.io/instance: datadog
+        agent.datadoghq.com/component: cluster-agent
+        app: datadog-cluster-agent
+        app.kubernetes.io/component: cluster-agent
+        app.kubernetes.io/instance: datadog-cluster-agent
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: datadog
-      name: datadog-otel-agent-gateway
+        app.kubernetes.io/part-of: datadog--agent-datadog
+      name: datadog-cluster-agent
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: datadog-cluster-agent
+                topologyKey: kubernetes.io/hostname
+              weight: 50
+      automountServiceAccountToken: true
       containers:
-        - args:
-            - --config=/etc/otel-agent/otel-gateway-config.yaml
-          command:
-            - otel-agent
-            - --sync-delay=30s
-          env:
+        - env:
+            - name: DD_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: DD_CLUSTER_AGENT_SERVICE_ACCOUNT_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+            - name: DD_HEALTH_PORT
+              value: "5556"
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:
                   key: api-key
                   name: datadog-secret
-            - name: DD_OTELCOLLECTOR_ENABLED
-              value: "true"
-            - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
-              value: kubernetes
-            - name: DD_OTELCOLLECTOR_GATEWAY_MODE
-              value: "true"
-            - name: DD_OTEL_STANDALONE
+                  optional: true
+            - name: KUBERNETES
+              value: "yes"
+            - name: DD_CSI_ENABLED
               value: "false"
-            - name: DD_HOSTNAME
+            - name: DD_LANGUAGE_DETECTION_ENABLED
+              value: "false"
+            - name: DD_LANGUAGE_DETECTION_REPORTING_ENABLED
+              value: "false"
+            - name: DD_APP_KEY
               valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
-              value: zpages,pprof,datadog
-            - name: DD_ENABLE_METADATA_COLLECTION
+                secretKeyRef:
+                  key: app-key
+                  name: datadog-secret
+            - name: DD_ADMISSION_CONTROLLER_ENABLED
+              value: "true"
+            - name: DD_ADMISSION_CONTROLLER_VALIDATION_ENABLED
+              value: "true"
+            - name: DD_ADMISSION_CONTROLLER_MUTATION_ENABLED
+              value: "true"
+            - name: DD_TRACE_AGENT_HOST_SOCKET_PATH
+              value: /var/run/datadog
+            - name: DD_DOGSTATSD_HOST_SOCKET_PATH
+              value: /var/run/datadog
+            - name: DD_DOGSTATSD_SOCKET
+              value: /var/run/datadog/dsd.socket
+            - name: DD_APM_RECEIVER_SOCKET
+              value: /var/run/datadog/apm.socket
+            - name: DD_ADMISSION_CONTROLLER_WEBHOOK_NAME
+              value: datadog-webhook
+            - name: DD_ADMISSION_CONTROLLER_MUTATE_UNLABELLED
               value: "false"
-            - name: DD_PROCESS_AGENT_ENABLED
-              value: "false"
+            - name: DD_ADMISSION_CONTROLLER_SERVICE_NAME
+              value: datadog-cluster-agent-admission-controller
+            - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_MODE
+              value: socket
+            - name: DD_ADMISSION_CONTROLLER_INJECT_CONFIG_LOCAL_SERVICE_NAME
+              value: datadog
+            - name: DD_ADMISSION_CONTROLLER_FAILURE_POLICY
+              value: Ignore
+            - name: DD_ADMISSION_CONTROLLER_PORT
+              value: "8000"
+            - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
+              value: registry.datadoghq.com
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "false"
-            - name: DD_INVENTORIES_ENABLED
-              value: "false"
-            - name: DD_CMD_PORT
-              value: "0"
-            - name: DD_AGENT_IPC_PORT
-              value: "0"
-            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
-              value: "0"
+            - name: DD_CLUSTER_CHECKS_ENABLED
+              value: "true"
+            - name: DD_EXTRA_CONFIG_PROVIDERS
+              value: kube_endpoints kube_services
+            - name: DD_EXTRA_LISTENERS
+              value: kube_endpoints kube_services
             - name: DD_LOG_LEVEL
               value: INFO
-          image: registry.datadoghq.com/ddot-collector:7.78.0
+            - name: DD_LEADER_ELECTION
+              value: "true"
+            - name: DD_LEADER_ELECTION_DEFAULT_RESOURCE
+              value: configmap
+            - name: DD_LEADER_LEASE_NAME
+              value: datadog-leader-election
+            - name: DD_CLUSTER_AGENT_TOKEN_NAME
+              value: datadogtoken
+            - name: DD_COLLECT_KUBERNETES_EVENTS
+              value: "true"
+            - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
+              value: "true"
+            - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
+              value: "false"
+            - name: DD_KUBERNETES_EVENTS_SOURCE_DETECTION_ENABLED
+              value: "false"
+            - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
+              value: datadog-cluster-agent
+            - name: DD_CLUSTER_AGENT_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: token
+                  name: datadog-cluster-agent
+            - name: DD_CLUSTER_AGENT_COLLECT_KUBERNETES_TAGS
+              value: "false"
+            - name: DD_KUBE_RESOURCES_NAMESPACE
+              value: datadog-agent
+            - name: CHART_RELEASE_NAME
+              value: datadog
+            - name: AGENT_DAEMONSET
+              value: datadog
+            - name: CLUSTER_AGENT_DEPLOYMENT
+              value: datadog-cluster-agent
+            - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
+              value: "true"
+            - name: DD_ORCHESTRATOR_EXPLORER_CONTAINER_SCRUBBING_ENABLED
+              value: "true"
+            - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
+              value: "false"
+            - name: DD_COMPLIANCE_CONFIG_ENABLED
+              value: "true"
+            - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+              value: 20m
+            - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
+              value: "true"
+            - name: DD_INSTRUMENTATION_INSTALL_TIME
+              valueFrom:
+                configMapKeyRef:
+                  key: install_time
+                  name: datadog-kpi-telemetry-configmap
+            - name: DD_INSTRUMENTATION_INSTALL_ID
+              valueFrom:
+                configMapKeyRef:
+                  key: install_id
+                  name: datadog-kpi-telemetry-configmap
+            - name: DD_INSTRUMENTATION_INSTALL_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  key: install_type
+                  name: datadog-kpi-telemetry-configmap
+          image: registry.datadoghq.com/cluster-agent:7.82.3
           imagePullPolicy: IfNotPresent
-          name: otel-agent
+          livenessProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /live
+              port: 5556
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
+          name: cluster-agent
           ports:
-            - containerPort: 4317
-              name: otel-grpc
+            - containerPort: 5005
+              name: agentport
               protocol: TCP
-            - containerPort: 4318
-              name: otel-http
+            - containerPort: 5000
+              name: agentmetrics
               protocol: TCP
+            - containerPort: 8000
+              name: datadog-webhook
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /ready
+              port: 5556
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
           resources: {}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          startupProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /startup
+              port: 5556
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 5
           volumeMounts:
-            - mountPath: /etc/otel-agent
-              name: otelgatewayconfig
-              readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
+              readOnly: false
             - mountPath: /var/log/datadog
               name: varlog
               readOnly: false
             - mountPath: /tmp
               name: tmpdir
               readOnly: false
+            - mountPath: /etc/datadog-agent/install_info
+              name: installinfo
+              readOnly: true
+              subPath: install_info
+            - mountPath: /conf.d
+              name: confd
+              readOnly: true
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: true
       initContainers:
         - args:
             - /etc/datadog-agent
@@ -2452,7 +3219,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/ddot-collector:7.78.0
+          image: registry.datadoghq.com/cluster-agent:7.82.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
@@ -2460,18 +3227,25 @@ spec:
               name: config
       nodeSelector:
         kubernetes.io/os: linux
-      serviceAccountName: datadog
+      serviceAccountName: datadog-cluster-agent
       volumes:
+        - emptyDir: {}
+          name: datadogrun
         - emptyDir: {}
           name: varlog
         - emptyDir: {}
           name: tmpdir
-        - emptyDir: {}
-          name: config
+        - configMap:
+            name: datadog-installinfo
+          name: installinfo
         - configMap:
             items:
-              - key: otel-gateway-config.yaml
-                path: otel-gateway-config.yaml
-            name: datadog-otel-gateway-config
-          name: otelgatewayconfig
+              - key: kubernetes_state_core.yaml.default
+                path: kubernetes_state_core.d/kubernetes_state_core.yaml.default
+              - key: kubernetes_apiserver.yaml
+                path: kubernetes_apiserver.d/kubernetes_apiserver.yaml
+            name: datadog-cluster-agent-confd
+          name: confd
+        - emptyDir: {}
+          name: config
 ---
