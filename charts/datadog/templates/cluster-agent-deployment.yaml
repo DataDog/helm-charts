@@ -476,13 +476,11 @@ spec:
           {{- end }}
           - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
             value: {{ include "language-detection-enabled" .  | quote }}
-          {{- if eq  (include "should-enable-security-agent" .) "true" }}
+          {{- if eq (include "should-enable-compliance-feature" .) "true" }}
           - name: DD_COMPLIANCE_CONFIG_ENABLED
-            value:  {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
-          {{- if .Values.datadog.securityAgent.compliance.enabled }}
+            value: "true"
           - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
             value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
-          {{- end }}
           {{- end }}
           {{- if .Values.datadog.prometheusScrape.enabled }}
           - name: DD_PROMETHEUS_SCRAPE_ENABLED
@@ -646,12 +644,10 @@ spec:
             subPath: datadog-cluster.yaml
             readOnly: true
 {{- end}}
-{{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.configMap }}
+{{- if and (eq (include "should-enable-compliance-feature" .) "true") .Values.datadog.securityAgent.compliance.configMap }}
           - name: complianceconfigdir
             mountPath: /etc/datadog-agent/compliance.d
             readOnly: true
-{{- end}}
 {{- end}}
           - name: config
             mountPath: /etc/datadog-agent
@@ -716,12 +712,10 @@ spec:
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-config
 {{- end}}
-{{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if  and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.configMap }}
+{{- if and (eq (include "should-enable-compliance-feature" .) "true") .Values.datadog.securityAgent.compliance.configMap }}
         - name: complianceconfigdir
           configMap:
             name: {{ .Values.datadog.securityAgent.compliance.configMap }}
-{{- end}}
 {{- end}}
         - name: config
           emptyDir: {}
