@@ -1,0 +1,17 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  # Runtime security, compliance and network monitoring bring up the Security Agent, System Probe
+  # and Process Agent containers, so every container that reads the switch appears in this baseline.
+  securityAgent:
+    runtime:
+      enabled: true
+    compliance:
+      enabled: true
+  networkMonitoring:
+    enabled: true
+
+agents:
+  image:
+    # At or above the floor the switch is on without being asked for.
+    tag: 7.85.0

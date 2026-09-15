@@ -531,6 +531,14 @@ datadog:
     # DEPRECATED: Consider using remoteConfiguration.enabled instead
     enabled: true
 
+  configStream:
+    # datadog.configStream.enabled -- Stream configuration from the Agent to the Trace Agent, Process Agent, Security Agent and System Probe
+
+    ## Those containers then drop their own environment and take their configuration from the Agent,
+    ## so any DD_* variable meant for them must be set on the Agent container.
+    ## Unset follows the Agent version: enabled from 7.85.0 onwards.
+    enabled:  # nil
+
   privateActionRunner:
     # datadog.privateActionRunner.enabled -- Enable the Private Action Runner on the node agent to execute workflow actions
     enabled: false

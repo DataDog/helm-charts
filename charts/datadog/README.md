@@ -808,6 +808,7 @@ helm install <RELEASE_NAME> \
 | datadog.clusterTagger.collectKubernetesTags | bool | `false` | Enables Kubernetes resources tags collection. |
 | datadog.collectEvents | bool | `true` | Enables this to start event collection from the kubernetes API |
 | datadog.confd | object | `{}` | Provide additional check configurations (static and Autodiscovery) |
+| datadog.configStream.enabled | string | `nil` | Stream configuration from the Agent to the Trace Agent, Process Agent, Security Agent and System Probe |
 | datadog.containerExclude | string | `nil` | Exclude containers from Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeLogs | string | `nil` | Exclude logs from Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeMetrics | string | `nil` | Exclude metrics from Agent Autodiscovery, as a space-separated list |

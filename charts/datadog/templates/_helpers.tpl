@@ -1923,3 +1923,61 @@ Examples (assuming no overrides):
 {{- end -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Whether the Trace Agent, Process Agent, Security Agent and System Probe take their
+configuration from the Agent. Rendered as the consumer's own environment variable and used to
+gate the settings mirrored onto the Agent container, so the chart's answer and the Agent's
+behaviour are one value rather than two that have to agree.
+The version floor is the Agent release that ships the namespaced per-container keys: enabling
+streaming without them drops each container's DD_LOG_LEVEL without a replacement.
+*/}}
+{{- define "configstream-enabled" -}}
+{{- include "configstream-env-conflict-check" . -}}
+{{- if kindIs "bool" .Values.datadog.configStream.enabled -}}
+{{ .Values.datadog.configStream.enabled }}
+{{- else if .Values.agents.image.doNotCheckTag -}}
+true
+{{- else if semverCompare ">=7.85.0-0" (include "get-agent-version" .) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Fail if DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED is set through env or envDict. A
+container's own env renders after the chart's, so such a value would win and leave the
+rendered spec streaming while the mirrored settings stay ungated.
+*/}}
+{{- define "configstream-env-conflict-check" -}}
+{{- $var := "DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED" -}}
+{{- $lists := dict "datadog.env" .Values.datadog.env -}}
+{{- $dicts := dict "datadog.envDict" .Values.datadog.envDict -}}
+{{- range $key := list "agent" "traceAgent" "processAgent" "securityAgent" "systemProbe" -}}
+{{- $container := index $.Values.agents.containers $key -}}
+{{- $_ := set $lists (printf "agents.containers.%s.env" $key) $container.env -}}
+{{- $_ := set $dicts (printf "agents.containers.%s.envDict" $key) $container.envDict -}}
+{{- end -}}
+{{- range $path, $entries := $lists -}}
+{{- range $entries -}}
+{{- if eq (default "" .name) $var -}}
+{{- fail (printf "%s sets %s. Use datadog.configStream.enabled instead, so the mirrored Agent settings stay in step with it." $path $var) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- range $path, $entries := $dicts -}}
+{{- if hasKey (default dict $entries) $var -}}
+{{- fail (printf "%s sets %s. Use datadog.configStream.enabled instead, so the mirrored Agent settings stay in step with it." $path $var) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+The consumer switch, rendered on every container that reads it and on the Agent container, so a
+streamed snapshot reports the value each container actually started with.
+*/}}
+{{- define "configstream-consumer-env" -}}
+- name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
+  value: {{ include "configstream-enabled" . | quote }}
+{{- end -}}
