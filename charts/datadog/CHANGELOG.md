@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.246.0
+
+* Support node_kubelet KSM check configuration ([#2917](https://github.com/DataDog/helm-charts/pull/2917)).
+
 ## 3.245.1
 
 * Configure the Core Agent for Private Action Runner split mode.
