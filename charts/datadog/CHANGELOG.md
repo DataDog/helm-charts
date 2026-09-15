@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.245.1
+
+* Configure the Core Agent for Private Action Runner split mode.
+
 ## 3.245.0
 
 * Add an option to choose between StatefulSet or Deployment for OTel gateways ([#2906](https://github.com/DataDog/helm-charts/pull/2906)).
