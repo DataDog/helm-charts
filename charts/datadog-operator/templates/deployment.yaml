@@ -241,10 +241,19 @@ spec:
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.tolerations }}
       tolerations:
+        # Tolerate the agent-not-ready startup taint applied by the untaint controller
+        # (agent.datadoghq.com/not-ready). The Operator schedules itself and is the only
+        # thing that removes the taint, so it must tolerate it unconditionally to avoid a
+        # cold-start deadlock. Inert on clusters where the taint is never applied. Appended
+        # to (not replacing) any user-supplied .Values.tolerations.
+        - key: agent.datadoghq.com/not-ready
+          operator: Equal
+          value: presence
+          effect: NoSchedule
+      {{- with .Values.tolerations }}
         {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- end }}
     {{- with .Values.dnsConfig }}
       dnsConfig:
         {{- toYaml . | nindent 8 }}

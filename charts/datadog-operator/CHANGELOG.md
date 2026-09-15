@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.27.0
+
+* Always tolerate the `agent.datadoghq.com/not-ready` startup taint on the Operator Deployment so it can schedule on a cold cluster where every node registers with the untaint controller's startup taint. The toleration is appended to any user-supplied `tolerations`.
+
 ## 2.26.0
 
 * Update Datadog Operator chart for 1.30.0.
