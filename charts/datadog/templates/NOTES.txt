@@ -636,7 +636,7 @@ To make sure all cluster checks run on Cluster Checks Runners set `clusterChecks
 ####               WARNING: Configuration notice             ####
 #################################################################
 
-You have set `datadog.kubeStateMetricsCore.podCollectionMode` to `node_kubelet`, but this requires Agent and Cluster Agent version 7.82.0 or later.
+You have set `datadog.kubeStateMetricsCore.podCollectionMode` to `node_kubelet`, but this requires Agent and Cluster Agent version 7.82.0 or later, and Cluster Checks Runner version 7.82.0 or later when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is enabled.
 Falling back to the default Kubernetes State Metrics Core configuration.
 
 {{- end }}
