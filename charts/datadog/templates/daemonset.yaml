@@ -94,6 +94,9 @@ spec:
             "max_returned_metrics": 4000
           }]
         {{- end }}
+        {{- if eq (include "ksm-pod-collection-on-node-enabled" .) "true" }}
+        checksum/ksm-node-config: {{ include "kubeStateMetricsCore-node-config" . | sha256sum }}
+        {{- end -}}
       {{- if .Values.agents.podAnnotations }}
 {{ tpl (toYaml .Values.agents.podAnnotations) . | indent 8 }}
       {{- end }}
