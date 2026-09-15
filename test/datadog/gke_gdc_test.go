@@ -62,6 +62,22 @@ func Test_gdcConfigs(t *testing.T) {
 			},
 			errorContains: "Private Action Runner is not supported on GKE Autopilot / GDC environments",
 		},
+		{
+			name: "KSM pod collection on nodes rejected",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":                   "datadog-secret",
+					"providers.gke.gdc":                              "true",
+					"datadog.kubeStateMetricsCore.enabled":           "true",
+					"datadog.kubeStateMetricsCore.podCollectionMode": "node_kubelet",
+				},
+			},
+			errorContains: "KSM pod collection on nodes is not supported on GKE GDC environments",
+		},
 	}
 
 	for _, tt := range tests {
