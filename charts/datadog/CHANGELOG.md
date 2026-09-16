@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.245.2
+
+* Update `fips.image.tag` to `1.1.30` fixing CVEs and updating packages.
+
 ## 3.245.1
 
 * Configure the Core Agent for Private Action Runner split mode.
