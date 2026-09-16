@@ -309,7 +309,6 @@ datadog:
     # instance on the cluster-side component to collect them instead.
     # Requires Agent / Cluster Agent 7.82+, and Cluster Checks Runner 7.82+
     # when datadog.kubeStateMetricsCore.useClusterCheckRunners is enabled.
-    # This mode is not supported on GKE Distributed Cloud (GDC).
     #
     # When `clusterAgent.confd` or `clusterAgent.advancedConfd` is also set, the
     # chart deploys the node-side check but does NOT modify the user-supplied

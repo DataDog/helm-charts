@@ -505,16 +505,6 @@ On GKE Autopilot environments, GPU Monitoring is not supported. The option 'data
 
 {{- if .Values.providers.gke.gdc }}
 
-{{- if eq .Values.datadog.kubeStateMetricsCore.podCollectionMode "node_kubelet" }}
-
-############################################################################################################
-####   WARNING: KSM pod collection on nodes is not supported on GKE GDC   ####
-############################################################################################################
-
-{{- fail "KSM pod collection on nodes is not supported on GKE GDC environments. The option 'datadog.kubeStateMetricsCore.podCollectionMode' must be set to 'default'." }}
-
-{{- end }}
-
 {{- if .Values.datadog.networkMonitoring.enabled }}
 
 #######################################################################################
