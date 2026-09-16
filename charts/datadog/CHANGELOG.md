@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.252.1
+## 3.253.0
 
 * Grant the Cluster Agent read access to KubeAI custom resources collected by the orchestrator explorer.
 
