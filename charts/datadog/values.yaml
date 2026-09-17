@@ -290,6 +290,37 @@ datadog:
     # - default
     # - kube-system
 
+    # PodCollectionMode controls where the KSM check collects pod metrics.
+    #
+    # When set to "node_kubelet" the kubernetes_state_core check is split into
+    # two: the cluster-side instance keeps every collector except
+    # scheduled pods (only unscheduled pods are kept cluster-side), and a
+    # dedicated pods-only instance is deployed on every node agent to read pods
+    # locally from its Kubelet via workloadmeta.
+
+    # Useful in large clusters where a single KSM instance is a bottleneck.
+    # The cluster-aggregate `.total` metrics
+    # (kubernetes_state.{container,initcontainer}.<resource>_{requested,limit}.total)
+    # carry a reduced tag set with no host or node, so they cannot be collected
+    # correctly by every node agent independently without colliding at
+    # ingestion. To avoid this, the `cluster_aggregates_enabled` is enabled
+    # on the cluster-side and node-side check instances, which silences those aggregate
+    # metrics on both, and schedules a dedicated `cluster_aggregates_only`
+    # instance on the cluster-side component to collect them instead.
+    # Requires Agent / Cluster Agent 7.82+, and Cluster Checks Runner 7.82+
+    # when datadog.kubeStateMetricsCore.useClusterCheckRunners is enabled.
+    #
+    # When `clusterAgent.confd` or `clusterAgent.advancedConfd` is also set, the
+    # chart deploys the node-side check but does NOT modify the user-supplied
+    # cluster-side config. To avoid double pod collection in that case, the
+    # user's cluster-side instance must either omit `pods` from its
+    # `collectors` list OR set the `pod_collection_mode: cluster_unassigned`
+    # check option themselves. Omitting `collectors` entirely falls back to
+    # upstream KSM defaults, which include `pods`.
+
+    podCollectionMode: default
+
+
   ## Manage Cluster checks feature
 
   ## ref: https://docs.datadoghq.com/agent/autodiscovery/clusterchecks/
@@ -2871,6 +2902,13 @@ clusterChecksRunner:
 
     # clusterChecksRunner.image.repository -- Override default registry + image.name for Cluster Check Runners
     repository:
+
+    # clusterChecksRunner.image.doNotCheckTag -- Skip the version and chart compatibility check
+
+    ## By default, the version check is enabled. To disable the version check,
+    ## set this value to true. This is useful if you use a custom Agent image
+    ## whose version cannot be inferred from its tag.
+    doNotCheckTag:  # false
 
     # clusterChecksRunner.image.pullPolicy -- Datadog Agent image pull policy
     pullPolicy: IfNotPresent
