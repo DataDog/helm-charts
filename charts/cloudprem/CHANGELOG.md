@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Render `QW_AVAILABILITY_ZONE` on Kubernetes distributions whose version includes a prerelease suffix, such as GKE.
+
 ## 0.5.2
 
 * Update Docker image to `v0.1.33`.

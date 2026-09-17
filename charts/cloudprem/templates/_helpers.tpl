@@ -291,7 +291,7 @@ Quickwit environment
 {{- end }}
 - name: QW_NODE_ID
   value: "$(KUBERNETES_POD_NAME)"
-{{ if semverCompare ">=1.33.0" .Capabilities.KubeVersion.Version }}
+{{ if semverCompare ">=1.33.0-0" .Capabilities.KubeVersion.Version }}
 - name: QW_AVAILABILITY_ZONE
   valueFrom:
     fieldRef:
