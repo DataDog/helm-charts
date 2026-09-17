@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.5.3
+
+* Render `QW_AVAILABILITY_ZONE` on GKE Kubernetes 1.33+ versions, whose prerelease suffix was excluded by the previous semantic version constraint.
+
 ## 0.5.2
 
 * Update Docker image to `v0.1.33`.
