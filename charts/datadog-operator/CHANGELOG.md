@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.27.1
+
+* Always grant the Operator read access (`get`, `list`, `watch`) on `csidrivers.storage.k8s.io`, so the Cluster Agent can detect an installed Datadog CSI driver even when `datadogCSIDriver.enabled` is `false`. The write verbs stay behind `datadogCSIDriver.enabled`.
+
 ## 2.27.0
 
 * Always tolerate the `agent.datadoghq.com/not-ready` startup taint on the Operator Deployment so it can schedule on a cold cluster where every node registers with the untaint controller's startup taint. The toleration is appended to any user-supplied `tolerations`.

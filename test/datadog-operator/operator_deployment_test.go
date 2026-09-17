@@ -403,6 +403,80 @@ func Test_operator_untaint_controller_rbac(t *testing.T) {
 	}
 }
 
+func Test_operator_csi_driver_rbac(t *testing.T) {
+	tests := []struct {
+		name       string
+		overrides  map[string]string
+		wantWrites bool
+	}{
+		{
+			name:       "datadogCSIDriver disabled -- read-only on csidrivers",
+			overrides:  map[string]string{"datadogCSIDriver.enabled": "false"},
+			wantWrites: false,
+		},
+		{
+			name:       "datadogCSIDriver enabled -- write verbs on csidrivers too",
+			overrides:  map[string]string{"datadogCSIDriver.enabled": "true"},
+			wantWrites: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/clusterrole.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   tt.overrides,
+			})
+			assert.Nil(t, err, "couldn't render template")
+
+			var clusterRole rbacv1.ClusterRole
+			common.Unmarshal(t, manifest, &clusterRole)
+
+			// The operator passes this permission on to the Cluster Agent, which
+			// needs it whatever datadogCSIDriver.enabled is set to.
+			assert.True(t, hasCSIDriversReadRule(clusterRole.Rules),
+				"csidrivers read rule should always be granted")
+			assert.Equal(t, tt.wantWrites, hasCSIDriversWriteVerb(clusterRole.Rules),
+				"unexpected presence of write verbs on csidrivers")
+		})
+	}
+}
+
+// hasCSIDriversReadRule reports whether a rule grants get, list and watch on
+// every csidrivers object.
+func hasCSIDriversReadRule(rules []rbacv1.PolicyRule) bool {
+	for _, rule := range rules {
+		if !isCSIDriversRule(rule) || len(rule.ResourceNames) > 0 {
+			continue
+		}
+		if containsString(rule.Verbs, "get") && containsString(rule.Verbs, "list") && containsString(rule.Verbs, "watch") {
+			return true
+		}
+	}
+	return false
+}
+
+func hasCSIDriversWriteVerb(rules []rbacv1.PolicyRule) bool {
+	for _, rule := range rules {
+		if !isCSIDriversRule(rule) {
+			continue
+		}
+		for _, verb := range []string{"create", "delete", "patch", "update"} {
+			if containsString(rule.Verbs, verb) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func isCSIDriversRule(rule rbacv1.PolicyRule) bool {
+	return containsString(rule.APIGroups, "storage.k8s.io") && containsString(rule.Resources, "csidrivers")
+}
+
 func hasNodesPatchRule(rules []rbacv1.PolicyRule) bool {
 	for _, rule := range rules {
 		if !containsString(rule.APIGroups, "") || !containsString(rule.Resources, "nodes") {
