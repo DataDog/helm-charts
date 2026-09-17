@@ -58,26 +58,6 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "ExtendedDaemonSet support renders its flag when enabled on a supported prerelease Operator version",
-			command: common.HelmCommand{
-				ReleaseName: "datadog-operator",
-				ChartPath:   "../../charts/datadog-operator",
-				ShowOnly:    []string{"templates/deployment.yaml"},
-				Values:      []string{"../../charts/datadog-operator/values.yaml"},
-				Overrides: map[string]string{
-					"supportExtendedDaemonset": "true",
-				},
-			},
-			assertions: func(t *testing.T, manifest string) {
-				var deployment appsv1.Deployment
-				common.Unmarshal(t, manifest, &deployment)
-				operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-				assert.Contains(t, operatorContainer.Args, "-supportExtendedDaemonset=true")
-				assert.NotContains(t, operatorContainer.Args, "-supportExtendedDaemonset=false")
-			},
-			skipTest: SkipTest,
-		},
-		{
 			name: "ExtendedDaemonSet support renders its flag when enabled on Operator 1.30.0",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
