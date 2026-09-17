@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.246.0
+
+* Support node_kubelet KSM check configuration, including Cluster Checks Runner version validation when runners are used ([#2917](https://github.com/DataDog/helm-charts/pull/2917)).
+
 ## 3.245.2
 
 * Update `fips.image.tag` to `1.1.30` fixing CVEs and updating packages.

@@ -16,6 +16,19 @@
 {{- end -}}
 
 {{/*
+  Returns Cluster Checks Runner version based on image tag. This assumes
+  `clusterChecksRunner.image.doNotCheckTag` is false.
+*/}}
+{{- define "get-cluster-checks-runner-version" -}}
+{{- $version := .Values.clusterChecksRunner.image.tag | toString -}}
+{{- $length := len (split "." $version) -}}
+{{- if and (eq $length 1) (eq $version "latest") -}}
+{{- $version = "7.82.3" -}}
+{{- end -}}
+{{- $version -}}
+{{- end -}}
+
+{{/*
   Returns Cluster Agent version based on image tag. This assumes `clusterAgent.image.doNotCheckTag` is false.
 */}}
 {{- define "get-cluster-agent-version" -}}
@@ -1929,5 +1942,34 @@ Examples (assuming no overrides):
 {{- else -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if KSM node pod collection is supported
+*/}}
+{{- define "ksm-pod-collection-on-node-supported" -}}
+{{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+{{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+{{- $ccrVersionOK := or (not .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners) .Values.clusterChecksRunner.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-checks-runner-version" .)) -}}
+{{- if and $agentVersionOK $dcaVersionOK $ccrVersionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if KSM pod collection on nodes is enabled and supported
+*/}}
+{{- define "ksm-pod-collection-on-node-enabled" -}}
+{{- if and
+  .Values.datadog.kubeStateMetricsCore.enabled
+  (eq .Values.datadog.kubeStateMetricsCore.podCollectionMode "node_kubelet")
+  (eq (include "ksm-pod-collection-on-node-supported" .) "true")
+-}}
+true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}
