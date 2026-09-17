@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.3
 
 * Render `QW_AVAILABILITY_ZONE` on Kubernetes distributions whose version includes a prerelease suffix, such as GKE.
 
