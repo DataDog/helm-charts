@@ -45,8 +45,24 @@ CONDITIONAL_RESOURCES = {
     ("datadoghq.com", "datadogcsidrivers"),
     ("datadoghq.com", "datadogcsidrivers/finalizers"),
     ("datadoghq.com", "datadogcsidrivers/status"),
+    # Only the write verbs are conditional; see ALWAYS_ON_RULES below.
     ("storage.k8s.io", "csidrivers"),
 }
+
+# Rules granted unconditionally, on top of the ones derived from role.yaml.
+# Stripping is per (apiGroup, resource), so a resource in CONDITIONAL_RESOURCES
+# loses every verb; re-add here the subset that must always be granted.
+ALWAYS_ON_RULES = [
+    # The Cluster Agent reads csidrivers to detect the Datadog CSI driver, which
+    # must work even when the driver is not managed by the operator. The operator
+    # can only grant permissions it holds. Write verbs stay in the conditional
+    # block; get is unrestricted because list already exposes every CSIDriver.
+    {
+        "apiGroups": ["storage.k8s.io"],
+        "resources": ["csidrivers"],
+        "verbs": ["get", "list", "watch"],
+    },
+]
 
 
 HEADER = """\
@@ -162,7 +178,7 @@ def main():
     with open(upstream_file) as f:
         upstream = yaml.safe_load(f)
 
-    rules = filter_rules(upstream["rules"])
+    rules = filter_rules(upstream["rules"]) + ALWAYS_ON_RULES
 
     main_lines = []
     for rule in rules:
