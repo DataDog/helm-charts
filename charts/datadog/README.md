@@ -916,6 +916,7 @@ helm install <RELEASE_NAME> \
 | datadog.namespaceLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Labels to Datadog Tags |
 | datadog.networkMonitoring.dnsMonitoringPorts | list | `[53]` (set by agent) | List of ports to monitor for DNS traffic |
 | datadog.networkMonitoring.enabled | bool | `false` | Enable Cloud Network Monitoring |
+| datadog.networkPath.collector.filters | list | `[]` | Custom ordered filters for dynamic Network Path tests. Each filter can include or exclude destinations using `match_domain` (wildcard by default, or regex with `match_domain_strategy: regex`) or `match_ip` (IP or CIDR). The last matching filter takes precedence. Requires a stable Datadog Agent 7.83.2 or newer. For a verified compatible prerelease or custom image, set `agents.image.doNotCheckTag=true`. |
 | datadog.networkPath.collector.pathtestContextsLimit | string | `nil` | Override maximum number of pathtests stored to run |
 | datadog.networkPath.collector.pathtestInterval | string | `nil` | Override time interval between pathtest runs |
 | datadog.networkPath.collector.pathtestMaxPerMinute | string | `nil` | Override limit for total pathtests run, per minute |

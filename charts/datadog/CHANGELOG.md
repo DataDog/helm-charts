@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.249.0
+
+* [NETPATH-1165] Add `datadog.networkPath.collector.filters` to configure ordered include and exclude filters for dynamic Network Path tests. This option requires a stable Datadog Agent 7.83.2 or newer.
+
 ## 3.248.1
 
 - Grant the Cluster Agent `get` access to Secrets named `datadog-secret` when Agent sidecar injection is enabled.

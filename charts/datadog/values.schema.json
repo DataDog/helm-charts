@@ -22,6 +22,71 @@
             }
           }
         },
+        "networkPath": {
+          "type": "object",
+          "properties": {
+            "collector": {
+              "type": "object",
+              "properties": {
+                "filters": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "include",
+                          "exclude"
+                        ]
+                      },
+                      "match_domain": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "match_domain_strategy": {
+                        "type": "string",
+                        "enum": [
+                          "",
+                          "wildcard",
+                          "regex"
+                        ]
+                      },
+                      "match_ip": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "anyOf": [
+                      {
+                        "required": [
+                          "match_domain"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "match_ip"
+                        ]
+                      }
+                    ],
+                    "dependencies": {
+                      "match_domain_strategy": [
+                        "match_domain"
+                      ]
+                    },
+                    "additionalProperties": false
+                  }
+                }
+              }
+            }
+          }
+        },
         "apm": {
           "type": "object",
           "properties": {
