@@ -1,0 +1,38 @@
+{{- $dcaImageTag := .Values.clusterAgent.image.tag | toString }}
+{{- if and .Values.datadog.kubernetesActions.enabled (eq (include "cluster-agent-enabled" .) "true") (or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.85.0-0" $dcaImageTag)) }}
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-helm-action-caller
+rules:
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    # `create` is required. get/list/watch let the CLI (or a future --wait
+    # flag) observe the Job. `delete` is optional: TTL-after-finished handles
+    # cleanup automatically, but `delete` is useful for manual re-runs.
+    verbs:
+      - create
+      - get
+      - list
+      - watch
+      - delete
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-helm-action-caller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-helm-action-caller
+subjects:
+  - kind: ServiceAccount
+    name: {{ if .Values.clusterAgent.rbac.create }}{{ template "datadog.fullname" . }}-cluster-agent{{ else }}"{{ .Values.clusterAgent.rbac.serviceAccountName }}"{{ end }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
