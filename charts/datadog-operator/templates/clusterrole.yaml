@@ -794,9 +794,6 @@ rules:
   - patch
   - update
 {{- else }}
-{{- /* The operator passes these on to the Cluster Agent, and RBAC forbids granting
-permissions the grantor does not hold. Keep in sync with getRBACClusterPolicyRules
-in DataDog/datadog-operator. */}}
 - apiGroups:
   - storage.k8s.io
   resources:
