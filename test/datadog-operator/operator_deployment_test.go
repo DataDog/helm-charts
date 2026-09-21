@@ -1,6 +1,7 @@
 package datadog_operator
 
 import (
+	"slices"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -381,6 +382,101 @@ func Test_operator_untaint_controller_rbac(t *testing.T) {
 				"unexpected presence of nodes patch rule")
 		})
 	}
+}
+
+func Test_operator_csi_driver_rbac(t *testing.T) {
+	tests := []struct {
+		name       string
+		overrides  map[string]string
+		wantWrites bool
+	}{
+		{
+			name:       "datadogCSIDriver disabled -- read-only on csidrivers",
+			overrides:  map[string]string{"datadogCSIDriver.enabled": "false"},
+			wantWrites: false,
+		},
+		{
+			name:       "datadogCSIDriver enabled -- write verbs on csidrivers too",
+			overrides:  map[string]string{"datadogCSIDriver.enabled": "true"},
+			wantWrites: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/clusterrole.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   tt.overrides,
+			})
+			assert.Nil(t, err, "couldn't render template")
+
+			var clusterRole rbacv1.ClusterRole
+			common.Unmarshal(t, manifest, &clusterRole)
+
+			// The operator passes these permissions on to the Cluster Agent, which
+			// needs them whatever datadogCSIDriver.enabled is set to.
+			assert.True(t, coversClusterAgentCSIDriversGrant(clusterRole.Rules),
+				"csidrivers read permissions should always be granted")
+			assert.Equal(t, tt.wantWrites, hasCSIDriversWriteVerb(clusterRole.Rules),
+				"unexpected presence of write verbs on csidrivers")
+		})
+	}
+}
+
+// coversClusterAgentCSIDriversGrant reports whether the rules cover the
+// csidrivers permissions the operator grants to the Cluster Agent: list and
+// watch on every object, and get on the Datadog CSI driver. Without that
+// coverage the API server rejects the grant as a privilege escalation.
+func coversClusterAgentCSIDriversGrant(rules []rbacv1.PolicyRule) bool {
+	return hasCSIDriversRule(rules, nil, "list", "watch") &&
+		hasCSIDriversRule(rules, []string{"k8s.csi.datadoghq.com"}, "get")
+}
+
+// hasCSIDriversRule reports whether a csidrivers rule scoped to resourceNames
+// grants every one of verbs.
+func hasCSIDriversRule(rules []rbacv1.PolicyRule, resourceNames []string, verbs ...string) bool {
+	for _, rule := range rules {
+		if !isCSIDriversRule(rule) || !slices.Equal(rule.ResourceNames, resourceNames) {
+			continue
+		}
+		if grantsAll(rule.Verbs, verbs) {
+			return true
+		}
+	}
+	return false
+}
+
+// hasCSIDriversWriteVerb reports whether any csidrivers rule grants a verb
+// other than the read ones. Defined as the complement of the read verbs so it
+// also catches wildcards and verbs added later.
+func hasCSIDriversWriteVerb(rules []rbacv1.PolicyRule) bool {
+	for _, rule := range rules {
+		if !isCSIDriversRule(rule) {
+			continue
+		}
+		for _, verb := range rule.Verbs {
+			if !containsString([]string{"get", "list", "watch"}, verb) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func isCSIDriversRule(rule rbacv1.PolicyRule) bool {
+	return containsString(rule.APIGroups, "storage.k8s.io") && containsString(rule.Resources, "csidrivers")
+}
+
+func grantsAll(got, want []string) bool {
+	for _, verb := range want {
+		if !containsString(got, verb) {
+			return false
+		}
+	}
+	return true
 }
 
 func hasNodesPatchRule(rules []rbacv1.PolicyRule) bool {
