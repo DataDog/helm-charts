@@ -1,5 +1,5 @@
 {{- $dcaImageTag := .Values.clusterAgent.image.tag | toString }}
-{{- if and .Values.datadog.kubernetesActions.enabled (eq (include "cluster-agent-enabled" .) "true") (or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.85.0-0" $dcaImageTag)) }}
+{{- if and .Values.datadog.kubernetesActions.helmActions.enabled (eq (include "cluster-agent-enabled" .) "true") (or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.85.0-0" $dcaImageTag)) }}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:
@@ -91,6 +91,7 @@ rules:
       - ""
     resources:
       - configmaps
+      - secrets
       - services
       - serviceaccounts
       - persistentvolumeclaims
