@@ -793,6 +793,22 @@ rules:
   - get
   - patch
   - update
+{{- else }}
+- apiGroups:
+  - storage.k8s.io
+  resources:
+  - csidrivers
+  verbs:
+  - list
+  - watch
+- apiGroups:
+  - storage.k8s.io
+  resourceNames:
+  - k8s.csi.datadoghq.com
+  resources:
+  - csidrivers
+  verbs:
+  - get
 {{- end }}
 {{- if .Values.clusterRole.allowReadAllResources }}
 - apiGroups:

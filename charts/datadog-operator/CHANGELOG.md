@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.28.0-dev.2
+
+* Keep granting the Operator read access on `csidrivers.storage.k8s.io` when `datadogCSIDriver.enabled` is `false`, so it can still pass that permission on to the Cluster Agent, which needs it to detect an installed Datadog CSI driver. The write verbs stay behind `datadogCSIDriver.enabled` ([#2923](https://github.com/DataDog/helm-charts/pull/2923)).
+
 ## 2.28.0-dev.1
 
 * Update Datadog Operator chart for 1.31.0-rc.1.
