@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.28.0-dev.2
+
+* fix(datadog-operator): grant csidrivers read RBAC ([#2923](https://github.com/DataDog/helm-charts/pull/2923)).
+
 ## 2.28.0-dev.1
 
 * Update Datadog Operator chart for 1.31.0-rc.1.
