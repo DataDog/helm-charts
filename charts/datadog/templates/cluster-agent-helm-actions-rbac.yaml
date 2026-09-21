@@ -35,4 +35,98 @@ subjects:
   - kind: ServiceAccount
     name: {{ if .Values.clusterAgent.rbac.create }}{{ template "datadog.fullname" . }}-cluster-agent{{ else }}"{{ .Values.clusterAgent.rbac.serviceAccountName }}"{{ end }}
     namespace: {{ .Release.Namespace }}
+---
+# ServiceAccount for the Job performing the Helm action
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-helm-actions
+  namespace: {{ .Release.Namespace }}
+---
+# ClusterRole granting Helm release storage access (secrets driver)
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-helm-release-storage
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - configmaps
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-helm-release-storage
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-helm-release-storage
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-helm-actions
+    namespace: {{ .Release.Namespace }}
+---
+# ClusterRole granting the Job access to the resources a Helm release can alter.
+# This needs to be extended every time a customer's chart adds a new resource type.
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRole
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-helm-to-resources
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - services
+      - serviceaccounts
+      - persistentvolumeclaims
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+---
+apiVersion: {{ template "rbac.apiVersion" . }}
+kind: ClusterRoleBinding
+metadata:
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+  name: {{ template "datadog.fullname" . }}-helm-to-resources
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ template "datadog.fullname" . }}-helm-to-resources
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "datadog.fullname" . }}-helm-actions
+    namespace: {{ .Release.Namespace }}
 {{- end }}
