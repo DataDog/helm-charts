@@ -1981,3 +1981,86 @@ streamed snapshot reports the value each container actually started with.
 - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
   value: {{ include "configstream-enabled" . | quote }}
 {{- end -}}
+
+{{/*
+Per-remote-agent log levels, set on the Agent container so the config stream carries them.
+*/}}
+{{- define "remote-agent-log-level-env" -}}
+{{- if eq (include "configstream-enabled" .) "true" }}
+{{- if .Values.agents.containers.securityAgent.logLevel }}
+- name: DD_SECURITY_AGENT_LOG_LEVEL
+  value: {{ .Values.agents.containers.securityAgent.logLevel | quote }}
+{{- end }}
+{{- if .Values.agents.containers.processAgent.logLevel }}
+- name: DD_PROCESS_CONFIG_LOG_LEVEL
+  value: {{ .Values.agents.containers.processAgent.logLevel | quote }}
+{{- end }}
+{{- if .Values.agents.containers.traceAgent.logLevel }}
+- name: DD_APM_LOG_LEVEL
+  value: {{ .Values.agents.containers.traceAgent.logLevel | quote }}
+{{- end }}
+{{- if .Values.agents.containers.systemProbe.logLevel }}
+- name: DD_SYSTEM_PROBE_LOG_LEVEL
+  value: {{ .Values.agents.containers.systemProbe.logLevel | quote }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Settings the chart renders only on a remote agent's container, mirrored onto the Agent
+container so config streaming carries them: the remote agents drop their own environment
+and take their configuration from the Agent. Values stay raw and the guards match the
+remote containers' verbatim, so nothing here changes what a remote agent computes.
+*/}}
+{{- define "remote-agent-hoisted-env" -}}
+{{- if eq (include "configstream-enabled" .) "true" }}
+{{- if eq (include "should-enable-compliance" .) "true" }}
+- name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+  value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
+- name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+- name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
+  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+{{- if .Values.datadog.securityAgent.compliance.containerInclude }}
+- name: DD_COMPLIANCE_CONFIG_CONTAINER_INCLUDE
+  value: {{ .Values.datadog.securityAgent.compliance.containerInclude | quote }}
+{{- end }}
+{{- if .Values.datadog.securityAgent.compliance.containerExclude }}
+- name: DD_COMPLIANCE_CONFIG_CONTAINER_EXCLUDE
+  value: {{ .Values.datadog.securityAgent.compliance.containerExclude | quote }}
+{{- end }}
+{{- end }}
+{{- if eq (include "should-enable-security-agent-cws-integration" .) "true" }}
+- name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
+  value: "/etc/datadog-agent/runtime-security.d"
+- name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
+  value: /var/run/sysprobe/runtime-security.sock
+- name: DD_RUNTIME_SECURITY_CONFIG_USE_SECRUNTIME_TRACK
+  value: {{ .Values.datadog.securityAgent.runtime.useSecruntimeTrack | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.connectionsMonitoring.enabled }}
+- name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
+  value: {{ .Values.datadog.networkPath.connectionsMonitoring.enabled | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.workers }}
+- name: DD_NETWORK_PATH_COLLECTOR_WORKERS
+  value: {{ .Values.datadog.networkPath.collector.workers | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestTTL }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_TTL
+  value: {{ .Values.datadog.networkPath.collector.pathtestTTL | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestInterval }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_INTERVAL
+  value: {{ .Values.datadog.networkPath.collector.pathtestInterval | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestContextsLimit }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_CONTEXTS_LIMIT
+  value: {{ .Values.datadog.networkPath.collector.pathtestContextsLimit | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestMaxPerMinute }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_MAX_PER_MINUTE
+  value: {{ .Values.datadog.networkPath.collector.pathtestMaxPerMinute | quote }}
+{{- end }}
+{{- end }}
+{{- end -}}
