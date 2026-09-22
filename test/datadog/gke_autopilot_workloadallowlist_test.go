@@ -63,9 +63,10 @@ var workloadAllowlistExemptedHostPaths = map[string]interface{}{
 // (GKE >= 1.32.1-gke.1729000). On real clusters the CRDs are detected automatically.
 func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 	tests := []struct {
-		name       string
-		command    common.HelmCommand
-		assertions func(t *testing.T, manifest string)
+		name          string
+		command       common.HelmCommand
+		errorContains string
+		assertions    func(t *testing.T, manifest string)
 	}{
 		{
 			name: "default",
@@ -87,6 +88,25 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				requireContainerNames(t, ds, "agent", "system-probe")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
 			},
+		},
+		{
+			name: "split private action runner rejected",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"agents.image.tag":                         "7.84.0",
+					"datadog.envDict.HELM_FORCE_RENDER":        "true",
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"providers.gke.autopilot":                  "true",
+					"datadog.privateActionRunner.enabled":      "true",
+					"datadog.privateActionRunner.splitEnabled": "true",
+					"datadog.privateActionRunner.selfEnroll":   "true",
+				},
+			},
+			errorContains: "Private Action Runner is not supported on GKE Autopilot / GDC environments",
 		},
 		{
 			name: "with agent-data-plane",
@@ -143,7 +163,11 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
-			assert.Nil(t, err, "couldn't render template")
+			if tt.errorContains != "" {
+				assert.ErrorContains(t, err, tt.errorContains)
+				return
+			}
+			assert.NoError(t, err, "couldn't render template")
 			tt.assertions(t, manifest)
 		})
 	}

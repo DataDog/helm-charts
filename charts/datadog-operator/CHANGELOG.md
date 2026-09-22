@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.28.0-dev.2
+
+* Keep granting the Operator read access on `csidrivers.storage.k8s.io` when `datadogCSIDriver.enabled` is `false`, so it can still pass that permission on to the Cluster Agent, which needs it to detect an installed Datadog CSI driver. The write verbs stay behind `datadogCSIDriver.enabled` ([#2923](https://github.com/DataDog/helm-charts/pull/2923)).
+
+## 2.28.0-dev.1
+
+* Update Datadog Operator chart for 1.31.0-rc.1.
+
+## 2.27.0
+
+* Always tolerate the `agent.datadoghq.com/not-ready` startup taint on the Operator Deployment so it can schedule on a cold cluster where every node registers with the untaint controller's startup taint. The toleration is appended to any user-supplied `tolerations`.
+
+## 2.26.0
+
+* Update Datadog Operator chart for 1.30.0.
+
+## 2.26.0-dev.5
+
+* Update Datadog Operator chart for 1.30.0-rc.3.
+
 ## 2.26.0-dev.4
 
 * Stop rendering unsupported ExtendedDaemonSet and registry override settings ([#2875](https://github.com/DataDog/helm-charts/pull/2875)).

@@ -94,6 +94,9 @@ spec:
             "max_returned_metrics": 4000
           }]
         {{- end }}
+        {{- if eq (include "ksm-pod-collection-on-node-enabled" .) "true" }}
+        checksum/ksm-node-config: {{ include "kubeStateMetricsCore-node-config" . | sha256sum }}
+        {{- end -}}
       {{- if .Values.agents.podAnnotations }}
 {{ tpl (toYaml .Values.agents.podAnnotations) . | indent 8 }}
       {{- end }}
@@ -253,7 +256,9 @@ spec:
 {{- if .Values.agents.volumes }}
 {{ toYaml .Values.agents.volumes | indent 6 }}
 {{- end }}
-      {{- if .Values.agents.terminationGracePeriodSeconds }}
+      {{- if and .Values.datadog.privateActionRunner.enabled .Values.datadog.privateActionRunner.splitEnabled }}
+      terminationGracePeriodSeconds: {{ max 190 (.Values.agents.terminationGracePeriodSeconds | default 0) }}
+      {{- else if .Values.agents.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.agents.terminationGracePeriodSeconds }}
       {{- end }}
       tolerations:

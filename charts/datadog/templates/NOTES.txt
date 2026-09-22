@@ -630,6 +630,28 @@ To make sure all cluster checks run on Cluster Checks Runners set `clusterChecks
 
 {{- end }}
 
+{{- if and (eq .Values.datadog.kubeStateMetricsCore.podCollectionMode "node_kubelet") (eq (include "ksm-pod-collection-on-node-supported" .) "false") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You have set `datadog.kubeStateMetricsCore.podCollectionMode` to `node_kubelet`, but this requires Agent and Cluster Agent version 7.82.0 or later, and Cluster Checks Runner version 7.82.0 or later when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is enabled.
+Falling back to the default Kubernetes State Metrics Core configuration.
+
+{{- end }}
+
+{{- if and (eq (include "ksm-pod-collection-on-node-enabled" .) "true") (or .Values.clusterAgent.confd .Values.clusterAgent.advancedConfd)}}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You have set `datadog.kubeStateMetricsCore.podCollectionMode` to `node_kubelet` alongside `.Values.clusterAgent.confd` or `.Values.clusterAgent.advancedConfd`;
+the helm chart will deploy node-side check but won't alter the user-supplied cluster-side values. To avoid double pod collection, set pod_collection_mode: cluster_unassigned
+(or omit `pods` from `collectors`) on the cluster-side instance. For cluster-aggregate metrics, add an instance with no collectors and pod_collection_mode: cluster_aggregates_only.
+
+{{- end }}
 
 {{- if or .Values.datadog.acInclude .Values.datadog.acExclude }}
 #################################################################

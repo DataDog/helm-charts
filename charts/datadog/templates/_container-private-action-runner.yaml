@@ -3,7 +3,11 @@
 - name: private-action-runner
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
+  {{- if .Values.datadog.privateActionRunner.splitEnabled }}
+  command: ["/opt/entrypoints/privateactionrunner"]
+  {{- else }}
   command: ["/opt/datadog-agent/embedded/bin/privateactionrunner", "run", "-c={{ template "datadog.confPath" . }}", "-E=/etc/privateactionrunner/privateactionrunner.yaml"]
+  {{- end }}
 {{ include "generate-security-context" (dict "securityContext" .Values.agents.containers.privateActionRunner.securityContext "targetSystem" .Values.targetSystem "seccomp" "" "kubeversion" .Capabilities.KubeVersion.Version) | nindent 2 }}
   resources:
 {{ toYaml .Values.agents.containers.privateActionRunner.resources | indent 4 }}
@@ -45,6 +49,14 @@
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
+    {{- if .Values.datadog.privateActionRunner.splitEnabled }}
+    - name: DD_PRIVATE_ACTION_RUNNER_SPLIT_ENABLED
+      value: "true"
+    - name: DD_PRIVATE_ACTION_RUNNER_EXTRA_CONFIG_PATH
+      value: /etc/privateactionrunner/privateactionrunner.yaml
+    - name: DD_PM_SOCKET_PATH
+      value: /opt/datadog-agent/run/dd-procmgrd.sock
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.privateActionRunner.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.privateActionRunner.envDict | indent 4 }}
   volumeMounts:
@@ -62,6 +74,11 @@
     - name: {{ template "datadog.fullname" . }}-privateactionrunner-config
       mountPath: /etc/privateactionrunner
       readOnly: true
+    {{- if .Values.datadog.privateActionRunner.splitEnabled }}
+    - name: private-action-runner-run
+      mountPath: /opt/datadog-agent/run
+      readOnly: false
+    {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: tmpdir
       mountPath: /tmp
@@ -92,5 +109,10 @@
     {{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
+{{- end }}
+{{- if .Values.datadog.privateActionRunner.splitEnabled }}
+  readinessProbe:
+    exec:
+      command: ["/par-probe.sh"]
 {{- end }}
 {{- end -}}

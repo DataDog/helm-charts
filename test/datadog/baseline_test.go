@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/DataDog/helm-charts/test/common"
+	"github.com/DataDog/helm-charts/test/utils"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -97,7 +98,43 @@ func verifyUntypedResources(t *testing.T, baselineManifestPath, actual string) {
 		yaml.Unmarshal(baselineResource, &expected)
 		yaml.Unmarshal(actualResource, &actual)
 
+		stripOperatorReleaseVersion(expected)
+		stripOperatorReleaseVersion(actual)
+
 		assert.True(t, cmp.Equal(expected, actual), cmp.Diff(expected, actual))
+	}
+}
+
+// stripOperatorReleaseVersion drops the operator image tag and the
+// "app.kubernetes.io/version" label from every operator-owned resource
+// that carries them (Deployment, ServiceAccount, ClusterRole, etc.), so
+// an Operator version bump doesn't break this baseline.
+func stripOperatorReleaseVersion(doc map[string]interface{}) {
+	metadata, _ := doc["metadata"].(map[string]interface{})
+	if labels, ok := metadata["labels"].(map[string]interface{}); ok {
+		if name, _ := labels["app.kubernetes.io/name"].(string); name == "operator" {
+			delete(labels, "app.kubernetes.io/version")
+		}
+	}
+
+	kind, _ := doc["kind"].(string)
+	name, _ := metadata["name"].(string)
+	if kind != "Deployment" || name != "datadog-operator" {
+		return
+	}
+
+	spec, _ := doc["spec"].(map[string]interface{})
+	template, _ := spec["template"].(map[string]interface{})
+	podSpec, _ := template["spec"].(map[string]interface{})
+	containers, _ := podSpec["containers"].([]interface{})
+	for _, c := range containers {
+		container, ok := c.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		if image, ok := container["image"].(string); ok {
+			container["image"] = utils.ImageRepository(image)
+		}
 	}
 }
 

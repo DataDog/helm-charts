@@ -16,6 +16,19 @@
 {{- end -}}
 
 {{/*
+  Returns Cluster Checks Runner version based on image tag. This assumes
+  `clusterChecksRunner.image.doNotCheckTag` is false.
+*/}}
+{{- define "get-cluster-checks-runner-version" -}}
+{{- $version := .Values.clusterChecksRunner.image.tag | toString -}}
+{{- $length := len (split "." $version) -}}
+{{- if and (eq $length 1) (eq $version "latest") -}}
+{{- $version = "7.82.3" -}}
+{{- end -}}
+{{- $version -}}
+{{- end -}}
+
+{{/*
   Returns Cluster Agent version based on image tag. This assumes `clusterAgent.image.doNotCheckTag` is false.
 */}}
 {{- define "get-cluster-agent-version" -}}
@@ -1517,6 +1530,14 @@ Validate Node Agent Private Action Runner configuration
 */}}
 {{- define "validate-node-private-action-runner-config" -}}
 {{- if .Values.datadog.privateActionRunner.enabled -}}
+{{- if .Values.datadog.privateActionRunner.splitEnabled -}}
+{{- if or .Values.useFIPSAgent .Values.fips.enabled -}}
+{{- fail "Node Agent Private Action Runner split mode does not support FIPS." -}}
+{{- end -}}
+{{- if and (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.84.0-0" (include "get-agent-version" .)) -}}
+{{- fail "Node Agent Private Action Runner split mode requires Datadog Agent 7.84.0 or newer." -}}
+{{- end -}}
+{{- end -}}
 {{- if not .Values.datadog.privateActionRunner.selfEnroll -}}
 {{- if and (not .Values.datadog.privateActionRunner.identityFromExistingSecret) (or (not .Values.datadog.privateActionRunner.urn) (not .Values.datadog.privateActionRunner.privateKey)) -}}
 {{- fail "Node Agent Private Action Runner: when selfEnroll is disabled, you must provide either datadog.privateActionRunner.identityFromExistingSecret or both datadog.privateActionRunner.urn and datadog.privateActionRunner.privateKey" }}
@@ -1946,6 +1967,20 @@ false
 {{- end -}}
 
 {{/*
+Return true if KSM node pod collection is supported
+*/}}
+{{- define "ksm-pod-collection-on-node-supported" -}}
+{{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+{{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+{{- $ccrVersionOK := or (not .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners) .Values.clusterChecksRunner.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-checks-runner-version" .)) -}}
+{{- if and $agentVersionOK $dcaVersionOK $ccrVersionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Fail if DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED is set through env or envDict. A
 container's own env renders after the chart's, so such a value would win and leave the
 rendered spec streaming while the mirrored settings stay ungated.
@@ -2063,4 +2098,19 @@ remote containers' verbatim, so nothing here changes what a remote agent compute
   value: {{ .Values.datadog.networkPath.collector.pathtestMaxPerMinute | quote }}
 {{- end }}
 {{- end }}
+{{- end -}}
+
+{{/*
+Return true if KSM pod collection on nodes is enabled and supported
+*/}}
+{{- define "ksm-pod-collection-on-node-enabled" -}}
+{{- if and
+  .Values.datadog.kubeStateMetricsCore.enabled
+  (eq .Values.datadog.kubeStateMetricsCore.podCollectionMode "node_kubelet")
+  (eq (include "ksm-pod-collection-on-node-supported" .) "true")
+-}}
+true
+{{- else -}}
+false
+{{- end -}}
 {{- end -}}

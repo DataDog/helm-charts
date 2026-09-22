@@ -1,0 +1,9 @@
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  privateActionRunner:
+    enabled: true
+    selfEnroll: true
+    splitEnabled: true
+agents:
+  image:
+    tag: 7.84.0

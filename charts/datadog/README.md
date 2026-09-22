@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.244.0](https://img.shields.io/badge/Version-3.244.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.248.0](https://img.shields.io/badge/Version-3.248.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -31,10 +31,10 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://helm.datadoghq.com | datadog-crds | 2.23.0 |
-| https://helm.datadoghq.com | datadog-instrumentation-crd(datadog-crds) | 2.23.0 |
+| https://helm.datadoghq.com | datadog-crds | 2.24.0 |
+| https://helm.datadoghq.com | datadog-instrumentation-crd(datadog-crds) | 2.24.0 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.17.0 |
-| https://helm.datadoghq.com | operator(datadog-operator) | 2.25.0 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.26.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -715,6 +715,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.envFrom | list | `[]` | Set environment variables specific to Cluster Checks Runner from configMaps and/or secrets |
 | clusterChecksRunner.healthPort | int | `5557` | Port number to use in the Cluster Checks Runner for the healthz endpoint |
 | clusterChecksRunner.image.digest | string | `""` | Define Agent image digest to use, takes precedence over tag if specified |
+| clusterChecksRunner.image.doNotCheckTag | string | `nil` | Skip the version and chart compatibility check |
 | clusterChecksRunner.image.name | string | `"agent"` | Datadog Agent image name to use (relative to `registry`) |
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
@@ -858,6 +859,7 @@ helm install <RELEASE_NAME> \
 | datadog.hostProfiler.image | string | `""` | Image the Host Profiler. This parameter is experimental and will be removed once official image is available. |
 | datadog.hostProfiler.imagePullPolicy | string | `""` | Pull policy for the Host Profiler image. Defaults to agents.image.pullPolicy when unset. |
 | datadog.hostProfiler.loggingSeccomp | bool | `false` | Use the seccomp profile that also permits logging syscalls |
+| datadog.hostProfiler.runAsNonRoot | bool | `false` | Run the Host Profiler as the dd-agent user (UID/GID 100). |
 | datadog.hostProfiler.seccomp | object | `{"enabled":true}` | Seccomp profile configuration for the Host Profiler |
 | datadog.hostProfiler.seccomp.enabled | bool | `true` | Apply the localhost seccomp profile to the host-profiler container and run the init container that installs it on the node. Disable to run the host-profiler container Unconfined (no init container, no profile installed on the node). |
 | datadog.hostProfiler.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
@@ -875,6 +877,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck | bool | `true` | Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true) |
 | datadog.kubeStateMetricsCore.labelsAsTags | object | `{}` | Extra labels to collect from resources and to turn into datadog tag. |
 | datadog.kubeStateMetricsCore.namespaces | list | `[]` | Restrict the kubernetes_state_core check to collect metrics only from the specified namespaces. # When set, namespace-scoped RBAC is created as Role+RoleBinding per listed namespace instead of a cluster-wide ClusterRole. # Cluster-scoped resources (nodes, persistentvolumes, storageclasses, etc.) are still collected via a ClusterRole. |
+| datadog.kubeStateMetricsCore.podCollectionMode | string | `"default"` |  |
 | datadog.kubeStateMetricsCore.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | datadog.kubeStateMetricsCore.tags | list | `[]` | List of static tags to attach to all KSM metrics |
 | datadog.kubeStateMetricsCore.useApiServerCache | bool | `false` |  |
@@ -1059,7 +1062,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.29"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"1.1.30"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |
@@ -1093,69 +1096,70 @@ helm install <RELEASE_NAME> \
 | operator.datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | operator.datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
-| operator.image.tag | string | `"1.29.0"` | Define the Datadog Operator version to use |
+| operator.image.tag | string | `"1.30.0"` | Define the Datadog Operator version to use |
 | operator.untaintController.enabled | bool | `false` | Enables the Datadog Operator untaint controller (removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint once the Agent is ready) and adds the matching toleration to the Agent DaemonSet so it can schedule on tainted nodes. Requires Operator v1.28.0+ |
-| otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway Deployment and pods |
-| otelAgentGateway.affinity | object | `{}` | Allow the Gateway Deployment to schedule using affinity rules |
-| otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA |
-| otelAgentGateway.autoscaling.behavior | object | `{"scaleDown":{},"scaleUp":{}}` | defines the scaling behavior in OTel Agent Gateway HPA |
-| otelAgentGateway.autoscaling.behavior.scaleDown | object | `{}` | defines the scaling down behavior in OTel Agent Gateway HPA |
-| otelAgentGateway.autoscaling.behavior.scaleUp | object | `{}` | defines the scaling up behavior in OTel Agent Gateway HPA |
-| otelAgentGateway.autoscaling.enabled | bool | `false` | enable autoscaling using Horizontal Pod Autoscaler (HPA), requires k8s 1.23.0 and above. Will override otelAgentGateway.replicas. |
-| otelAgentGateway.autoscaling.maxReplicas | int | `0` | max number of replicas for OTel Agent Gateway HPA |
-| otelAgentGateway.autoscaling.metrics | list | `[]` | the metrics used for OTel Agent Gateway HPA |
-| otelAgentGateway.autoscaling.minReplicas | int | `0` | min number of replicas for OTel Agent Gateway HPA |
-| otelAgentGateway.config | string | `nil` | Gateway OTel Agent configuration |
-| otelAgentGateway.configMap.checksum | string | `nil` | Checksum of the existing ConfigMap that contains the Gateway OTel Agent configuration |
-| otelAgentGateway.configMap.items | string | `nil` | Items within the ConfigMap that contain Gateway OTel Agent configuration |
-| otelAgentGateway.configMap.key | string | `"otel-gateway-config.yaml"` | Key within the ConfigMap that contains the Gateway OTel Agent configuration |
-| otelAgentGateway.configMap.name | string | `nil` | Name of the existing ConfigMap that contains the Gateway OTel Agent configuration |
-| otelAgentGateway.containers.otelAgent.env | list | `[]` | Additional environment variables for the otel-agent container |
-| otelAgentGateway.containers.otelAgent.envDict | object | `{}` | Set environment variables specific to otel-agent defined in a dict |
-| otelAgentGateway.containers.otelAgent.envFrom | list | `[]` | Set environment variables specific to otel-agent from configMaps and/or secrets |
-| otelAgentGateway.containers.otelAgent.healthPort | int | `13133` | Port number to use for the otel-agent-gateway health check endpoint (OTel health_check extension) |
-| otelAgentGateway.containers.otelAgent.livenessProbe | object | `{"enabled":false,"failureThreshold":6,"initialDelaySeconds":15,"periodSeconds":15,"successThreshold":1,"timeoutSeconds":5}` | otel-agent-gateway liveness probe settings. Set enabled to true to activate. The OTel config must expose the health_check extension on healthPort (default 13133); the generated default config does this automatically. |
-| otelAgentGateway.containers.otelAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
-| otelAgentGateway.containers.otelAgent.readinessProbe | object | `{"enabled":false,"failureThreshold":6,"initialDelaySeconds":15,"periodSeconds":15,"successThreshold":1,"timeoutSeconds":5}` | otel-agent-gateway readiness probe settings. Set enabled to true to activate. The OTel config must expose the health_check extension on healthPort (default 13133); the generated default config does this automatically. |
-| otelAgentGateway.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container |
-| otelAgentGateway.containers.otelAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. |
-| otelAgentGateway.deploymentAnnotations | object | `{}` | Annotations to add to the otel-agent Gateway Deployment |
-| otelAgentGateway.dnsConfig | object | `{}` | Specify dns configuration options for otel agent containers e.g ndots |
+| otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway workload and pods (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.affinity | object | `{}` | Allow the Gateway to schedule using affinity rules (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.autoscaling.annotations | object | `{}` | annotations for OTel Agent Gateway HPA (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.autoscaling.behavior | object | `{"scaleDown":{},"scaleUp":{}}` | defines the scaling behavior in OTel Agent Gateway HPA (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.autoscaling.behavior.scaleDown | object | `{}` | defines the scaling down behavior in OTel Agent Gateway HPA (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.autoscaling.behavior.scaleUp | object | `{}` | defines the scaling up behavior in OTel Agent Gateway HPA (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.autoscaling.enabled | bool | `false` | enable autoscaling using Horizontal Pod Autoscaler (HPA), requires k8s 1.23.0 and above. Will override otelAgentGateway.replicas. (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.autoscaling.maxReplicas | int | `0` | max number of replicas for OTel Agent Gateway HPA (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.autoscaling.metrics | list | `[]` | the metrics used for OTel Agent Gateway HPA (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.autoscaling.minReplicas | int | `0` | min number of replicas for OTel Agent Gateway HPA (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.config | string | `nil` | Gateway OTel Agent configuration (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.configMap.checksum | string | `nil` | Checksum of the existing ConfigMap that contains the Gateway OTel Agent configuration (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.configMap.items | string | `nil` | Items within the ConfigMap that contain Gateway OTel Agent configuration (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.configMap.key | string | `"otel-gateway-config.yaml"` | Key within the ConfigMap that contains the Gateway OTel Agent configuration (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.configMap.name | string | `nil` | Name of the existing ConfigMap that contains the Gateway OTel Agent configuration (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.containers.otelAgent.env | list | `[]` | Additional environment variables for the otel-agent container (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.containers.otelAgent.envDict | object | `{}` | Set environment variables specific to otel-agent defined in a dict (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.containers.otelAgent.envFrom | list | `[]` | Set environment variables specific to otel-agent from configMaps and/or secrets (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.containers.otelAgent.healthPort | int | `13133` | Port number to use for the otel-agent-gateway health check endpoint (OTel health_check extension) (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.containers.otelAgent.livenessProbe | object | `{"enabled":false,"failureThreshold":6,"initialDelaySeconds":15,"periodSeconds":15,"successThreshold":1,"timeoutSeconds":5}` | otel-agent-gateway liveness probe settings. (applies to both `Deployment` and `StatefulSet`) Set enabled to true to activate. The OTel config must expose the health_check extension on healthPort (default 13133); the generated default config does this automatically. |
+| otelAgentGateway.containers.otelAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. (applies to both `Deployment` and `StatefulSet`) If not set, fall back to the value of datadog.logLevel. |
+| otelAgentGateway.containers.otelAgent.readinessProbe | object | `{"enabled":false,"failureThreshold":6,"initialDelaySeconds":15,"periodSeconds":15,"successThreshold":1,"timeoutSeconds":5}` | otel-agent-gateway readiness probe settings. (applies to both `Deployment` and `StatefulSet`) Set enabled to true to activate. The OTel config must expose the health_check extension on healthPort (default 13133); the generated default config does this automatically. |
+| otelAgentGateway.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.containers.otelAgent.securityContext | object | `{}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.controller.type | string | `"Deployment"` | Workload type used to deploy the Gateway. Valid values are `Deployment` and `StatefulSet` |
+| otelAgentGateway.deploymentAnnotations | object | `{}` | Annotations to add to the otel-agent Gateway workload (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.dnsConfig | object | `{}` | Specify dns configuration options for otel agent containers e.g ndots (applies to both `Deployment` and `StatefulSet`) |
 | otelAgentGateway.enabled | bool | `false` | Enable otel-agent Gateway |
-| otelAgentGateway.featureGates | string | `nil` | Feature gates to pass to OTel collector, as a comma separated list |
-| otelAgentGateway.image.digest | string | `""` | Override the image digest of otel agent, takes precedence over tag if specified |
-| otelAgentGateway.image.doNotCheckTag | string | `nil` | Skip the version and chart compatibility check |
-| otelAgentGateway.image.name | string | `"ddot-collector"` | otel agent image name to use (relative to `registry`) |
-| otelAgentGateway.image.pullPolicy | string | `"IfNotPresent"` | otel Agent image pullPolicy |
-| otelAgentGateway.image.pullSecrets | list | `[]` | otel Agent repository pullSecret (ex: specify docker registry credentials) |
-| otelAgentGateway.image.repository | string | `nil` | Override the image repository to override default registry |
-| otelAgentGateway.image.tag | string | `""` | Override the image tag of otel agent |
-| otelAgentGateway.image.tagSuffix | string | `""` | Suffix to append to image tag of otel agent |
-| otelAgentGateway.initContainers.resources | string | `nil` | Resource requests and limits for init containers |
-| otelAgentGateway.initContainers.securityContext | string | `nil` | Allows you to overwrite the default container SecurityContext for init containers |
-| otelAgentGateway.lifecycle | object | `{}` | Configure the lifecycle of the otel-agent |
-| otelAgentGateway.logs.enabled | bool | `false` | Enable logs support in the OTel Collector. If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers and pods logs. |
-| otelAgentGateway.nodeSelector | object | `{}` | Allow the Gateway Deployment to schedule on selected nodes |
-| otelAgentGateway.podAnnotations | object | `{}` | Annotations to add to the Gateway Deployment's Pods |
-| otelAgentGateway.podLabels | object | `{}` | Sets podLabels if defined |
-| otelAgentGateway.ports | list | `[{"containerPort":"4317","name":"otel-grpc","protocol":"TCP"},{"containerPort":"4318","name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on |
-| otelAgentGateway.priorityClassCreate | bool | `false` | Creates a priorityClass for the otel-agent Gateway Deployment pods. |
-| otelAgentGateway.priorityClassName | string | `nil` | Sets PriorityClassName if defined |
-| otelAgentGateway.priorityClassValue | int | `1000000000` | Value used to specify the priority of the scheduling of otel-agent Gateway Deployment pods. |
-| otelAgentGateway.priorityPreemptionPolicyValue | string | `"PreemptLowerPriority"` | Set to "Never" to change the PriorityClass to non-preempting |
-| otelAgentGateway.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API |
-| otelAgentGateway.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole |
-| otelAgentGateway.replicas | int | `1` | Number of otel-agent instances in the Gateway Deployment |
-| otelAgentGateway.revisionHistoryLimit | int | `10` | The number of old ReplicaSets to keep in this Deployment. |
-| otelAgentGateway.service.type | string | `"ClusterIP"` | Set type of otel-agent-gateway service |
-| otelAgentGateway.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the otel-agent |
-| otelAgentGateway.strategy | object | `{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"}` | Allow the otel-agent Gateway Deployment to perform a rolling update on helm update |
-| otelAgentGateway.terminationGracePeriodSeconds | int | `nil` | Configure the termination grace period for the otel-agent |
-| otelAgentGateway.tolerations | list | `[]` | Allow the Gateway Deployment to schedule on tainted nodes (requires Kubernetes >= 1.6) |
-| otelAgentGateway.topologySpreadConstraints | list | `[]` | Allow the otel-agent Gateway Deployment to schedule using pod topology spreading |
-| otelAgentGateway.useHostNetwork | bool | `false` | Bind ports on the hostNetwork |
-| otelAgentGateway.volumeMounts | list | `[]` | Specify additional volumes to mount in the otel-agent container |
-| otelAgentGateway.volumes | list | `[]` | Specify additional volumes to mount in the otel-agent container |
+| otelAgentGateway.featureGates | string | `nil` | Feature gates to pass to OTel collector, as a comma separated list (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.image.digest | string | `""` | Override the image digest of otel agent, takes precedence over tag if specified (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.image.doNotCheckTag | string | `nil` | Skip the version and chart compatibility check (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.image.name | string | `"ddot-collector"` | otel agent image name to use (relative to `registry`) (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.image.pullPolicy | string | `"IfNotPresent"` | otel Agent image pullPolicy (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.image.pullSecrets | list | `[]` | otel Agent repository pullSecret (ex: specify docker registry credentials) (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.image.repository | string | `nil` | Override the image repository to override default registry (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.image.tag | string | `""` | Override the image tag of otel agent (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.image.tagSuffix | string | `""` | Suffix to append to image tag of otel agent (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.initContainers.resources | string | `nil` | Resource requests and limits for init containers (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.initContainers.securityContext | string | `nil` | Allows you to overwrite the default container SecurityContext for init containers (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.lifecycle | object | `{}` | Configure the lifecycle of the otel-agent (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.logs.enabled | bool | `false` | Enable logs support in the OTel Collector. If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers and pods logs. (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.nodeSelector | object | `{}` | Allow the Gateway to schedule on selected nodes (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.podAnnotations | object | `{}` | Annotations to add to the Gateway's Pods (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.podLabels | object | `{}` | Sets podLabels if defined (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.ports | list | `[{"containerPort":"4317","name":"otel-grpc","protocol":"TCP"},{"containerPort":"4318","name":"otel-http","protocol":"TCP"}]` | Ports that OTel Collector is listening on (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.priorityClassCreate | bool | `false` | Creates a priorityClass for the otel-agent Gateway pods (applies to both `Deployment` and `StatefulSet`). |
+| otelAgentGateway.priorityClassName | string | `nil` | Sets PriorityClassName if defined (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.priorityClassValue | int | `1000000000` | Value used to specify the priority of the scheduling of otel-agent Gateway pods (applies to both `Deployment` and `StatefulSet`). |
+| otelAgentGateway.priorityPreemptionPolicyValue | string | `"PreemptLowerPriority"` | Set to "Never" to change the PriorityClass to non-preempting (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.rbac.create | bool | `true` | If true, check OTel Collector config for k8sattributes processor and create required ClusterRole to access Kubernetes API (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.rbac.rules | list | `[]` | A set of additional RBAC rules to apply to OTel Collector's ClusterRole (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.replicas | int | `1` | Number of otel-agent instances in the Gateway (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.revisionHistoryLimit | int | `10` | The number of old ReplicaSets (`Deployment`) or ControllerRevisions (`StatefulSet`) to keep (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.service.type | string | `"ClusterIP"` | Set type of otel-agent-gateway service (applies to both `Deployment` and `StatefulSet`; StatefulSet mode also creates an additional headless Service for pod DNS, unaffected by this setting) |
+| otelAgentGateway.shareProcessNamespace | bool | `false` | Set the process namespace sharing on the otel-agent (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.strategy | object | `{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"}` | Allow the otel-agent Gateway Deployment to perform a rolling update on helm update (Deployment only; ignored when `controller.type` is `StatefulSet`, which always uses a fixed RollingUpdate strategy) |
+| otelAgentGateway.terminationGracePeriodSeconds | int | `nil` | Configure the termination grace period for the otel-agent (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.tolerations | list | `[]` | Allow the Gateway to schedule on tainted nodes (requires Kubernetes >= 1.6) (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.topologySpreadConstraints | list | `[]` | Allow the otel-agent Gateway to schedule using pod topology spreading (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.useHostNetwork | bool | `false` | Bind ports on the hostNetwork (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.volumeMounts | list | `[]` | Specify additional volumes to mount in the otel-agent container (applies to both `Deployment` and `StatefulSet`) |
+| otelAgentGateway.volumes | list | `[]` | Specify additional volumes to mount in the otel-agent container (applies to both `Deployment` and `StatefulSet`) |
 | providers.aks.enabled | bool | `false` | Activate all specificities related to AKS configuration. Required as currently we cannot auto-detect AKS. |
 | providers.eks.controlPlaneMonitoring | bool | `false` | Enable control plane monitoring checks in the EKS cluster. |
 | providers.eks.ec2.useHostnameFromFile | bool | `false` | Use hostname from EC2 filesystem instead of fetching from metadata endpoint. |

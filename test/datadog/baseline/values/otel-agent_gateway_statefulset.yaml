@@ -1,0 +1,26 @@
+agents:
+  image:
+    tag: 7.78.0
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+  otelCollector:
+    enabled: true
+clusterAgent:
+  enabled: false
+otelAgentGateway:
+  enabled: true
+  controller:
+    type: StatefulSet
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    metrics:
+      - type: Resource
+        resource:
+          name: cpu
+          target:
+            type: Utilization
+            averageUtilization: 80
