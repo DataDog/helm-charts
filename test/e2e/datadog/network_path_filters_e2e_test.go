@@ -30,7 +30,10 @@ datadog:
     enabled: true
 `
 
-const networkPathFiltersEnv = "DD_NETWORK_PATH_COLLECTOR_FILTERS"
+const (
+	networkPathFiltersEnv               = "DD_NETWORK_PATH_COLLECTOR_FILTERS"
+	networkPathConnectionsMonitoringEnv = "DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED"
+)
 
 type networkPathFilter struct {
 	Type                string `json:"type"`
@@ -45,7 +48,7 @@ var expectedNetworkPathFilters = []networkPathFilter{
 	{Type: "exclude", MatchIP: "10.0.0.0/8"},
 }
 
-func systemProbeNetworkPathFilterEnvValue(pod corev1.Pod) (string, int, bool) {
+func systemProbeEnvValue(pod corev1.Pod, name string) (string, int, bool) {
 	for _, container := range pod.Spec.Containers {
 		if container.Name != "system-probe" {
 			continue
@@ -53,7 +56,7 @@ func systemProbeNetworkPathFilterEnvValue(pod corev1.Pod) (string, int, bool) {
 
 		value, count := "", 0
 		for _, env := range container.Env {
-			if env.Name == networkPathFiltersEnv {
+			if env.Name == name {
 				value = env.Value
 				count++
 			}
@@ -64,7 +67,7 @@ func systemProbeNetworkPathFilterEnvValue(pod corev1.Pod) (string, int, bool) {
 }
 
 func assertSystemProbeNetworkPathFilterEnv(c *assert.CollectT, pod corev1.Pod) bool {
-	raw, count, found := systemProbeNetworkPathFilterEnvValue(pod)
+	raw, count, found := systemProbeEnvValue(pod, networkPathFiltersEnv)
 	if !assert.True(c, found, "system-probe container not found") {
 		return false
 	}
@@ -76,10 +79,16 @@ func assertSystemProbeNetworkPathFilterEnv(c *assert.CollectT, pod corev1.Pod) b
 	if !assert.NoErrorf(c, json.Unmarshal([]byte(raw), &got), "invalid filter JSON in system-probe: %q", raw) {
 		return false
 	}
-	return assert.Equal(c, expectedNetworkPathFilters, got, "filters in system-probe")
+	if !assert.Equal(c, expectedNetworkPathFilters, got, "filters in system-probe") {
+		return false
+	}
+
+	enabled, count, _ := systemProbeEnvValue(pod, networkPathConnectionsMonitoringEnv)
+	return assert.Equalf(c, 1, count, "%s count in system-probe", networkPathConnectionsMonitoringEnv) &&
+		assert.Equal(c, "true", enabled, "Connections Monitoring activation in system-probe")
 }
 
-// Verifies that system-probe receives the configured Network Path filters in a live cluster.
+// Verifies that system-probe receives the enabled Network Path collector and its filters in a live cluster.
 func (s *k8sSuite) testNetworkPathCollectorFilters() {
 	s.T().Log("Verifying Network Path collector filters")
 

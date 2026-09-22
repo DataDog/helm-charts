@@ -13,7 +13,10 @@ import (
 	"github.com/DataDog/helm-charts/test/common"
 )
 
-const ddNetworkPathCollectorFilters = "DD_NETWORK_PATH_COLLECTOR_FILTERS"
+const (
+	ddNetworkPathCollectorFilters             = "DD_NETWORK_PATH_COLLECTOR_FILTERS"
+	ddNetworkPathConnectionsMonitoringEnabled = "DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED"
+)
 
 // Verifies that non-empty filters require Agent 7.83.2 or newer unless image tag validation is disabled.
 func Test_networkPathCollectorFiltersAgentVersion(t *testing.T) {
@@ -138,6 +141,11 @@ func Test_networkPathCollectorFilters(t *testing.T) {
 			require.True(t, found, "expected %s container", containerName)
 			assertNetworkPathFilters(t, container, filters)
 		}
+
+		systemProbe, found := getContainer(t, daemonSet.Spec.Template.Spec.Containers, "system-probe")
+		require.True(t, found, "expected system-probe container")
+		connectionsMonitoring := getNetworkPathEnv(t, systemProbe, ddNetworkPathConnectionsMonitoringEnabled)
+		assert.Equal(t, "true", connectionsMonitoring.Value)
 	})
 
 	t.Run("configured filters are added to Agent containers on Windows", func(t *testing.T) {
@@ -292,22 +300,22 @@ func Test_networkPathCollectorFilters(t *testing.T) {
 
 func assertNetworkPathFilters(t *testing.T, container corev1.Container, expected []map[string]string) {
 	t.Helper()
-	env := getNetworkPathFilterEnv(t, container)
+	env := getNetworkPathEnv(t, container, ddNetworkPathCollectorFilters)
 
 	var actual []map[string]string
 	require.NoError(t, json.Unmarshal([]byte(env.Value), &actual), "container %s", container.Name)
 	assert.Equal(t, expected, actual, "container %s", container.Name)
 }
 
-func getNetworkPathFilterEnv(t *testing.T, container corev1.Container) corev1.EnvVar {
+func getNetworkPathEnv(t *testing.T, container corev1.Container, name string) corev1.EnvVar {
 	t.Helper()
 
 	var matching []corev1.EnvVar
 	for _, env := range container.Env {
-		if env.Name == ddNetworkPathCollectorFilters {
+		if env.Name == name {
 			matching = append(matching, env)
 		}
 	}
-	require.Len(t, matching, 1, "container %s", container.Name)
+	require.Len(t, matching, 1, "%s in container %s", name, container.Name)
 	return matching[0]
 }
