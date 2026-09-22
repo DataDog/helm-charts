@@ -1960,6 +1960,8 @@ spec:
               value: warn
             - name: DD_APM_LOG_LEVEL
               value: trace
+            - name: DD_SYSTEM_PROBE_LOG_LEVEL
+              value: error
             - name: DD_DOGSTATSD_PORT
               value: "8125"
             - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC

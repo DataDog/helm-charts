@@ -1984,8 +1984,6 @@ streamed snapshot reports the value each container actually started with.
 
 {{/*
 Per-remote-agent log levels, set on the Agent container so the config stream carries them.
-system-probe is omitted deliberately — system_probe_config.log_level is not known to the core
-Agent's config, so it is never streamed; its container logLevel keeps working locally.
 */}}
 {{- define "remote-agent-log-level-env" -}}
 {{- if eq (include "configstream-enabled" .) "true" }}
@@ -2000,6 +1998,10 @@ Agent's config, so it is never streamed; its container logLevel keeps working lo
 {{- if .Values.agents.containers.traceAgent.logLevel }}
 - name: DD_APM_LOG_LEVEL
   value: {{ .Values.agents.containers.traceAgent.logLevel | quote }}
+{{- end }}
+{{- if .Values.agents.containers.systemProbe.logLevel }}
+- name: DD_SYSTEM_PROBE_LOG_LEVEL
+  value: {{ .Values.agents.containers.systemProbe.logLevel | quote }}
 {{- end }}
 {{- end }}
 {{- end -}}

@@ -21,7 +21,5 @@ agents:
       logLevel: warn
     traceAgent:
       logLevel: trace
-    # Deliberately not hoisted onto the Agent container: system_probe_config.log_level is
-    # unknown to the core Agent's config and is never streamed.
     systemProbe:
       logLevel: error

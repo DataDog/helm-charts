@@ -2310,6 +2310,7 @@ agents:
 
       # agents.containers.agent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # With config streaming enabled this also sets the default for remote Agent containers that do not set their own logLevel, because the core Agent's log level is the streamed global.
       logLevel:  # INFO
 
       # agents.containers.agent.resources -- Resource requests and limits for the agent container.
