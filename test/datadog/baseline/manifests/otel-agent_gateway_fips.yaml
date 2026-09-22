@@ -1519,6 +1519,8 @@ spec:
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
+              value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
@@ -1728,6 +1730,8 @@ spec:
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
+              value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "false"
             - name: DD_LOG_LEVEL
@@ -1833,6 +1837,8 @@ spec:
             - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
+              value: "false"
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
               value: "false"
             - name: DD_LOG_LEVEL
               value: INFO
