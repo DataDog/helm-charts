@@ -9,7 +9,7 @@
   command:
     - "host-profiler"
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
-{{- $securityContext := deepCopy .Values.agents.containers.hostProfiler.securityContext -}}
+{{- $securityContext := deepCopy (.Values.agents.containers.hostProfiler.securityContext | default dict) -}}
 {{- if .Values.datadog.hostProfiler.runAsNonRoot }}
 {{- $_ := set $securityContext "runAsUser" 100 }}
 {{- $_ := set $securityContext "runAsGroup" 100 }}

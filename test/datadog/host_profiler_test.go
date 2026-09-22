@@ -170,7 +170,19 @@ func TestHostProfilerSELinux(t *testing.T) {
 func TestHostProfilerNilSecurityContext(t *testing.T) {
 	overrides := copyMap(hostProfilerBaseOverrides)
 	overrides["agents.containers.hostProfiler.securityContext"] = "null"
+	overrides["datadog.hostProfiler.runAsNonRoot"] = "true"
 	ds := renderHostProfilerDaemonSet(t, overrides)
+
+	hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+	require.True(t, ok)
+	require.NotNil(t, hpContainer.SecurityContext)
+	require.NotNil(t, hpContainer.SecurityContext.RunAsUser)
+	require.NotNil(t, hpContainer.SecurityContext.RunAsGroup)
+	require.NotNil(t, hpContainer.SecurityContext.RunAsNonRoot)
+	assert.Equal(t, int64(100), *hpContainer.SecurityContext.RunAsUser)
+	assert.Equal(t, int64(100), *hpContainer.SecurityContext.RunAsGroup)
+	assert.True(t, *hpContainer.SecurityContext.RunAsNonRoot)
+	assert.Nil(t, hpContainer.SecurityContext.Privileged)
 
 	initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
 	require.True(t, ok)
