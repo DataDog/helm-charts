@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.247.0
+
+* [Host Profiler][PROF-15459] add feature option to deploy as dd-agent ([#2894](https://github.com/DataDog/helm-charts/pull/2894)).
+
 ## 3.246.0
 
 * Support node_kubelet KSM check configuration, including Cluster Checks Runner version validation when runners are used ([#2917](https://github.com/DataDog/helm-charts/pull/2917)).
