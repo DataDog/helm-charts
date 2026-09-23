@@ -1,6 +1,17 @@
 # Changelog
 
-## Unreleased
+## 0.5.3
+
+* Update Docker image to `v0.1.34`.
+* Enable locality-aware scheduling by default with `QW_ENABLE_LOCALITY_AWARE_SCHEDULING=true`.
+* Use readiness checks for startup probes, remove default readiness probes, and set liveness probe timeouts to 5 seconds.
+* Populate availability zone from pod labels regardless of Kubernetes version.
+* Set `QW_DISABLE_LOAD_ESTIMATION=true` and `QW_ENABLE_IN_MEMORY_INDEXING=true` on indexers by default. A value from `indexer.extraEnv` or `environment` takes precedence.
+* Set `QW_INDEXING_MAX_WRITE_THROUGHPUT` on indexers based on `indexer.podSize`, scaled with the CPU request. The variable is not set when `indexer.resources` is set, and a value from `indexer.extraEnv` or `environment` takes precedence.
+
+* Support immutable image digests and numeric image tags.
+* Default metastore PostgreSQL connections to a minimum of 10 and maximum of 50.
+* Increase compactor termination grace period to 300 seconds.
 
 ## 0.5.2
 

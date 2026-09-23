@@ -6,6 +6,18 @@ Expand the name of the chart.
 {{- end }}
 
 {{/*
+Create the Quickwit image reference. An immutable digest takes precedence over
+the configured tag and the chart appVersion.
+*/}}
+{{- define "quickwit.image" -}}
+{{- if .Values.image.digest -}}
+{{- printf "%s@%s" .Values.image.repository .Values.image.digest -}}
+{{- else -}}
+{{- printf "%s:%s" .Values.image.repository (.Values.image.tag | default .Chart.AppVersion | toString) -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
@@ -291,12 +303,10 @@ Quickwit environment
 {{- end }}
 - name: QW_NODE_ID
   value: "$(KUBERNETES_POD_NAME)"
-{{ if semverCompare ">=1.33.0" .Capabilities.KubeVersion.Version }}
 - name: QW_AVAILABILITY_ZONE
   valueFrom:
     fieldRef:
       fieldPath: metadata.labels['topology.kubernetes.io/zone']
-{{- end }}
 - name: QW_PEER_SEEDS
   value: {{ include "quickwit.fullname" . }}-headless
 - name: QW_ADVERTISE_ADDRESS
@@ -367,7 +377,7 @@ Quickwit environment
 - name: BYOC_TELEMETRY_ENABLED
   value: "true"
 - name: OTEL_RESOURCE_ATTRIBUTES
-  value: {{ printf "cluster_id=%s,node_id=$(QW_NODE_ID),host.name=$(KUBERNETES_NODE_NAME),component=$(KUBERNETES_COMPONENT),chart.version=%s" $clusterID .Chart.Version | quote }}
+  value: {{ printf "cluster_id=%s,node_id=$(QW_NODE_ID),host.name=$(KUBERNETES_NODE_NAME),chart.version=%s" $clusterID .Chart.Version | quote }}
 - name: OTEL_EXPORTER_OTLP_PROTOCOL
   value: "http/protobuf"
 - name: OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
@@ -405,7 +415,7 @@ Defaults are stored as a list (not a dict) to guarantee deterministic rendering 
 and avoid spurious rollouts from manifest drift.
 */}}
 {{- define "quickwit.environmentDefaults" -}}
-{{- $defaults := list (dict "name" "NO_COLOR" "value" "true") (dict "name" "QW_DISABLE_INGEST_V1" "value" "true") (dict "name" "QW_DISABLE_TELEMETRY" "value" "true") (dict "name" "QW_LOG_FORMAT" "value" "DDG") (dict "name" "QW_RANDOM_SPLIT_PREFIX" "value" "true") -}}
+{{- $defaults := list (dict "name" "NO_COLOR" "value" "true") (dict "name" "QW_DISABLE_INGEST_V1" "value" "true") (dict "name" "QW_DISABLE_TELEMETRY" "value" "true") (dict "name" "QW_LOG_FORMAT" "value" "DDG") (dict "name" "QW_RANDOM_SPLIT_PREFIX" "value" "true") (dict "name" "QW_ENABLE_LOCALITY_AWARE_SCHEDULING" "value" "true") -}}
 {{- $envs := list -}}
 {{- $keys := list -}}
 {{- if kindIs "map" . -}}
@@ -430,11 +440,35 @@ and avoid spurious rollouts from manifest drift.
 {{- end }}
 
 {{/*
-Render extra environment variables supporting both map and list formats.
+Render default environment variables whose names are absent from all override sources.
+Arguments: defaults (map or list), overrides (list of map or list environment sources).
+Only defaults are emitted; callers render user-provided environment variables separately.
+List defaults retain their order; map defaults are rendered in key order.
+*/}}
+{{- define "quickwit.renderEnvDefaults" -}}
+{{- $overridden := dict -}}
+{{- range .overrides -}}
+{{- range (include "quickwit.renderEnv" . | fromYamlArray) -}}
+{{- $_ := set $overridden .name true -}}
+{{- end -}}
+{{- end -}}
+{{- $envs := list -}}
+{{- range (include "quickwit.renderEnv" .defaults | fromYamlArray) -}}
+{{- if not (hasKey $overridden .name) -}}
+{{- $envs = append $envs . -}}
+{{- end -}}
+{{- end -}}
+{{- with $envs -}}
+{{- toYaml . -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Render environment variables as a Kubernetes env list from map or list input.
 Map format (legacy): { KEY: VALUE }
 List format (recommended): [{ name: KEY, value: VALUE, valueFrom: ... }]
 */}}
-{{- define "quickwit.extraEnv" -}}
+{{- define "quickwit.renderEnv" -}}
 {{- if kindIs "map" . -}}
 {{- $envList := list -}}
 {{- range $key, $value := . -}}
