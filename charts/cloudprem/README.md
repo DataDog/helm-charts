@@ -1,6 +1,6 @@
 # CloudPrem
 
-![Version: 0.5.2](https://img.shields.io/badge/Version-0.5.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.33](https://img.shields.io/badge/AppVersion-v0.1.33-informational?style=flat-square)
+![Version: 0.5.3](https://img.shields.io/badge/Version-0.5.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.34](https://img.shields.io/badge/AppVersion-v0.1.34-informational?style=flat-square)
 
 ## Using the Datadog Helm repository
 
@@ -59,6 +59,8 @@ Actual memory request/limit = (nominal pod memory - Kubernetes system memory res
 | `8xlarge` | 32 | 31600m | 128Gi | 120900Mi |
 
 The presets do not set a CPU limit, allowing a pod to use idle CPU on its node without being throttled. Memory requests and limits are equal to keep memory usage within the allocatable node capacity.
+
+For indexers, `podSize` also sets `QW_INDEXING_MAX_WRITE_THROUGHPUT`, which caps each indexer's write throughput and scales with the CPU request: `25MiB` for `large`, `50MiB` for `xlarge`, `100MiB` for `2xlarge`, `200MiB` for `4xlarge`, `300MiB` for `6xlarge`, and `400MiB` for `8xlarge`. The variable is not set when `indexer.resources` is set. To override it, set `QW_INDEXING_MAX_WRITE_THROUGHPUT` in `indexer.extraEnv` or `environment`.
 
 ```yaml
 datadog:
