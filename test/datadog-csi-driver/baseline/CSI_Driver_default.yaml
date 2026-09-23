@@ -111,3 +111,4 @@ spec:
             path: /var/run/datadog
             type: DirectoryOrCreate
           name: dsd-socket
+

@@ -1159,6 +1159,14 @@ datadog:
     # Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater.
     enabled: false
 
+    helmActions:
+      # datadog.kubernetesActions.helmActions.enabled -- Set this to true to enable Helm actions as part of the
+      # Kubernetes Actions feature. This grants the Cluster Agent RBAC to create a Job (and the Job the RBAC it
+      # needs) to perform Helm actions (e.g. rollback) so that the Datadog Kubernetes Actions product can drive
+      # remediation. Requires Cluster Agent version 7.85.0 or greater. Requires datadog.kubernetesActions.enabled
+      # to also be set to true.
+      enabled: false
+
   helmCheck:
     # datadog.helmCheck.enabled -- Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+)
     # This requires clusterAgent.enabled to be set to true
