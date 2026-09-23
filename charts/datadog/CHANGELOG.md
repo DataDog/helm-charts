@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.248.1
+
+- Grant the Cluster Agent `get` access to Secrets named `datadog-secret` when Agent sidecar injection is enabled.
+
 ## 3.248.0
 
 - Add support for Helm Actions in addion to Kube Actions

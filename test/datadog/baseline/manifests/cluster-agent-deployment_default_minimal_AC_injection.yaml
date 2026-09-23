@@ -1223,6 +1223,14 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - ""
+    resourceNames:
+      - datadog-secret
+    resources:
+      - secrets
+    verbs:
+      - get
+  - apiGroups:
       - storage.k8s.io
     resources:
       - csidrivers
