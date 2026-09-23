@@ -2445,6 +2445,7 @@ agents:
 
       # agents.containers.processAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # Under config streaming the Agent container carries this as DD_PROCESS_CONFIG_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.processAgent.resources -- Resource requests and limits for the process-agent container
@@ -2566,7 +2567,8 @@ agents:
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
-      # agents.containers.traceAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off
+      # agents.containers.traceAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
+      # Under config streaming the Agent container carries this as DD_APM_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.traceAgent.resources -- Resource requests and limits for the trace-agent container
@@ -2609,6 +2611,7 @@ agents:
 
       # agents.containers.systemProbe.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # Under config streaming the Agent container carries this as DD_SYSTEM_PROBE_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.systemProbe.resources -- Resource requests and limits for the system-probe container
@@ -2649,6 +2652,7 @@ agents:
 
       # agents.containers.securityAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # Under config streaming the Agent container carries this as DD_SECURITY_AGENT_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.securityAgent.resources -- Resource requests and limits for the security-agent container
