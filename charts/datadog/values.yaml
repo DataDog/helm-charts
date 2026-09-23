@@ -562,6 +562,14 @@ datadog:
     # DEPRECATED: Consider using remoteConfiguration.enabled instead
     enabled: true
 
+  configStream:
+    # datadog.configStream.enabled -- Stream configuration from the Agent to the Trace Agent, Process Agent, Security Agent and System Probe
+
+    ## Those containers then drop their own environment and take their configuration from the Agent,
+    ## so any DD_* variable meant for them must be set on the Agent container.
+    ## Unset follows the Agent version: enabled from 7.85.0 onwards.
+    enabled:  # nil
+
   privateActionRunner:
     # datadog.privateActionRunner.enabled -- Enable the Private Action Runner on the node agent to execute workflow actions
     enabled: false
@@ -2343,6 +2351,7 @@ agents:
 
       # agents.containers.agent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # With config streaming enabled this also sets the default for remote Agent containers that do not set their own logLevel, because the core Agent's log level is the streamed global.
       logLevel:  # INFO
 
       # agents.containers.agent.resources -- Resource requests and limits for the agent container.
@@ -2428,22 +2437,23 @@ agents:
           add: ["NET_RAW"]
 
     processAgent:
-      # agents.containers.processAgent.env -- Additional environment variables for the process-agent container
+      # agents.containers.processAgent.env -- Additional environment variables for the process-agent container DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       env: []
 
-      # agents.containers.processAgent.envFrom -- Set environment variables specific to process-agent from configMaps and/or secrets
+      # agents.containers.processAgent.envFrom -- Set environment variables specific to process-agent from configMaps and/or secrets DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.processAgent.envDict -- Set environment variables specific to process-agent defined in a dict
+      # agents.containers.processAgent.envDict -- Set environment variables specific to process-agent defined in a dict DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
       # agents.containers.processAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # Under config streaming the Agent container carries this as DD_PROCESS_CONFIG_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.processAgent.resources -- Resource requests and limits for the process-agent container
@@ -2551,21 +2561,22 @@ agents:
       #     readOnly: true
 
     traceAgent:
-      # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
+      # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       env: []
 
-      # agents.containers.traceAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets
+      # agents.containers.traceAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.traceAgent.envDict -- Set environment variables specific to trace-agent defined in a dict
+      # agents.containers.traceAgent.envDict -- Set environment variables specific to trace-agent defined in a dict DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
-      # agents.containers.traceAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off
+      # agents.containers.traceAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
+      # Under config streaming the Agent container carries this as DD_APM_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.traceAgent.resources -- Resource requests and limits for the trace-agent container
@@ -2592,22 +2603,23 @@ agents:
       ports: []
 
     systemProbe:
-      # agents.containers.systemProbe.env -- Additional environment variables for the system-probe container
+      # agents.containers.systemProbe.env -- Additional environment variables for the system-probe container DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       env: []
 
-      # agents.containers.systemProbe.envFrom -- Set environment variables specific to system-probe from configMaps and/or secrets
+      # agents.containers.systemProbe.envFrom -- Set environment variables specific to system-probe from configMaps and/or secrets DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.systemProbe.envDict -- Set environment variables specific to system-probe defined in a dict
+      # agents.containers.systemProbe.envDict -- Set environment variables specific to system-probe defined in a dict DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
       # agents.containers.systemProbe.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # Under config streaming the Agent container carries this as DD_SYSTEM_PROBE_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.systemProbe.resources -- Resource requests and limits for the system-probe container
@@ -2632,22 +2644,23 @@ agents:
       ports: []
 
     securityAgent:
-      # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container
+      # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       env: []
 
-      # agents.containers.securityAgent.envFrom -- Set environment variables specific to security-agent from configMaps and/or secrets
+      # agents.containers.securityAgent.envFrom -- Set environment variables specific to security-agent from configMaps and/or secrets DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.securityAgent.envDict -- Set environment variables specific to security-agent defined in a dict
+      # agents.containers.securityAgent.envDict -- Set environment variables specific to security-agent defined in a dict DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
       # agents.containers.securityAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # Under config streaming the Agent container carries this as DD_SECURITY_AGENT_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.securityAgent.resources -- Resource requests and limits for the security-agent container

@@ -1989,6 +1989,8 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
+              value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
@@ -2041,6 +2043,10 @@ spec:
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "false"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
+              value: "false"
+            - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
+              value: "false"
+            - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
               value: "false"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
@@ -2170,6 +2176,8 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
+              value: "false"
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_DOGSTATSD_PORT

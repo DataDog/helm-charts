@@ -1946,6 +1946,27 @@ Examples (assuming no overrides):
 {{- end -}}
 
 {{/*
+Whether the Trace Agent, Process Agent, Security Agent and System Probe take their
+configuration from the Agent. Rendered as the consumer's own environment variable and used to
+gate the settings mirrored onto the Agent container, so the chart's answer and the Agent's
+behaviour are one value rather than two that have to agree.
+The version floor is the Agent release that ships the namespaced per-container keys: enabling
+streaming without them drops each container's DD_LOG_LEVEL without a replacement.
+*/}}
+{{- define "configstream-enabled" -}}
+{{- include "configstream-env-conflict-check" . -}}
+{{- if kindIs "bool" .Values.datadog.configStream.enabled -}}
+{{ .Values.datadog.configStream.enabled }}
+{{- else if .Values.agents.image.doNotCheckTag -}}
+true
+{{- else if semverCompare ">=7.85.0-0" (include "get-agent-version" .) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if KSM node pod collection is supported
 */}}
 {{- define "ksm-pod-collection-on-node-supported" -}}
@@ -1957,6 +1978,126 @@ true
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Fail if DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED is set through env or envDict. A
+container's own env renders after the chart's, so such a value would win and leave the
+rendered spec streaming while the mirrored settings stay ungated.
+*/}}
+{{- define "configstream-env-conflict-check" -}}
+{{- $var := "DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED" -}}
+{{- $lists := dict "datadog.env" .Values.datadog.env -}}
+{{- $dicts := dict "datadog.envDict" .Values.datadog.envDict -}}
+{{- range $key := list "agent" "traceAgent" "processAgent" "securityAgent" "systemProbe" -}}
+{{- $container := index $.Values.agents.containers $key -}}
+{{- $_ := set $lists (printf "agents.containers.%s.env" $key) $container.env -}}
+{{- $_ := set $dicts (printf "agents.containers.%s.envDict" $key) $container.envDict -}}
+{{- end -}}
+{{- range $path, $entries := $lists -}}
+{{- range $entries -}}
+{{- if eq (default "" .name) $var -}}
+{{- fail (printf "%s sets %s. Use datadog.configStream.enabled instead, so the mirrored Agent settings stay in step with it." $path $var) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- range $path, $entries := $dicts -}}
+{{- if hasKey (default dict $entries) $var -}}
+{{- fail (printf "%s sets %s. Use datadog.configStream.enabled instead, so the mirrored Agent settings stay in step with it." $path $var) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+The consumer switch, rendered on every container that reads it and on the Agent container, so a
+streamed snapshot reports the value each container actually started with.
+*/}}
+{{- define "configstream-consumer-env" -}}
+- name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
+  value: {{ include "configstream-enabled" . | quote }}
+{{- end -}}
+
+{{/*
+Per-remote-agent log levels, set on the Agent container so the config stream carries them.
+*/}}
+{{- define "remote-agent-log-level-env" -}}
+{{- if eq (include "configstream-enabled" .) "true" }}
+{{- if .Values.agents.containers.securityAgent.logLevel }}
+- name: DD_SECURITY_AGENT_LOG_LEVEL
+  value: {{ .Values.agents.containers.securityAgent.logLevel | quote }}
+{{- end }}
+{{- if .Values.agents.containers.processAgent.logLevel }}
+- name: DD_PROCESS_CONFIG_LOG_LEVEL
+  value: {{ .Values.agents.containers.processAgent.logLevel | quote }}
+{{- end }}
+{{- if .Values.agents.containers.traceAgent.logLevel }}
+- name: DD_APM_LOG_LEVEL
+  value: {{ .Values.agents.containers.traceAgent.logLevel | quote }}
+{{- end }}
+{{- if .Values.agents.containers.systemProbe.logLevel }}
+- name: DD_SYSTEM_PROBE_LOG_LEVEL
+  value: {{ .Values.agents.containers.systemProbe.logLevel | quote }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Settings the chart renders only on a remote agent's container, mirrored onto the Agent
+container so config streaming carries them: the remote agents drop their own environment
+and take their configuration from the Agent. Values stay raw and the guards match the
+remote containers' verbatim, so nothing here changes what a remote agent computes.
+*/}}
+{{- define "remote-agent-hoisted-env" -}}
+{{- if eq (include "configstream-enabled" .) "true" }}
+{{- if eq (include "should-enable-compliance" .) "true" }}
+- name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+  value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
+- name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+- name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
+  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+{{- if .Values.datadog.securityAgent.compliance.containerInclude }}
+- name: DD_COMPLIANCE_CONFIG_CONTAINER_INCLUDE
+  value: {{ .Values.datadog.securityAgent.compliance.containerInclude | quote }}
+{{- end }}
+{{- if .Values.datadog.securityAgent.compliance.containerExclude }}
+- name: DD_COMPLIANCE_CONFIG_CONTAINER_EXCLUDE
+  value: {{ .Values.datadog.securityAgent.compliance.containerExclude | quote }}
+{{- end }}
+{{- end }}
+{{- if eq (include "should-enable-security-agent-cws-integration" .) "true" }}
+- name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
+  value: "/etc/datadog-agent/runtime-security.d"
+- name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
+  value: /var/run/sysprobe/runtime-security.sock
+- name: DD_RUNTIME_SECURITY_CONFIG_USE_SECRUNTIME_TRACK
+  value: {{ .Values.datadog.securityAgent.runtime.useSecruntimeTrack | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.connectionsMonitoring.enabled }}
+- name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
+  value: {{ .Values.datadog.networkPath.connectionsMonitoring.enabled | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.workers }}
+- name: DD_NETWORK_PATH_COLLECTOR_WORKERS
+  value: {{ .Values.datadog.networkPath.collector.workers | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestTTL }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_TTL
+  value: {{ .Values.datadog.networkPath.collector.pathtestTTL | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestInterval }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_INTERVAL
+  value: {{ .Values.datadog.networkPath.collector.pathtestInterval | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestContextsLimit }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_CONTEXTS_LIMIT
+  value: {{ .Values.datadog.networkPath.collector.pathtestContextsLimit | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestMaxPerMinute }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_MAX_PER_MINUTE
+  value: {{ .Values.datadog.networkPath.collector.pathtestMaxPerMinute | quote }}
+{{- end }}
+{{- end }}
 {{- end -}}
 
 {{/*

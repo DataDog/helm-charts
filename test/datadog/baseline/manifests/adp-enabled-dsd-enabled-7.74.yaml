@@ -1689,6 +1689,8 @@ spec:
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
+              value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
@@ -1770,6 +1772,10 @@ spec:
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "false"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
+              value: "false"
+            - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
+              value: "false"
+            - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
               value: "false"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
@@ -1888,6 +1894,8 @@ spec:
             - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
+              value: "false"
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
