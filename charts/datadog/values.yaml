@@ -2437,17 +2437,17 @@ agents:
           add: ["NET_RAW"]
 
     processAgent:
-      # agents.containers.processAgent.env -- Additional environment variables for the process-agent container DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.processAgent.env -- Additional environment variables for the process-agent container
       env: []
 
-      # agents.containers.processAgent.envFrom -- Set environment variables specific to process-agent from configMaps and/or secrets DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.processAgent.envFrom -- Set environment variables specific to process-agent from configMaps and/or secrets
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.processAgent.envDict -- Set environment variables specific to process-agent defined in a dict DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.processAgent.envDict -- Set environment variables specific to process-agent defined in a dict
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
@@ -2561,17 +2561,17 @@ agents:
       #     readOnly: true
 
     traceAgent:
-      # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
       env: []
 
-      # agents.containers.traceAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.traceAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.traceAgent.envDict -- Set environment variables specific to trace-agent defined in a dict DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.traceAgent.envDict -- Set environment variables specific to trace-agent defined in a dict
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
@@ -2603,17 +2603,17 @@ agents:
       ports: []
 
     systemProbe:
-      # agents.containers.systemProbe.env -- Additional environment variables for the system-probe container DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.systemProbe.env -- Additional environment variables for the system-probe container
       env: []
 
-      # agents.containers.systemProbe.envFrom -- Set environment variables specific to system-probe from configMaps and/or secrets DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.systemProbe.envFrom -- Set environment variables specific to system-probe from configMaps and/or secrets
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.systemProbe.envDict -- Set environment variables specific to system-probe defined in a dict DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.systemProbe.envDict -- Set environment variables specific to system-probe defined in a dict
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
@@ -2644,17 +2644,17 @@ agents:
       ports: []
 
     securityAgent:
-      # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container
       env: []
 
-      # agents.containers.securityAgent.envFrom -- Set environment variables specific to security-agent from configMaps and/or secrets DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.securityAgent.envFrom -- Set environment variables specific to security-agent from configMaps and/or secrets
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.securityAgent.envDict -- Set environment variables specific to security-agent defined in a dict DEPRECATED: where config streaming is enabled the Agent is the source of truth for this container, so variables set here have no effect; set them on the Agent instead.
+      # agents.containers.securityAgent.envDict -- Set environment variables specific to security-agent defined in a dict
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
