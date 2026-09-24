@@ -69,6 +69,10 @@
     - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_MAX_PER_MINUTE
       value: {{ .Values.datadog.networkPath.collector.pathtestMaxPerMinute | quote }}
     {{- end }}
+    {{- if .Values.datadog.networkPath.collector.filters }}
+    - name: DD_NETWORK_PATH_COLLECTOR_FILTERS
+      value: {{ .Values.datadog.networkPath.collector.filters | toJson | quote }}
+    {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}

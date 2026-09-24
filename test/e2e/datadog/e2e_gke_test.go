@@ -55,7 +55,14 @@ providers:
     cos: true
 clusterChecksRunner:
   enabled: false
-`)))))
+`),
+			kubernetesagentparams.WithHelmValues(networkPathFiltersHelmValues),
+		))))
+}
+
+// Verifies in a live GKE cluster that system-probe receives the configured Network Path filters.
+func (v *gkeSuite) TestNetworkPathCollectorFilters() {
+	v.testNetworkPathCollectorFilters()
 }
 
 func (v *gkeSuite) TestGKE() {

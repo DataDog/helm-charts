@@ -153,6 +153,9 @@ false
 {{- if not (semverCompare "^6.36.0-0 || ^7.36.0-0" $version) -}}
 {{- fail "This version of the chart requires an agent image 7.36.0 or greater. If you want to force and skip this check, use `--set agents.image.doNotCheckTag=true`" -}}
 {{- end -}}
+{{- if and .Values.datadog.networkPath.collector.filters (not (semverCompare ">=7.83.2" $version)) -}}
+{{- fail "datadog.networkPath.collector.filters requires a stable Datadog Agent 7.83.2 or newer. Set agents.image.tag to an explicit stable version 7.83.2 or newer. For a verified compatible prerelease or custom image, set agents.image.doNotCheckTag=true." -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
