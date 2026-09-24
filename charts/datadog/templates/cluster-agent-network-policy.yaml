@@ -53,6 +53,15 @@ spec:
         - podSelector:
             matchLabels:
               app: {{ template "datadog.fullname" . }}-cluster-agent
+{{- if $.Values.clusterChecksRunner.enabled }}
+    - # Egress to cluster checks runners for runner stats collection
+      ports:
+        - port: 5005
+      to:
+        - podSelector:
+            matchLabels:
+              app: {{ template "datadog.fullname" . }}-clusterchecks
+{{- end }}
     - # Egress to
       # * Datadog intake
       # * Kube API server
