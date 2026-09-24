@@ -102,6 +102,28 @@ func TestClusterChecksRunnerCiliumNetworkPolicyAllowsHostNetworkClusterAgent(t *
 	assertCiliumNetworkPolicyPorts(t, runnerSpec.Ingress[0].ToPorts)
 }
 
+func TestClusterChecksRunnerKubernetesNetworkPolicyAllowsHostNetworkClusterAgent(t *testing.T) {
+	overrides := clusterChecksNetworkPolicyOverrides("kubernetes", map[string]string{
+		"clusterChecksRunner.enabled": "true",
+	})
+	overrides["clusterAgent.useHostNetwork"] = "true"
+
+	runnerManifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/agent-clusterchecks-network-policy.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides:   overrides,
+	})
+	require.NoError(t, err)
+
+	var runnerPolicy networkingv1.NetworkPolicy
+	common.Unmarshal(t, runnerManifest, &runnerPolicy)
+	require.Len(t, runnerPolicy.Spec.Ingress, 1)
+	assert.Empty(t, runnerPolicy.Spec.Ingress[0].From)
+	assertKubernetesNetworkPolicyPorts(t, runnerPolicy.Spec.Ingress[0].Ports)
+}
+
 func clusterChecksRunnerDeploymentOverrides() map[string]map[string]string {
 	return map[string]map[string]string{
 		"explicit runners": {
