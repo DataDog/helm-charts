@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.250.0
+## 3.249.0
 
 * Add `datadog.configStream.enabled` to control whether the Trace Agent, Process Agent, Security Agent and System Probe take their configuration from the Agent. Unset follows the Agent version, enabled from 7.85.0 onwards; an explicit value overrides it. The settings the chart mirrors onto the Agent container are gated on the same value, so the chart and the Agent cannot disagree.
 * Set the per-remote-agent log levels (`DD_SECURITY_AGENT_LOG_LEVEL`, `DD_PROCESS_CONFIG_LOG_LEVEL`, `DD_APM_LOG_LEVEL`, `DD_SYSTEM_PROBE_LOG_LEVEL`) on the Agent container when the corresponding `agents.containers.<name>.logLevel` is set. Under config streaming the remote agents take their log level from the Agent.
