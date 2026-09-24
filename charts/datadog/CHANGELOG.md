@@ -2,7 +2,7 @@
 
 ## 3.249.0
 
-* Announce a breaking change in Agent 7.85.0: `agents.containers.<name>.{env,envDict,envFrom}` will stop having any effect on the Security Agent, Process Agent, System Probe and Trace Agent containers, which take their configuration from the Agent and drop their own environment on startup. Set the variables on the Agent instead, through `datadog.env`, `datadog.envFrom` or `agents.containers.agent.env`. The chart now prints a migration notice when any of the four containers has one of these options set.
+- [BREAKING] From Agent 7.85.0, the Security Agent, Process Agent, System Probe and Trace Agent containers drop their own environment on startup and take their configuration from the Agent, so variables set through `agents.containers.<name>.{env,envDict,envFrom}` no longer take effect. Set them on the Agent instead, through `datadog.env`, `datadog.envFrom` or `agents.containers.agent.env` ([#2933](https://github.com/DataDog/helm-charts/pull/2933)).
 
 ## 3.248.1
 
