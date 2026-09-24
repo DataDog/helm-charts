@@ -4,6 +4,10 @@
 
 * Announce a breaking change in Agent 7.85.0: `agents.containers.<name>.{env,envDict,envFrom}` will stop having any effect on the Security Agent, Process Agent, System Probe and Trace Agent containers, which take their configuration from the Agent and drop their own environment on startup. Set the variables on the Agent instead, through `datadog.env`, `datadog.envFrom` or `agents.containers.agent.env`. The chart now prints a migration notice when any of the four containers has one of these options set.
 
+## 3.248.1
+
+- Grant the Cluster Agent `get` access to Secrets named `datadog-secret` when Agent sidecar injection is enabled.
+
 ## 3.248.0
 
 - Add support for Helm Actions in addion to Kube Actions
