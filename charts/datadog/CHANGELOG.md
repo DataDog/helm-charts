@@ -2,7 +2,7 @@
 
 ## 3.249.0
 
-- [BREAKING] From Agent 7.85.0, the Security Agent, Process Agent, System Probe and Trace Agent containers drop their own environment on startup and take their configuration from the Agent, so variables set through `agents.containers.<name>.{env,envDict,envFrom}` no longer take effect. Set them on the Agent instead, through `datadog.env`, `datadog.envFrom` or `agents.containers.agent.env` ([#2933](https://github.com/DataDog/helm-charts/pull/2933)).
+- Announce an upcoming change in Agent 7.85: when config streaming is enabled, remote-agent configuration overrides must be set on the core Agent instead of `agents.containers.<name>.{env,envDict,envFrom}`. This release adds notice only ([#2933](https://github.com/DataDog/helm-charts/pull/2933)).
 
 ## 3.248.1
 

@@ -1082,15 +1082,16 @@ To disable it, set `datadog.logs.autoMultiLineDetection` to `false`:
 
 You set `env`, `envDict` or `envFrom` on these containers: {{ join ", " (sortAlpha $withLocalEnv) }}.
 
-From Agent 7.85.0 these containers take their configuration from the Agent: they drop their own
-environment on startup and apply the configuration the Agent streams to them. A DD_* variable set
-through these options will stop having any effect.
+From Agent 7.85.0, when config streaming is enabled, these containers take their configuration
+from the core Agent. Configuration overrides set through their own `env`, `envDict` or `envFrom`
+will no longer take effect.
 
-Migrate before upgrading to 7.85.0. Set the variable on the Agent instead, through `datadog.env`
-or `agents.containers.agent.env`. Where a setting applies to one container only, the Agent has a
-namespaced key for it, for example `DD_SECURITY_AGENT_LOG_LEVEL` or `DD_APM_LOG_LEVEL`.
+Prepare your configuration before enabling streaming. Set configuration overrides on the core Agent
+through `datadog.env` or `agents.containers.agent.env`. Some container-specific settings require a
+namespaced variable, such as `DD_SECURITY_AGENT_LOG_LEVEL` or `DD_APM_LOG_LEVEL`.
+Keep the existing remote-container settings while streaming is disabled.
 
-`envFrom` has no equivalent on the Agent container for per-container values: move the ConfigMap or
-Secret reference to `datadog.envFrom`.
+For `envFrom`, add the ConfigMap or Secret reference to `agents.containers.agent.envFrom`,
+or use `datadog.envFrom` for shared settings.
 
 {{- end }}
