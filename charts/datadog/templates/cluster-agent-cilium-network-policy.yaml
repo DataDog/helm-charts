@@ -156,7 +156,7 @@ specs:
         - port: "5005"
           protocol: TCP
 {{- end }}
-{{- if $.Values.clusterChecksRunner.enabled }}
+{{- if eq (include "should-enable-cluster-check-workers" .) "true" }}
   - description: "Egress to cluster checks runners for runner stats collection"
     endpointSelector:
       matchLabels:

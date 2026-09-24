@@ -13,7 +13,7 @@ spec:
   policyTypes:
     - Ingress
     - Egress
-{{- if $.Values.clusterChecksRunner.enabled }}
+{{- if eq (include "should-enable-cluster-check-workers" .) "true" }}
   ingress:
     - # Ingress from cluster agent for runner stats collection
       ports:

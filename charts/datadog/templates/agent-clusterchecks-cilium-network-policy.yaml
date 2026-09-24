@@ -82,22 +82,29 @@ specs:
           - ports:
               - port: "5005"
                 protocol: TCP
-{{- if $.Values.clusterChecksRunner.enabled }}
+{{- if eq (include "should-enable-cluster-check-workers" .) "true" }}
   - description: "Ingress from cluster agent for runner stats collection"
     endpointSelector:
       matchLabels:
         app: {{ template "datadog.fullname" . }}-clusterchecks
     ingress:
-      - fromEndpoints:
+    -
+      {{- if $.Values.clusterAgent.useHostNetwork }}
+      fromEntities:
+        - host
+        - remote-node
+      {{- else }}
+      fromEndpoints:
           - matchLabels:
               app: {{ template "datadog.fullname" . }}-cluster-agent
               {{- if .Values.clusterAgent.podLabels }}
               {{ toYaml .Values.clusterAgent.podLabels | indent 14 }}
               {{- end }}
-        toPorts:
-          - ports:
-              - port: "5005"
-                protocol: TCP
+      {{- end }}
+      toPorts:
+        - ports:
+            - port: "5005"
+              protocol: TCP
 {{- end }}
 # The cluster check runners are susceptible to an issue connecting to
 # any service that is annotated with auto-discovery annotations.
