@@ -1194,6 +1194,15 @@ datadog:
       # datadog.networkPath.connectionsMonitoring.enabled -- Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled.
       enabled: false
     collector:
+      # datadog.networkPath.collector.filters -- Custom ordered filters for dynamic Network Path tests. Each filter can include or exclude destinations using `match_domain` (wildcard by default, or regex with `match_domain_strategy: regex`) or `match_ip` (IP or CIDR). The last matching filter takes precedence. Requires a stable Datadog Agent 7.83.2 or newer. For a verified compatible prerelease or custom image, set `agents.image.doNotCheckTag=true`.
+      filters: []
+        # - type: exclude
+        #   match_domain: "*.example.com"
+        # - type: include
+        #   match_domain: '^api-[0-9]+\.example\.com$'
+        #   match_domain_strategy: regex
+        # - type: exclude
+        #   match_ip: "10.0.0.0/8"
       # datadog.networkPath.collector.workers -- Override the number of workers
       workers:
       # datadog.networkPath.collector.pathtestTTL -- Override TTL in minutes for pathtests

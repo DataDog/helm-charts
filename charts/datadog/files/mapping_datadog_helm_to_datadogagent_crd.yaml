@@ -493,6 +493,7 @@ datadog.logs.enabled: spec.features.logCollection.enabled
 datadog.namespaceAnnotationsAsTags: ""
 datadog.namespaceLabelsAsTags: ""
 datadog.networkMonitoring.enabled: spec.features.npm.enabled
+datadog.networkPath.collector.filters: ""
 datadog.networkPath.collector.pathtestContextsLimit: ""
 datadog.networkPath.collector.pathtestInterval: ""
 datadog.networkPath.collector.pathtestMaxPerMinute: ""

@@ -50,6 +50,14 @@
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
     {{- end }}
+    {{- if and .Values.datadog.networkPath.connectionsMonitoring.enabled (eq (include "cnm-use-direct-send" .) "true") }}
+    - name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
+      value: {{ .Values.datadog.networkPath.connectionsMonitoring.enabled | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.collector.filters }}
+    - name: DD_NETWORK_PATH_COLLECTOR_FILTERS
+      value: {{ .Values.datadog.networkPath.collector.filters | toJson | quote }}
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.systemProbe.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.systemProbe.envDict | indent 4 }}
   resources:
