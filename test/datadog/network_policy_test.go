@@ -88,6 +88,28 @@ func TestClusterChecksRunnerCiliumNetworkPolicyAllowsStatsCollection(t *testing.
 	}
 }
 
+func TestClusterChecksRunnerCiliumNetworkPolicyWithClusterAgentPodLabels(t *testing.T) {
+	overrides := clusterChecksNetworkPolicyOverrides("cilium", map[string]string{
+		"clusterChecksRunner.enabled": "true",
+	})
+	// Render only the runner policy so this test isolates its Cluster Agent peer selectors.
+	overrides["datadog.networkPolicy.create"] = "false"
+	overrides["clusterChecksRunner.networkPolicy.create"] = "true"
+	overrides["clusterAgent.podLabels.review-test"] = "present"
+
+	runnerPolicy := renderCiliumNetworkPolicy(t, "templates/agent-clusterchecks-cilium-network-policy.yaml", overrides)
+
+	egressSpec := findCiliumPolicySpec(t, runnerPolicy.Specs, "Egress to cluster agent")
+	require.Len(t, egressSpec.Egress, 1)
+	require.Len(t, egressSpec.Egress[0].ToEndpoints, 1)
+	assert.Equal(t, "present", egressSpec.Egress[0].ToEndpoints[0].MatchLabels["review-test"])
+
+	ingressSpec := findCiliumPolicySpec(t, runnerPolicy.Specs, "Ingress from cluster agent for runner stats collection")
+	require.Len(t, ingressSpec.Ingress, 1)
+	require.Len(t, ingressSpec.Ingress[0].FromEndpoints, 1)
+	assert.Equal(t, "present", ingressSpec.Ingress[0].FromEndpoints[0].MatchLabels["review-test"])
+}
+
 func TestClusterChecksRunnerCiliumNetworkPolicyAllowsHostNetworkClusterAgent(t *testing.T) {
 	overrides := clusterChecksNetworkPolicyOverrides("cilium", map[string]string{
 		"clusterChecksRunner.enabled": "true",

@@ -76,7 +76,7 @@ specs:
         - matchLabels:
             app: {{ template "datadog.fullname" . }}-cluster-agent
             {{- if .Values.clusterAgent.podLabels }}
-            {{ toYaml .Values.clusterAgent.podLabels | indent 12 }}
+{{ toYaml .Values.clusterAgent.podLabels | indent 12 }}
             {{- end }}
         toPorts:
           - ports:
@@ -98,7 +98,7 @@ specs:
           - matchLabels:
               app: {{ template "datadog.fullname" . }}-cluster-agent
               {{- if .Values.clusterAgent.podLabels }}
-              {{ toYaml .Values.clusterAgent.podLabels | indent 14 }}
+{{ toYaml .Values.clusterAgent.podLabels | indent 14 }}
               {{- end }}
       {{- end }}
       toPorts:
