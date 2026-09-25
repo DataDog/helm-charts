@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 3.250.1
+## 3.251.0
 
 - Grant the Cluster Agent `get` access to `pods/log` to run the getPodLogs action.
 
