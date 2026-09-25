@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.250.1
+
+- Grant the Cluster Agent `get` access to `pods/log` to run the getPodLogs action.
+
 ## 3.250.0
 
 - Announce an upcoming change in Agent 7.85: when config streaming is enabled, remote-agent configuration overrides must be set on the core Agent instead of `agents.containers.<name>.{env,envDict,envFrom}`. This release adds notice only ([#2933](https://github.com/DataDog/helm-charts/pull/2933)).

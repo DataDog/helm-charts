@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.250.0](https://img.shields.io/badge/Version-3.250.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.250.1](https://img.shields.io/badge/Version-3.250.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -682,7 +682,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a Kubernetes secret. Requires leader election to be enabled. |
 | clusterAgent.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |
 | clusterAgent.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if clusterAgent.rbac.create is true |
-| clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources |
+| clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources. When false, the preexisting ServiceAccount must have `get` permission on the `pods/log` subresource to run the `getPodLogs` private action. |
 | clusterAgent.rbac.flareAdditionalPermissions | bool | `true` | If true, add Secrets and Configmaps get/list permissions to retrieve user Datadog Helm values from Cluster Agent namespace |
 | clusterAgent.rbac.serviceAccountAdditionalLabels | object | `{}` | Labels to add to the ServiceAccount if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.serviceAccountAnnotations | object | `{}` | Annotations to add to the ServiceAccount if clusterAgent.rbac.create is true |
