@@ -3,6 +3,21 @@ entries:
   cloudprem:
   - apiVersion: v2
     appVersion: v0.1.34
+    created: "2026-09-25T18:22:13.015643218Z"
+    description: Datadog CloudPrem
+    digest: 683460f375c60c500fd8f19ce3c43df2ba936bbedfac7bd1a8fc09e2c0165626
+    home: https://www.datadoghq.com/
+    icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: cloudprem
+    type: application
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/cloudprem-0.5.4/cloudprem-0.5.4.tgz
+    version: 0.5.4
+  - apiVersion: v2
+    appVersion: v0.1.34
     created: "2026-09-23T22:50:36.804288819Z"
     description: Datadog CloudPrem
     digest: 652cecac10bfdf7192c90c23c8da217374188de46140a721d0c25cb28277113d
@@ -46808,4 +46823,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2026-09-25T13:41:30.564349176Z"
+generated: "2026-09-25T18:22:13.017143098Z"
