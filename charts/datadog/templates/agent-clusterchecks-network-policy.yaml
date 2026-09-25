@@ -13,6 +13,18 @@ spec:
   policyTypes:
     - Ingress
     - Egress
+{{- if eq (include "should-enable-cluster-check-workers" .) "true" }}
+  ingress:
+    - # Ingress from cluster agent for runner stats collection
+      ports:
+        - port: 5005
+{{- if not $.Values.clusterAgent.useHostNetwork }}
+      from:
+        - podSelector:
+            matchLabels:
+              app: {{ template "datadog.fullname" . }}-cluster-agent
+{{- end }}
+{{- end }}
   egress:
     - # Egress to
       # * Datadog intake

@@ -156,7 +156,22 @@ specs:
         - port: "5005"
           protocol: TCP
 {{- end }}
-{{- if $.Values.clusterChecksRunner.enabled }}
+{{- if eq (include "should-enable-cluster-check-workers" .) "true" }}
+  - description: "Egress to cluster checks runners for runner stats collection"
+    endpointSelector:
+      matchLabels:
+        app: {{ template "datadog.fullname" . }}-cluster-agent
+        {{- if .Values.clusterAgent.podLabels }}
+        {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
+        {{- end }}
+    egress:
+      - toEndpoints:
+          - matchLabels:
+              app: {{ template "datadog.fullname" . }}-clusterchecks
+        toPorts:
+          - ports:
+              - port: "5005"
+                protocol: TCP
   - description: "Ingress from cluster workers"
     endpointSelector:
       matchLabels:
