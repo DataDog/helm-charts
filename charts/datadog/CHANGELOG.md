@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.251.0
+
+- Grant the Cluster Agent `get` access to `pods/log` to run the getPodLogs action.
+
 ## 3.250.4
 
 - Update the default Agent, Cluster Agent, and Cluster Checks Runner image version to 7.84.0.

@@ -1650,7 +1650,8 @@ clusterAgent:
 
   ## Provide Cluster Agent Deployment pod(s) RBAC configuration
   rbac:
-    # clusterAgent.rbac.create -- If true, create & use RBAC resources
+    # clusterAgent.rbac.create -- If true, create & use RBAC resources. When false, the preexisting ServiceAccount
+    # must have `get` permission on the `pods/log` subresource to run the `getPodLogs` private action.
     create: true
 
     # clusterAgent.rbac.flareAdditionalPermissions -- If true, add Secrets and Configmaps get/list permissions to retrieve user Datadog Helm values from Cluster Agent namespace

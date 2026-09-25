@@ -1091,6 +1091,12 @@ rules:
   - apiGroups:
       - ""
     resources:
+      - pods/log
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
       - events
     verbs:
       - get
