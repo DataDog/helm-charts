@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.4
+
+* Restore the CloudPrem component name in OpenTelemetry resource attributes (`component`).
+
 ## 0.5.3
 
 * Update Docker image to `v0.1.34`.
