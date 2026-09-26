@@ -302,6 +302,10 @@
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- end }}
     {{- end }}
+    {{- if eq (include "should-render-discovery-config" .) "true" }}
+    - name: DD_DISCOVERY_ENABLED
+      value: {{ include "resolved-discovery-enabled" . | quote }}
+    {{- end }}
     {{- if eq (include "should-enable-instrumentation-crd-controller" .) "true" }}
     - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
       value: "true"
