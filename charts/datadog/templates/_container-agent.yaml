@@ -325,7 +325,7 @@
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
     - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
-      value: {{ and .Values.datadog.orchestratorExplorer.enabled .Values.datadog.orchestratorExplorer.kubelet_configuration_check.enabled | quote }}
+      value: {{ and (eq (include "should-enable-k8s-resource-monitoring" .) "true") .Values.datadog.orchestratorExplorer.kubelet_configuration_check.enabled | quote }}
   volumeMounts:
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}
