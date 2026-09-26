@@ -289,11 +289,11 @@ Create chart name and version as used by the chart label.
 
 {{/*
 Return true if the DatadogInstrumentation CRD controller should be enabled.
-Requires datadog.instrumentationCrd.enabled and both the node Agent and Cluster Agent to be
-version 7.82.0 or newer; otherwise falls back to disabled.
+Requires datadog.instrumentationCrd.enabled, the Cluster Agent to be enabled, and both the node
+Agent and Cluster Agent to be version 7.82.0 or newer; otherwise falls back to disabled.
 */}}
 {{- define "should-enable-instrumentation-crd-controller" -}}
-{{- if .Values.datadog.instrumentationCrd.enabled -}}
+{{- if and .Values.datadog.instrumentationCrd.enabled (eq (include "cluster-agent-enabled" .) "true") -}}
 {{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
 {{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
 {{- if and $agentVersionOK $dcaVersionOK -}}
