@@ -2036,6 +2036,8 @@ spec:
               value: "true"
             - name: DD_SYSTEM_PROBE_NETWORK_ENABLED
               value: "true"
+            - name: DD_DISCOVERY_ENABLED
+              value: "true"
             - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
               value: "true"
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS

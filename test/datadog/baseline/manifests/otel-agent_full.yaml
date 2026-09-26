@@ -29,39 +29,6 @@ data:
       -
         filtering_enabled: false
         unbundle_events: false
-  kubernetes_state_core.yaml.default: |-
-    init_config:
-    instances:
-      - collectors:
-        - secrets
-        - configmaps
-        - nodes
-        - pods
-        - services
-        - resourcequotas
-        - replicationcontrollers
-        - limitranges
-        - persistentvolumeclaims
-        - persistentvolumes
-        - namespaces
-        - endpoints
-        - endpointslices
-        - daemonsets
-        - deployments
-        - replicasets
-        - statefulsets
-        - controllerrevisions
-        - cronjobs
-        - jobs
-        - horizontalpodautoscalers
-        - poddisruptionbudgets
-        - storageclasses
-        - volumeattachments
-        - ingresses
-        labels_as_tags:
-          {}
-        annotations_as_tags:
-          {}
 kind: ConfigMap
 metadata:
   annotations: {}
@@ -1100,107 +1067,6 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
-  name: datadog-ksm-core
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-      - configmaps
-      - nodes
-      - pods
-      - services
-      - resourcequotas
-      - replicationcontrollers
-      - limitranges
-      - persistentvolumeclaims
-      - persistentvolumes
-      - namespaces
-      - endpoints
-      - events
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - discovery.k8s.io
-    resources:
-      - endpointslices
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - extensions
-    resources:
-      - daemonsets
-      - deployments
-      - replicasets
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - apps
-    resources:
-      - statefulsets
-      - daemonsets
-      - deployments
-      - replicasets
-      - controllerrevisions
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - batch
-    resources:
-      - cronjobs
-      - jobs
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - autoscaling
-    resources:
-      - horizontalpodautoscalers
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - policy
-    resources:
-      - poddisruptionbudgets
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - storage.k8s.io
-    resources:
-      - storageclasses
-      - volumeattachments
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - networking.k8s.io
-    resources:
-      - ingresses
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - apiextensions.k8s.io
-    resources:
-      - customresourcedefinitions
-    verbs:
-      - list
-      - watch
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
   name: datadog
 rules:
   - apiGroups:
@@ -1333,24 +1199,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: datadog-operator
-    namespace: datadog-agent
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  labels:
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
-  name: datadog-ksm-core
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: datadog-ksm-core
-subjects:
-  - kind: ServiceAccount
-    name: datadog-cluster-agent
     namespace: datadog-agent
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1553,10 +1401,12 @@ spec:
               value: "true"
             - name: DD_KUBERNETES_KUBELET_PODRESOURCES_SOCKET
               value: /var/lib/kubelet/pod-resources/kubelet.sock
+            - name: DD_DISCOVERY_ENABLED
+              value: "true"
             - name: DD_KUBERNETES_KUBE_SERVICE_IGNORE_READINESS
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
-              value: "true"
+              value: "false"
           image: registry.datadoghq.com/agent:7.78.0-full
           imagePullPolicy: IfNotPresent
           livenessProbe:
