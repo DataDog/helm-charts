@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.250.2
+
+* Internal cleanup: Use get-agent-version for semverCompare ([#2885](https://github.com/DataDog/helm-charts/pull/2885)).
+
 ## 3.250.1
 
 - Allow the Cluster Agent to collect stats from Cluster Checks Runners when network policies are enabled.
