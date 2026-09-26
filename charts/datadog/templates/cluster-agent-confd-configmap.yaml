@@ -12,7 +12,7 @@ data:
 {{- if .Values.clusterAgent.confd }}
 {{ tpl (toYaml .Values.clusterAgent.confd) . | indent 2 }}
 {{- end }}
-{{- if .Values.datadog.kubeStateMetricsCore.enabled -}}
+{{- if and .Values.datadog.kubeStateMetricsCore.enabled (eq (include "cluster-agent-enabled" .) "true") -}}
 {{ include "kubeStateMetricsCore-config" . | nindent 2 }}
 {{- end -}}
 {{- if .Values.datadog.helmCheck.enabled -}}

@@ -1256,7 +1256,7 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
+{{- if (or (.Values.clusterAgent.confd) (and .Values.datadog.kubeStateMetricsCore.enabled (eq (include "cluster-agent-enabled" .) "true")) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
 true
 {{- else -}}
 false
