@@ -11,7 +11,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   {{- if (eq (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") }}
   labels:
-    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.1.1"
+    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.1.2"
   {{- end }}
 spec:
   {{- with .Values.updateStrategy }}
@@ -101,10 +101,9 @@ spec:
             # no updated exemption is published for it in that mode.
             - name: DD_APM_ENABLED
               value: {{ .Values.apm.enabled | quote }}
-            {{- if and .Values.apm.enabled (ne (include "csi.gke-autopilot" .) "true") }}
-            # Registry authentication variables are skipped on GKE Autopilot
-            # because they are not part of the published WorkloadAllowlist, and
-            # when APM is disabled because the credentials are not used.
+            {{- if .Values.apm.enabled }}
+            # Registry authentication variables are skipped when APM is disabled
+            # because the credentials are not used.
             {{- range $index, $secret := $registryPullSecrets }}
             - name: DD_APM_REGISTRY_AUTH_{{ $index }}
               valueFrom:

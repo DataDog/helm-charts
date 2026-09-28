@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.18.0
+
+* Render APM registry authentication (`DD_APM_REGISTRY_AUTH_<n>`) on GKE Autopilot with WorkloadAllowlist.
+* Fix DaemonSet rejection on GKE Autopilot with WorkloadAllowlist when `global.apmRegistryAllowList` is set.
+* The DaemonSet now matches the new `datadog-datadog-csi-driver-daemonset-exemption-v1.1.2` WorkloadAllowlist. The `AllowlistSynchronizer` keeps `v1.1.0` and `v1.1.1` and also syncs `v1.1.2`.
+
 ## 0.17.0
 
 * Set csi driver image to `1.4.0` (private registry authentication for SSI libraries).
