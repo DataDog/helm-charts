@@ -318,8 +318,12 @@ phase_operator() {
 
     # Step 9: Update test baselines
     step "Updating test baselines (make update-test-baselines-operator)..."
-    (cd "$ROOT_DIR" && make update-test-baselines-operator)
-    success "Test baselines updated"
+    if (cd "$ROOT_DIR" && make update-test-baselines-operator); then
+        success "Test baselines updated"
+    else
+        warn "Test baseline update failed (make update-test-baselines-operator)."
+        warn "Continuing without updated baselines -- Inspect for unit test failures from version bump."
+    fi
 
     # Step 10: Update clusterrole.yaml from upstream RBAC
     step "Updating clusterrole.yaml from upstream v${OPERATOR_VERSION}..."

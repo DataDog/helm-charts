@@ -47,7 +47,7 @@ spec:
       - name: {{ $.Chart.Name }}
         securityContext:
           {{- toYaml $.Values.securityContext | nindent 10 }}
-        image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default $.Chart.AppVersion }}"
+        image: {{ include "quickwit.image" $ | quote }}
         imagePullPolicy: {{ $.Values.image.pullPolicy }}
       {{- if $.Values.bootstrap.sources.command }}
         command: {{- toYaml $.Values.bootstrap.sources.command | nindent 8 }}
@@ -56,7 +56,7 @@ spec:
       {{- end }}
         env:
           {{- include "quickwit.environment" $ | nindent 10 }}
-          {{- with (include "quickwit.extraEnv" $.Values.bootstrap.extraEnv) }}
+          {{- with (include "quickwit.renderEnv" $.Values.bootstrap.extraEnv) }}
           {{- . | nindent 10 }}
           {{- end }}
         {{- if or ($.Values.environmentFrom) ($.Values.bootstrap.extraEnvFrom) }}

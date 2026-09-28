@@ -456,6 +456,7 @@ datadog.kubeStateMetricsCore.collectCrdMetrics: ""
 datadog.kubeStateMetricsCore.collectSecretMetrics: ""
 datadog.kubeStateMetricsCore.collectVpaMetrics: ""
 datadog.kubeStateMetricsCore.enabled: spec.features.kubeStateMetricsCore.enabled
+datadog.kubeStateMetricsCore.podCollectionMode: spec.features.kubeStateMetricsCore.podCollectionMode
 datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck: ""
 datadog.kubeStateMetricsCore.labelsAsTags: ""
 datadog.kubeStateMetricsCore.rbac.create: ""
@@ -492,6 +493,7 @@ datadog.logs.enabled: spec.features.logCollection.enabled
 datadog.namespaceAnnotationsAsTags: ""
 datadog.namespaceLabelsAsTags: ""
 datadog.networkMonitoring.enabled: spec.features.npm.enabled
+datadog.networkPath.collector.filters: ""
 datadog.networkPath.collector.pathtestContextsLimit: ""
 datadog.networkPath.collector.pathtestInterval: ""
 datadog.networkPath.collector.pathtestMaxPerMinute: ""

@@ -1,0 +1,9 @@
+{{- define "kubeStateMetricsCore-node-config" -}}
+kubernetes_state_core.yaml: |-
+  init_config:
+  instances:
+    - pod_collection_mode: node_kubelet
+      cluster_aggregates_enabled: true
+      collectors:
+        - pods
+{{ end }}

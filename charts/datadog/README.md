@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.245.2](https://img.shields.io/badge/Version-3.245.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.250.2](https://img.shields.io/badge/Version-3.250.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -517,30 +517,30 @@ helm install <RELEASE_NAME> \
 | agents.containers.privateActionRunner.logLevel | string | `nil` | Set logging verbosity for the private-action-runner container |
 | agents.containers.privateActionRunner.resources | object | `{}` | Resource requests and limits for the private-action-runner container. |
 | agents.containers.privateActionRunner.securityContext | object | `{"capabilities":{"add":["NET_RAW"]},"readOnlyRootFilesystem":true}` | Specify securityContext on the private-action-runner container. |
-| agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container |
-| agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict |
-| agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets |
+| agents.containers.processAgent.env | list | `[]` | Additional environment variables for the process-agent container BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled. |
+| agents.containers.processAgent.envDict | object | `{}` | Set environment variables specific to process-agent defined in a dict BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled. |
+| agents.containers.processAgent.envFrom | list | `[]` | Set environment variables specific to process-agent from configMaps and/or secrets BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; add the ConfigMap or Secret reference to agents.containers.agent.envFrom instead, or datadog.envFrom for shared settings. Keep the existing settings here while streaming is disabled. |
 | agents.containers.processAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
 | agents.containers.processAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.processAgent.resources | object | `{}` | Resource requests and limits for the process-agent container |
 | agents.containers.processAgent.securityContext | object | `{"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the process-agent container. |
-| agents.containers.securityAgent.env | list | `[]` | Additional environment variables for the security-agent container |
-| agents.containers.securityAgent.envDict | object | `{}` | Set environment variables specific to security-agent defined in a dict |
-| agents.containers.securityAgent.envFrom | list | `[]` | Set environment variables specific to security-agent from configMaps and/or secrets |
+| agents.containers.securityAgent.env | list | `[]` | Additional environment variables for the security-agent container BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled. |
+| agents.containers.securityAgent.envDict | object | `{}` | Set environment variables specific to security-agent defined in a dict BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled. |
+| agents.containers.securityAgent.envFrom | list | `[]` | Set environment variables specific to security-agent from configMaps and/or secrets BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; add the ConfigMap or Secret reference to agents.containers.agent.envFrom instead, or datadog.envFrom for shared settings. Keep the existing settings here while streaming is disabled. |
 | agents.containers.securityAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
 | agents.containers.securityAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.securityAgent.resources | object | `{}` | Resource requests and limits for the security-agent container |
 | agents.containers.securityAgent.securityContext | object | `{"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the security-agent container. |
-| agents.containers.systemProbe.env | list | `[]` | Additional environment variables for the system-probe container |
-| agents.containers.systemProbe.envDict | object | `{}` | Set environment variables specific to system-probe defined in a dict |
-| agents.containers.systemProbe.envFrom | list | `[]` | Set environment variables specific to system-probe from configMaps and/or secrets |
+| agents.containers.systemProbe.env | list | `[]` | Additional environment variables for the system-probe container BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled. |
+| agents.containers.systemProbe.envDict | object | `{}` | Set environment variables specific to system-probe defined in a dict BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled. |
+| agents.containers.systemProbe.envFrom | list | `[]` | Set environment variables specific to system-probe from configMaps and/or secrets BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; add the ConfigMap or Secret reference to agents.containers.agent.envFrom instead, or datadog.envFrom for shared settings. Keep the existing settings here while streaming is disabled. |
 | agents.containers.systemProbe.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off. If not set, fall back to the value of datadog.logLevel. |
 | agents.containers.systemProbe.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
 | agents.containers.systemProbe.resources | object | `{}` | Resource requests and limits for the system-probe container |
 | agents.containers.systemProbe.securityContext | object | `{"capabilities":{"add":["SYS_ADMIN","SYS_RESOURCE","SYS_PTRACE","NET_ADMIN","NET_BROADCAST","NET_RAW","IPC_LOCK","CHOWN","DAC_READ_SEARCH"]},"privileged":false,"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the system-probe container. |
-| agents.containers.traceAgent.env | list | `[]` | Additional environment variables for the trace-agent container |
-| agents.containers.traceAgent.envDict | object | `{}` | Set environment variables specific to trace-agent defined in a dict |
-| agents.containers.traceAgent.envFrom | list | `[]` | Set environment variables specific to trace-agent from configMaps and/or secrets |
+| agents.containers.traceAgent.env | list | `[]` | Additional environment variables for the trace-agent container BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled. |
+| agents.containers.traceAgent.envDict | object | `{}` | Set environment variables specific to trace-agent defined in a dict BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled. |
+| agents.containers.traceAgent.envFrom | list | `[]` | Set environment variables specific to trace-agent from configMaps and/or secrets BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; add the ConfigMap or Secret reference to agents.containers.agent.envFrom instead, or datadog.envFrom for shared settings. Keep the existing settings here while streaming is disabled. |
 | agents.containers.traceAgent.livenessProbe | object | Every 15s | Override default agent liveness probe settings |
 | agents.containers.traceAgent.logLevel | string | `nil` | Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off |
 | agents.containers.traceAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
@@ -715,6 +715,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.envFrom | list | `[]` | Set environment variables specific to Cluster Checks Runner from configMaps and/or secrets |
 | clusterChecksRunner.healthPort | int | `5557` | Port number to use in the Cluster Checks Runner for the healthz endpoint |
 | clusterChecksRunner.image.digest | string | `""` | Define Agent image digest to use, takes precedence over tag if specified |
+| clusterChecksRunner.image.doNotCheckTag | string | `nil` | Skip the version and chart compatibility check |
 | clusterChecksRunner.image.name | string | `"agent"` | Datadog Agent image name to use (relative to `registry`) |
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
@@ -857,6 +858,7 @@ helm install <RELEASE_NAME> \
 | datadog.hostProfiler.image | string | `""` | Image the Host Profiler. This parameter is experimental and will be removed once official image is available. |
 | datadog.hostProfiler.imagePullPolicy | string | `""` | Pull policy for the Host Profiler image. Defaults to agents.image.pullPolicy when unset. |
 | datadog.hostProfiler.loggingSeccomp | bool | `false` | Use the seccomp profile that also permits logging syscalls |
+| datadog.hostProfiler.runAsNonRoot | bool | `false` | Run the Host Profiler as the dd-agent user (UID/GID 100). |
 | datadog.hostProfiler.seccomp | object | `{"enabled":true}` | Seccomp profile configuration for the Host Profiler |
 | datadog.hostProfiler.seccomp.enabled | bool | `true` | Apply the localhost seccomp profile to the host-profiler container and run the init container that installs it on the node. Disable to run the host-profiler container Unconfined (no init container, no profile installed on the node). |
 | datadog.hostProfiler.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
@@ -874,6 +876,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck | bool | `true` | Disable the auto-configuration of legacy kubernetes_state check (taken into account only when datadog.kubeStateMetricsCore.enabled is true) |
 | datadog.kubeStateMetricsCore.labelsAsTags | object | `{}` | Extra labels to collect from resources and to turn into datadog tag. |
 | datadog.kubeStateMetricsCore.namespaces | list | `[]` | Restrict the kubernetes_state_core check to collect metrics only from the specified namespaces. # When set, namespace-scoped RBAC is created as Role+RoleBinding per listed namespace instead of a cluster-wide ClusterRole. # Cluster-scoped resources (nodes, persistentvolumes, storageclasses, etc.) are still collected via a ClusterRole. |
+| datadog.kubeStateMetricsCore.podCollectionMode | string | `"default"` |  |
 | datadog.kubeStateMetricsCore.rbac.create | bool | `true` | If true, create & use RBAC resources |
 | datadog.kubeStateMetricsCore.tags | list | `[]` | List of static tags to attach to all KSM metrics |
 | datadog.kubeStateMetricsCore.useApiServerCache | bool | `false` |  |
@@ -890,6 +893,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubelet.tlsVerify | string | true | Toggle kubelet TLS verification |
 | datadog.kubelet.useApiServer | bool | false | Enable this to query the pod list from the API Server instead of the Kubelet. (Requires Agent 7.65.0+) |
 | datadog.kubernetesActions.enabled | bool | `false` | Set this to true to enable the Kubernetes Actions feature on the Cluster Agent. This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater. |
+| datadog.kubernetesActions.helmActions.enabled | bool | `false` | Set this to true to enable Helm actions as part of the Kubernetes Actions feature. This grants the Cluster Agent RBAC to create a Job (and the Job the RBAC it needs) to perform Helm actions (e.g. rollback) so that the Datadog Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.85.0 or greater. Requires datadog.kubernetesActions.enabled to also be set to true. |
 | datadog.kubernetesEvents.collectedEventTypes | list | `[{"kind":"Pod","reasons":["Failed","BackOff","Unhealthy","FailedScheduling","FailedMount","FailedAttachVolume"]},{"kind":"Node","reasons":["TerminatingEvictedPod","NodeNotReady","Rebooted","HostPortConflict"]},{"kind":"CronJob","reasons":["SawCompletedJob"]}]` | Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true. |
 | datadog.kubernetesEvents.filteringEnabled | bool | `false` | Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+). |
 | datadog.kubernetesEvents.kubernetesEventResyncPeriodS | string | `nil` | Specify the frequency in seconds at which the Agent should list all events to re-sync following the informer pattern |
@@ -912,6 +916,7 @@ helm install <RELEASE_NAME> \
 | datadog.namespaceLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Labels to Datadog Tags |
 | datadog.networkMonitoring.dnsMonitoringPorts | list | `[53]` (set by agent) | List of ports to monitor for DNS traffic |
 | datadog.networkMonitoring.enabled | bool | `false` | Enable Cloud Network Monitoring |
+| datadog.networkPath.collector.filters | list | `[]` | Custom ordered filters for dynamic Network Path tests. Each filter can include or exclude destinations using `match_domain` (wildcard by default, or regex with `match_domain_strategy: regex`) or `match_ip` (IP or CIDR). The last matching filter takes precedence. Requires a stable Datadog Agent 7.83.2 or newer. For a verified compatible prerelease or custom image, set `agents.image.doNotCheckTag=true`. |
 | datadog.networkPath.collector.pathtestContextsLimit | string | `nil` | Override maximum number of pathtests stored to run |
 | datadog.networkPath.collector.pathtestInterval | string | `nil` | Override time interval between pathtest runs |
 | datadog.networkPath.collector.pathtestMaxPerMinute | string | `nil` | Override limit for total pathtests run, per minute |

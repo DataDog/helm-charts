@@ -9,7 +9,11 @@
 - name: private-action-runner-run
   emptyDir: {}
 {{- end }}
-{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+{{- if or
+  .Values.datadog.confd
+  .Values.datadog.autoconf
+  (eq (include "ksm-pod-collection-on-node-enabled" .) "true")
+}}
 - name: confd
   configMap:
     name: {{ include "agents.confd-configmap-name" . }}

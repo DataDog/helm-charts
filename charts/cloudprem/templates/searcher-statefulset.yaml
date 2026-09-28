@@ -61,7 +61,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ include "quickwit.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.signals.metrics.enabled }}
           command: ["quickwit-metrics"]
@@ -81,7 +81,7 @@ spec:
             - name: KUBERNETES_STORAGE_SIZE
               value: {{ .Values.searcher.persistentVolume.storage | quote }}
             {{- end }}
-            {{- with (include "quickwit.extraEnv" .Values.searcher.extraEnv) }}
+            {{- with (include "quickwit.renderEnv" .Values.searcher.extraEnv) }}
             {{- . | nindent 12 }}
             {{- end }}
           {{- if or (.Values.environmentFrom) (.Values.searcher.extraEnvFrom) }}
@@ -99,8 +99,10 @@ spec:
             {{- toYaml .Values.searcher.startupProbe | nindent 12 }}
           livenessProbe:
             {{- toYaml .Values.searcher.livenessProbe | nindent 12 }}
+          {{- with .Values.searcher.readinessProbe }}
           readinessProbe:
-            {{- toYaml .Values.searcher.readinessProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: config
               mountPath: /quickwit/node.yaml
