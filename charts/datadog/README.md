@@ -879,6 +879,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubeStateMetricsCore.namespaces | list | `[]` | Restrict the kubernetes_state_core check to collect metrics only from the specified namespaces. # When set, namespace-scoped RBAC is created as Role+RoleBinding per listed namespace instead of a cluster-wide ClusterRole. # Cluster-scoped resources (nodes, persistentvolumes, storageclasses, etc.) are still collected via a ClusterRole. |
 | datadog.kubeStateMetricsCore.podCollectionMode | string | `"default"` |  |
 | datadog.kubeStateMetricsCore.rbac.create | bool | `true` | If true, create & use RBAC resources |
+| datadog.kubeStateMetricsCore.shardingEnabled | bool | `true` | Split the kubernetes_state_core check into three check instances (pods, nodes, and all other resources), each dispatched as a separate cluster check. |
 | datadog.kubeStateMetricsCore.tags | list | `[]` | List of static tags to attach to all KSM metrics |
 | datadog.kubeStateMetricsCore.useApiServerCache | bool | `false` |  |
 | datadog.kubeStateMetricsCore.useClusterCheckRunners | bool | `false` | For large clusters where the Kubernetes State Metrics Check Core needs to be distributed on dedicated workers. |

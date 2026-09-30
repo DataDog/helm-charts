@@ -244,6 +244,12 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
     useClusterCheckRunners: false
 
+    # datadog.kubeStateMetricsCore.shardingEnabled -- Split the kubernetes_state_core check into three check instances (pods, nodes, and all other resources), each dispatched as a separate cluster check.
+
+    ## Only takes effect when datadog.kubeStateMetricsCore.useClusterCheckRunners is true.
+    ## Safe to combine with datadog.kubeStateMetricsCore.podCollectionMode: node_kubelet.
+    shardingEnabled: true
+
     # datadog.kubeStateMetricsCore.labelsAsTags -- Extra labels to collect from resources and to turn into datadog tag.
 
     ## It has the following structure:

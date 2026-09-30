@@ -3090,6 +3090,8 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
+            - name: DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED
+              value: "true"
           image: registry.datadoghq.com/cluster-agent:7.84.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
