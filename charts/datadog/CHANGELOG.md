@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.251.0
+
+- Add `datadog.kubeStateMetricsCore.shardingEnabled` (default `true`) to split the `kubernetes_state_core` check into three check instances (pods, nodes, and all other resources), each dispatched as a separate cluster check. Only takes effect when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is true.
+
 ## 3.250.3
 
 - Disable Service Discovery on Cluster Checks Runners to prevent requests to the unavailable system-probe socket ([#2943](https://github.com/DataDog/helm-charts/issues/2943)).
