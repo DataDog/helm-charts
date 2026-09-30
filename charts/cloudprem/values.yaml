@@ -81,6 +81,8 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   # tag: edge
   pullPolicy: IfNotPresent
+  # Overrides the image tag with an immutable image digest.
+  digest: ""
 
 imagePullSecrets: []
 nameOverride: ""
@@ -116,6 +118,18 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1005
   readOnlyRootFilesystem: true
+
+# -- Pod-level DNS config, applied to every workload's pod spec. Additive on
+# top of the default dnsPolicy (ClusterFirst). ndots defaults to 5 in
+# Kubernetes, which makes glibc's resolver try every cluster search-domain
+# suffix before trying already-qualified external hostnames (S3, etc.) as
+# absolute, adding 4 wasted DNS round trips per cold lookup. ndots: 1 skips
+# that for any hostname with at least one dot, while unqualified in-cluster
+# service names (0 dots) are unaffected.
+dnsConfig:
+  options:
+    - name: ndots
+      value: "1"
 
 dogstatsdServer:
   host:
@@ -175,7 +189,7 @@ volumes: []
 volumeMounts: []
 
 searcher:
-  # -- Pod size for the searcher. Determines resource limits/requests and config tuning parameters. Valid values: medium, large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
+  # -- Pod size for the searcher. Determines resource limits/requests and config tuning parameters. Valid values: large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
   podSize: xlarge
   enabled: true
   # When autoscaling is enabled, replicaCount is ignored.
@@ -216,6 +230,8 @@ searcher:
     annotations: {}
     # storage: "1Gi"
     # storageClass: ""
+    # -- Name of an externally managed VolumeAttributesClass to use for the persistent volume.
+    volumeAttributesClassName: ""
 
   volumeAttributesClass:
     enabled: false
@@ -230,7 +246,7 @@ searcher:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -239,11 +255,7 @@ searcher:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # StatefulSet allows you to relax its ordering guarantees
   #   - OrderedReady
@@ -330,7 +342,7 @@ searcher:
 
 indexer:
   enabled: true
-  # -- Pod size for the indexer. Determines resource limits/requests and config tuning parameters. Valid values: medium, large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
+  # -- Pod size for the indexer. Determines resource limits/requests and config tuning parameters. Valid values: large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
   podSize: xlarge
   # When autoscaling is enabled, replicaCount is ignored.
   replicaCount: 2
@@ -371,7 +383,7 @@ indexer:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -380,11 +392,7 @@ indexer:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # StatefulSet allows you to relax its ordering guarantees
   #   - OrderedReady
@@ -431,7 +439,9 @@ indexer:
     #       - -c
     #       - sleep 30
 
-  # Long grace period is recommended to wait for all index commit_timeout_secs and splits to be published
+  # Long grace period is recommended to wait for all index commit_timeout_secs and splits to be published.
+  # With Quickwit edge or the upcoming 0.10 release, the ingester decommission timeout
+  # is set to 90% of this value.
   # See https://quickwit.io/docs/configuration/index-config#indexing-settings
   terminationGracePeriodSeconds: 300
 
@@ -478,6 +488,8 @@ indexer:
     annotations: {}
     # storage: "1Gi"
     # storageClass: ""
+    # -- Name of an externally managed VolumeAttributesClass to use for the persistent volume.
+    volumeAttributesClassName: ""
 
   volumeAttributesClass:
     enabled: false
@@ -515,9 +527,12 @@ metastore:
       cpu: 2
       memory: 4Gi
 
-  ## Pod distruption budget
-  podDisruptionBudget: {}
-    # maxUnavailable: 1
+  ## Pod disruption budget
+  # Keep at least one metastore available during voluntary disruptions (node
+  # drains, Karpenter consolidation, etc.) so the cluster never loses all
+  # metastores at once.
+  podDisruptionBudget:
+    maxUnavailable: 1
     # minAvailable: 2
 
   strategy: {}
@@ -525,7 +540,7 @@ metastore:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -534,11 +549,7 @@ metastore:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # Override args for starting container
   args: []
@@ -615,7 +626,7 @@ metastore_ro:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -624,11 +635,7 @@ metastore_ro:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # Override args for starting the container.
   args: []
@@ -690,7 +697,7 @@ control_plane:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -699,11 +706,7 @@ control_plane:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # Override args for starting container
   args: []
@@ -769,7 +772,7 @@ janitor:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -778,11 +781,7 @@ janitor:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # Override args for starting container
   args: []
@@ -1026,7 +1025,7 @@ compactor:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -1035,11 +1034,7 @@ compactor:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # Override args for starting container
   args: []
@@ -1073,8 +1068,9 @@ compactor:
 
   # Grace period to let in-flight merges finish publishing on shutdown. Unfinished
   # merges are simply rescheduled by the planner after a heartbeat timeout, so this
-  # does not need to be as long as the indexer's.
-  terminationGracePeriodSeconds: 60
+  # does not need to be as long as the indexer's. With Quickwit edge or the upcoming
+  # 0.10 release, the compactor decommission timeout is set to 90% of this value.
+  terminationGracePeriodSeconds: 300
 
   runtimeClassName: ""
 
@@ -1157,9 +1153,6 @@ config:
       interval: 30s
       timeout: 10s
 
-  # postgres:
-  #   max_num_connections: 50
-
   # storage:
     # s3:
       # endpoint: "http://custom-s3-endpoint"
@@ -1176,6 +1169,19 @@ config:
   # indexer:
   #   split_store_max_num_bytes: 200G
   #   split_store_max_num_splits: 10000
+  # Docs clustering settings
+  docs_clustering:
+  - fingerprint:
+      - kind: structure
+  - fingerprint:
+      - kind: raw
+        path: source
+  - fingerprint:
+      - kind: raw
+        path: status
+  - fingerprint:
+      - kind: tokenized
+        path: message
   # Ingest API settings
   # ingest_api:
   #   max_queue_memory_usage: 2GiB
@@ -1185,6 +1191,11 @@ config:
   #   fast_field_cache_capacity: 10G
   #   split_footer_cache_capacity: 1G
   #   max_num_concurrent_split_streams: 100
+  # Metastore settings
+  metastore:
+    postgres:
+      min_connections: 10
+      max_connections: 50
 
 # Seed configuration
 seed:

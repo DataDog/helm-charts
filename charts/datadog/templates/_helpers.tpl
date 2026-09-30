@@ -4,13 +4,40 @@
   Returns node agent version based on image tag. This assumes `agents.image.doNotCheckTag` is false.
 */}}
 {{- define "get-agent-version" -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
+{{- $version := .Values.agents.image.tag | toString -}}
+{{/* Strip build-variant suffixes so version guards compare on a clean version. */}}
+{{- $version = regexReplaceAll "(-jmx|-full|-fips|-servercore)+$" $version "" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.81.1" -}}
+{{- $version = "7.82.3" -}}
+{{- end -}}
+{{- $version -}}
+{{- end -}}
+
+{{/*
+  Returns Cluster Checks Runner version based on image tag. This assumes
+  `clusterChecksRunner.image.doNotCheckTag` is false.
+*/}}
+{{- define "get-cluster-checks-runner-version" -}}
+{{- $version := .Values.clusterChecksRunner.image.tag | toString -}}
+{{- $length := len (split "." $version) -}}
+{{- if and (eq $length 1) (eq $version "latest") -}}
+{{- $version = "7.82.3" -}}
+{{- end -}}
+{{- $version -}}
+{{- end -}}
+
+{{/*
+  Returns Cluster Agent version based on image tag. This assumes `clusterAgent.image.doNotCheckTag` is false.
+*/}}
+{{- define "get-cluster-agent-version" -}}
+{{- $version := .Values.clusterAgent.image.tag | toString -}}
+{{- $length := len (split "." $version) -}}
+{{- if and (eq $length 1) (eq $version "latest") -}}
+{{- $version = "7.82.3" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -105,6 +132,19 @@ true
 false
 {{- end -}}
 {{- else -}}
+true
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if config sync must be enabled for CNM direct send. With direct send, system-probe
+submits network payloads itself, and it cannot resolve an ENC[...] api_key because it wires the
+no-op secrets component. Config sync is what hands it the value the core agent already resolved.
+*/}}
+{{- define "should-enable-config-sync-for-direct-send" -}}
+{{- if and (eq (include "cnm-use-direct-send" .) "true") (or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled) -}}
+true
+{{- else -}}
 false
 {{- end -}}
 {{- end -}}
@@ -115,16 +155,15 @@ false
 {{- if not (semverCompare "^6.36.0-0 || ^7.36.0-0" $version) -}}
 {{- fail "This version of the chart requires an agent image 7.36.0 or greater. If you want to force and skip this check, use `--set agents.image.doNotCheckTag=true`" -}}
 {{- end -}}
+{{- if and .Values.datadog.networkPath.collector.filters (not (semverCompare ">=7.83.2" $version)) -}}
+{{- fail "datadog.networkPath.collector.filters requires a stable Datadog Agent 7.83.2 or newer. Set agents.image.tag to an explicit stable version 7.83.2 or newer. For a verified compatible prerelease or custom image, set agents.image.doNotCheckTag=true." -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "check-dca-version" -}}
 {{- if not .Values.clusterAgent.image.doNotCheckTag -}}
-{{- $version := .Values.clusterAgent.image.tag | toString -}}
-{{- $length := len (split "." $version) -}}
-{{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "1.20.0" -}}
-{{- end -}}
+{{- $version := include "get-cluster-agent-version" . -}}
 {{- if not (semverCompare ">=1.20.0-0" $version) -}}
 {{- fail "This version of the chart requires a cluster agent image 1.20.0 or greater. If you want to force and skip this check, use `--set clusterAgent.image.doNotCheckTag=true`" -}}
 {{- end -}}
@@ -249,6 +288,25 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Return true if the DatadogInstrumentation CRD controller should be enabled.
+Requires datadog.instrumentationCrd.enabled and both the node Agent and Cluster Agent to be
+version 7.82.0 or newer; otherwise falls back to disabled.
+*/}}
+{{- define "should-enable-instrumentation-crd-controller" -}}
+{{- if .Values.datadog.instrumentationCrd.enabled -}}
+{{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+{{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+{{- if and $agentVersionOK $dcaVersionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the OTelAgent needs to be deployed
 */}}
 {{- define "should-enable-otel-agent" -}}
@@ -301,7 +359,7 @@ Return the seccomp profile filename for the host-profiler, scoped to the image r
 to avoid races when multiple host-profiler versions coexist on the same node.
 */}}
 {{- define "host-profiler-seccomp-name" -}}
-host-profiler-{{ include "ddot-ebpf-image" . | sha256sum | trunc 8 }}
+host-profiler-{{ include "ddot-ebpf-image" . | sha256sum | trunc 8 }}{{- if .Values.datadog.hostProfiler.loggingSeccomp }}-logging{{- end }}
 {{- end -}}
 
 {{/*
@@ -639,8 +697,8 @@ Return a remote otel-agent based on `.Values` (passed as .)
     */}}
     {{- $agentTag := .Values.agents.image.tag | toString -}}
     {{- if hasSuffix "-full" $agentTag -}}
-      {{- $cleanVersion := $agentTag | trimSuffix "-full" -}}
-      {{- if semverCompare "<7.67.0" $cleanVersion -}}
+      {{/* `get-agent-version` strips the `-full` suffix and resolves floating tags, so this compares on a clean version. */}}
+      {{- if semverCompare "<7.67.0" (include "get-agent-version" .) -}}
         {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
       {{- else -}}
         {{- fail "Setting `7.X.Y-full` in `agents.image.tag` with `datadog.otelCollector.useStandaloneImage=true` is not supported for agent versions >= 7.67.0. Options: (1) Remove the `-full` suffix from `agents.image.tag`, or (2) Set `datadog.otelCollector.useStandaloneImage=false`." -}}
@@ -652,10 +710,13 @@ Return a remote otel-agent based on `.Values` (passed as .)
       {{- if semverCompare "<7.67.0" (include "get-agent-version" .) -}}
         {{- fail "datadog.otelCollector.useStandaloneImage is only supported for agent versions 7.67.0+. Please bump the agent version to 7.67.0+ or set datadog.otelCollector.useStandaloneImage to false and set agents.image.tagSuffix to `-full`" -}}
       {{- end -}}
-      {{- $ddotTag := include "get-agent-version" . -}}
-      {{- if eq (.Values.agents.image.tag | toString | trimSuffix "-jmx") "latest" -}}
-        {{- $ddotTag = "latest" -}}
-      {{- end -}}
+      {{/*
+      Preserve the raw Agent tag so floating tags (e.g. `latest`, `7`) stay in sync with the Agent image.
+      `get-agent-version` is only for the semver guards above; using it as the tag would pin floating tags
+      to the chart fallback version and produce a mismatched ddot-collector image. The `-jmx` suffix is
+      dropped since the ddot-collector image has no `-jmx` variant.
+      */}}
+      {{- $ddotTag := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
       {{- $ddotImage := dict "name" "ddot-collector" "tag" $ddotTag -}}
       {{- if and (eq (include "use-fips-images" .Values) "true") (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.78.0" (include "get-agent-version" .)) -}}
         {{- fail "The standalone FIPS ddot-collector image is not available before 7.78.0. Upgrade agents.image.tag to 7.78.0+, set useFIPSAgent to false, or set agents.image.doNotCheckTag to true." -}}
@@ -1419,9 +1480,7 @@ In 7.36, `--config` was deprecated and `--cfgpath` should be used instead.
 {{- if  .Values.providers.gke.autopilot -}}
 -config
 {{- else if not .Values.agents.image.doNotCheckTag -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
-{{- $length := len (split "." $version ) -}}
-{{- if and (gt $length 1) (not (semverCompare "^6.36.0 || ^7.36.0" $version)) -}}
+{{- if not (semverCompare "^6.36.0 || ^7.36.0" (include "get-agent-version" .)) -}}
 --config
 {{- else -}}
 --cfgpath
@@ -1487,6 +1546,14 @@ Validate Node Agent Private Action Runner configuration
 */}}
 {{- define "validate-node-private-action-runner-config" -}}
 {{- if .Values.datadog.privateActionRunner.enabled -}}
+{{- if .Values.datadog.privateActionRunner.splitEnabled -}}
+{{- if or .Values.useFIPSAgent .Values.fips.enabled -}}
+{{- fail "Node Agent Private Action Runner split mode does not support FIPS." -}}
+{{- end -}}
+{{- if and (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.84.0-0" (include "get-agent-version" .)) -}}
+{{- fail "Node Agent Private Action Runner split mode requires Datadog Agent 7.84.0 or newer." -}}
+{{- end -}}
+{{- end -}}
 {{- if not .Values.datadog.privateActionRunner.selfEnroll -}}
 {{- if and (not .Values.datadog.privateActionRunner.identityFromExistingSecret) (or (not .Values.datadog.privateActionRunner.urn) (not .Values.datadog.privateActionRunner.privateKey)) -}}
 {{- fail "Node Agent Private Action Runner: when selfEnroll is disabled, you must provide either datadog.privateActionRunner.identityFromExistingSecret or both datadog.privateActionRunner.urn and datadog.privateActionRunner.privateKey" }}
@@ -1891,5 +1958,34 @@ Examples (assuming no overrides):
 {{- else -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if KSM node pod collection is supported
+*/}}
+{{- define "ksm-pod-collection-on-node-supported" -}}
+{{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+{{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+{{- $ccrVersionOK := or (not .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners) .Values.clusterChecksRunner.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-checks-runner-version" .)) -}}
+{{- if and $agentVersionOK $dcaVersionOK $ccrVersionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if KSM pod collection on nodes is enabled and supported
+*/}}
+{{- define "ksm-pod-collection-on-node-enabled" -}}
+{{- if and
+  .Values.datadog.kubeStateMetricsCore.enabled
+  (eq .Values.datadog.kubeStateMetricsCore.podCollectionMode "node_kubelet")
+  (eq (include "ksm-pod-collection-on-node-supported" .) "true")
+-}}
+true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}

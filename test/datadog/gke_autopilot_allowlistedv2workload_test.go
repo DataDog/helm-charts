@@ -27,9 +27,10 @@ var allowlistedV2WorkloadExemptedHostPaths = map[string]interface{}{
 // (legacy) mode. HELM_FORCE_RENDER=false simulates clusters without WorkloadAllowlist CRDs.
 func Test_autopilotAllowlistedV2WorkloadConfigs(t *testing.T) {
 	tests := []struct {
-		name       string
-		command    common.HelmCommand
-		assertions func(t *testing.T, manifest string)
+		name          string
+		command       common.HelmCommand
+		errorContains string
+		assertions    func(t *testing.T, manifest string)
 	}{
 		{
 			name: "default",
@@ -47,12 +48,35 @@ func Test_autopilotAllowlistedV2WorkloadConfigs(t *testing.T) {
 			},
 			assertions: verifyDaemonsetAutopilotAllowlistedV2WorkloadMinimal,
 		},
+		{
+			name: "split private action runner rejected",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"agents.image.tag":                         "7.84.0",
+					"datadog.envDict.HELM_FORCE_RENDER":        "false",
+					"datadog.apiKeyExistingSecret":             "datadog-secret",
+					"providers.gke.autopilot":                  "true",
+					"datadog.privateActionRunner.enabled":      "true",
+					"datadog.privateActionRunner.splitEnabled": "true",
+					"datadog.privateActionRunner.selfEnroll":   "true",
+				},
+			},
+			errorContains: "Private Action Runner is not supported on GKE Autopilot / GDC environments",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
-			assert.Nil(t, err, "couldn't render template")
+			if tt.errorContains != "" {
+				assert.ErrorContains(t, err, tt.errorContains)
+				return
+			}
+			assert.NoError(t, err, "couldn't render template")
 			tt.assertions(t, manifest)
 		})
 	}

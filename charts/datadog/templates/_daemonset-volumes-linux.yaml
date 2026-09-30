@@ -5,7 +5,15 @@
   emptyDir: {}
 - name: s6-run
   emptyDir: {}
-{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+{{- if and .Values.datadog.privateActionRunner.enabled .Values.datadog.privateActionRunner.splitEnabled }}
+- name: private-action-runner-run
+  emptyDir: {}
+{{- end }}
+{{- if or
+  .Values.datadog.confd
+  .Values.datadog.autoconf
+  (eq (include "ksm-pod-collection-on-node-enabled" .) "true")
+}}
 - name: confd
   configMap:
     name: {{ include "agents.confd-configmap-name" . }}

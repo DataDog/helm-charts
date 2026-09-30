@@ -39,6 +39,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "quickwit.serviceAccountName" . }}
+      {{- with .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- with .Values.compactor.initContainers }}
@@ -49,7 +53,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ include "quickwit.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if $.Values.compactor.args }}
           args: {{- toYaml $.Values.compactor.args | nindent 10 }}
@@ -57,8 +61,11 @@ spec:
           args: ["run", "--service", "compactor"]
           {{- end }}
           env:
+            {{- /* Supported by Quickwit edge and the upcoming 0.10 release. */}}
+            - name: QW_COMPACTOR_DECOMMISSION_TIMEOUT
+              value: {{ printf "%ds" (div (mul .Values.compactor.terminationGracePeriodSeconds 9) 10) | quote }}
             {{- include "quickwit.environment" . | nindent 12 }}
-            {{- with (include "quickwit.extraEnv" .Values.compactor.extraEnv) }}
+            {{- with (include "quickwit.renderEnv" .Values.compactor.extraEnv) }}
             {{- . | nindent 12 }}
             {{- end }}
           {{- if or (.Values.environmentFrom) (.Values.compactor.extraEnvFrom) }}
@@ -76,8 +83,10 @@ spec:
             {{- toYaml .Values.compactor.startupProbe | nindent 12 }}
           livenessProbe:
             {{- toYaml .Values.compactor.livenessProbe | nindent 12 }}
+          {{- with .Values.compactor.readinessProbe }}
           readinessProbe:
-            {{- toYaml .Values.compactor.readinessProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: config
               mountPath: /quickwit/node.yaml

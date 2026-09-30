@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.28.0
+    app.kubernetes.io/version: 1.30.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -45,6 +45,7 @@ data:
         - persistentvolumes
         - namespaces
         - endpoints
+        - endpointslices
         - daemonsets
         - deployments
         - replicasets
@@ -475,7 +476,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.28.0
+    app.kubernetes.io/version: 1.30.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -602,6 +603,12 @@ rules:
       - patch
       - update
       - watch
+  - apiGroups:
+      - apps
+    resources:
+      - deployments/status
+    verbs:
+      - get
   - apiGroups:
       - apps
     resources:
@@ -775,7 +782,6 @@ rules:
       - datadoghq.com
     resources:
       - datadoginstrumentations
-      - extendeddaemonsetreplicasets
       - watermarkpodautoscalers
     verbs:
       - get
@@ -807,6 +813,15 @@ rules:
       - datadogpodautoscalers/status
     verbs:
       - '*'
+  - apiGroups:
+      - datadoghq.com
+    resources:
+      - extendeddaemonsetreplicasets
+    verbs:
+      - delete
+      - get
+      - list
+      - watch
   - apiGroups:
       - discovery.k8s.io
     resources:
@@ -1134,6 +1149,13 @@ rules:
       - namespaces
       - endpoints
       - events
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
     verbs:
       - list
       - watch
@@ -1563,7 +1585,7 @@ spec:
             - name: DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL
               value: "false"
             - name: DD_LOGS_CONFIG_AUTO_MULTI_LINE_DETECTION
-              value: "false"
+              value: "true"
             - name: DD_HEALTH_PORT
               value: "5555"
             - name: DD_IGNORE_AUTOCONF
@@ -1965,6 +1987,8 @@ spec:
               value: "60"
             - name: DD_OTELCOLLECTOR_ENABLED
               value: "true"
+            - name: DD_OTEL_STANDALONE
+              value: "false"
             - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
               value: kubernetes
             - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
@@ -1997,6 +2021,9 @@ spec:
             - mountPath: /etc/otel-agent
               name: otelconfig
               readOnly: true
+            - mountPath: /opt/datadog-agent/run
+              name: datadogrun
+              readOnly: false
             - mountPath: /host/proc
               mountPropagation: None
               name: procdir
@@ -2018,7 +2045,7 @@ spec:
       hostPID: true
       initContainers:
         - args:
-            - cp -r /etc/datadog-agent /opt
+            - cp -r /etc/datadog-agent /opt && mkdir -p /opt/datadog-agent/auth
           command:
             - bash
             - -c
@@ -2230,7 +2257,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.28.0
+    app.kubernetes.io/version: 1.30.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2256,7 +2283,6 @@ spec:
     spec:
       containers:
         - args:
-            - -supportExtendedDaemonset=false
             - -logEncoder=json
             - -metrics-addr=:8383
             - -loglevel=info
@@ -2270,6 +2296,7 @@ spec:
             - -datadogGenericResourceEnabled=false
             - -remoteConfigEnabled=false
             - -datadogCSIDriverEnabled=true
+            - -untaintControllerEnabled=false
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -2289,13 +2316,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-            - name: DD_REGISTRY_OVERRIDE_ASIA
-              value: "true"
-            - name: DD_REGISTRY_OVERRIDE_EU
-              value: "true"
-            - name: DD_REGISTRY_OVERRIDE_DEFAULT
-              value: "true"
-          image: registry.datadoghq.com/operator:1.28.0
+          image: registry.datadoghq.com/operator:1.30.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2367,6 +2388,8 @@ spec:
               value: kubernetes
             - name: DD_OTELCOLLECTOR_GATEWAY_MODE
               value: "true"
+            - name: DD_OTEL_STANDALONE
+              value: "false"
             - name: DD_HOSTNAME
               valueFrom:
                 fieldRef:

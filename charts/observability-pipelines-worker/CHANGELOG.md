@@ -1,5 +1,41 @@
 # Changelog
 
+## 2.23.0
+
+* Official image `2.23.0`
+
+## 2.22.0
+
+* Official image `2.22.0`
+
+## 2.21.2
+
+* Fix `sgc_path` in bootstrap template: remove hardcoded path to `datadog-secret-backend` (renamed to `sgc` since 2.15.1) and defer to the worker's built-in default. Also skip emitting the auto-generated `secret:` block when `bootstrap.config` already defines one, preventing duplicate YAML key errors.
+
+## 2.21.1
+
+* Official image `2.21.1`
+
+## 2.21.0
+
+* Official image `2.21.0`
+
+## 2.20.5
+
+* Official image `2.20.4`
+
+## 2.20.4
+
+* Official image `2.20.3`
+
+## 2.20.3
+
+* Official image `2.20.2`
+
+## 2.20.2
+
+* Official image `2.20.1`
+
 ## 2.20.1
 
 * Set the worker environment variable DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS (supported since worker version 2.19.0) based on the value of terminationGracePeriodSeconds with a 10 seconds margin. This allows a worker configured with a large sink buffer to drain it gracefully before exiting.

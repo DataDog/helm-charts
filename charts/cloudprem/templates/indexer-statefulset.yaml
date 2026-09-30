@@ -47,6 +47,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "quickwit.serviceAccountName" . }}
+      {{- with .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- with .Values.indexer.initContainers }}
@@ -57,7 +61,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ include "quickwit.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.signals.metrics.enabled }}
           command: ["quickwit-metrics"]
@@ -68,7 +72,21 @@ spec:
           args: ["run", "--service", "indexer"]
           {{- end }}
           env:
+            {{- /* Supported by Quickwit edge and the upcoming 0.10 release. */}}
+            - name: QW_INGEST_DECOMMISSION_TIMEOUT
+              value: {{ printf "%ds" (div (mul .Values.indexer.terminationGracePeriodSeconds 9) 10) | quote }}
             {{- include "quickwit.environment" . | nindent 12 }}
+            {{- $indexerEnvDefaults := dict "QW_DISABLE_LOAD_ESTIMATION" "true" "QW_ENABLE_IN_MEMORY_INDEXING" "true" }}
+            {{- if not .Values.indexer.resources }}
+              {{- /* Pod-size defaults from the sizing map. */}}
+              {{- $sizingMap := .Files.Get "sizing-map.yaml" | fromYaml }}
+              {{- $sizingEnv := ((index $sizingMap .Values.indexer.podSize | default dict).env | default dict).indexer | default dict }}
+              {{- $indexerEnvDefaults = merge $indexerEnvDefaults $sizingEnv }}
+            {{- end }}
+            {{- include "quickwit.renderEnvDefaults" (dict
+              "defaults" $indexerEnvDefaults
+              "overrides" (list .Values.environment .Values.indexer.extraEnv)
+            ) | nindent 12 }}
             {{- if .Values.indexer.persistentVolume.enabled }}
             {{- if .Values.indexer.persistentVolume.storageClass }}
             - name: KUBERNETES_STORAGE_CLASS
@@ -81,7 +99,7 @@ spec:
             - name: "QW_PIPELINE_CONFIG_PATH"
               value: "/quickwit/pipelines_config.json"
             {{- end }}
-            {{- with (include "quickwit.extraEnv" .Values.indexer.extraEnv) }}
+            {{- with (include "quickwit.renderEnv" .Values.indexer.extraEnv) }}
             {{- . | nindent 12 }}
             {{- end }}
           {{- if or (.Values.environmentFrom) (.Values.indexer.extraEnvFrom) }}
@@ -99,8 +117,10 @@ spec:
             {{- toYaml .Values.indexer.startupProbe | nindent 12 }}
           livenessProbe:
             {{- toYaml .Values.indexer.livenessProbe | nindent 12 }}
+          {{- with .Values.indexer.readinessProbe }}
           readinessProbe:
-            {{- toYaml .Values.indexer.readinessProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: config
               mountPath: /quickwit/
@@ -182,7 +202,9 @@ spec:
       {{- if .Values.indexer.persistentVolume.storageClass }}
         storageClassName: "{{ .Values.indexer.persistentVolume.storageClass }}"
       {{- end }}
-      {{- if .Values.indexer.volumeAttributesClass.enabled }}
+      {{- if .Values.indexer.persistentVolume.volumeAttributesClassName }}
+        volumeAttributesClassName: {{ .Values.indexer.persistentVolume.volumeAttributesClassName | quote }}
+      {{- else if .Values.indexer.volumeAttributesClass.enabled }}
         volumeAttributesClassName: {{ include "quickwit.indexer.vacName" . | quote }}
       {{- end }}
   {{- end }}

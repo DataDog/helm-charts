@@ -7,9 +7,9 @@ metadata:
   namespace: datadog-agent
   labels:
     app.kubernetes.io/name: datadog-operator
-    helm.sh/chart: datadog-operator-2.25.0-dev.3
+    helm.sh/chart: datadog-operator-2.28.0-dev.3
     app.kubernetes.io/instance: datadog-operator
-    app.kubernetes.io/version: "1.29.0-rc.2"
+    app.kubernetes.io/version: "1.31.0-rc.2"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -35,7 +35,7 @@ spec:
       serviceAccountName: datadog-operator 
       containers:
         - name: datadog-operator
-          image: "registry.datadoghq.com/operator:1.29.0-rc.2"
+          image: "registry.datadoghq.com/operator:1.31.0-rc.2"
           imagePullPolicy: IfNotPresent
           env:
             - name: WATCH_NAMESPACE
@@ -56,14 +56,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-            - name: DD_REGISTRY_OVERRIDE_ASIA
-              value: "true"
-            - name: DD_REGISTRY_OVERRIDE_EU
-              value: "true"
-            - name: DD_REGISTRY_OVERRIDE_DEFAULT
-              value: "true"
           args:
-            - "-supportExtendedDaemonset=false"
             - "-logEncoder=json"
             - "-metrics-addr=:8383"
             - "-loglevel=info"
@@ -93,4 +86,14 @@ spec:
           volumeMounts:
       nodeSelector:
         kubernetes.io/os: linux
+      tolerations:
+        # Tolerate the agent-not-ready startup taint applied by the untaint controller
+        # (agent.datadoghq.com/not-ready). The Operator schedules itself and is the only
+        # thing that removes the taint, so it must tolerate it unconditionally to avoid a
+        # cold-start deadlock. Inert on clusters where the taint is never applied. Appended
+        # to (not replacing) any user-supplied .Values.tolerations.
+        - key: agent.datadoghq.com/not-ready
+          operator: Equal
+          value: presence
+          effect: NoSchedule
       volumes:

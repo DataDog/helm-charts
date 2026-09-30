@@ -68,8 +68,11 @@ spec:
                     - dashboard
                     - downtime
                     - monitor
+                    - monitor_notification_rule
                     - notebook
                     - slo
+                    - slo_correction
+                    - software_catalog_entity
                     - synthetics_api_test
                     - synthetics_browser_test
                   type: string

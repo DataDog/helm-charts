@@ -1,4 +1,4 @@
-{{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
+{{- if or .Values.datadog.confd .Values.datadog.autoconf (eq (include "ksm-pod-collection-on-node-enabled" .) "true") }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,15 +9,21 @@ metadata:
   annotations:
     checksum/confd-config: {{ tpl (toYaml .Values.datadog.confd) . | sha256sum }}
     checksum/autoconf-config: {{ tpl (toYaml .Values.datadog.autoconf) . | sha256sum }}
+    {{- if eq (include "ksm-pod-collection-on-node-enabled" .) "true" }}
+    checksum/ksm-node-config: {{ include "kubeStateMetricsCore-node-config" . | sha256sum }}
+    {{- end }}
 data:
 {{/*
 Merge the legacy autoconf dict before so confd static configurations
-override duplicates
+override duplicates.
 */}}
 {{- if .Values.datadog.autoconf }}
 {{ tpl (toYaml .Values.datadog.autoconf) . | indent 2 }}
 {{- end }}
 {{- if .Values.datadog.confd }}
 {{ tpl (toYaml .Values.datadog.confd) . | indent 2 }}
+{{- end }}
+{{- if eq (include "ksm-pod-collection-on-node-enabled" .) "true" }}
+{{ include "kubeStateMetricsCore-node-config" . | indent 2 }}
 {{- end }}
 {{- end -}}

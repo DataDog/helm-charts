@@ -1,0 +1,31 @@
+{{- if and .Values.otelAgentGateway.enabled (eq (include "otel-agent-gateway.controllerType" .) "StatefulSet") }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "datadog.fullname" . }}-otel-agent-gateway
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog.labels" . | indent 4 }}
+    app.kubernetes.io/component: otel-agent-gateway
+    {{- if .Values.otelAgentGateway.additionalLabels }}
+{{ toYaml .Values.otelAgentGateway.additionalLabels | indent 4 }}
+    {{- end }}
+{{ include "provider-labels" . | indent 4 }}
+  {{- if .Values.otelAgentGateway.deploymentAnnotations }}
+  annotations: {{ toYaml .Values.otelAgentGateway.deploymentAnnotations | nindent 4 }}
+  {{- end }}
+spec:
+  serviceName: {{ template "datadog.fullname" . }}-otel-agent-gateway-headless
+  podManagementPolicy: Parallel
+  replicas: {{ .Values.otelAgentGateway.replicas | default 1 }}
+  revisionHistoryLimit: {{ .Values.otelAgentGateway.revisionHistoryLimit }}
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ template "datadog.fullname" . }}-otel-agent-gateway
+        {{- if .Values.otelAgentGateway.podLabels }}
+{{ toYaml .Values.otelAgentGateway.podLabels | indent 6 }}
+        {{- end }}
+{{- include "otel-agent-gateway.podTemplate" . }}
+{{ end }}

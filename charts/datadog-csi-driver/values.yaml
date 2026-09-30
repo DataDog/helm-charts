@@ -13,7 +13,7 @@ fullnameOverride: ""
 ## Define the Datadog CSI Driver image to work with
 image:
   # image.tag -- CSI driver image tag to use
-  tag: 1.3.0
+  tag: 1.4.0
 
   # image.repository -- Override default registry + image.name for CSI driver
   repository: gcr.io/datadoghq/csi-driver
@@ -32,7 +32,6 @@ priorityClassName: ""
 
 ## Configure the CSI registrar to use as a sidecar container
 registrar:
-
   # Define the CSI registrar image to work with
   image:
     # registrar.image.tag -- CSI registrar image tag to use
@@ -76,6 +75,14 @@ sockets:
 apm:
   # apm.enabled -- Enable APM/SSI support for the CSI driver.
   enabled: true
+
+  # apm.pullSecrets -- kubernetes.io/dockerconfigjson Secrets used to download
+  # APM libraries from private registries. Falls back to image.pullSecrets when
+  # empty, but legacy kubernetes.io/dockercfg Secrets are ignored for APM
+  # authentication. Restart the CSI DaemonSet after rotating these Secrets.
+  # Not supported on GKE Autopilot.
+  pullSecrets: []
+  #   - name: "<REG_SECRET>"
 
 # tolerations -- Allow scheduling the csi driver daemonset pods on tainted nodes.
 

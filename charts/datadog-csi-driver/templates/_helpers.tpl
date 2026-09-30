@@ -82,6 +82,19 @@ false
 {{- end -}}
 
 {{/*
+Check if target cluster is GKE Autopilot (any version).
+Registry authentication environment variables are not part of the published
+WorkloadAllowlist and must not be rendered on Autopilot.
+*/}}
+{{- define "csi.gke-autopilot" -}}
+{{- if or (.Capabilities.APIVersions.Has "allowlistedv2workloads.auto.gke.io/v1/AllowlistedV2Workload") (eq (include "csi.gke-autopilot-workloadallowlists-enabled" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Check if target cluster is legacy GKE Autopilot (GKE Autopilot but no
 WorkloadAllowlist support, i.e. GKE < 1.32.1-gke.1729000).
 */}}

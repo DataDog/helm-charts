@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.17.0
+
+* Set csi driver image to `1.4.0` (private registry authentication for SSI libraries).
+* Add `apm.pullSecrets` for downloading SSI libraries from private registries using `kubernetes.io/dockerconfigjson` Secrets, with fallback to compatible `image.pullSecrets`. Legacy `kubernetes.io/dockercfg` fallback Secrets are ignored for APM authentication without preventing the CSI driver from starting. Registry authentication is not rendered on GKE Autopilot because it is not covered by the published WorkloadAllowlist.
+
 ## 0.16.1
 
 * Migrate the default CSI node driver registrar image from `k8s.gcr.io` to `registry.k8s.io`. The DaemonSet now matches the new `datadog-datadog-csi-driver-daemonset-exemption-v1.1.1` WorkloadAllowlist, and the `AllowlistSynchronizer` keeps `v1.1.0` while also syncing `v1.1.1`.
