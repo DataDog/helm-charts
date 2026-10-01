@@ -598,7 +598,7 @@ spec:
             value: {{ .Values.datadog.appsec.injector.processor.service.namespace | quote }}
           {{- end }}
           {{- end }}
-          {{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+          {{- if eq (include "should-shard-ksm-config" .) "true" }}
           - name: DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED
             value: {{ .Values.datadog.kubeStateMetricsCore.shardingEnabled | quote }}
           {{- end }}
