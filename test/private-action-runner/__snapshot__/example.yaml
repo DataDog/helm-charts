@@ -32,7 +32,6 @@ stringData:
       - com.datadoghq.kubernetes.core.getPod
       - com.datadoghq.kubernetes.core.listPod
     httpTimeoutSeconds: 30
-
 ---
 # Source: private-action-runner/templates/secrets.yaml
 apiVersion: v1
