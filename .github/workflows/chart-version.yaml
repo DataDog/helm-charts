@@ -13,6 +13,11 @@ permissions:
 
 jobs:
   bump-chart-version:
+    # Agent release metadata and generated files must be committed together by agent-release.yaml.
+    if: >-
+      !(github.event.pull_request.user.login == 'renovate[bot]' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.head.ref == 'renovate/datadog-agent')
     runs-on: ubuntu-latest
     steps:
       - uses: DataDog/dd-octo-sts-action@96a25462dbcb10ebf0bfd6e2ccc917d2ab235b9a # v1.0.4
