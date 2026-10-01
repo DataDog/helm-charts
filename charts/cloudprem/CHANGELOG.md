@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* Set `QW_DISABLE_LOAD_ESTIMATION=true` on searchers instead of indexers by default. A value from `searcher.extraEnv` or `environment` takes precedence.
+
 ## 0.5.4
 
 * Restore the CloudPrem component name in OpenTelemetry resource attributes (`component`).
