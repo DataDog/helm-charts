@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "minimumReleaseAge": "1 day",
+  "minimumReleaseAge": "7 days",
   "enabledManagers": ["github-actions", "custom.regex"],
   "gitIgnoredAuthors": ["200755185+dd-octo-sts[bot]@users.noreply.github.com"],
   "customManagers": [
@@ -31,6 +31,7 @@
       "matchManagers": ["custom.regex"],
       "matchDatasources": ["github-releases"],
       "matchPackageNames": ["DataDog/datadog-agent"],
+      "minimumReleaseAge": "1 day",
       "allowedVersions": "/^7\\.\\d+\\.\\d+$/",
       "ignoreUnstable": true,
       "groupName": "Datadog Agent",

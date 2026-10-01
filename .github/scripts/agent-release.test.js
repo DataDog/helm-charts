@@ -115,8 +115,10 @@ test('Renovate keeps GitHub Actions enabled, uses stable releases, and requires 
   assert.equal(rule.groupSlug, 'datadog-agent');
   assert.equal(`renovate/${rule.branchTopic}`, branch);
   assert.equal(rule.rebaseWhen, 'behind-base-branch');
-  assert.equal(renovate.minimumReleaseAge, '1 day');
-  assert.equal(rule.minimumReleaseAge ?? renovate.minimumReleaseAge, '1 day');
+  assert.equal(renovate.minimumReleaseAge, '7 days');
+  assert.equal(rule.minimumReleaseAge, '1 day');
+  const actionsRule = renovate.packageRules.find(rule => rule.matchManagers?.includes('github-actions'));
+  assert.equal(actionsRule.minimumReleaseAge ?? renovate.minimumReleaseAge, '7 days');
   const allowed = new RegExp(rule.allowedVersions.slice(1, -1));
   for (const version of ['7.84.0', '7.84.1', '7.100.0']) assert.ok(allowed.test(version));
   for (const version of ['6.55.1', '8.0.0', '7.85.0-rc.1', '7.84.0-jmx', 'latest']) assert.ok(!allowed.test(version));
