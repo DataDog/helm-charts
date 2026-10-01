@@ -1586,7 +1586,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.82.3
+    tag: 7.84.0
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2211,7 +2211,7 @@ agents:
 
     # agents.image.tag -- Define the Agent version to use
     # Set a pinned version here. Do not append build variants: put `full` or `jmx` in `agents.image.tagSuffix`, and enable FIPS with `useFIPSAgent`. To stay on the latest stable Agent, leave this unset and upgrade the chart periodically.
-    tag: 7.82.3
+    tag: 7.84.0
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2907,7 +2907,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.82.3
+    tag: 7.84.0
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
