@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.250.4
+
+* Update `fips.image.tag` to `1.1.31` fixing CVEs and updating packages.
+
 ## 3.250.3
 
 - Disable Service Discovery on Cluster Checks Runners to prevent requests to the unavailable system-probe socket ([#2943](https://github.com/DataDog/helm-charts/issues/2943)).
