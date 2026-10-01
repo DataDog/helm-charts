@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.253.0
+
+- Add `datadog.kubeStateMetricsCore.shardingEnabled` (default `true`) to split the `kubernetes_state_core` check into three check instances (pods, nodes, and all other resources), each dispatched as a separate cluster check. Only takes effect when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is true and the Cluster Agent is 7.83.0 or newer, which is the first version where sharding coexists safely with the `cluster_aggregates_only` collection mode ([datadog-agent#54126](https://github.com/DataDog/datadog-agent/pull/54126)).
+
 ## 3.252.1
 
 * Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.1 ([#2956](https://github.com/DataDog/helm-charts/pull/2956)).

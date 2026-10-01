@@ -307,6 +307,25 @@ false
 {{- end -}}
 
 {{/*
+Return true if DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED should be set on the Cluster Agent.
+Sharding is only dispatched when cluster checks runners are enabled, and the Cluster Agent
+must be 7.83.0 or newer: sharding only coexists safely with the cluster_aggregates_only
+collection mode as of https://github.com/DataDog/datadog-agent/pull/54126. On older Cluster
+Agents the env var is omitted so the Agent keeps its own default.
+*/}}
+{{- define "should-shard-ksm-config" -}}
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.83.0-0" (include "get-cluster-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the OTelAgent needs to be deployed
 */}}
 {{- define "should-enable-otel-agent" -}}
