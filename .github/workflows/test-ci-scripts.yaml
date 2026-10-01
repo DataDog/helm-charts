@@ -3,10 +3,26 @@ name: Test CI Scripts
 on:
   push:
     paths:
+      - 'charts/datadog/values.yaml'
+      - 'charts/datadog/templates/_helpers.tpl'
       - '.github/scripts/**'
+      - '.github/workflows/agent-release.yaml'
+      - '.github/workflows/chart-version.yaml'
+      - '.github/workflows/test-ci-scripts.yaml'
+      - '.github/chainguard/self.agent-release.create-commit.sts.yaml'
+      - 'renovate.json'
+      - 'Makefile'
   pull_request:
     paths:
+      - 'charts/datadog/values.yaml'
+      - 'charts/datadog/templates/_helpers.tpl'
       - '.github/scripts/**'
+      - '.github/workflows/agent-release.yaml'
+      - '.github/workflows/chart-version.yaml'
+      - '.github/workflows/test-ci-scripts.yaml'
+      - '.github/chainguard/self.agent-release.create-commit.sts.yaml'
+      - 'renovate.json'
+      - 'Makefile'
 
 # Permission forced by repo-level setting; only elevate on job-level
 permissions:
