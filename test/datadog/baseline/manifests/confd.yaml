@@ -2827,6 +2827,8 @@ spec:
                   fieldPath: metadata.name
             - name: DD_USE_DOGSTATSD
               value: "false"
+            - name: DD_DISCOVERY_ENABLED
+              value: "false"
             - name: DD_PROCESS_AGENT_ENABLED
               value: "false"
             - name: DD_LOGS_ENABLED

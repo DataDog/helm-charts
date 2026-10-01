@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.250.3
+
+- Disable Service Discovery on Cluster Checks Runners to prevent requests to the unavailable system-probe socket ([#2943](https://github.com/DataDog/helm-charts/issues/2943)).
+
 ## 3.250.2
 
 * Internal cleanup: Use get-agent-version for semverCompare ([#2885](https://github.com/DataDog/helm-charts/pull/2885)).
