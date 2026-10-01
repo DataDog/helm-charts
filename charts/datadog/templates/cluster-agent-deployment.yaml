@@ -598,6 +598,10 @@ spec:
             value: {{ .Values.datadog.appsec.injector.processor.service.namespace | quote }}
           {{- end }}
           {{- end }}
+          {{- if eq (include "should-shard-ksm-config" .) "true" }}
+          - name: DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED
+            value: {{ .Values.datadog.kubeStateMetricsCore.shardingEnabled | quote }}
+          {{- end }}
           {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
