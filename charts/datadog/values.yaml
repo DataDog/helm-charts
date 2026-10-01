@@ -1432,7 +1432,7 @@ datadog:
     flavor: kubernetes
 
     cilium:
-      # datadog.networkPolicy.cilium.dnsSelector -- Cilium selector of the DNS server entity
+      # datadog.networkPolicy.cilium.dnsSelector -- Cilium selector of the DNS server entity
       # @default -- kube-dns in namespace kube-system
       dnsSelector:
         toEndpoints:

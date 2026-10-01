@@ -923,7 +923,7 @@ helm install <RELEASE_NAME> \
 | datadog.networkPath.collector.pathtestTTL | string | `nil` | Override TTL in minutes for pathtests |
 | datadog.networkPath.collector.workers | string | `nil` | Override the number of workers |
 | datadog.networkPath.connectionsMonitoring.enabled | bool | `false` | Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled. |
-| datadog.networkPolicy.cilium.dnsSelector | object | kube-dns in namespace kube-system | Cilium selector of the DNS server entity |
+| datadog.networkPolicy.cilium.dnsSelector | object | kube-dns in namespace kube-system | Cilium selector of the DNS server entity |
 | datadog.networkPolicy.create | bool | `false` | If true, create NetworkPolicy for all the components |
 | datadog.networkPolicy.flavor | string | `"kubernetes"` | Flavor of the network policy to use. Can be: * kubernetes for networking.k8s.io/v1/NetworkPolicy * cilium     for cilium.io/v2/CiliumNetworkPolicy |
 | datadog.nodeLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Node Labels to Datadog Tags |
