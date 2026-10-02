@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.251.1
+
+* Expose `datadog.apm.instrumentation.onDemand` (default `true`) and set `DD_APM_INSTRUMENTATION_ON_DEMAND` on the Cluster Agent.
+* Enable Cluster Agent Remote Configuration when the admission controller is enabled and on-demand SSI is on, so `APM_POLICIES` Remote Config rules work without `clusterAgent.admissionController.remoteInstrumentation.enabled`.
+
 ## 3.251.0
 
 - Grant the Cluster Agent `get` access to `pods/log` to run the getPodLogs action.
