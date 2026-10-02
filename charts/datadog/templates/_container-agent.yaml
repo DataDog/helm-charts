@@ -302,6 +302,10 @@
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- end }}
     {{- end }}
+    {{- if eq (include "should-render-discovery-config" .) "true" }}
+    - name: DD_DISCOVERY_ENABLED
+      value: {{ include "resolved-discovery-enabled" . | quote }}
+    {{- end }}
     {{- if eq (include "should-enable-instrumentation-crd-controller" .) "true" }}
     - name: DD_INSTRUMENTATION_CRD_CONTROLLER_ENABLED
       value: "true"
@@ -320,10 +324,8 @@
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
-    {{- if .Values.datadog.orchestratorExplorer.kubelet_configuration_check.enabled }}
     - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
-      value: "true"
-    {{- end }}
+      value: {{ and (eq (include "should-enable-k8s-resource-monitoring" .) "true") .Values.datadog.orchestratorExplorer.kubelet_configuration_check.enabled | quote }}
   volumeMounts:
     - name: logdatadog
       mountPath: {{ template "datadog.logDirectoryPath" . }}

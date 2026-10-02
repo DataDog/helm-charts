@@ -7,6 +7,8 @@ datadog:
 
   otelCollector:
     enabled: true
+  operator:
+    enabled: false
 clusterAgent:
   enabled: false
 otelAgentGateway:

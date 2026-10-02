@@ -11,3 +11,5 @@ datadog:
   otelCollector:
     enabled: true
     useStandaloneImage: false
+  operator:
+    enabled: false
