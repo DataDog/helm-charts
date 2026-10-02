@@ -38,7 +38,7 @@ spec:
       name: v1alpha2
       schema:
         openAPIV3Schema:
-          description: DatadogPodAutoscalerClusterProfile is the Schema for the datadogpodautoscalerclusterprofiles API
+          description: DatadogPodAutoscalerClusterProfile is the Schema for the datadogpodautoscalerclusterprofiles API.
           properties:
             apiVersion:
               description: |-
@@ -395,7 +395,7 @@ spec:
                                               Queries is a list of timeseries queries to use for the objective.
                                               At least one query must be specified
                                             items:
-                                              description: TimeseriesQuery is a discriminated union. Only Metrics and APMMetrics are supported for autoscaling.
+                                              description: DatadogPodAutoscalerTimeseriesQuery is a discriminated union. Only Metrics and APMMetrics are supported for autoscaling.
                                               properties:
                                                 apmMetrics:
                                                   description: ApmMetrics is allows to query APM metrics.
@@ -643,7 +643,7 @@ spec:
                                       Queries is a list of timeseries queries to use for the objective.
                                       At least one query must be specified
                                     items:
-                                      description: TimeseriesQuery is a discriminated union. Only Metrics and APMMetrics are supported for autoscaling.
+                                      description: DatadogPodAutoscalerTimeseriesQuery is a discriminated union. Only Metrics and APMMetrics are supported for autoscaling.
                                       properties:
                                         apmMetrics:
                                           description: ApmMetrics is allows to query APM metrics.
@@ -809,7 +809,6 @@ spec:
                         required:
                           - type
                         type: object
-                      minItems: 1
                       type: array
                       x-kubernetes-list-type: atomic
                     options:

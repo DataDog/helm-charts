@@ -59,7 +59,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ include "quickwit.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["pomsky-intake"]
           {{- if $.Values.intake.args }}
@@ -69,7 +69,7 @@ spec:
           {{- end }}
           env:
             {{- include "quickwit.environment" . | nindent 12 }}
-            {{- with (include "quickwit.extraEnv" .Values.intake.extraEnv) }}
+            {{- with (include "quickwit.renderEnv" .Values.intake.extraEnv) }}
             {{- . | nindent 12 }}
             {{- end }}
           {{- if or (.Values.environmentFrom) (.Values.intake.extraEnvFrom) }}
@@ -87,8 +87,10 @@ spec:
             {{- toYaml .Values.intake.startupProbe | nindent 12 }}
           livenessProbe:
             {{- toYaml .Values.intake.livenessProbe | nindent 12 }}
+          {{- with .Values.intake.readinessProbe }}
           readinessProbe:
-            {{- toYaml .Values.intake.readinessProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: config
               mountPath: /quickwit/

@@ -355,6 +355,7 @@ datadog.apm.errorTrackingStandalone.enabled: spec.features.apm.errorTrackingStan
 datadog.apm.hostSocketPath: ""
 datadog.apm.instrumentation.disabledNamespaces: ""
 datadog.apm.instrumentation.enabled: spec.features.apm.instrumentation.enabled
+datadog.apm.instrumentation.onDemand: spec.features.apm.instrumentation.onDemand
 datadog.apm.instrumentation.enabledNamespaces: ""
 datadog.apm.instrumentation.injector.imageTag: ""
 datadog.apm.instrumentation.language_detection.enabled: ""
@@ -456,6 +457,7 @@ datadog.kubeStateMetricsCore.collectCrdMetrics: ""
 datadog.kubeStateMetricsCore.collectSecretMetrics: ""
 datadog.kubeStateMetricsCore.collectVpaMetrics: ""
 datadog.kubeStateMetricsCore.enabled: spec.features.kubeStateMetricsCore.enabled
+datadog.kubeStateMetricsCore.podCollectionMode: spec.features.kubeStateMetricsCore.podCollectionMode
 datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck: ""
 datadog.kubeStateMetricsCore.labelsAsTags: ""
 datadog.kubeStateMetricsCore.rbac.create: ""
@@ -492,6 +494,7 @@ datadog.logs.enabled: spec.features.logCollection.enabled
 datadog.namespaceAnnotationsAsTags: ""
 datadog.namespaceLabelsAsTags: ""
 datadog.networkMonitoring.enabled: spec.features.npm.enabled
+datadog.networkPath.collector.filters: ""
 datadog.networkPath.collector.pathtestContextsLimit: ""
 datadog.networkPath.collector.pathtestInterval: ""
 datadog.networkPath.collector.pathtestMaxPerMinute: ""
@@ -666,6 +669,7 @@ otelAgentGateway.configMap.name: ""
 otelAgentGateway.containers.otelAgent.env: ""
 otelAgentGateway.containers.otelAgent.envFrom: ""
 otelAgentGateway.containers.otelAgent.logLevel: ""
+otelAgentGateway.controller.type: ""
 otelAgentGateway.enabled: ""
 otelAgentGateway.featureGates: ""
 otelAgentGateway.image.digest: ""

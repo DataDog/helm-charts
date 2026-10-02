@@ -16,7 +16,6 @@ func Test_baseline_manifests(t *testing.T) {
 		command              common.HelmCommand
 		baselineManifestPath string
 		assertions           func(t *testing.T, baselineManifestPath, manifest string)
-		skipTest             bool
 	}{
 		{
 			name: "Operator Deployment default",
@@ -29,7 +28,6 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			baselineManifestPath: "./baseline/Operator_Deployment_default.yaml",
 			assertions:           verifyOperatorDeployment,
-			skipTest:             SkipTest,
 		},
 		{
 			name: "DatadogAgent CRD default",
@@ -43,13 +41,12 @@ func Test_baseline_manifests(t *testing.T) {
 			},
 			baselineManifestPath: "./baseline/DatadogAgent_CRD_default.yaml",
 			assertions:           verifyDatadogAgent,
-			skipTest:             SkipTest,
 		},
 	}
 
 	for _, tt := range tests {
-		if tt.skipTest {
-			continue
+		if SkipTest {
+			t.Skip()
 		}
 		t.Run(tt.name, func(t *testing.T) {
 			manifest, err := common.RenderChart(t, tt.command)
@@ -65,7 +62,18 @@ func Test_baseline_manifests(t *testing.T) {
 }
 
 func verifyOperatorDeployment(t *testing.T, baselineManifestPath, manifest string) {
-	utils.VerifyBaseline(t, baselineManifestPath, manifest, appsv1.Deployment{}, appsv1.Deployment{})
+	// The image tag and the "app.kubernetes.io/version" label (sourced from
+	// Chart.AppVersion) both change with every Operator release and aren't
+	// part of the chart structure this baseline is meant to protect, so
+	// they're stripped before comparing.
+	utils.VerifyBaseline(t, baselineManifestPath, manifest, appsv1.Deployment{}, appsv1.Deployment{}, stripReleaseVersion)
+}
+
+func stripReleaseVersion(d *appsv1.Deployment) {
+	for i, c := range d.Spec.Template.Spec.Containers {
+		d.Spec.Template.Spec.Containers[i].Image = utils.ImageRepository(c.Image)
+	}
+	delete(d.Labels, "app.kubernetes.io/version")
 }
 
 func verifyDatadogAgent(t *testing.T, baselineManifestPath, manifest string) {

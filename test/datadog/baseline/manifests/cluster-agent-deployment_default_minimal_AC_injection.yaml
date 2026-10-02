@@ -1223,6 +1223,14 @@ rules:
     verbs:
       - get
   - apiGroups:
+      - ""
+    resourceNames:
+      - datadog-secret
+    resources:
+      - secrets
+    verbs:
+      - get
+  - apiGroups:
       - storage.k8s.io
     resources:
       - csidrivers
@@ -2093,9 +2101,11 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
               value: agent
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
-              value: 7.82.3
+              value: 7.84.0
             - name: DD_REMOTE_CONFIGURATION_ENABLED
-              value: "false"
+              value: "true"
+            - name: DD_APM_INSTRUMENTATION_ON_DEMAND
+              value: "true"
             - name: DD_CLUSTER_CHECKS_ENABLED
               value: "true"
             - name: DD_EXTRA_CONFIG_PROVIDERS
@@ -2160,7 +2170,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.82.3
+          image: registry.datadoghq.com/cluster-agent:7.84.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2233,7 +2243,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/cluster-agent:7.82.3
+          image: registry.datadoghq.com/cluster-agent:7.84.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

@@ -13,16 +13,21 @@ permissions:
 
 jobs:
   bump-chart-version:
+    # Agent release metadata and generated files must be committed together by agent-release.yaml.
+    if: >-
+      !(github.event.pull_request.user.login == 'renovate[bot]' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.head.ref == 'renovate/datadog-agent')
     runs-on: ubuntu-latest
     steps:
-      - uses: DataDog/dd-octo-sts-action@96a25462dbcb10ebf0bfd6e2ccc917d2ab235b9a # v1.0.4
+      - uses: DataDog/dd-octo-sts-action@c85802a58e202b7e764b5441e4378c76043c8108 # v1.0.5
         id: octo-sts
         with:
           scope: DataDog/helm-charts
           policy: self.bump-chart-version.create-commit
 
       - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Extract all chart label information and update Chart.yaml and CHANGELOG.md
         id: update_charts
@@ -45,7 +50,7 @@ jobs:
       pull-requests: read
     steps:
       - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Validate chart version, CHANGELOG, and README badge
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0

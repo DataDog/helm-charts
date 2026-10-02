@@ -1,4 +1,6 @@
 {{- define "kubeStateMetricsCore-config" -}}
+{{- $userSuppliedConfdValues := or .Values.clusterAgent.confd .Values.clusterAgent.advancedConfd -}}
+
 kubernetes_state_core.yaml.default: |-
 {{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
   cluster_check: true
@@ -48,6 +50,13 @@ kubernetes_state_core.yaml.default: |-
       - storageclasses
       - volumeattachments
       - ingresses
+{{- if and
+  (not $userSuppliedConfdValues)
+  (eq (include "ksm-pod-collection-on-node-enabled" .) "true")
+}}
+      pod_collection_mode: cluster_unassigned
+      cluster_aggregates_enabled: true
+{{- end }}
 {{- if .Values.datadog.kubeStateMetricsCore.useApiServerCache }}
       use_api_server_cache: true
 {{- end }}
@@ -71,5 +80,22 @@ kubernetes_state_core.yaml.default: |-
 {{- if .Values.datadog.kubeStateMetricsCore.tags }}
       tags:
 {{ .Values.datadog.kubeStateMetricsCore.tags | toYaml | indent 8 }}
+{{- end }}
+{{- if and
+  (not $userSuppliedConfdValues)
+  (eq (include "ksm-pod-collection-on-node-enabled" .) "true")
+}}
+    - pod_collection_mode: cluster_aggregates_only
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners }}
+      skip_leader_election: true
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.namespaces }}
+      namespaces:
+{{ .Values.datadog.kubeStateMetricsCore.namespaces | toYaml | indent 8 }}
+{{- end }}
+{{- if .Values.datadog.kubeStateMetricsCore.tags }}
+      tags:
+{{ .Values.datadog.kubeStateMetricsCore.tags | toYaml | indent 8 }}
+{{- end }}
 {{- end }}
 {{- end -}}

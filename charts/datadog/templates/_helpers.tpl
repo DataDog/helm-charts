@@ -4,13 +4,28 @@
   Returns node agent version based on image tag. This assumes `agents.image.doNotCheckTag` is false.
 */}}
 {{- define "get-agent-version" -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
+{{- $version := .Values.agents.image.tag | toString -}}
+{{/* Strip build-variant suffixes so version guards compare on a clean version. */}}
+{{- $version = regexReplaceAll "(-jmx|-full|-fips|-servercore)+$" $version "" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.82.3" -}}
+{{- $version = "7.84.0" -}}
+{{- end -}}
+{{- $version -}}
+{{- end -}}
+
+{{/*
+  Returns Cluster Checks Runner version based on image tag. This assumes
+  `clusterChecksRunner.image.doNotCheckTag` is false.
+*/}}
+{{- define "get-cluster-checks-runner-version" -}}
+{{- $version := .Values.clusterChecksRunner.image.tag | toString -}}
+{{- $length := len (split "." $version) -}}
+{{- if and (eq $length 1) (eq $version "latest") -}}
+{{- $version = "7.84.0" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -22,7 +37,7 @@
 {{- $version := .Values.clusterAgent.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.82.3" -}}
+{{- $version = "7.84.0" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -139,6 +154,9 @@ false
 {{- $version := (include "get-agent-version" .) -}}
 {{- if not (semverCompare "^6.36.0-0 || ^7.36.0-0" $version) -}}
 {{- fail "This version of the chart requires an agent image 7.36.0 or greater. If you want to force and skip this check, use `--set agents.image.doNotCheckTag=true`" -}}
+{{- end -}}
+{{- if and .Values.datadog.networkPath.collector.filters (not (semverCompare ">=7.83.2" $version)) -}}
+{{- fail "datadog.networkPath.collector.filters requires a stable Datadog Agent 7.83.2 or newer. Set agents.image.tag to an explicit stable version 7.83.2 or newer. For a verified compatible prerelease or custom image, set agents.image.doNotCheckTag=true." -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -679,8 +697,8 @@ Return a remote otel-agent based on `.Values` (passed as .)
     */}}
     {{- $agentTag := .Values.agents.image.tag | toString -}}
     {{- if hasSuffix "-full" $agentTag -}}
-      {{- $cleanVersion := $agentTag | trimSuffix "-full" -}}
-      {{- if semverCompare "<7.67.0" $cleanVersion -}}
+      {{/* `get-agent-version` strips the `-full` suffix and resolves floating tags, so this compares on a clean version. */}}
+      {{- if semverCompare "<7.67.0" (include "get-agent-version" .) -}}
         {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
       {{- else -}}
         {{- fail "Setting `7.X.Y-full` in `agents.image.tag` with `datadog.otelCollector.useStandaloneImage=true` is not supported for agent versions >= 7.67.0. Options: (1) Remove the `-full` suffix from `agents.image.tag`, or (2) Set `datadog.otelCollector.useStandaloneImage=false`." -}}
@@ -1449,9 +1467,7 @@ In 7.36, `--config` was deprecated and `--cfgpath` should be used instead.
 {{- if  .Values.providers.gke.autopilot -}}
 -config
 {{- else if not .Values.agents.image.doNotCheckTag -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
-{{- $length := len (split "." $version ) -}}
-{{- if and (gt $length 1) (not (semverCompare "^6.36.0 || ^7.36.0" $version)) -}}
+{{- if not (semverCompare "^6.36.0 || ^7.36.0" (include "get-agent-version" .)) -}}
 --config
 {{- else -}}
 --cfgpath
@@ -1489,7 +1505,7 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (and .Values.clusterAgent.admissionController.enabled .Values.datadog.apm.instrumentation.onDemand) .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
 true
 {{- else -}}
 false
@@ -1929,5 +1945,34 @@ Examples (assuming no overrides):
 {{- else -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if KSM node pod collection is supported
+*/}}
+{{- define "ksm-pod-collection-on-node-supported" -}}
+{{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+{{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+{{- $ccrVersionOK := or (not .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners) .Values.clusterChecksRunner.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-checks-runner-version" .)) -}}
+{{- if and $agentVersionOK $dcaVersionOK $ccrVersionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if KSM pod collection on nodes is enabled and supported
+*/}}
+{{- define "ksm-pod-collection-on-node-enabled" -}}
+{{- if and
+  .Values.datadog.kubeStateMetricsCore.enabled
+  (eq .Values.datadog.kubeStateMetricsCore.podCollectionMode "node_kubelet")
+  (eq (include "ksm-pod-collection-on-node-supported" .) "true")
+-}}
+true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}

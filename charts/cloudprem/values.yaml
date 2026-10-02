@@ -81,6 +81,8 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   # tag: edge
   pullPolicy: IfNotPresent
+  # Overrides the image tag with an immutable image digest.
+  digest: ""
 
 imagePullSecrets: []
 nameOverride: ""
@@ -244,7 +246,7 @@ searcher:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -253,11 +255,7 @@ searcher:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # StatefulSet allows you to relax its ordering guarantees
   #   - OrderedReady
@@ -385,7 +383,7 @@ indexer:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -394,11 +392,7 @@ indexer:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # StatefulSet allows you to relax its ordering guarantees
   #   - OrderedReady
@@ -546,7 +540,7 @@ metastore:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -555,11 +549,7 @@ metastore:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # Override args for starting container
   args: []
@@ -636,7 +626,7 @@ metastore_ro:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -645,11 +635,7 @@ metastore_ro:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # Override args for starting the container.
   args: []
@@ -711,7 +697,7 @@ control_plane:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -720,11 +706,7 @@ control_plane:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # Override args for starting container
   args: []
@@ -790,7 +772,7 @@ janitor:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -799,11 +781,7 @@ janitor:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # Override args for starting container
   args: []
@@ -1047,7 +1025,7 @@ compactor:
 
   startupProbe:
     httpGet:
-      path: /health/livez
+      path: /health/readyz
       port: health
     failureThreshold: 12
     periodSeconds: 5
@@ -1056,11 +1034,7 @@ compactor:
     httpGet:
       path: /health/livez
       port: health
-
-  readinessProbe:
-    httpGet:
-      path: /health/readyz
-      port: health
+    timeoutSeconds: 5
 
   # Override args for starting container
   args: []
@@ -1096,7 +1070,7 @@ compactor:
   # merges are simply rescheduled by the planner after a heartbeat timeout, so this
   # does not need to be as long as the indexer's. With Quickwit edge or the upcoming
   # 0.10 release, the compactor decommission timeout is set to 90% of this value.
-  terminationGracePeriodSeconds: 60
+  terminationGracePeriodSeconds: 300
 
   runtimeClassName: ""
 
@@ -1218,9 +1192,10 @@ config:
   #   split_footer_cache_capacity: 1G
   #   max_num_concurrent_split_streams: 100
   # Metastore settings
-  # metastore:
-  #   postgres:
-  #     max_num_connections: 50
+  metastore:
+    postgres:
+      min_connections: 10
+      max_connections: 50
 
 # Seed configuration
 seed:

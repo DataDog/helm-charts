@@ -108,7 +108,7 @@ func InstallChart(t *testing.T, kubectlOptions *k8s.KubectlOptions, cmd HelmComm
 		// use --wait to ensure resources are fully cleaned up before returning
 		deleteOptions := &helm.Options{
 			KubectlOptions: kubectlOptions,
-			ExtraArgs:      map[string][]string{"delete": {"--wait", "--timeout", "2m"}},
+			ExtraArgs:      map[string][]string{"delete": {"--wait", "--timeout", "5m"}},
 		}
 		if cmd.Logger != nil {
 			deleteOptions.Logger = cmd.Logger

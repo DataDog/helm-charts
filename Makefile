@@ -71,7 +71,7 @@ unit-test-private-action-runner:
 
 .PHONY: unit-test-ci-scripts
 unit-test-ci-scripts:
-	node --test .github/scripts/chart-version-utils.test.js
+	node --test .github/scripts/*.test.js
 
 .PHONY: update-test-baselines
 update-test-baselines: update-test-baselines-datadog-agent update-test-baselines-operator update-test-baselines-private-action-runner update-test-baselines-datadog-csi-driver

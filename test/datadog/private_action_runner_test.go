@@ -359,6 +359,16 @@ func Test_NodeAgent_PrivateActionRunner_SplitMode(t *testing.T) {
 	common.Unmarshal(t, manifest, &daemonset)
 	parContainer := findPARContainer(daemonset)
 	require.NotNil(t, parContainer)
+	var agentContainer *corev1.Container
+	for i := range daemonset.Spec.Template.Spec.Containers {
+		if daemonset.Spec.Template.Spec.Containers[i].Name == "agent" {
+			agentContainer = &daemonset.Spec.Template.Spec.Containers[i]
+			break
+		}
+	}
+	require.NotNil(t, agentContainer)
+	assert.Equal(t, "true", selectPAREnvVars(agentContainer.Env)[DDPAREnabled])
+	assert.Equal(t, "true", selectPAREnvVars(agentContainer.Env)[DDPARSplitEnabled])
 
 	assert.Equal(t, []string{"/opt/entrypoints/privateactionrunner"}, parContainer.Command)
 	require.NotNil(t, parContainer.ReadinessProbe)
