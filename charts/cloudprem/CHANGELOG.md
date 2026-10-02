@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.6
+
+* Fix load-estimation configuration: set `QW_DISABLE_LOAD_ESTIMATION=true` on searchers instead of indexers by default. Explicit overrides remain supported.
+
 ## 0.5.4
 
 * Restore the CloudPrem component name in OpenTelemetry resource attributes (`component`).
