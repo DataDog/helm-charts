@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.252.0
+
+* Improve the user experience when disabling the cluster agent ([#2938](https://github.com/DataDog/helm-charts/pull/2938)).
+
 ## 3.251.1
 
 * Expose `datadog.apm.instrumentation.onDemand` (default `true`) and set `DD_APM_INSTRUMENTATION_ON_DEMAND` on the Cluster Agent.
