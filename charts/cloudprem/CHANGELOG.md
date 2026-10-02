@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.5.6
 
-* Set `QW_DISABLE_LOAD_ESTIMATION=true` on searchers instead of indexers by default. A value from `searcher.extraEnv` or `environment` takes precedence.
+* Fix load-estimation configuration: set `QW_DISABLE_LOAD_ESTIMATION=true` on searchers instead of indexers by default. Explicit overrides remain supported.
 
 ## 0.5.4
 
