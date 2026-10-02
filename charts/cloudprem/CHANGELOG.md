@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.5.6
+## 0.5.5
 
 * Fix load-estimation configuration: set `QW_DISABLE_LOAD_ESTIMATION=true` on searchers instead of indexers by default. Explicit overrides remain supported.
 
