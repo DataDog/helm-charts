@@ -69,7 +69,7 @@ func Test_KubernetesActions_HelmActions_RequiresCompatibleClusterAgent(t *testin
 		Overrides: map[string]string{
 			"datadog.kubernetesActions.enabled":             "true",
 			"datadog.kubernetesActions.helmActions.enabled": "true",
-			"clusterAgent.image.tag":                        "7.82.3",
+			"clusterAgent.image.tag":                        "7.84.0",
 		},
 	})
 	require.Error(t, err)
