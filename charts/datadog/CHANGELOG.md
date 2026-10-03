@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.251.2
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.1 ([#2956](https://github.com/DataDog/helm-charts/pull/2956)).
+
 ## 3.251.1
 
 * Expose `datadog.apm.instrumentation.onDemand` (default `true`) and set `DD_APM_INSTRUMENTATION_ON_DEMAND` on the Cluster Agent.
