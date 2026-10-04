@@ -1,5 +1,18 @@
 # Datadog changelog
 
+## 3.251.1
+
+* Expose `datadog.apm.instrumentation.onDemand` (default `true`) and set `DD_APM_INSTRUMENTATION_ON_DEMAND` on the Cluster Agent.
+* Enable Cluster Agent Remote Configuration when the admission controller is enabled and on-demand SSI is on, so `APM_POLICIES` Remote Config rules work without `clusterAgent.admissionController.remoteInstrumentation.enabled`.
+
+## 3.251.0
+
+- Grant the Cluster Agent `get` access to `pods/log` to run the getPodLogs action.
+
+## 3.250.4
+
+- Update the default Agent, Cluster Agent, and Cluster Checks Runner image version to 7.84.0.
+
 ## 3.250.3
 
 - Disable Service Discovery on Cluster Checks Runners to prevent requests to the unavailable system-probe socket ([#2943](https://github.com/DataDog/helm-charts/issues/2943)).

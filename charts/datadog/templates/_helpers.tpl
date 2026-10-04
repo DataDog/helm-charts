@@ -12,7 +12,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.82.3" -}}
+{{- $version = "7.84.0" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -25,7 +25,7 @@
 {{- $version := .Values.clusterChecksRunner.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.82.3" -}}
+{{- $version = "7.84.0" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -37,7 +37,7 @@
 {{- $version := .Values.clusterAgent.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.82.3" -}}
+{{- $version = "7.84.0" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -1505,7 +1505,7 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (and .Values.clusterAgent.admissionController.enabled .Values.datadog.apm.instrumentation.onDemand) .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
 true
 {{- else -}}
 false

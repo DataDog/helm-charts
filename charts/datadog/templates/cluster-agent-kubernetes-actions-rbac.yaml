@@ -16,6 +16,12 @@ rules:
       - list
       - delete
   - apiGroups:
+      - ""
+    resources:
+      - pods/log
+    verbs:
+      - get
+  - apiGroups:
       - apps
     resources:
       - deployments

@@ -2085,7 +2085,9 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
               value: registry.datadoghq.com
             - name: DD_REMOTE_CONFIGURATION_ENABLED
-              value: "false"
+              value: "true"
+            - name: DD_APM_INSTRUMENTATION_ON_DEMAND
+              value: "true"
             - name: DD_CLUSTER_CHECKS_ENABLED
               value: "true"
             - name: DD_EXTRA_CONFIG_PROVIDERS
@@ -2150,7 +2152,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.82.3
+          image: registry.datadoghq.com/cluster-agent:7.84.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2223,7 +2225,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/cluster-agent:7.82.3
+          image: registry.datadoghq.com/cluster-agent:7.84.0
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
