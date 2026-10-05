@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.28.0-dev.4
+
+* feat(datadog-operator): enable Linux ADP default for the AP1 site (`ap1.datadoghq.com`) via `defaultDataPlaneEnabled.linux: "auto"`. Set to `true` to enable for all sites or `false` to disable ([#2879](https://github.com/DataDog/helm-charts/pull/2879)).
+
 ## 2.28.0-dev.3
 
 * Update Datadog Operator chart for 1.31.0-rc.2.

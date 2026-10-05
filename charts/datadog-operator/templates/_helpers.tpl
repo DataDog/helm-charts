@@ -178,3 +178,20 @@ Check operator image tag version.
 {{ "1.31.0-rc.2" }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return "true" or "false" for DD_DEFAULT_DATA_PLANE_LINUX_ENABLED.
+"auto" enables the Agent Data Plane default only for sites where it is rolled out.
+Currently enabled: AP1 (ap1.datadoghq.com).
+*/}}
+{{- define "default-data-plane-linux-enabled" -}}
+{{- $mode := toString .Values.defaultDataPlaneEnabled.linux -}}
+{{- if eq $mode "auto" -}}
+{{- $site := default .Values.site (include "get-endpoint-config-data-key" (list . "dd-site")) -}}
+{{- eq $site "ap1.datadoghq.com" -}}
+{{- else if or (eq $mode "true") (eq $mode "false") -}}
+{{- $mode -}}
+{{- else -}}
+{{- fail (printf "defaultDataPlaneEnabled.linux must be \"auto\", true, or false; got %q" $mode) -}}
+{{- end -}}
+{{- end -}}
