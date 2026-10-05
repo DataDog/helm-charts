@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.252.0
+
+* Grant the Cluster Agent read access to KServe custom resources collected by the orchestrator explorer.
+
 ## 3.251.1
 
 * Expose `datadog.apm.instrumentation.onDemand` (default `true`) and set `DD_APM_INSTRUMENTATION_ON_DEMAND` on the Cluster Agent.
