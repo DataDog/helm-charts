@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.252.1
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.1 ([#2956](https://github.com/DataDog/helm-charts/pull/2956)).
+
 ## 3.252.0
 
 * Grant the Cluster Agent read access to KServe custom resources collected by the orchestrator explorer.
