@@ -244,6 +244,28 @@ datadog:
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
     useClusterCheckRunners: false
 
+    # datadog.kubeStateMetricsCore.shardingEnabled -- Split the kubernetes_state_core check into three check instances (pods, nodes, and all other resources), each dispatched as a separate cluster check. (Requires Cluster Agent 7.83.0+) Trade-off: label joins cannot cross shards, so pod metrics lose exactly these six node-derived tags: `kube_region`, `kube_zone`, `container_runtime_version`, `kernel_version`, `kubelet_version`, `os_image`.
+
+    ## Only takes effect when datadog.kubeStateMetricsCore.useClusterCheckRunners is true.
+    ## Ignored on Cluster Agents older than 7.83.0, which do not support sharding alongside the cluster_aggregates_only collection mode.
+    ## Safe to combine with datadog.kubeStateMetricsCore.podCollectionMode: node_kubelet.
+    ##
+    ## Known gap -- label joins do not cross shard boundaries. Each shard is a separate check
+    ## instance that builds its own label-join store from only the collectors it owns, so a join
+    ## works only when the source and the target resource land in the same shard. Because pods and
+    ## nodes are deliberately split into different shards, the default node joins no longer enrich
+    ## pod metrics. Pod metrics keep their own `node` tag, but these six tags are absent:
+    ##   - kube_region                 (from kube_node_labels, via topology.kubernetes.io/region)
+    ##   - kube_zone                   (from kube_node_labels, via topology.kubernetes.io/zone)
+    ##   - container_runtime_version   (from kube_node_info)
+    ##   - kernel_version              (from kube_node_info)
+    ##   - kubelet_version             (from kube_node_info)
+    ##   - os_image                    (from kube_node_info)
+    ## Any custom label_joins whose source resource sits in a different shard than its target are
+    ## dropped the same way -- no error is emitted, the tags are simply absent.
+    ## Leave sharding disabled if you rely on these tags for dashboards, monitors, or filtering.
+    shardingEnabled: false
+
     # datadog.kubeStateMetricsCore.labelsAsTags -- Extra labels to collect from resources and to turn into datadog tag.
 
     ## It has the following structure:
