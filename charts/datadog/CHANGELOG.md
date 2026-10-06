@@ -2,7 +2,7 @@
 
 ## 3.253.0
 
-- Add `datadog.kubeStateMetricsCore.shardingEnabled` (default `true`) to split the `kubernetes_state_core` check into three check instances (pods, nodes, and all other resources), each dispatched as a separate cluster check. Only takes effect when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is true and the Cluster Agent is 7.83.0 or newer, which is the first version where sharding coexists safely with the `cluster_aggregates_only` collection mode ([datadog-agent#54126](https://github.com/DataDog/datadog-agent/pull/54126)).
+- Add `datadog.kubeStateMetricsCore.shardingEnabled` (default `false`) to split the `kubernetes_state_core` check into three check instances (pods, nodes, and all other resources), each dispatched as a separate cluster check. Only takes effect when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is true and the Cluster Agent is 7.83.0 or newer, which is the first version where sharding coexists safely with the `cluster_aggregates_only` collection mode ([datadog-agent#54126](https://github.com/DataDog/datadog-agent/pull/54126)). Note that label joins do not cross shard boundaries: because pods and nodes are split into separate shards, enabling this drops six node-derived tags from pod metrics — `kube_region`, `kube_zone`, `container_runtime_version`, `kernel_version`, `kubelet_version`, and `os_image`.
 
 ## 3.252.1
 
