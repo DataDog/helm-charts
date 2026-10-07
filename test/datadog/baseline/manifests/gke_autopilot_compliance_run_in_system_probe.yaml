@@ -1585,6 +1585,24 @@ rules:
     verbs:
       - list
       - watch
+  - apiGroups:
+      - serving.kserve.io
+    resources:
+      - clusterstoragecontainers
+      - llminferenceserviceconfigs
+      - llminferenceservices
+      - localmodelcaches
+      - localmodelnamespacecaches
+      - localmodelnodegroups
+      - localmodelnodes
+      - clusterservingruntimes
+      - inferencegraphs
+      - inferenceservices
+      - servingruntimes
+      - trainedmodels
+    verbs:
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -2019,7 +2037,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.82.3
+          image: gcr.io/datadoghq/agent:7.84.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2145,7 +2163,7 @@ spec:
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
               value: "true"
-          image: gcr.io/datadoghq/agent:7.82.3
+          image: gcr.io/datadoghq/agent:7.84.1
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources:
@@ -2248,7 +2266,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.82.3
+          image: gcr.io/datadoghq/agent:7.84.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:
@@ -2301,7 +2319,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
-          image: gcr.io/datadoghq/agent:7.82.3
+          image: gcr.io/datadoghq/agent:7.84.1
           imagePullPolicy: IfNotPresent
           name: init-config
           resources:
@@ -2334,7 +2352,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: gcr.io/datadoghq/agent:7.82.3
+          image: gcr.io/datadoghq/agent:7.84.1
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -2638,7 +2656,9 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
               value: gcr.io/datadoghq
             - name: DD_REMOTE_CONFIGURATION_ENABLED
-              value: "false"
+              value: "true"
+            - name: DD_APM_INSTRUMENTATION_ON_DEMAND
+              value: "true"
             - name: DD_CLUSTER_CHECKS_ENABLED
               value: "true"
             - name: DD_EXTRA_CONFIG_PROVIDERS
@@ -2703,7 +2723,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.82.3
+          image: gcr.io/datadoghq/cluster-agent:7.84.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2782,7 +2802,7 @@ spec:
           command:
             - cp
             - -r
-          image: gcr.io/datadoghq/cluster-agent:7.82.3
+          image: gcr.io/datadoghq/cluster-agent:7.84.1
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources:

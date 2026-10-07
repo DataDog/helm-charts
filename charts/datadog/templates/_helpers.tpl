@@ -12,7 +12,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.82.3" -}}
+{{- $version = "7.84.1" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -25,7 +25,7 @@
 {{- $version := .Values.clusterChecksRunner.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.82.3" -}}
+{{- $version = "7.84.1" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -37,7 +37,7 @@
 {{- $version := .Values.clusterAgent.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.82.3" -}}
+{{- $version = "7.84.1" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -297,6 +297,25 @@ version 7.82.0 or newer; otherwise falls back to disabled.
 {{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
 {{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
 {{- if and $agentVersionOK $dcaVersionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED should be set on the Cluster Agent.
+Sharding is only dispatched when cluster checks runners are enabled, and the Cluster Agent
+must be 7.83.0 or newer: sharding only coexists safely with the cluster_aggregates_only
+collection mode as of https://github.com/DataDog/datadog-agent/pull/54126. On older Cluster
+Agents the env var is omitted so the Agent keeps its own default.
+*/}}
+{{- define "should-shard-ksm-config" -}}
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.83.0-0" (include "get-cluster-agent-version" .)) -}}
 true
 {{- else -}}
 false
@@ -1518,7 +1537,7 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (and .Values.clusterAgent.admissionController.enabled .Values.datadog.apm.instrumentation.onDemand) .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
 true
 {{- else -}}
 false

@@ -311,6 +311,8 @@ spec:
           - name: DD_APM_INSTRUMENTATION_ENABLED
             value: {{ .Values.datadog.apm.instrumentation.enabled | quote }}
           {{- end }}
+          - name: DD_APM_INSTRUMENTATION_ON_DEMAND
+            value: {{ .Values.datadog.apm.instrumentation.onDemand | quote }}
           {{- if .Values.datadog.apm.instrumentation.enabledNamespaces }}
           - name: DD_APM_INSTRUMENTATION_ENABLED_NAMESPACES
             value: {{ .Values.datadog.apm.instrumentation.enabledNamespaces | toJson | quote }}
@@ -597,6 +599,10 @@ spec:
           - name: DD_CLUSTER_AGENT_APPSEC_INJECTOR_PROCESSOR_SERVICE_NAMESPACE
             value: {{ .Values.datadog.appsec.injector.processor.service.namespace | quote }}
           {{- end }}
+          {{- end }}
+          {{- if eq (include "should-shard-ksm-config" .) "true" }}
+          - name: DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED
+            value: {{ .Values.datadog.kubeStateMetricsCore.shardingEnabled | quote }}
           {{- end }}
           {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}

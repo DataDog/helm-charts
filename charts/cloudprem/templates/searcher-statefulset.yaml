@@ -73,6 +73,10 @@ spec:
           {{- end }}
           env:
             {{- include "quickwit.environment" . | nindent 12 }}
+            {{- include "quickwit.renderEnvDefaults" (dict
+              "defaults" (dict "QW_DISABLE_LOAD_ESTIMATION" "true")
+              "overrides" (list .Values.environment .Values.searcher.extraEnv)
+            ) | nindent 12 }}
             {{- if .Values.searcher.persistentVolume.enabled }}
             {{- if .Values.searcher.persistentVolume.storageClass }}
             - name: KUBERNETES_STORAGE_CLASS
