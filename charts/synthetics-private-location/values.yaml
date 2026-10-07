@@ -132,3 +132,54 @@ podDisruptionBudget:
   enabled: false
   minAvailable: 1
   # maxUnavailable: 1
+
+multiContainer:
+  # multiContainer.enabled -- Preview. Run the worker, deno-executor, browser-pool and traceroute-server as separate containers in one pod, none using `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Requires a private location image version that supports the multi-container layout. `securityContext` and `podSecurityContext` are ignored when enabled.
+  enabled: false
+
+  # multiContainer.terminationGracePeriodSeconds -- Must stay above the browser-pool drain timeout (10 minutes) so in-flight browser tests can finish
+  terminationGracePeriodSeconds: 620
+
+  worker:
+    # multiContainer.worker.resources -- Resource requests/limits for the worker container. Browsers run in the browser-pool container, so the worker needs less than in the single-container layout. Defaults to `resources` when empty.
+    resources: {}
+
+  denoExecutor:
+    # multiContainer.denoExecutor.maxConcurrent -- Concurrent `deno run` processes per replica. Past it the worker retries the run.
+    maxConcurrent: 10
+    # multiContainer.denoExecutor.resources -- Resource requests/limits for the deno-executor container. Each JS-using test step uses ~30-50Mi.
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+  browserPool:
+    # multiContainer.browserPool.maxConcurrent -- Concurrent browsers per replica. Past it the worker waits for a slot.
+    maxConcurrent: 100
+    # multiContainer.browserPool.maxBrowserIdleMs -- Reclaim a browser after this long without a request from the worker. Not a cap on test duration.
+    maxBrowserIdleMs: 300000
+    # multiContainer.browserPool.shmSizeLimit -- Size of the in-memory `/dev/shm` volume. The runtime default (64Mi) crashes renderers on heavier pages.
+    shmSizeLimit: 2Gi
+    # multiContainer.browserPool.resources -- Resource requests/limits for the browser-pool container
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        cpu: "2"
+        memory: 4Gi
+
+  tracerouteServer:
+    # multiContainer.tracerouteServer.enabled -- Run the traceroute-server container, which needs the `NET_RAW` capability. Required for network path (traceroute) features. Disable on clusters enforcing the `restricted` Pod Security Standard.
+    enabled: true
+    # multiContainer.tracerouteServer.resources -- Resource requests/limits for the traceroute-server container
+    resources:
+      requests:
+        cpu: 100m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi

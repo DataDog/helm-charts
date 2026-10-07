@@ -1,0 +1,286 @@
+{{- if .Values.multiContainer.enabled }}
+{{- $mc := .Values.multiContainer }}
+{{- $image := printf "%s:%s" .Values.image.repository (.Values.image.tag | default .Chart.AppVersion) }}
+{{- $waitForWorkerExit := `const workerUp = () => fetch('http://127.0.0.1:8080/liveness', {signal: AbortSignal.timeout(2000)}).then(() => true, (error) => error?.cause?.code !== 'ECONNREFUSED'); (async () => { while (await workerUp()) await new Promise((resolve) => setTimeout(resolve, 2000)) })()` }}
+{{- $hardened := dict "allowPrivilegeEscalation" false "readOnlyRootFilesystem" true "runAsNonRoot" true "capabilities" (dict "drop" (list "ALL")) "seccompProfile" (dict "type" "RuntimeDefault") }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "synthetics-private-location.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "synthetics-private-location.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "synthetics-private-location.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "synthetics-private-location.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- if .Values.dnsPolicy }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      {{- end }}
+      {{- with .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "synthetics-private-location.serviceAccountName" . }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: {{ $mc.terminationGracePeriodSeconds }}
+      securityContext:
+        # GID 502 lets the worker (UID 501) and deno-executor (UID 502) share the unix socket volume.
+        fsGroup: 502
+        runAsUser: 501
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      hostAliases:
+        {{- .Values.hostAliases | toYaml | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ $image | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/bash", "/home/dog/scripts/multi-pod/start-worker.sh"]
+          securityContext:
+            runAsUser: 501
+            {{- toYaml $hardened | nindent 12 }}
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 10
+            httpGet:
+              path: /liveness
+              port: 8080
+          readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 2
+            httpGet:
+              path: /readiness
+              port: 8080
+          volumeMounts:
+          {{- if or (ne .Values.configFile "{}") (.Values.configConfigMap) (.Values.configSecret) }}
+          - mountPath: /etc/datadog
+            name: worker-config
+          {{- end }}
+          - mountPath: /tmp
+            name: worker-tmp
+          - mountPath: /tmp/pki
+            name: pki
+          - mountPath: /run/deno-executor
+            name: deno-socket
+          {{- if .Values.extraVolumeMounts }}
+          {{- toYaml .Values.extraVolumeMounts | nindent 10 }}
+          {{- end }}
+          resources:
+            {{- toYaml ($mc.worker.resources | default .Values.resources) | nindent 12 }}
+      {{- if .Values.envFrom }}
+          envFrom:
+      {{- toYaml .Values.envFrom | nindent 12 }}
+      {{- end }}
+          env:
+            # The daemons' preStop hooks wait for the worker to stop answering on :8080.
+            - name: DATADOG_WORKER_ENABLE_STATUS_PROBES
+              value: "true"
+            - name: DATADOG_PKI
+              value: /tmp/pki
+            - name: DENO_EXECUTOR_SOCKET_PATH
+              value: /run/deno-executor/deno-executor.sock
+            - name: DATADOG_BROWSER_POOL_URL
+              value: http://localhost:9444
+            # A browser shares the pod network namespace but cannot read the pod metadata.
+            - name: BROWSER_POOL_ADMIN_TOKEN
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            {{- if $mc.tracerouteServer.enabled }}
+            - name: DATADOG_TRACEROUTE_USE_HTTP
+              value: "true"
+            - name: DATADOG_TRACEROUTE_HTTP_URL
+              value: http://localhost:3765
+            {{- end }}
+      {{- if .Values.env }}
+      {{- toYaml .Values.env | nindent 12 }}
+      {{- end }}
+        - name: deno-executor
+          image: {{ $image | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["node", "--no-warnings", "/home/dog/packages/runtime/deno-executor/dist/cli/daemon.js", "/run/deno-executor/deno-executor.sock"]
+          securityContext:
+            runAsUser: 502
+            {{- toYaml $hardened | nindent 12 }}
+          env:
+            - name: DENO_EXECUTOR_MAX_CONCURRENT
+              value: {{ $mc.denoExecutor.maxConcurrent | int | quote }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["node", "-e", {{ $waitForWorkerExit | quote }}]
+          livenessProbe:
+            exec:
+              command: ["node", "--no-warnings", "/home/dog/packages/runtime/deno-executor/dist/cli/healthcheck.js", "/run/deno-executor/deno-executor.sock"]
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command: ["node", "--no-warnings", "/home/dog/packages/runtime/deno-executor/dist/cli/healthcheck.js", "/run/deno-executor/deno-executor.sock"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+          - mountPath: /run/deno-executor
+            name: deno-socket
+          - mountPath: /tmp
+            name: deno-executor-tmp
+          resources:
+            {{- toYaml $mc.denoExecutor.resources | nindent 12 }}
+        - name: browser-pool
+          image: {{ $image | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # dumb-init reaps browser descendants (crashpad handlers) that outlive the tracked PID.
+          command: ["/usr/local/bin/dumb-init", "--", "node", "--no-warnings", "/home/dog/packages/runtime/browser-pool/dist/cli/daemon.js"]
+          securityContext:
+            runAsUser: 65534
+            {{- toYaml $hardened | nindent 12 }}
+          env:
+            - name: BROWSER_POOL_PORT
+              value: "9444"
+            - name: BROWSER_POOL_ADMIN_TOKEN
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: BROWSER_POOL_MAX_CONCURRENT
+              value: {{ $mc.browserPool.maxConcurrent | int | quote }}
+            - name: BROWSER_POOL_MAX_BROWSER_IDLE_MS
+              value: {{ $mc.browserPool.maxBrowserIdleMs | int | quote }}
+            - name: CERTIFICATE_STORE
+              value: /pki/nssdb
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            httpGet:
+              path: /health
+              port: 9444
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            httpGet:
+              path: /health
+              port: 9444
+          volumeMounts:
+          - mountPath: /dev/shm
+            name: dshm
+          - mountPath: /tmp
+            name: browser-pool-tmp
+          - mountPath: /pki
+            name: pki
+            readOnly: true
+          resources:
+            {{- toYaml $mc.browserPool.resources | nindent 12 }}
+        {{- if $mc.tracerouteServer.enabled }}
+        - name: traceroute-server
+          image: {{ $image | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/usr/bin/datadog-traceroute-server", "--addr", ":3765", "--log-level", "info"]
+          securityContext:
+            runAsUser: 65534
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              add:
+              - NET_RAW
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          lifecycle:
+            preStop:
+              exec:
+                command: ["node", "-e", {{ $waitForWorkerExit | quote }}]
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3765
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            {{- toYaml $mc.tracerouteServer.resources | nindent 12 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      {{- if or (ne .Values.configFile "{}") (.Values.configConfigMap) (.Values.configSecret) }}
+      - name: worker-config
+        {{- if .Values.configConfigMap }}
+        configMap:
+          name: {{ tpl .Values.configConfigMap . | quote }}
+        {{- else }}
+        secret:
+        {{- if .Values.configSecret }}
+          secretName: {{ tpl .Values.configSecret . | quote }}
+        {{- else }}
+          secretName: {{ include "synthetics-private-location.fullname" . }}-config
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      - name: worker-tmp
+        emptyDir: {}
+      - name: pki
+        emptyDir: {}
+      - name: deno-socket
+        emptyDir: {}
+      - name: deno-executor-tmp
+        emptyDir: {}
+      - name: browser-pool-tmp
+        emptyDir: {}
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: {{ $mc.browserPool.shmSizeLimit }}
+      {{- if .Values.extraVolumes }}
+      {{- toYaml .Values.extraVolumes | nindent 6 }}
+      {{- end }}
+{{- end }}
