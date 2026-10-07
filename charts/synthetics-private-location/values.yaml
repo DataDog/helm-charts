@@ -132,3 +132,75 @@ podDisruptionBudget:
   enabled: false
   minAvailable: 1
   # maxUnavailable: 1
+
+podSecurity:
+  securityContextConstraints:
+    # podSecurity.securityContextConstraints.create -- If true, create an OpenShift SecurityContextConstraints resource that allows the multi-container pod (fixed non-root UIDs, `NET_RAW` for traceroute-server). Requires `multiContainer.enabled`.
+    create: false
+    # podSecurity.securityContextConstraints.volumes -- Allowed volume types. Add the types used by `extraVolumes`.
+    volumes:
+      - configMap
+      - downwardAPI
+      - emptyDir
+      - projected
+      - secret
+
+multiContainer:
+  # multiContainer.enabled -- Preview. Run the worker, deno-executor, browser-pool and traceroute-server as separate containers in one pod, none using `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Requires a private location image version that supports the multi-container layout. `podSecurityContext` applies to the pod and `securityContext` to the worker container, merged over hardened defaults.
+  enabled: false
+
+
+  # multiContainer.terminationGracePeriodSeconds -- Must stay above the browser-pool drain timeout (10 minutes) so in-flight browser tests can finish
+  terminationGracePeriodSeconds: 620
+
+  worker:
+    # multiContainer.worker.resources -- Resource requests/limits for the worker container. Browsers run in the browser-pool container, so the worker needs less than in the single-container layout. `resources` is not used in the multi-container layout.
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+  denoExecutor:
+    # multiContainer.denoExecutor.maxConcurrent -- Concurrent `deno run` processes per replica. Past it the worker retries the run.
+    maxConcurrent: 10
+    # multiContainer.denoExecutor.resources -- Resource requests/limits for the deno-executor container. Each JS-using test step uses ~30-50Mi.
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+  browserPool:
+    # multiContainer.browserPool.maxConcurrent -- Concurrent browsers per replica. Past it the worker waits for a slot. Keep it at about twice the worker `concurrency` (default 10) and size `browserPool.resources` to match.
+    maxConcurrent: 20
+    # multiContainer.browserPool.maxBrowserIdleMs -- Reclaim a browser after this long without a request from the worker. Not a cap on test duration.
+    maxBrowserIdleMs: 300000
+    # multiContainer.browserPool.shmSizeLimit -- Size of the in-memory `/dev/shm` volume. The runtime default (64Mi) crashes renderers on heavier pages.
+    shmSizeLimit: 2Gi
+    # multiContainer.browserPool.resources -- Resource requests/limits for the browser-pool container
+    resources:
+      requests:
+        cpu: "2"
+        memory: 6Gi
+      limits:
+        cpu: "2"
+        memory: 6Gi
+
+  tracerouteServer:
+    # multiContainer.tracerouteServer.enabled -- Run the traceroute-server container, which needs the `NET_RAW` capability. Required for network path (traceroute) features. Disable on clusters enforcing the `restricted` Pod Security Standard.
+    enabled: true
+    # multiContainer.tracerouteServer.logLevel -- Log level of the traceroute-server container (`debug`, `info`, `warn`, `error`). Set the worker log level with the worker `verbosity` option or `DATADOG_WORKER_LOG_VERBOSITY`.
+    logLevel: info
+    # multiContainer.tracerouteServer.resources -- Resource requests/limits for the traceroute-server container
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi

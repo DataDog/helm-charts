@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 0.18.0-rc.1
+
+* (Preview) Add opt-in `multiContainer.enabled` to run the worker, `deno-executor`, `browser-pool` and `traceroute-server` as separate containers in one pod. No container uses `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Every container sets `readOnlyRootFilesystem`, `runAsNonRoot`, drops all capabilities (`traceroute-server` keeps `NET_RAW`) and uses the `RuntimeDefault` seccomp profile. Requires a private location image that supports the multi-container layout. Nothing changes when `multiContainer.enabled` is `false`.
+* `podSecurityContext` and `securityContext` are merged over the hardened defaults of the multi-container pod and worker container. The `net.ipv4.ping_group_range` sysctl follows `securityContext.runAsGroup` (default 501).
+* Add opt-in `podSecurity.securityContextConstraints.create` to create an OpenShift SCC for the multi-container pod.
+
 ## 0.17.33
 
 * Update private location image version to `1.74.0`.
