@@ -33,6 +33,8 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --devel \
   --set multiContainer.enabled=true
 ```
 
+In this layout the worker cannot apply its `iptables` firewall. Set `multiContainer.networkPolicy.enabled=true` to restrict egress with a `NetworkPolicy` instead, and configure `multiContainer.networkPolicy.enableDefaultBlockedIpRanges`, `allowedIPRanges` and `blockedIPRanges` to match the `enableDefaultBlockedIpRanges`, `allowedIPRanges` and `blockedIPRanges` options of your worker configuration. The `NetworkPolicy` applies to the whole pod, so it also restricts the worker traffic (for example to a proxy).
+
 The `traceroute-server` container needs the `NET_RAW` capability. On clusters that enforce the `restricted` Pod Security Standard, set `multiContainer.tracerouteServer.enabled=false`. Network path (traceroute) features are then not available.
 
 ## Values
@@ -64,6 +66,10 @@ The `traceroute-server` container needs the `NET_RAW` capability. On clusters th
 | multiContainer.denoExecutor.maxConcurrent | int | `10` | Concurrent `deno run` processes per replica. Past it the worker retries the run. |
 | multiContainer.denoExecutor.resources | object | `{"limits":{"cpu":"500m","memory":"512Mi"},"requests":{"cpu":"200m","memory":"256Mi"}}` | Resource requests/limits for the deno-executor container. Each JS-using test step uses ~30-50Mi. |
 | multiContainer.enabled | bool | `false` | Preview. Run the worker, deno-executor, browser-pool and traceroute-server as separate containers in one pod, none using `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Requires a private location image version that supports the multi-container layout. `securityContext` and `podSecurityContext` are ignored when enabled. |
+| multiContainer.networkPolicy.allowedIPRanges | object | `{"IPv4":[],"IPv6":[]}` | CIDRs that stay reachable even when inside a blocked range |
+| multiContainer.networkPolicy.blockedIPRanges | object | `{"IPv4":[],"IPv6":[]}` | Additional CIDRs to block |
+| multiContainer.networkPolicy.enableDefaultBlockedIpRanges | bool | `false` | Block the IANA reserved ranges (private networks, link-local, etc.). Same as the worker `enableDefaultBlockedIpRanges` option. |
+| multiContainer.networkPolicy.enabled | bool | `false` | Create an egress NetworkPolicy for the pod. Replaces the in-container `iptables` firewall of the single-container layout. Applies to every container in the pod, including the worker. Requires a CNI that enforces NetworkPolicies. |
 | multiContainer.terminationGracePeriodSeconds | int | `620` | Must stay above the browser-pool drain timeout (10 minutes) so in-flight browser tests can finish |
 | multiContainer.tracerouteServer.enabled | bool | `true` | Run the traceroute-server container, which needs the `NET_RAW` capability. Required for network path (traceroute) features. Disable on clusters enforcing the `restricted` Pod Security Standard. |
 | multiContainer.tracerouteServer.resources | object | `{"limits":{"cpu":"200m","memory":"256Mi"},"requests":{"cpu":"100m","memory":"64Mi"}}` | Resource requests/limits for the traceroute-server container |

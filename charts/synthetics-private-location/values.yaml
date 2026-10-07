@@ -183,3 +183,17 @@ multiContainer:
       limits:
         cpu: 200m
         memory: 256Mi
+
+  networkPolicy:
+    # multiContainer.networkPolicy.enabled -- Create an egress NetworkPolicy for the pod. Replaces the in-container `iptables` firewall of the single-container layout. Applies to every container in the pod, including the worker. Requires a CNI that enforces NetworkPolicies.
+    enabled: false
+    # multiContainer.networkPolicy.enableDefaultBlockedIpRanges -- Block the IANA reserved ranges (private networks, link-local, etc.). Same as the worker `enableDefaultBlockedIpRanges` option.
+    enableDefaultBlockedIpRanges: false
+    # multiContainer.networkPolicy.allowedIPRanges -- CIDRs that stay reachable even when inside a blocked range
+    allowedIPRanges:
+      IPv4: []
+      IPv6: []
+    # multiContainer.networkPolicy.blockedIPRanges -- Additional CIDRs to block
+    blockedIPRanges:
+      IPv4: []
+      IPv6: []

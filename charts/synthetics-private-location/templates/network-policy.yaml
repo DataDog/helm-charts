@@ -1,0 +1,65 @@
+{{- if and .Values.multiContainer.enabled .Values.multiContainer.networkPolicy.enabled }}
+{{- $np := .Values.multiContainer.networkPolicy }}
+{{- $reservedIPv4 := list "0.0.0.0/8" "10.0.0.0/8" "100.64.0.0/10" "127.0.0.0/8" "169.254.0.0/16" "172.16.0.0/12" "192.0.0.0/24" "192.0.2.0/24" "192.31.196.0/24" "192.52.193.0/24" "192.88.99.0/24" "192.168.0.0/16" "192.175.48.0/24" "198.18.0.0/15" "198.51.100.0/24" "203.0.113.0/24" "224.0.0.0/4" "240.0.0.0/4" }}
+{{- /* ::ffff:0:0/96 is omitted: the API server rejects it in any ipBlock, and the IPv4 list covers it. */}}
+{{- $reservedIPv6 := list "::/128" "::1/128" "64:ff9b::/96" "64:ff9b:1::/48" "100::/64" "2001::/23" "2001:db8::/32" "2002::/16" "2620:4f:8000::/48" "fc00::/7" "fe80::/10" }}
+{{- $blockedIPv4 := $np.blockedIPRanges.IPv4 | default (list) }}
+{{- $blockedIPv6 := $np.blockedIPRanges.IPv6 | default (list) }}
+{{- if $np.enableDefaultBlockedIpRanges }}
+{{- $blockedIPv4 = concat $reservedIPv4 $blockedIPv4 }}
+{{- $blockedIPv6 = concat $reservedIPv6 $blockedIPv6 }}
+{{- end }}
+{{- $allowed := concat ($np.allowedIPRanges.IPv4 | default (list)) ($np.allowedIPRanges.IPv6 | default (list)) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "synthetics-private-location.fullname" . }}-egress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "synthetics-private-location.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "synthetics-private-location.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Browsers reach the worker forward proxy on the pod IP (worker `managedPortRangeStart`/`End`).
+    - to:
+        - podSelector:
+            matchLabels:
+              {{- include "synthetics-private-location.selectorLabels" . | nindent 14 }}
+      ports:
+        - port: 30000
+          endPort: 40000
+          protocol: TCP
+    {{- if $allowed }}
+    - to:
+        {{- range $allowed }}
+        - ipBlock:
+            cidr: {{ . | quote }}
+        {{- end }}
+    {{- end }}
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            {{- with $blockedIPv4 }}
+            except:
+              {{- range . }}
+              - {{ . | quote }}
+              {{- end }}
+            {{- end }}
+        - ipBlock:
+            cidr: "::/0"
+            {{- with $blockedIPv6 }}
+            except:
+              {{- range . }}
+              - {{ . | quote }}
+              {{- end }}
+            {{- end }}
+{{- end }}
