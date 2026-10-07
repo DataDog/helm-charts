@@ -74,3 +74,10 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 "policy/v1beta1"
 {{- end -}}
 {{- end -}}
+
+{{/*
+Normalize a bare IP to a single-address CIDR, as the worker does for allowedIPRanges / blockedIPRanges.
+*/}}
+{{- define "synthetics-private-location.cidr" -}}
+{{- if contains "/" . }}{{ . }}{{ else if contains ":" . }}{{ . }}/128{{ else }}{{ . }}/32{{ end -}}
+{{- end -}}
