@@ -1,0 +1,72 @@
+---
+# Source: synthetics-private-location/templates/service_account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: synthetics-pl-synthetics-private-location
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: synthetics-private-location-0.18.0-dev.1
+    app.kubernetes.io/name: synthetics-private-location
+    app.kubernetes.io/instance: synthetics-pl
+    app.kubernetes.io/version: "1.73.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: synthetics-private-location/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synthetics-pl-synthetics-private-location
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: synthetics-private-location-0.18.0-dev.1
+    app.kubernetes.io/name: synthetics-private-location
+    app.kubernetes.io/instance: synthetics-pl
+    app.kubernetes.io/version: "1.73.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: synthetics-private-location
+      app.kubernetes.io/instance: synthetics-pl
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: synthetics-private-location
+        app.kubernetes.io/instance: synthetics-pl
+    spec:
+      
+      dnsPolicy: ClusterFirst
+      
+      securityContext:
+        {}
+      serviceAccountName: synthetics-pl-synthetics-private-location
+      hostAliases:
+        []
+      containers:
+        - name: synthetics-private-location
+          securityContext:
+            {}
+          image: "gcr.io/datadoghq/synthetics-private-location-worker:1.73.0"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - mountPath: /etc/datadog
+            name: worker-config
+          # s6-overlay's preinit chowns /run to the worker UID; on clusters that
+          # mount /run read-only (OpenShift, FIPS-hardened pod security standards,
+          # `securityContext.readOnlyRootFilesystem: true`) the chown fails and
+          # the container crashes with `s6-overlay-suexec: fatal: child failed
+          # with exit code 111`. Mounting an emptyDir at /run gives s6-overlay
+          # a writable runtime dir without requiring write access to the image
+          # filesystem.
+          - mountPath: /run
+            name: run
+          resources:
+            {}
+      volumes:
+      - name: worker-config
+        secret:
+          secretName: "synthetics-pl-config"
+      - name: run
+        emptyDir: {}

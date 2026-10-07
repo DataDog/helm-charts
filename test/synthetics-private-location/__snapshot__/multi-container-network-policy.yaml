@@ -1,0 +1,352 @@
+---
+# Source: synthetics-private-location/templates/network-policy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: synthetics-pl-synthetics-private-location-egress
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: synthetics-private-location-0.18.0-dev.1
+    app.kubernetes.io/name: synthetics-private-location
+    app.kubernetes.io/instance: synthetics-pl
+    app.kubernetes.io/version: "1.73.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: synthetics-private-location
+      app.kubernetes.io/instance: synthetics-pl
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Browsers reach the worker forward proxy on the pod IP (worker `managedPortRangeStart`/`End`).
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: synthetics-private-location
+              app.kubernetes.io/instance: synthetics-pl
+      ports:
+        - port: 30000
+          endPort: 40000
+          protocol: TCP
+    - to:
+        - ipBlock:
+            cidr: "10.1.0.0/16"
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            except:
+              - "0.0.0.0/8"
+              - "10.0.0.0/8"
+              - "100.64.0.0/10"
+              - "127.0.0.0/8"
+              - "169.254.0.0/16"
+              - "172.16.0.0/12"
+              - "192.0.0.0/24"
+              - "192.0.2.0/24"
+              - "192.31.196.0/24"
+              - "192.52.193.0/24"
+              - "192.88.99.0/24"
+              - "192.168.0.0/16"
+              - "192.175.48.0/24"
+              - "198.18.0.0/15"
+              - "198.51.100.0/24"
+              - "203.0.113.0/24"
+              - "224.0.0.0/4"
+              - "240.0.0.0/4"
+              - "203.0.114.0/24"
+        - ipBlock:
+            cidr: "::/0"
+            except:
+              - "::/128"
+              - "::1/128"
+              - "64:ff9b::/96"
+              - "64:ff9b:1::/48"
+              - "100::/64"
+              - "2001::/23"
+              - "2001:db8::/32"
+              - "2002::/16"
+              - "2620:4f:8000::/48"
+              - "fc00::/7"
+              - "fe80::/10"
+              - "2001:db9::/32"
+---
+# Source: synthetics-private-location/templates/service_account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: synthetics-pl-synthetics-private-location
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: synthetics-private-location-0.18.0-dev.1
+    app.kubernetes.io/name: synthetics-private-location
+    app.kubernetes.io/instance: synthetics-pl
+    app.kubernetes.io/version: "1.73.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: synthetics-private-location/templates/deployment-multi-container.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synthetics-pl-synthetics-private-location
+  namespace: datadog-agent
+  labels:
+    helm.sh/chart: synthetics-private-location-0.18.0-dev.1
+    app.kubernetes.io/name: synthetics-private-location
+    app.kubernetes.io/instance: synthetics-pl
+    app.kubernetes.io/version: "1.73.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: synthetics-private-location
+      app.kubernetes.io/instance: synthetics-pl
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: synthetics-private-location
+        app.kubernetes.io/instance: synthetics-pl
+    spec:
+      dnsPolicy: ClusterFirst
+      serviceAccountName: synthetics-pl-synthetics-private-location
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 620
+      securityContext:
+        # GID 502 lets the worker (UID 501) and deno-executor (UID 502) share the unix socket volume.
+        fsGroup: 502
+        runAsUser: 501
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      hostAliases:
+        []
+      containers:
+        - name: synthetics-private-location
+          image: "gcr.io/datadoghq/synthetics-private-location-worker:1.73.0"
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "/home/dog/scripts/multi-pod/start-worker.sh"]
+          securityContext:
+            runAsUser: 501
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            timeoutSeconds: 10
+            httpGet:
+              path: /liveness
+              port: 8080
+          readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 2
+            httpGet:
+              path: /readiness
+              port: 8080
+          volumeMounts:
+          - mountPath: /etc/datadog
+            name: worker-config
+          - mountPath: /tmp
+            name: worker-tmp
+          - mountPath: /tmp/pki
+            name: pki
+          - mountPath: /run/deno-executor
+            name: deno-socket
+          resources:
+            {}
+          env:
+            # The daemons' preStop hooks wait for the worker to stop answering on :8080.
+            - name: DATADOG_WORKER_ENABLE_STATUS_PROBES
+              value: "true"
+            - name: DATADOG_PKI
+              value: /tmp/pki
+            - name: DENO_EXECUTOR_SOCKET_PATH
+              value: /run/deno-executor/deno-executor.sock
+            - name: DATADOG_BROWSER_POOL_URL
+              value: http://localhost:9444
+            # A browser shares the pod network namespace but cannot read the pod metadata.
+            - name: BROWSER_POOL_ADMIN_TOKEN
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: DATADOG_TRACEROUTE_USE_HTTP
+              value: "true"
+            - name: DATADOG_TRACEROUTE_HTTP_URL
+              value: http://localhost:3765
+        - name: deno-executor
+          image: "gcr.io/datadoghq/synthetics-private-location-worker:1.73.0"
+          imagePullPolicy: IfNotPresent
+          command: ["node", "--no-warnings", "/home/dog/packages/runtime/deno-executor/dist/cli/daemon.js", "/run/deno-executor/deno-executor.sock"]
+          securityContext:
+            runAsUser: 502
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+            - name: DENO_EXECUTOR_MAX_CONCURRENT
+              value: "10"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["node", "-e", "const workerUp = () => fetch('http://127.0.0.1:8080/liveness', {signal: AbortSignal.timeout(2000)}).then(() => true, (error) => error?.cause?.code !== 'ECONNREFUSED'); (async () => { while (await workerUp()) await new Promise((resolve) => setTimeout(resolve, 2000)) })()"]
+          livenessProbe:
+            exec:
+              command: ["node", "--no-warnings", "/home/dog/packages/runtime/deno-executor/dist/cli/healthcheck.js", "/run/deno-executor/deno-executor.sock"]
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command: ["node", "--no-warnings", "/home/dog/packages/runtime/deno-executor/dist/cli/healthcheck.js", "/run/deno-executor/deno-executor.sock"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+          - mountPath: /run/deno-executor
+            name: deno-socket
+          - mountPath: /tmp
+            name: deno-executor-tmp
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+        - name: browser-pool
+          image: "gcr.io/datadoghq/synthetics-private-location-worker:1.73.0"
+          imagePullPolicy: IfNotPresent
+          # dumb-init reaps browser descendants (crashpad handlers) that outlive the tracked PID.
+          command: ["/usr/local/bin/dumb-init", "--", "node", "--no-warnings", "/home/dog/packages/runtime/browser-pool/dist/cli/daemon.js"]
+          securityContext:
+            runAsUser: 65534
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+            - name: BROWSER_POOL_PORT
+              value: "9444"
+            - name: BROWSER_POOL_ADMIN_TOKEN
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: BROWSER_POOL_MAX_CONCURRENT
+              value: "100"
+            - name: BROWSER_POOL_MAX_BROWSER_IDLE_MS
+              value: "300000"
+            - name: CERTIFICATE_STORE
+              value: /pki/nssdb
+          livenessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            httpGet:
+              path: /health
+              port: 9444
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            httpGet:
+              path: /health
+              port: 9444
+          volumeMounts:
+          - mountPath: /dev/shm
+            name: dshm
+          - mountPath: /tmp
+            name: browser-pool-tmp
+          - mountPath: /pki
+            name: pki
+            readOnly: true
+          resources:
+            limits:
+              cpu: "2"
+              memory: 4Gi
+            requests:
+              cpu: 500m
+              memory: 2Gi
+        - name: traceroute-server
+          image: "gcr.io/datadoghq/synthetics-private-location-worker:1.73.0"
+          imagePullPolicy: IfNotPresent
+          command: ["/usr/bin/datadog-traceroute-server", "--addr", ":3765", "--log-level", "info"]
+          securityContext:
+            runAsUser: 65534
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              add:
+              - NET_RAW
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          lifecycle:
+            preStop:
+              exec:
+                command: ["node", "-e", "const workerUp = () => fetch('http://127.0.0.1:8080/liveness', {signal: AbortSignal.timeout(2000)}).then(() => true, (error) => error?.cause?.code !== 'ECONNREFUSED'); (async () => { while (await workerUp()) await new Promise((resolve) => setTimeout(resolve, 2000)) })()"]
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3765
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 100m
+              memory: 64Mi
+      volumes:
+      - name: worker-config
+        secret:
+          secretName: "synthetics-pl-config"
+      - name: worker-tmp
+        emptyDir: {}
+      - name: pki
+        emptyDir: {}
+      - name: deno-socket
+        emptyDir: {}
+      - name: deno-executor-tmp
+        emptyDir: {}
+      - name: browser-pool-tmp
+        emptyDir: {}
+      - name: dshm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 2Gi

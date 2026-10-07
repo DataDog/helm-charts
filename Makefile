@@ -48,7 +48,7 @@ vet:
 	go vet -C test ./...
 
 .PHONY: unit-test
-unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner unit-test-datadog-csi-driver unit-test-ci-scripts
+unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner unit-test-synthetics-private-location unit-test-datadog-csi-driver unit-test-ci-scripts
 
 .PHONY: unit-test-datadog
 unit-test-datadog:
@@ -69,16 +69,24 @@ unit-test-datadog-csi-driver:
 unit-test-private-action-runner:
 	go test -C test ./private-action-runner -count=1
 
+.PHONY: unit-test-synthetics-private-location
+unit-test-synthetics-private-location:
+	go test -C test ./synthetics-private-location -count=1
+
 .PHONY: unit-test-ci-scripts
 unit-test-ci-scripts:
 	node --test .github/scripts/*.test.js
 
 .PHONY: update-test-baselines
-update-test-baselines: update-test-baselines-datadog-agent update-test-baselines-operator update-test-baselines-private-action-runner update-test-baselines-datadog-csi-driver
+update-test-baselines: update-test-baselines-datadog-agent update-test-baselines-operator update-test-baselines-private-action-runner update-test-baselines-synthetics-private-location update-test-baselines-datadog-csi-driver
 
 .PHONY: update-test-baselines-private-action-runner
 update-test-baselines-private-action-runner:
 	go test -C test ./private-action-runner -count=1 -args -updateBaselines=true
+
+.PHONY: update-test-baselines-synthetics-private-location
+update-test-baselines-synthetics-private-location:
+	go test -C test ./synthetics-private-location -count=1 -args -updateBaselines=true
 
 .PHONY: update-test-baselines-operator
 update-test-baselines-operator:
