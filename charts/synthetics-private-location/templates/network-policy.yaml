@@ -1,0 +1,76 @@
+{{- if and .Values.multiContainer.enabled .Values.multiContainer.networkPolicy.enabled }}
+{{- $np := .Values.multiContainer.networkPolicy }}
+{{- $rawIPv4 := $np.blockedIPRanges.IPv4 | default (list) }}
+{{- $rawIPv6 := $np.blockedIPRanges.IPv6 | default (list) }}
+{{- if $np.enableDefaultBlockedIpRanges }}
+{{- $rawIPv4 = concat ($np.defaultBlockedIPRanges.IPv4 | default (list)) $rawIPv4 }}
+{{- $rawIPv6 = concat ($np.defaultBlockedIPRanges.IPv6 | default (list)) $rawIPv6 }}
+{{- end }}
+{{- $blockedIPv4 := list }}
+{{- range $rawIPv4 }}{{ $blockedIPv4 = append $blockedIPv4 (include "synthetics-private-location.cidr" .) }}{{ end }}
+{{- $blockedIPv6 := list }}
+{{- range $rawIPv6 }}{{ $blockedIPv6 = append $blockedIPv6 (include "synthetics-private-location.cidr" .) }}{{ end }}
+{{- /* An except entry must be strictly inside its cidr, so a fully blocked family gets no allow rule. */}}
+{{- $allowIPv4 := not (has "0.0.0.0/0" $blockedIPv4) }}
+{{- $allowIPv6 := not (has "::/0" $blockedIPv6) }}
+{{- $allowed := list }}
+{{- range (concat ($np.allowedIPRanges.IPv4 | default (list)) ($np.allowedIPRanges.IPv6 | default (list))) }}{{ $allowed = append $allowed (include "synthetics-private-location.cidr" .) }}{{ end }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "synthetics-private-location.fullname" . }}-egress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "synthetics-private-location.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "synthetics-private-location.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - port: 53
+          protocol: UDP
+        - port: 53
+          protocol: TCP
+    # Browsers reach the worker forward proxy on the pod IP (worker `managedPortRangeStart`/`End`).
+    - to:
+        - podSelector:
+            matchLabels:
+              {{- include "synthetics-private-location.selectorLabels" . | nindent 14 }}
+      ports:
+        - port: 30000
+          endPort: 40000
+          protocol: TCP
+    {{- if $allowed }}
+    - to:
+        {{- range $allowed }}
+        - ipBlock:
+            cidr: {{ . | quote }}
+        {{- end }}
+    {{- end }}
+    {{- if or $allowIPv4 $allowIPv6 }}
+    - to:
+        {{- if $allowIPv4 }}
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            {{- with $blockedIPv4 }}
+            except:
+              {{- range . }}
+              - {{ . | quote }}
+              {{- end }}
+            {{- end }}
+        {{- end }}
+        {{- if $allowIPv6 }}
+        - ipBlock:
+            cidr: "::/0"
+            {{- with $blockedIPv6 }}
+            except:
+              {{- range . }}
+              - {{ . | quote }}
+              {{- end }}
+            {{- end }}
+        {{- end }}
+    {{- end }}
+{{- end }}
