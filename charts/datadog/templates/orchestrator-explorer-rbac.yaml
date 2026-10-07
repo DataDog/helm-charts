@@ -208,6 +208,13 @@ rules:
   verbs:
   - list
   - watch
+- apiGroups:
+  - inference.networking.k8s.io
+  resources:
+  - inferencepools
+  verbs:
+  - list
+  - watch
 {{- if .Values.datadog.orchestratorExplorer.networkCRDs.enabled }}
 # Gateway API, service mesh, and ingress controller CRDs for internet-reachability analysis
 - apiGroups:
