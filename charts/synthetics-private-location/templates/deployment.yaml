@@ -1,3 +1,4 @@
+{{- if not .Values.multiContainer.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -128,3 +129,4 @@ spec:
       {{- if .Values.extraVolumes }}
       {{- toYaml .Values.extraVolumes | nindent 6 }}
       {{- end }}
+{{- end }}
