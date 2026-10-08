@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.253.2
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.2 ([#2961](https://github.com/DataDog/helm-charts/pull/2961)).
+
 ## 3.253.1
 
 * Grant the Cluster Agent read access to Gateway API Inference Extension InferencePools collected by Orchestrator Explorer.
