@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.254.0
+
+* Bump Datadog Operator chart dependency to 2.28.0.
+* Bump Datadog CRD chart dependency to 2.25.0.
+* Bump Operator image tag to 1.31.0.
+
 ## 3.253.2
 
 * Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.2 ([#2961](https://github.com/DataDog/helm-charts/pull/2961)).
