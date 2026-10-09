@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.28.0
+
+* Update Datadog Operator chart for 1.31.0.
+
 ## 2.28.0-dev.4
 
 * Update Datadog Operator chart for 1.31.0-rc.3.
