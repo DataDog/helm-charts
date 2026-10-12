@@ -67,6 +67,10 @@ spec:
           {{- end }}
           env:
             {{- include "quickwit.environment" . | nindent 12 }}
+            {{- include "quickwit.renderEnvDefaults" (dict
+              "defaults" (dict "QW_SPLIT_DELETION_GRACE_PERIOD_SECS" "21600")
+              "overrides" (list .Values.environment .Values.janitor.extraEnv)
+            ) | nindent 12 }}
             {{- with (include "quickwit.renderEnv" .Values.janitor.extraEnv) }}
             {{- . | nindent 12 }}
             {{- end }}

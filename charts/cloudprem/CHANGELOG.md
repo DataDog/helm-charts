@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.6
+
+* Default `QW_SPLIT_DELETION_GRACE_PERIOD_SECS` to `21600` (6 hours) on the janitor. Explicit overrides remain supported.
+
 ## 0.5.5
 
 * Fix load-estimation configuration: set `QW_DISABLE_LOAD_ESTIMATION=true` on searchers instead of indexers by default. Explicit overrides remain supported.
