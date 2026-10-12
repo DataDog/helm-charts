@@ -4,6 +4,8 @@ datadog:
   securityAgent:
     compliance:
       enabled: true
+      # Pinned to cover the security-agent path.
+      runInSystemProbe: false
 providers:
   gke:
     gdc: true

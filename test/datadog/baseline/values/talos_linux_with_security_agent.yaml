@@ -6,8 +6,12 @@ datadog:
   securityAgent:
     runtime:
       enabled: true
+      # Pinned to cover the security-agent path.
+      directSendFromSystemProbe: false
     compliance:
       enabled: true
+      # Pinned to cover the security-agent path.
+      runInSystemProbe: false
   ignoreAutoConfig:
     - etcd
     - kube_scheduler
