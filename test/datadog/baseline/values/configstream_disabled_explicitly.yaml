@@ -4,6 +4,8 @@ datadog:
   securityAgent:
     runtime:
       enabled: true
+      # Pinned to cover the security-agent path.
+      directSendFromSystemProbe: false
   networkMonitoring:
     enabled: true
   configStream:

@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.267.1
+
+* Enable `datadog.securityAgent.runtime.directSendFromSystemProbe` and `datadog.securityAgent.compliance.runInSystemProbe` by default. CWS events and CSPM compliance checks are now handled directly by `system-probe`, so the `security-agent` container is no longer created when only Workload Protection (CWS) and/or CSPM are enabled. Set either value back to `false` to restore the previous behaviour.
+
 ## 3.267.0
 
 * Add `datadog.kaiScheduler.enabled` to enable KAI Scheduler PodGroup collection in the Cluster Agent, which tags pods with their KAI workload and queue, and grant the Cluster Agent `list` and `watch` on KAI PodGroups (requires Agent and Cluster Agent 7.86.0+). With `datadog.gpuMonitoring.enabled`, it also maps KAI fractional GPUs to the containers using them.
