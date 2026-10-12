@@ -86,8 +86,9 @@ func TestSystemProbeSeccompHostBenchmarks(t *testing.T) {
 		{
 			name: "compliance in security-agent",
 			values: map[string]string{
-				"datadog.securityAgent.compliance.enabled": "true",
-				"datadog.networkMonitoring.enabled":        "true",
+				"datadog.securityAgent.compliance.enabled":          "true",
+				"datadog.securityAgent.compliance.runInSystemProbe": "false",
+				"datadog.networkMonitoring.enabled":                 "true",
 			},
 			want: false,
 		},

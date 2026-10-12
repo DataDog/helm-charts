@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.275.2
+
+* Enable `datadog.securityAgent.runtime.directSendFromSystemProbe` and `datadog.securityAgent.compliance.runInSystemProbe` by default. CWS events and CSPM compliance checks are now handled directly by `system-probe`, so the `security-agent` container is no longer created when only Workload Protection (CWS) and/or CSPM are enabled. Set either value back to `false` to restore the previous behaviour.
+
 ## 3.275.1
 
 * Fix compliance running in System Probe (`datadog.securityAgent.compliance.runInSystemProbe: true`) so it gets everything compliance gets in the Security Agent: mount the container runtime socket, so Docker benchmarks are no longer silently skipped; add the `AUDIT_CONTROL` and `AUDIT_READ` capabilities needed by audit-rule checks; route payloads through the FIPS proxy when `fips.enabled` is set, which also applies to CWS and CNM direct send from System Probe; and, with `datadog.configStream.enabled`, copy the check interval, host benchmark and container filter settings onto the Agent container. A new test checks that the two execution paths stay in sync.
