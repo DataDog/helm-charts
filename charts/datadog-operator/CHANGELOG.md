@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.28.1
+
+* Restore ExtendedDaemonSet RBAC when `supportExtendedDaemonset` is `true` and the Operator image is older than 1.31.0.
+
 ## 2.28.0
 
 * Update Datadog Operator chart for 1.31.0.
