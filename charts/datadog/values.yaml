@@ -1212,6 +1212,22 @@ datadog:
     valuesAsTags: {}
       #   <HELM_VALUE>: <LABEL_NAME>
 
+  kueue:
+    # datadog.kueue.enabled -- Enable Kueue metadata collection in the Cluster Agent and the Kueue check (Requires Agent and Cluster Agent 7.82.0+. Kueue with more than one replica requires Agent 7.86.0+)
+    # The Kueue check runs as an endpoints check against each Kueue controller pod, so it requires
+    # datadog.clusterChecks.enabled and a node Agent scheduled on the Kueue controller nodes.
+    enabled: false
+
+    # datadog.kueue.collectWorkloadEvents -- Collect Kueue Workload lifecycle events. Grants the node Agent read access to Kueue Workloads
+    collectWorkloadEvents: true
+
+    metricsService:
+      # datadog.kueue.metricsService.name -- Name of the Service exposing the Kueue controller metrics
+      name: kueue-controller-manager-metrics-service
+
+      # datadog.kueue.metricsService.namespace -- Namespace of the Service exposing the Kueue controller metrics
+      namespace: kueue-system
+
   networkMonitoring:
     # datadog.networkMonitoring.enabled -- Enable Cloud Network Monitoring
     enabled: false
