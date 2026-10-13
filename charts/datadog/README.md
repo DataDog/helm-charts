@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.255.0](https://img.shields.io/badge/Version-3.255.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.256.0](https://img.shields.io/badge/Version-3.256.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -906,6 +906,10 @@ helm install <RELEASE_NAME> \
 | datadog.kubernetesResourcesAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Resources Annotations to Datadog Tags |
 | datadog.kubernetesResourcesLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Resources Labels to Datadog Tags |
 | datadog.kubernetesUseEndpointSlices | bool | `true` | Enable this to map Kubernetes services to endpointslices instead of endpoints. (Requires Cluster Agent 7.62.0+). |
+| datadog.kueue.collectWorkloadEvents | bool | `true` | Collect Kueue Workload lifecycle events. Grants the node Agent read access to Kueue Workloads |
+| datadog.kueue.enabled | bool | `false` | Enable Kueue metadata collection in the Cluster Agent and the Kueue check (Requires Agent and Cluster Agent 7.82.0+. Kueue with more than one replica requires Agent 7.86.0+) The Kueue check runs as an endpoints check against each Kueue controller pod, so it requires datadog.clusterChecks.enabled and a node Agent scheduled on the Kueue controller nodes. |
+| datadog.kueue.metricsService.name | string | `"kueue-controller-manager-metrics-service"` | Name of the Service exposing the Kueue controller metrics |
+| datadog.kueue.metricsService.namespace | string | `"kueue-system"` | Namespace of the Service exposing the Kueue controller metrics |
 | datadog.leaderElection | bool | `true` | Enables leader election mechanism for event collection |
 | datadog.leaderElectionResource | string | `"configmap"` | Selects the default resource to use for leader election. Can be: * "lease" / "leases". Only supported in agent 7.47+ * "configmap" / "configmaps". "" to automatically detect which one to use. |
 | datadog.leaderLeaseDuration | string | `nil` | Set the lease time for leader election in second |
