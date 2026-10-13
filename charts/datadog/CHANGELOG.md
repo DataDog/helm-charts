@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.255.0
+
+* Add `datadog.sbom.enrichment.usage.enrichmentInterval` (default `30m`) and `datadog.sbom.enrichment.usage.forwardInterval` (default `1m`), set on the `system-probe` container as `DD_RUNTIME_SECURITY_CONFIG_SBOM_ENRICHMENT_INTERVAL` and `DD_RUNTIME_SECURITY_CONFIG_SBOM_FORWARD_INTERVAL` when `datadog.sbom.enrichment.usage.enabled` is `true`. These defaults reduce how often SBOMs enriched with runtime usage information are updated and forwarded. Set either value to an empty string to use the Agent default.
+
 ## 3.254.1
 
 * Update `fips.image.tag` to `1.1.31` fixing CVEs and updating packages.

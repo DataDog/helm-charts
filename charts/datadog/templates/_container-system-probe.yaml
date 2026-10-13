@@ -43,6 +43,14 @@
     {{- if eq (include "should-enable-sbom-enrichment-usage" .) "true" }}
     - name: DD_SBOM_ENRICHMENT_USAGE_ENABLED
       value: "true"
+    {{- if .Values.datadog.sbom.enrichment.usage.enrichmentInterval }}
+    - name: DD_RUNTIME_SECURITY_CONFIG_SBOM_ENRICHMENT_INTERVAL
+      value: {{ .Values.datadog.sbom.enrichment.usage.enrichmentInterval | quote }}
+    {{- end }}
+    {{- if .Values.datadog.sbom.enrichment.usage.forwardInterval }}
+    - name: DD_RUNTIME_SECURITY_CONFIG_SBOM_FORWARD_INTERVAL
+      value: {{ .Values.datadog.sbom.enrichment.usage.forwardInterval | quote }}
+    {{- end }}
     {{- end }}
     {{- if eq (include "should-enable-config-sync-for-direct-send" .) "true" }}
     - name: DD_AGENT_IPC_PORT
