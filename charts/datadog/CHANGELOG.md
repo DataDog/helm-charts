@@ -1,10 +1,18 @@
 # Datadog changelog
 
-## 3.254.0
+## 3.255.0
 
 * Bump Datadog Operator chart dependency to 2.28.0.
 * Bump Datadog CRD chart dependency to 2.25.0.
 * Bump Operator image tag to 1.31.0.
+
+## 3.254.1
+
+* Update `fips.image.tag` to `1.1.31` fixing CVEs and updating packages.
+
+## 3.254.0
+
+* Bump the Datadog CSI Driver chart dependency to 0.18.0. On GKE Autopilot with WorkloadAllowlist, the CSI driver now gets APM registry authentication (`datadog-csi-driver.apm.pullSecrets`) and `global.apmRegistryAllowList`. This also fixes the CSI DaemonSet rejection on GKE Autopilot when `global.apmRegistryAllowList` is set.
 
 ## 3.253.2
 

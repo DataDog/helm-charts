@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.254.0](https://img.shields.io/badge/Version-3.254.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.255.0](https://img.shields.io/badge/Version-3.255.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -31,10 +31,17 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 | Repository | Name | Version |
 |------------|------|---------|
+<<<<<<< HEAD
 | https://helm.datadoghq.com | datadog-crds | 2.25.0 |
 | https://helm.datadoghq.com | datadog-instrumentation-crd(datadog-crds) | 2.25.0 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.17.0 |
 | https://helm.datadoghq.com | operator(datadog-operator) | 2.28.1 |
+=======
+| https://helm.datadoghq.com | datadog-crds | 2.24.0 |
+| https://helm.datadoghq.com | datadog-instrumentation-crd(datadog-crds) | 2.24.0 |
+| https://helm.datadoghq.com | datadog-csi-driver | 0.18.0 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.26.0 |
+>>>>>>> main
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -1065,7 +1072,7 @@ helm install <RELEASE_NAME> \
 | fips.image.name | string | `"fips-proxy"` |  |
 | fips.image.pullPolicy | string | `"IfNotPresent"` | Datadog the FIPS sidecar image pull policy |
 | fips.image.repository | string | `nil` | Override default registry + image.name for the FIPS sidecar container. |
-| fips.image.tag | string | `"1.1.30"` | Define the FIPS sidecar container version to use. |
+| fips.image.tag | string | `"1.1.31"` | Define the FIPS sidecar container version to use. |
 | fips.local_address | string | `"127.0.0.1"` | Set local IP address. This setting is only used for the fips-proxy sidecar. |
 | fips.port | int | `9803` | Specifies which port is used by the containers to communicate to the FIPS sidecar. This setting is only used for the fips-proxy sidecar. |
 | fips.portRange | int | `15` | Specifies the number of ports used, defaults to 13 https://github.com/DataDog/datadog-agent/blob/7.44.x/pkg/config/config.go#L1564-L1577. This setting is only used for the fips-proxy sidecar. |
