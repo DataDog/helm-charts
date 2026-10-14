@@ -31,17 +31,10 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 
 | Repository | Name | Version |
 |------------|------|---------|
-<<<<<<< HEAD
 | https://helm.datadoghq.com | datadog-crds | 2.25.0 |
 | https://helm.datadoghq.com | datadog-instrumentation-crd(datadog-crds) | 2.25.0 |
-| https://helm.datadoghq.com | datadog-csi-driver | 0.17.0 |
-| https://helm.datadoghq.com | operator(datadog-operator) | 2.28.1 |
-=======
-| https://helm.datadoghq.com | datadog-crds | 2.24.0 |
-| https://helm.datadoghq.com | datadog-instrumentation-crd(datadog-crds) | 2.24.0 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.18.0 |
-| https://helm.datadoghq.com | operator(datadog-operator) | 2.26.0 |
->>>>>>> main
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.28.1 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
