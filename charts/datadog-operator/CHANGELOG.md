@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.29.0
+
+* [datadog-operator] Add Kueue RBAC to the Operator ClusterRole ([#2976](https://github.com/DataDog/helm-charts/pull/2976)).
+
 ## 2.28.1
 
 * Restore ExtendedDaemonSet RBAC when `supportExtendedDaemonset` is `true` and the Operator image is older than 1.31.0.
