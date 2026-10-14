@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.30.0
+    app.kubernetes.io/version: 1.31.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -415,7 +415,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.30.0
+    app.kubernetes.io/version: 1.31.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -691,7 +691,6 @@ rules:
       - datadogmonitors/finalizers
       - datadogslos
       - datadogslos/finalizers
-      - extendeddaemonsets
     verbs:
       - create
       - delete
@@ -753,15 +752,6 @@ rules:
     verbs:
       - '*'
   - apiGroups:
-      - datadoghq.com
-    resources:
-      - extendeddaemonsetreplicasets
-    verbs:
-      - delete
-      - get
-      - list
-      - watch
-  - apiGroups:
       - discovery.k8s.io
     resources:
       - endpointslices
@@ -792,6 +782,18 @@ rules:
   - apiGroups:
       - gateway.networking.k8s.io
     resources:
+      - backendtlspolicies
+      - grpcroutes
+      - listenersets
+      - tcproutes
+      - tlsroutes
+      - udproutes
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
       - gatewayclasses
       - gateways
       - httproutes
@@ -803,21 +805,29 @@ rules:
   - apiGroups:
       - gateway.networking.k8s.io
     resources:
-      - grpcroutes
-      - listenersets
-      - tlsroutes
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - gateway.networking.k8s.io
-    resources:
       - referencegrants
     verbs:
       - create
       - delete
       - get
+      - list
       - patch
+      - watch
+  - apiGroups:
+      - inference.networking.k8s.io
+    resources:
+      - inferencepools
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - inference.networking.x-k8s.io
+    resources:
+      - inferencepoolimports
+      - inferencepools
+    verbs:
+      - list
+      - watch
   - apiGroups:
       - k8s.nginx.org
     resources:
@@ -839,6 +849,13 @@ rules:
       - update
       - watch
   - apiGroups:
+      - kubeai.org
+    resources:
+      - models
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - kustomize.toolkit.fluxcd.io
     resources:
       - kustomizations
@@ -851,6 +868,14 @@ rules:
       - kcm/metrics
       - ksh/metrics
     verbs:
+      - get
+  - apiGroups:
+      - networking.gke.io
+    resources:
+      - gcptrafficextensions
+    verbs:
+      - create
+      - delete
       - get
   - apiGroups:
       - networking.istio.io
@@ -908,6 +933,19 @@ rules:
       - update
       - watch
   - apiGroups:
+      - nvidia.com
+    resources:
+      - dynamocheckpoints
+      - dynamocomponentdeployments
+      - dynamographdeploymentrequests
+      - dynamographdeployments
+      - dynamographdeploymentscalingadapters
+      - dynamomodels
+      - dynamoworkermetadatas
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - policy
     resources:
       - poddisruptionbudgets
@@ -926,6 +964,16 @@ rules:
     verbs:
       - get
       - list
+  - apiGroups:
+      - ray.io
+    resources:
+      - rayclusters
+      - raycronjobs
+      - rayjobs
+      - rayservices
+    verbs:
+      - list
+      - watch
   - apiGroups:
       - rbac.authorization.k8s.io
     resources:
@@ -961,6 +1009,24 @@ rules:
       - securitycontextconstraints
     verbs:
       - use
+  - apiGroups:
+      - serving.kserve.io
+    resources:
+      - clusterservingruntimes
+      - clusterstoragecontainers
+      - inferencegraphs
+      - inferenceservices
+      - llminferenceserviceconfigs
+      - llminferenceservices
+      - localmodelcaches
+      - localmodelnamespacecaches
+      - localmodelnodegroups
+      - localmodelnodes
+      - servingruntimes
+      - trainedmodels
+    verbs:
+      - list
+      - watch
   - apiGroups:
       - source.toolkit.fluxcd.io
     resources:
@@ -1934,7 +2000,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.30.0
+    app.kubernetes.io/version: 1.31.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -1993,7 +2059,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: registry.datadoghq.com/operator:1.30.0
+          image: registry.datadoghq.com/operator:1.31.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2011,6 +2077,11 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       serviceAccountName: datadog-operator
+      tolerations:
+        - effect: NoSchedule
+          key: agent.datadoghq.com/not-ready
+          operator: Equal
+          value: presence
       volumes: null
 ---
 apiVersion: apps/v1

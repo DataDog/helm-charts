@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.255.0
+
+* Bump Datadog Operator chart dependency to 2.28.0.
+* Bump Datadog CRD chart dependency to 2.25.0.
+* Bump Operator image tag to 1.31.0.
+
 ## 3.254.1
 
 * Update `fips.image.tag` to `1.1.31` fixing CVEs and updating packages.
