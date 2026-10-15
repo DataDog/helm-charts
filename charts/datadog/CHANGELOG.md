@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.258.0
+
+* Add opt-in `datadog.jemalloc.enabled` for the Linux node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners, with explicit environment overrides taking precedence.
+
 ## 3.257.0
 
 * Grant the Cluster Agent read access to KubeAI custom resources collected by the orchestrator explorer.
