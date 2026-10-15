@@ -8,6 +8,9 @@ metadata:
 {{ include "datadog-operator.labels" . | indent 4 }}
 spec:
   minAvailable: 1
+  {{- with .Values.podDisruptionBudget.unhealthyPodEvictionPolicy }}
+  unhealthyPodEvictionPolicy: {{ . }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "datadog-operator.name" . }}
