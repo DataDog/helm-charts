@@ -150,3 +150,33 @@ func TestJemallocOverrides(t *testing.T) {
 		})
 	}
 }
+
+func TestJemallocAutopilotValidation(t *testing.T) {
+	for _, tc := range []struct {
+		name, autopilot, jemalloc, forceRender string
+		wantError                              bool
+	}{
+		{"legacy Autopilot", "true", "true", "false", true},
+		{"WorkloadAllowlist Autopilot", "true", "true", "true", true},
+		{"Autopilot without jemalloc", "true", "false", "false", false},
+		{"jemalloc without Autopilot", "false", "true", "false", false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog", ChartPath: "../../charts/datadog", ShowOnly: []string{"templates/daemonset.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":      "datadog-secret",
+					"providers.gke.autopilot":           tc.autopilot,
+					"datadog.jemalloc.enabled":          tc.jemalloc,
+					"datadog.envDict.HELM_FORCE_RENDER": tc.forceRender,
+				},
+			})
+			if tc.wantError {
+				require.ErrorContains(t, err, "jemalloc is not supported on GKE Autopilot")
+				assert.ErrorContains(t, err, "Set 'datadog.jemalloc.enabled' to 'false'")
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
+}
