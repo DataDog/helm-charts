@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.257.1
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.3 ([#2978](https://github.com/DataDog/helm-charts/pull/2978)).
+
 ## 3.257.0
 
 * Grant the Cluster Agent read access to KubeAI custom resources collected by the orchestrator explorer.
