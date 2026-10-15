@@ -11,6 +11,16 @@
     "datadog": {
       "type": "object",
       "properties": {
+        "jemalloc": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable jemalloc for the node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners using Linux Agent 7.84.0+ images."
+            }
+          }
+        },
         "instrumentationCrd": {
           "type": "object",
           "properties": {
