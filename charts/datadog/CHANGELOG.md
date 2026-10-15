@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.256.0
+
+* Collect Gateway API and Gateway API Inference Extension custom resources by default.
+
 ## 3.255.0
 
 * Bump Datadog Operator chart dependency to 2.28.0.
