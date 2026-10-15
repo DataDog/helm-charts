@@ -245,10 +245,22 @@ APM Single Step Instrumentation will be disabled in the whole cluster.
 ####               WARNING: Configuration notice             ####
 #################################################################
 
-`datadog.kueue.enabled` is set, but the Kueue check is not configured. It requires
-a deployed Cluster Agent, `datadog.clusterChecks.enabled`, and Agent and Cluster Agent 7.82.0+.
 {{- if eq (include "should-enable-kueue" .) "true" }}
-Only Kueue metadata collection is enabled in the Cluster Agent.
+`datadog.kueue.enabled` is set, but only Kueue metadata collection is enabled in the
+Cluster Agent. The Kueue check is not configured because:
+{{- else }}
+`datadog.kueue.enabled` is set, but Kueue support is disabled because:
+{{- end }}
+{{- if ne (include "should-deploy-cluster-agent" .) "true" }}
+* The Cluster Agent is not deployed by this chart (`clusterAgent.enabled` is false or `existingClusterAgent.join` is set).
+{{- else if ne (include "kueue-cluster-agent-version-supported" .) "true" }}
+* The Cluster Agent version ({{ include "get-cluster-agent-version" . }}) is older than 7.82.0.
+{{- end }}
+{{- if not .Values.datadog.clusterChecks.enabled }}
+* `datadog.clusterChecks.enabled` is false.
+{{- end }}
+{{- if ne (include "kueue-agent-version-supported" .) "true" }}
+* The Agent version ({{ include "get-agent-version" . }}) is older than 7.82.0.
 {{- end }}
 
 {{- end }}
