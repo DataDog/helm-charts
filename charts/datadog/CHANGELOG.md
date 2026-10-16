@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.258.0
+
+* Add `datadog.kueue.enabled` to enable Kueue metadata collection in the Cluster Agent and the Kueue check (requires Agent and Cluster Agent 7.82.0+). The check runs as an endpoints check against each Kueue controller pod and requires `datadog.clusterChecks.enabled`. Use `datadog.kueue.metricsService` to point it at a non-default Kueue metrics Service, and `datadog.kueue.collectWorkloadEvents` to disable Workload lifecycle events and the node Agent read access to Kueue Workloads.
+
 ## 3.257.1
 
 * Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.3 ([#2978](https://github.com/DataDog/helm-charts/pull/2978)).

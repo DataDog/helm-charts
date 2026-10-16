@@ -600,6 +600,10 @@ spec:
             value: {{ .Values.datadog.appsec.injector.processor.service.namespace | quote }}
           {{- end }}
           {{- end }}
+          {{- if eq (include "should-enable-kueue" .) "true" }}
+          - name: DD_CLUSTER_AGENT_KUEUE_ENABLED
+            value: "true"
+          {{- end }}
           {{- if eq (include "should-shard-ksm-config" .) "true" }}
           - name: DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED
             value: {{ .Values.datadog.kubeStateMetricsCore.shardingEnabled | quote }}
@@ -695,6 +699,10 @@ spec:
             {{- if .Values.datadog.helmCheck.enabled }}
             - key: helm.yaml
               path: helm.d/helm.yaml
+            {{- end }}
+            {{- if eq (include "should-enable-kueue-check" .) "true" }}
+            - key: kueue.yaml
+              path: kueue.d/kueue.yaml
             {{- end }}
             {{- if eq (include "need-kubernetes-apiserver-check-config" .) "true" }}
             - key: kubernetes_apiserver.yaml
