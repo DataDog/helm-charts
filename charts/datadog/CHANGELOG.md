@@ -2,7 +2,7 @@
 
 ## 3.257.2
 
-* Fix missing `datadog-yaml` volume in the OTel Agent Gateway pod when `agents.useConfigMap` is enabled ([#2980](https://github.com/DataDog/helm-charts/pull/2980)).
+* Fix OTel Agent Gateway pod failing to start when `agents.useConfigMap` is enabled: add the missing `datadog-yaml` volume and mount the config directory read-write so the `datadog.yaml` subPath mount can be created ([#2980](https://github.com/DataDog/helm-charts/pull/2980)).
 
 ## 3.257.1
 

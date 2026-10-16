@@ -221,7 +221,7 @@
             readOnly: false
           - name: config
             mountPath: {{ template "datadog.confPath" . }}
-            readOnly: true
+            readOnly: false # Need RW to mount to config path
           {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
           - name: datadog-yaml
             mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
