@@ -267,6 +267,11 @@
             - key: otel-gateway-config.yaml
               path: otel-gateway-config.yaml
           {{- end }}
+      {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux") }}
+      - name: datadog-yaml
+        configMap:
+          name: {{ include "agents-useConfigMap-configmap-name" . }}
+      {{- end }}
 {{- if .Values.otelAgentGateway.volumes }}
 {{ toYaml .Values.otelAgentGateway.volumes | indent 6 }}
 {{- end }}
