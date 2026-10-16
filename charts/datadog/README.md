@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.256.0](https://img.shields.io/badge/Version-3.256.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.258.0](https://img.shields.io/badge/Version-3.258.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -556,7 +556,7 @@ helm install <RELEASE_NAME> \
 | agents.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | agents.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | agents.image.repository | string | `nil` | Override default registry + image.name for Agent |
-| agents.image.tag | string | `"7.84.2"` | Define the Agent version to use Set a pinned version here. Do not append build variants: put `full` or `jmx` in `agents.image.tagSuffix`, and enable FIPS with `useFIPSAgent`. To stay on the latest stable Agent, leave this unset and upgrade the chart periodically. |
+| agents.image.tag | string | `"7.84.3"` | Define the Agent version to use Set a pinned version here. Do not append build variants: put `full` or `jmx` in `agents.image.tagSuffix`, and enable FIPS with `useFIPSAgent`. To stay on the latest stable Agent, leave this unset and upgrade the chart periodically. |
 | agents.image.tagSuffix | string | `""` | Suffix to append to Agent tag This is the supported place for build variants like `full` or `jmx`; set them here rather than appending them to `agents.image.tag`. |
 | agents.instanceLabelOverride | string | `nil` | Override the `app.kubernetes.io/instance` label on the Agent daemonset and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label. |
 | agents.lifecycle | object | `{}` | Configure the lifecycle of the Agent. Note: The `exec` lifecycle handler is not supported in GKE Autopilot. |
@@ -650,7 +650,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.image.pullPolicy | string | `"IfNotPresent"` | Cluster Agent image pullPolicy |
 | clusterAgent.image.pullSecrets | list | `[]` | Cluster Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterAgent.image.repository | string | `nil` | Override default registry + image.name for Cluster Agent |
-| clusterAgent.image.tag | string | `"7.84.2"` | Cluster Agent image tag to use |
+| clusterAgent.image.tag | string | `"7.84.3"` | Cluster Agent image tag to use |
 | clusterAgent.instanceLabelOverride | string | `nil` | Override the `app.kubernetes.io/instance` label on the Cluster Agent deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label. |
 | clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus | bool | `false` | Set this to true to disable use_component_status for the kube_apiserver integration. |
 | clusterAgent.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default Cluster Agent liveness probe settings |
@@ -720,7 +720,7 @@ helm install <RELEASE_NAME> \
 | clusterChecksRunner.image.pullPolicy | string | `"IfNotPresent"` | Datadog Agent image pull policy |
 | clusterChecksRunner.image.pullSecrets | list | `[]` | Datadog Agent repository pullSecret (ex: specify docker registry credentials) |
 | clusterChecksRunner.image.repository | string | `nil` | Override default registry + image.name for Cluster Check Runners |
-| clusterChecksRunner.image.tag | string | `"7.84.2"` | Define the Agent version to use |
+| clusterChecksRunner.image.tag | string | `"7.84.3"` | Define the Agent version to use |
 | clusterChecksRunner.image.tagSuffix | string | `""` | Suffix to append to Agent tag |
 | clusterChecksRunner.instanceLabelOverride | string | `nil` | Override the `app.kubernetes.io/instance` label on the cluster checks runner deployment and pods. Useful to restore the pre-3.140.0 value when callers (e.g. NetworkPolicies) match on that label. |
 | clusterChecksRunner.livenessProbe | object | Every 15s / 6 KO / 1 OK | Override default agent liveness probe settings |
@@ -941,7 +941,7 @@ helm install <RELEASE_NAME> \
 | datadog.orchestratorExplorer.customResources | list | `[]` | Defines custom resources for the orchestrator explorer to collect |
 | datadog.orchestratorExplorer.enabled | bool | `true` | Set this to false to disable the orchestrator explorer |
 | datadog.orchestratorExplorer.kubelet_configuration_check.enabled | bool | `true` | Enable the orchestrator kubelet configuration check |
-| datadog.orchestratorExplorer.networkCRDs.enabled | bool | `false` | Enable RBAC for Gateway API, service mesh, and ingress controller CRD collection. Set to true to add RBAC rules for these resources to the orchestrator explorer ClusterRole |
+| datadog.orchestratorExplorer.networkCRDs.enabled | bool | `false` | Enable RBAC for service mesh and ingress controller CRD collection. Gateway API and Gateway API Inference Extension resources are collected by default. Set to true to add RBAC rules for service mesh and ingress controller resources to the orchestrator explorer ClusterRole |
 | datadog.orchestratorExplorer.rbac.create | bool | `true` | If true, create & use a dedicated ClusterRole and ClusterRoleBinding for orchestrator explorer permissions |
 | datadog.orchestratorExplorer.useClusterCheckRunners | bool | `false` | For clusters where orchestrator explorer checks run on dedicated Cluster Checks Runners instead of the Cluster Agent. |
 | datadog.originDetectionUnified.enabled | bool | `false` | Enabled enables unified mechanism for origin detection. Default: false. (Requires Agent 7.54.0+). |

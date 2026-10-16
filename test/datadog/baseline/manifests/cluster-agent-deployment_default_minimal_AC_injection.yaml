@@ -1660,6 +1660,13 @@ rules:
       - list
       - watch
   - apiGroups:
+      - kubeai.org
+    resources:
+      - models
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - nvidia.com
     resources:
       - dynamocheckpoints
@@ -1691,9 +1698,33 @@ rules:
       - list
       - watch
   - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gatewayclasses
+      - gateways
+      - httproutes
+      - grpcroutes
+      - backendtlspolicies
+      - listenersets
+      - referencegrants
+      - tcproutes
+      - tlsroutes
+      - udproutes
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - inference.networking.k8s.io
     resources:
       - inferencepools
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - inference.networking.x-k8s.io
+    resources:
+      - inferencepools
+      - inferencepoolimports
     verbs:
       - list
       - watch
@@ -2197,7 +2228,7 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_NAME
               value: agent
             - name: DD_ADMISSION_CONTROLLER_AGENT_SIDECAR_IMAGE_TAG
-              value: 7.84.2
+              value: 7.84.3
             - name: DD_REMOTE_CONFIGURATION_ENABLED
               value: "true"
             - name: DD_APM_INSTRUMENTATION_ON_DEMAND
@@ -2266,7 +2297,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.84.2
+          image: registry.datadoghq.com/cluster-agent:7.84.3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2339,7 +2370,7 @@ spec:
           command:
             - cp
             - -r
-          image: registry.datadoghq.com/cluster-agent:7.84.2
+          image: registry.datadoghq.com/cluster-agent:7.84.3
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
