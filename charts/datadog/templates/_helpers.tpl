@@ -1343,6 +1343,27 @@ false
 {{- end -}}
 
 {{/*
+Enable jemalloc only when requested and the component's Agent image is 7.84+.
+*/}}
+{{- define "should-enable-jemalloc" -}}
+{{- $image := .image | default .Values.agents.image -}}
+{{- $versionContext := dict "Values" (dict "agents" (dict "image" $image)) -}}
+{{- if and .Values.datadog.jemalloc.enabled (or $image.doNotCheckTag (semverCompare ">=7.84.0-0" (include "get-agent-version" $versionContext))) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/* Environment variables for the jemalloc allocator. */}}
+{{- define "jemalloc-env" -}}
+- name: LD_PRELOAD
+  value: "/opt/lib/nosys.so /opt/datadog-agent/embedded/lib/libjemalloc.so"
+- name: MALLOC_CONF
+  value: "background_thread:true,dirty_decay_ms:5000"
+{{- end -}}
+
+{{/*
 Returns env vars correctly quoted and valueFrom respected
 */}}
 {{- define "additional-env-entries" -}}

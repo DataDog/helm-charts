@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.258.0
+
+* Add opt-in `datadog.jemalloc.enabled` for the Linux node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners, with explicit environment overrides taking precedence.
+
 ## 3.257.1
 
 * Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.3 ([#2978](https://github.com/DataDog/helm-charts/pull/2978)).

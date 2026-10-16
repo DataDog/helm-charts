@@ -57,6 +57,10 @@ registry:  # gcr.io/datadoghq
 registryMigrationMode: "auto"
 
 datadog:
+  jemalloc:
+    # datadog.jemalloc.enabled -- Enable jemalloc for the node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners (Linux Agent 7.84.0+).
+    enabled: false
+
   # datadog.apiKey -- Your Datadog API key
 
   ## ref: https://app.datadoghq.com/account/settings#agent/kubernetes
