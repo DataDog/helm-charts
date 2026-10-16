@@ -228,7 +228,7 @@ datadog:
     #     - name: "uptime"
     #       help: "Foo uptime"
     #       each:
-    #         type: Gauge
+    #         type: "gauge"
     #         gauge:
     #           path: [status, uptime]
 
