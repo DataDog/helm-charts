@@ -1524,7 +1524,43 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (and .Values.clusterAgent.admissionController.enabled .Values.datadog.apm.instrumentation.onDemand) .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (and .Values.clusterAgent.admissionController.enabled .Values.datadog.apm.instrumentation.onDemand) (eq (include "clusterAgent-privateActionRunner-enabled" .) "true") (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether Kubernetes Actions should be delivered to the Cluster Agent through
+the Private Action Runner (datadog.kubernetesActions.communication.par).
+*/}}
+{{- define "kubernetesActions-par-enabled" -}}
+{{- if and .Values.datadog.kubernetesActions.enabled (.Values.datadog.kubernetesActions.communication).par -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Validate Kubernetes Actions configuration
+*/}}
+{{- define "validate-kubernetes-actions-config" -}}
+{{- if .Values.datadog.kubernetesActions.enabled -}}
+{{- if not (or (.Values.datadog.kubernetesActions.communication).rc (.Values.datadog.kubernetesActions.communication).par) -}}
+{{- fail "Kubernetes Actions: at least one of datadog.kubernetesActions.communication.rc or datadog.kubernetesActions.communication.par must be true" }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether the Cluster Agent Private Action Runner should be enabled, either
+explicitly (clusterAgent.privateActionRunner.enabled) or because Kubernetes Actions
+communicates through it (datadog.kubernetesActions.communication.par).
+*/}}
+{{- define "clusterAgent-privateActionRunner-enabled" -}}
+{{- if or .Values.clusterAgent.privateActionRunner.enabled (eq (include "kubernetesActions-par-enabled" .) "true") -}}
 true
 {{- else -}}
 false
@@ -1535,7 +1571,7 @@ false
 Validate Cluster Agent Private Action Runner configuration
 */}}
 {{- define "validate-private-action-runner-config" -}}
-{{- if .Values.clusterAgent.privateActionRunner.enabled -}}
+{{- if eq (include "clusterAgent-privateActionRunner-enabled" .) "true" -}}
 {{- if and .Values.clusterAgent.privateActionRunner.selfEnroll (not .Values.datadog.leaderElection) -}}
 {{- fail "Private Action Runner: selfEnroll requires leader election to be enabled. Please set datadog.leaderElection to true" }}
 {{- end -}}
