@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	appsv1 "k8s.io/api/apps/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 
 	"github.com/DataDog/helm-charts/test/common"
 )
@@ -108,4 +109,34 @@ func Test_KubernetesActions_Communication_PARRequiresLeaderElection(t *testing.T
 	})
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "selfEnroll requires leader election")
+}
+
+func Test_KubernetesActions_RBAC_CoversAllActions(t *testing.T) {
+	manifest, err := common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-kubernetes-actions-rbac.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.kubernetesActions.enabled": "true",
+		},
+	})
+	require.NoError(t, err)
+
+	var clusterRole rbacv1.ClusterRole
+	common.Unmarshal(t, manifest, &clusterRole)
+
+	verbsByResource := map[string][]string{}
+	for _, rule := range clusterRole.Rules {
+		for _, res := range rule.Resources {
+			verbsByResource[res] = append(verbsByResource[res], rule.Verbs...)
+		}
+	}
+	// One entry per Kubernetes API call made by the kubeactions executors
+	// (comp/kubeactions/kubeactions/impl in datadog-agent), shared by the RC and PAR paths.
+	assert.Subset(t, verbsByResource["pods"], []string{"get", "delete"})
+	assert.Subset(t, verbsByResource["deployments"], []string{"get", "patch", "update"})
+	assert.Subset(t, verbsByResource["daemonsets"], []string{"get", "patch"})
+	assert.Subset(t, verbsByResource["statefulsets"], []string{"get", "patch"})
+	assert.Subset(t, verbsByResource["replicasets"], []string{"get", "list"})
 }
