@@ -11,6 +11,9 @@ kubernetes_apiserver.yaml: |-
       collected_event_types:
 {{ .Values.datadog.kubernetesEvents.collectedEventTypes | toYaml | nindent 8 }}
       {{- end -}}
+{{- if .Values.datadog.kubernetesEvents.eventCollectionMode }}
+      event_collection_mode: {{ .Values.datadog.kubernetesEvents.eventCollectionMode }}
+{{- end }}
 {{- end }}
 {{- if .Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus }}
       use_component_status: false

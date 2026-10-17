@@ -477,6 +477,7 @@ datadog.kubelet.podResourcesSocketDir: spec.global.kubelet.podResourcesSocketPat
 datadog.kubelet.tlsVerify: spec.global.kubelet.tlsVerify
 datadog.kubelet.useApiServer: ""
 datadog.kubernetesEvents.collectedEventTypes: spec.features.eventCollection.collectedEventTypes
+datadog.kubernetesEvents.eventCollectionMode: ""
 datadog.kubernetesEvents.filteringEnabled: ""
 datadog.kubernetesEvents.sourceDetectionEnabled: ""
 datadog.kubernetesEvents.unbundleEvents: spec.features.eventCollection.unbundleEvents
