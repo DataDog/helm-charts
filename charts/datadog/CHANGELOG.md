@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.257.2
+
+* Leave Private Action Runner self-enrollment unset by default so the Agent controls its default. Explicit `selfEnroll: true` and `false` remain supported; the Cluster Agent now receives explicit `false` rather than silently falling back to its default. Enrollment prerequisites remain configured when unset.
+
 ## 3.257.1
 
 * Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.3 ([#2978](https://github.com/DataDog/helm-charts/pull/2978)).

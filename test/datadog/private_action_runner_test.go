@@ -100,6 +100,49 @@ func Test_PrivateActionRunner_Enabled_SelfEnroll(t *testing.T) {
 	assert.Contains(t, manifest, "datadog-private-action-runner-identity")
 }
 
+func Test_PrivateActionRunner_AgentEnrollmentDefault(t *testing.T) {
+	for _, setting := range []string{"omitted", "null"} {
+		t.Run(setting, func(t *testing.T) {
+			command := common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly: []string{
+					"templates/cluster-agent-deployment.yaml",
+					"templates/cluster-agent-rbac.yaml",
+					"templates/daemonset.yaml",
+					"templates/private-action-runner-configmap.yaml",
+				},
+				Overrides: map[string]string{
+					"clusterAgent.privateActionRunner.enabled":            "true",
+					"clusterAgent.privateActionRunner.identitySecretName": "custom-par-identity",
+					"datadog.apiKeyExistingSecret":                        "datadog-secret",
+					"datadog.privateActionRunner.enabled":                 "true",
+				},
+			}
+			if setting == "null" {
+				command.Overrides["clusterAgent.privateActionRunner.selfEnroll"] = "null"
+				command.Overrides["datadog.privateActionRunner.selfEnroll"] = "null"
+			}
+			manifest, err := common.RenderChart(t, command)
+			require.NoError(t, err)
+			assert.NotContains(t, manifest, DDPARSelfEnroll)
+			assert.NotContains(t, manifest, "self_enroll:")
+			assert.Contains(t, manifest, "DD_PRIVATE_ACTION_RUNNER_IDENTITY_USE_K8S_SECRET")
+			assert.Contains(t, manifest, DDPARIdentitySecret)
+			assert.Contains(t, manifest, "custom-par-identity")
+			assert.Contains(t, manifest, "name: datadog-private-action-runner")
+			assert.Contains(t, manifest, "kind: RoleBinding")
+			assert.NotContains(t, manifest, DDPARURN)
+			assert.NotContains(t, manifest, DDPARPrivateKey)
+
+			command.Overrides["datadog.leaderElection"] = "false"
+			_, err = common.RenderChart(t, command)
+			require.Error(t, err)
+			assert.Contains(t, err.Error(), "selfEnroll requires leader election to be enabled")
+		})
+	}
+}
+
 func Test_PrivateActionRunner_Enabled_WithCredentials(t *testing.T) {
 	manifest, err := common.RenderChart(t, common.HelmCommand{
 		ReleaseName: "datadog",
@@ -120,7 +163,7 @@ func Test_PrivateActionRunner_Enabled_WithCredentials(t *testing.T) {
 	envVars := selectPAREnvVars(deployment.Spec.Template.Spec.Containers[0].Env)
 
 	assert.Equal(t, "true", envVars[DDPAREnabled])
-	assert.Empty(t, envVars[DDPARSelfEnroll])
+	assert.Equal(t, "false", envVars[DDPARSelfEnroll])
 	assert.Equal(t, "urn:datadog:private-action-runner:organization:123:runner:abc", envVars[DDPARURN])
 	assert.Equal(t, "test-private-key", envVars[DDPARPrivateKey])
 }
@@ -142,6 +185,7 @@ func Test_PrivateActionRunner_Enabled_WithExistingSecret(t *testing.T) {
 	var deployment appsv1.Deployment
 	common.Unmarshal(t, manifest, &deployment)
 	container := deployment.Spec.Template.Spec.Containers[0]
+	assert.Equal(t, "false", selectPAREnvVars(container.Env)[DDPARSelfEnroll])
 
 	// Find URN env var and verify it uses valueFrom
 	var urnEnv, privateKeyEnv *corev1.EnvVar

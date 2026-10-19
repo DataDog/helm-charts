@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.257.1](https://img.shields.io/badge/Version-3.257.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.257.2](https://img.shields.io/badge/Version-3.257.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -679,7 +679,7 @@ helm install <RELEASE_NAME> \
 | clusterAgent.privateActionRunner.identitySecretName | string | `"datadog-private-action-runner-identity"` | Name of the Kubernetes secret used to store PAR identity when self-enrollment is enabled # The Cluster Agent will create and manage this secret for storing the enrolled runner's URN and private key # RBAC permissions are granted specifically for this secret name |
 | clusterAgent.privateActionRunner.k8sRemediationEnabled | bool | `false` | Enable k8s remediation RBAC for the Private Action Runner # When enabled, a ClusterRole and ClusterRoleBinding are created granting the Cluster Agent # permissions to read/patch workloads (Deployments, DaemonSets, StatefulSets, ReplicaSets, Pods) # and manage ConfigMaps and Events cluster-wide. |
 | clusterAgent.privateActionRunner.privateKey | string | `nil` | Private key for the Private Action Runner (required if selfEnroll is false) # This key is used to authenticate the runner with Datadog |
-| clusterAgent.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a Kubernetes secret. Requires leader election to be enabled. |
+| clusterAgent.privateActionRunner.selfEnroll | bool | `nil` | Override the Agent's self-enrollment setting. Leave unset to use the Agent default. # When enabled, the runner will automatically register itself with Datadog # and store its identity in a Kubernetes secret. Leader election is required unless self-enrollment is explicitly disabled. |
 | clusterAgent.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |
 | clusterAgent.rbac.automountServiceAccountToken | bool | `true` | If true, automatically mount the ServiceAccount's API credentials if clusterAgent.rbac.create is true |
 | clusterAgent.rbac.create | bool | `true` | If true, create & use RBAC resources |
@@ -968,7 +968,7 @@ helm install <RELEASE_NAME> \
 | datadog.privateActionRunner.enabled | bool | `false` | Enable the Private Action Runner on the node agent to execute workflow actions |
 | datadog.privateActionRunner.identityFromExistingSecret | string | `nil` | Use existing Secret which stores the Private Action Runner URN and private key # The secret should contain 'urn' and 'private_key' keys # If set, this parameter takes precedence over "urn" and "privateKey" |
 | datadog.privateActionRunner.privateKey | string | `nil` | Private key for the Private Action Runner (required if selfEnroll is false) # This key is used to authenticate the runner with Datadog |
-| datadog.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a local file. Requires leader election to be enabled. |
+| datadog.privateActionRunner.selfEnroll | bool | `nil` | Override the Agent's self-enrollment setting. Leave unset to use the Agent default. # When enabled, the runner will automatically register itself with Datadog # and store its identity in a local file. |
 | datadog.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |
 | datadog.processAgent.containerCollection | bool | `true` | Set this to true to enable container collection # ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm |
 | datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
