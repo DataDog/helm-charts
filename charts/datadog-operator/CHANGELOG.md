@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.30.0
+
+* Update Datadog Operator chart for 1.31.1.
+
 ## 2.29.0
 
 * [datadog-operator] Add Kueue RBAC to the Operator ClusterRole ([#2976](https://github.com/DataDog/helm-charts/pull/2976)).
