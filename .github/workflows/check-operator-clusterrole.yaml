@@ -1,0 +1,42 @@
+name: Check Operator ClusterRole
+
+# Fails when the auto-generated section of the datadog-operator ClusterRole is
+# edited by hand. That section is regenerated from the upstream operator
+# config/rbac/role.yaml by scripts/update-clusterrole.py on every operator
+# release, so hand edits there get silently dropped. Manual RBAC patches belong
+# in the MANUAL RULES section of clusterrole.yaml, which the script preserves.
+on:
+  pull_request:
+    paths:
+      - "charts/datadog-operator/templates/clusterrole.yaml"
+      - "scripts/update-clusterrole.py"
+      - ".github/workflows/check-operator-clusterrole.yaml"
+
+# Permission forced by repo-level setting; only elevate on job-level
+permissions:
+  contents: read
+
+jobs:
+  clusterrole-idempotent:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: 3.14
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Regenerate clusterrole.yaml from upstream role.yaml
+        run: |
+          version=$(awk '/^appVersion:/ {print $2}' charts/datadog-operator/Chart.yaml | tr -d '"')
+          upstream_url="https://raw.githubusercontent.com/DataDog/datadog-operator/v${version}/config/rbac/role.yaml"
+          echo "Regenerating against ${upstream_url}"
+          curl --silent --show-error --fail --location -o "$RUNNER_TEMP/role.yaml" "$upstream_url"
+          python3 scripts/update-clusterrole.py "$RUNNER_TEMP/role.yaml" charts/datadog-operator/templates/clusterrole.yaml
+      - name: Check for diff
+        run: |
+          if ! git diff --exit-code -- charts/datadog-operator/templates/clusterrole.yaml; then
+            echo "::error file=charts/datadog-operator/templates/clusterrole.yaml::The auto-generated section of clusterrole.yaml does not match upstream role.yaml for this operator version (diff above). It is regenerated on every operator release, so hand edits there will be dropped. Move manual RBAC rules into the MANUAL RULES section."
+            exit 1
+          fi
