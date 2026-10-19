@@ -236,10 +236,14 @@ phase_crds() {
     (cd "$ROOT_DIR" && bash "$chart_dir/update-crds.sh" "v${OPERATOR_VERSION}")
     success "CRDs downloaded and formatted"
 
-    # During RC, if update-crds.sh produced no changes, skip the rest —
-    # a previous RC already has the CRDs we need.
-    if is_rc "$OPERATOR_VERSION" && git diff --quiet -- "$chart_dir"; then
-        info "No CRD changes detected for this RC, skipping CRDs chart bump."
+    # If update-crds.sh produced no changes, skip the rest — the current chart
+    # already has the CRDs we need. The exception is a final release on top of
+    # a -dev chart version, which still needs the suffix stripped. This also
+    # covers patch releases (e.g. 1.31.1) that have no RCs and no CRD changes.
+    local current_version
+    current_version=$(get_chart_version "$chart_yaml")
+    if git diff --quiet -- "$chart_dir" && { is_rc "$OPERATOR_VERSION" || ! is_dev "$current_version"; }; then
+        info "No CRD changes detected, skipping CRDs chart bump."
         return 0
     fi
 
