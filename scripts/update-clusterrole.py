@@ -4,7 +4,8 @@ Update the datadog-operator clusterrole.yaml from upstream operator role.yaml.
 
 Downloads the upstream config/rbac/role.yaml, filters out resources that are
 handled by conditional blocks in the helm chart, adds template directives,
-and reconstructs clusterrole.yaml preserving the header and conditional blocks.
+and reconstructs clusterrole.yaml preserving the header and everything from the
+MANUAL RULES marker onward (hand-maintained rules and conditional blocks).
 
 Usage:
     python3 update-clusterrole.py <upstream_role_yaml> <clusterrole_yaml>
@@ -58,7 +59,20 @@ metadata:
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
 rules:
+{{- /*
+  ============================================================================
+  AUTO-GENERATED RULES: DO NOT EDIT BY HAND
+  ============================================================================
+  Everything between here and the "MANUAL RULES" marker below is regenerated
+  from the upstream operator config/rbac/role.yaml by
+  scripts/update-clusterrole.py on every operator release. Hand edits in this
+  section WILL be dropped. Put manual RBAC patches in the MANUAL RULES section.
+*/}}
 """
+
+# Marks the start of the hand-maintained tail of clusterrole.yaml. Everything
+# from the line containing this marker to EOF is preserved verbatim.
+MANUAL_RULES_MARKER = "MANUAL RULES: hand-maintained"
 
 
 def quote_val(v):
@@ -139,16 +153,23 @@ def add_template_directives(lines):
     return result
 
 
-def extract_conditional_blocks(clusterrole_file):
-    """Extract the conditional blocks from the current clusterrole.yaml."""
+def extract_preserved_tail(clusterrole_file):
+    """Extract the manual rules and conditional blocks from the current clusterrole.yaml."""
     with open(clusterrole_file) as f:
         lines = f.readlines()
 
-    # Find where conditional blocks start: first {{- if .Values. after the rules header
+    # The manual rules section starts at the "{{- /*" line that opens the marker comment.
     for i, line in enumerate(lines):
-        if "{{- if .Values." in line and i > 7:
-            return "".join(lines[i:])
-    return ""
+        if MANUAL_RULES_MARKER in line:
+            start = i
+            while start > 0 and not lines[start].lstrip().startswith("{{- /*"):
+                start -= 1
+            return "".join(lines[start:])
+
+    sys.exit(
+        f"error: '{MANUAL_RULES_MARKER}' marker not found in {clusterrole_file}; "
+        "refusing to regenerate and drop manual rules"
+    )
 
 
 def main():
@@ -170,13 +191,13 @@ def main():
 
     main_lines = add_template_directives(main_lines)
 
-    conditional_blocks = extract_conditional_blocks(clusterrole_file)
+    preserved_tail = extract_preserved_tail(clusterrole_file)
 
     with open(clusterrole_file, "w") as f:
         f.write(HEADER)
         f.write("\n".join(main_lines))
         f.write("\n")
-        f.write(conditional_blocks)
+        f.write(preserved_tail)
 
 
 if __name__ == "__main__":
