@@ -33,7 +33,7 @@
           name: {{ template "datadog.appKeySecretName" . }}
           key: app-key
     {{- end }}
-    {{- if and (not .Values.datadog.privateActionRunner.selfEnroll) .Values.datadog.privateActionRunner.identityFromExistingSecret }}
+    {{- if and (eq .Values.datadog.privateActionRunner.selfEnroll false) .Values.datadog.privateActionRunner.identityFromExistingSecret }}
     - name: DD_PRIVATE_ACTION_RUNNER_URN
       valueFrom:
         secretKeyRef:

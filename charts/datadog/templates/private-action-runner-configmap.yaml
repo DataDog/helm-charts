@@ -14,10 +14,10 @@ data:
   privateactionrunner.yaml: |
     private_action_runner:
       enabled: true
-      {{- if .Values.datadog.privateActionRunner.selfEnroll }}
-      self_enroll: true
-      {{- else }}
-      self_enroll: false
+      {{- if ne .Values.datadog.privateActionRunner.selfEnroll nil }}
+      self_enroll: {{ .Values.datadog.privateActionRunner.selfEnroll }}
+      {{- end }}
+      {{- if eq .Values.datadog.privateActionRunner.selfEnroll false }}
       {{- if .Values.datadog.privateActionRunner.urn }}
       urn: {{ .Values.datadog.privateActionRunner.urn | quote }}
       {{- end }}

@@ -588,10 +588,10 @@ datadog:
     # datadog.privateActionRunner.enabled -- Enable the Private Action Runner on the node agent to execute workflow actions
     enabled: false
 
-    # datadog.privateActionRunner.selfEnroll -- Enable self-enrollment for the Private Action Runner
-    ## When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys
-    ## and store its identity in a local file. Requires leader election to be enabled.
-    selfEnroll: true
+    # datadog.privateActionRunner.selfEnroll -- (bool) Override the Agent's self-enrollment setting. Leave unset to use the Agent default.
+    ## When enabled, the runner will automatically register itself with Datadog
+    ## and store its identity in a local file.
+    selfEnroll: null
 
     # datadog.privateActionRunner.urn -- URN of the Private Action Runner (required if selfEnroll is false)
     ## Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id>
@@ -1974,10 +1974,10 @@ clusterAgent:
     # clusterAgent.privateActionRunner.enabled -- Enable the Private Action Runner to execute workflow actions
     enabled: false
 
-    # clusterAgent.privateActionRunner.selfEnroll -- Enable self-enrollment for the Private Action Runner
-    ## When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys
-    ## and store its identity in a Kubernetes secret. Requires leader election to be enabled.
-    selfEnroll: true
+    # clusterAgent.privateActionRunner.selfEnroll -- (bool) Override the Agent's self-enrollment setting. Leave unset to use the Agent default.
+    ## When enabled, the runner will automatically register itself with Datadog
+    ## and store its identity in a Kubernetes secret. Leader election is required unless self-enrollment is explicitly disabled.
+    selfEnroll: null
 
     # clusterAgent.privateActionRunner.identitySecretName -- Name of the Kubernetes secret used to store PAR identity when self-enrollment is enabled
     ## The Cluster Agent will create and manage this secret for storing the enrolled runner's URN and private key

@@ -973,7 +973,11 @@ To complete the migration:
 {{- if .Values.clusterAgent.privateActionRunner.enabled }}
 
 Cluster Agent Private Action Runner:
-{{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}
+{{- if eq .Values.clusterAgent.privateActionRunner.selfEnroll nil }}
+  Private Action Runner uses the Agent's default self-enrollment setting.
+  The identity secret and its permissions are configured for enrollment:
+    {{ .Values.clusterAgent.privateActionRunner.identitySecretName }}
+{{- else if .Values.clusterAgent.privateActionRunner.selfEnroll }}
   Private Action Runner is configured for self-enrollment.
   The runner will automatically register with Datadog and store its identity
   in the Kubernetes secret: {{ .Values.clusterAgent.privateActionRunner.identitySecretName }}
@@ -996,7 +1000,9 @@ Cluster Agent Private Action Runner:
 {{- if .Values.datadog.privateActionRunner.enabled }}
 
 Node Agent Private Action Runner (sidecar):
-{{- if .Values.datadog.privateActionRunner.selfEnroll }}
+{{- if eq .Values.datadog.privateActionRunner.selfEnroll nil }}
+  Private Action Runner uses the Agent's default self-enrollment setting.
+{{- else if .Values.datadog.privateActionRunner.selfEnroll }}
   Private Action Runner is configured for self-enrollment.
   The runner will automatically register with Datadog and store its identity in a local file.
 {{- else if .Values.datadog.privateActionRunner.identityFromExistingSecret }}

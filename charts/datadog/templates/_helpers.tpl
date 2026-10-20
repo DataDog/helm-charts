@@ -1536,10 +1536,10 @@ Validate Cluster Agent Private Action Runner configuration
 */}}
 {{- define "validate-private-action-runner-config" -}}
 {{- if .Values.clusterAgent.privateActionRunner.enabled -}}
-{{- if and .Values.clusterAgent.privateActionRunner.selfEnroll (not .Values.datadog.leaderElection) -}}
+{{- if and (ne .Values.clusterAgent.privateActionRunner.selfEnroll false) (not .Values.datadog.leaderElection) -}}
 {{- fail "Private Action Runner: selfEnroll requires leader election to be enabled. Please set datadog.leaderElection to true" }}
 {{- end -}}
-{{- if not .Values.clusterAgent.privateActionRunner.selfEnroll -}}
+{{- if eq .Values.clusterAgent.privateActionRunner.selfEnroll false -}}
 {{- if and (not .Values.clusterAgent.privateActionRunner.identityFromExistingSecret) (or (not .Values.clusterAgent.privateActionRunner.urn) (not .Values.clusterAgent.privateActionRunner.privateKey)) -}}
 {{- fail "Private Action Runner: when selfEnroll is disabled, you must provide either clusterAgent.privateActionRunner.identityFromExistingSecret or both clusterAgent.privateActionRunner.urn and clusterAgent.privateActionRunner.privateKey" }}
 {{- end -}}
@@ -1560,7 +1560,7 @@ Validate Node Agent Private Action Runner configuration
 {{- fail "Node Agent Private Action Runner split mode requires Datadog Agent 7.84.0 or newer." -}}
 {{- end -}}
 {{- end -}}
-{{- if not .Values.datadog.privateActionRunner.selfEnroll -}}
+{{- if eq .Values.datadog.privateActionRunner.selfEnroll false -}}
 {{- if and (not .Values.datadog.privateActionRunner.identityFromExistingSecret) (or (not .Values.datadog.privateActionRunner.urn) (not .Values.datadog.privateActionRunner.privateKey)) -}}
 {{- fail "Node Agent Private Action Runner: when selfEnroll is disabled, you must provide either datadog.privateActionRunner.identityFromExistingSecret or both datadog.privateActionRunner.urn and datadog.privateActionRunner.privateKey" }}
 {{- end -}}
