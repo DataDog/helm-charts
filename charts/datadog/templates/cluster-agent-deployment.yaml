@@ -116,7 +116,7 @@ spec:
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
           - cp
-          - -r
+          - -rf
         args:
           - /etc/datadog-agent
           - /opt

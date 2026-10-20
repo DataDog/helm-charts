@@ -3068,7 +3068,7 @@ spec:
             - /opt
           command:
             - cp
-            - -r
+            - -rf
           image: registry.datadoghq.com/cluster-agent:7.84.3
           imagePullPolicy: IfNotPresent
           name: init-volume
