@@ -1,5 +1,14 @@
 # Datadog changelog
 
+## 3.258.0
+
+* Bump Datadog Operator chart dependency to 2.30.0.
+* Bump Operator image tag to 1.31.1.
+
+## 3.257.2
+
+* Use `cp -rf` in the Cluster Agent `init-volume` init container so it can run again in the same pod, e.g. after an in-place node reboot, without failing on read-only files such as `private-action-runner/script-config.yaml`.
+
 ## 3.257.1
 
 * Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.3 ([#2978](https://github.com/DataDog/helm-charts/pull/2978)).
