@@ -146,7 +146,7 @@ podSecurity:
       - secret
 
 multiContainer:
-  # multiContainer.enabled -- Preview. Run the worker, deno-executor, browser-pool and traceroute-server as separate containers in one pod, none using `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Requires a private location image version that supports the multi-container layout. `podSecurityContext` applies to the pod and `securityContext` to the worker container, merged over hardened defaults.
+  # multiContainer.enabled -- Preview. Run the worker, deno-executor, browser-pool and traceroute-server as separate containers in one pod, none using `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Requires a private location image version >= 1.77.0; prerelease and custom tags are not supported. `podSecurityContext` applies to the pod and `securityContext` to the worker container, merged over hardened defaults.
   enabled: false
 
 
@@ -170,12 +170,17 @@ multiContainer:
     resources:
       requests:
         cpu: 200m
-        memory: 256Mi
+        memory: 1Gi
       limits:
         cpu: 200m
-        memory: 256Mi
+        memory: 1Gi
 
   browserPool:
+    adminTokenSecret:
+      # multiContainer.browserPool.adminTokenSecret.name -- Required in multi-container mode. Existing Secret containing a cryptographically random browser-pool admin token (at least 32 random bytes), shared by the worker and browser-pool. Created and rotated outside this chart.
+      name: ""
+      # multiContainer.browserPool.adminTokenSecret.key -- Key containing the admin token in the existing Secret. Restart the Deployment after rotating the token.
+      key: token
     # multiContainer.browserPool.maxConcurrent -- Concurrent browsers per replica. Past it the worker waits for a slot. Keep it at about twice the worker `concurrency` (default 10) and size `browserPool.resources` to match.
     maxConcurrent: 20
     # multiContainer.browserPool.maxBrowserIdleMs -- Reclaim a browser after this long without a request from the worker. Not a cap on test duration.
@@ -206,10 +211,15 @@ multiContainer:
         memory: 128Mi
 
   networkPolicy:
-    # multiContainer.networkPolicy.enabled -- Create an egress NetworkPolicy for the pod. Replaces the in-container `iptables` firewall of the single-container layout. Applies to every container in the pod, including the worker. Requires a CNI that enforces NetworkPolicies.
-    enabled: false
-    # multiContainer.networkPolicy.enableDefaultBlockedIpRanges -- Block the ranges in `defaultBlockedIPRanges`. Same as the worker `enableDefaultBlockedIpRanges` option.
-    enableDefaultBlockedIpRanges: false
+    # multiContainer.networkPolicy.mode -- Required in multi-container mode: `managed` creates a pod-wide egress NetworkPolicy; `external` creates none and leaves egress enforcement to the operator. Requires a CNI that enforces NetworkPolicies. Other policies can broaden access; ICMP filtering is CNI-dependent.
+    mode: ""
+    dns:
+      # multiContainer.networkPolicy.dns.to -- Required in managed mode. NetworkPolicy peers for DNS (TCP/UDP 53). Use namespace/pod selectors for cluster DNS or ipBlock CIDRs for NodeLocal/custom resolvers. There is no allow-all DNS exception.
+      to: []
+    # multiContainer.networkPolicy.additionalEgress -- Additional standard NetworkPolicy egress rules, for example access to an upstream proxy. These exceptions take precedence over blocked ranges.
+    additionalEgress: []
+    # multiContainer.networkPolicy.enableDefaultBlockedIpRanges -- Block the ranges in defaultBlockedIPRanges in managed mode. Explicit allowed ranges, DNS peers and additionalEgress can grant exceptions.
+    enableDefaultBlockedIpRanges: true
     # multiContainer.networkPolicy.defaultBlockedIPRanges -- IANA reserved ranges blocked when `enableDefaultBlockedIpRanges` is true. Same list as the worker, without `::ffff:0:0/96` (rejected in a NetworkPolicy, and covered by the IPv4 list).
     defaultBlockedIPRanges:
       IPv4:

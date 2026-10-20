@@ -25,19 +25,64 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 
 Set `multiContainer.enabled=true` to run the private location without `sudo`, `NET_ADMIN` or privilege escalation. The worker, `deno-executor`, `browser-pool` and `traceroute-server` run as separate containers in the same pod, from the same image. This layout is compatible with clusters that enforce `allowPrivilegeEscalation: false` and `readOnlyRootFilesystem: true`.
 
-This mode requires a private location image version that supports the multi-container layout.
+This mode requires a private location image version >= 1.77.0. The chart rejects older versions, prerelease tags and custom tags when this mode is enabled. Version 1.77.0 is not published yet; the examples below are for use once a compatible image is available.
 
 ```bash
 helm install <RELEASE_NAME> datadog/synthetics-private-location --devel \
   --set-file configFile=config.json \
+  --set image.tag=1.77.0 \
+  --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
+  --set multiContainer.networkPolicy.mode=external \
   --set multiContainer.enabled=true
 ```
 
-In this layout the worker cannot apply its `iptables` firewall. Set `multiContainer.networkPolicy.enabled=true` to restrict egress with a `NetworkPolicy` instead, and configure `multiContainer.networkPolicy.enableDefaultBlockedIpRanges`, `allowedIPRanges` and `blockedIPRanges` to match the `enableDefaultBlockedIpRanges`, `allowedIPRanges` and `blockedIPRanges` options of your worker configuration. The ranges blocked by `enableDefaultBlockedIpRanges` are listed in `multiContainer.networkPolicy.defaultBlockedIPRanges`. Override that value to change them. The `NetworkPolicy` applies to the whole pod, so it also restricts the worker traffic (for example to a proxy).
+Before installing, provision a Secret named `pl-browser-pool` in the release namespace with a `token` key containing at least 32 cryptographically random bytes (for example, hex-encoded). Use your secret manager or create it outside Helm. The chart references this Secret only in the worker and browser-pool containers; it does not generate or store the token in Helm values. Replicas share this credential. Restrict access to the Secret and restart the Deployment after rotating it, because environment variables do not reload automatically. The browser launcher must keep the admin token out of browser child-process environments.
+
+In this layout the worker cannot apply its `iptables` firewall. You must explicitly choose `multiContainer.networkPolicy.mode`:
+
+- `external`: the chart creates no policy. The operator is responsible for egress enforcement. The commands above use this mode; they do not restrict egress by themselves.
+- `managed`: the chart creates a pod-wide egress policy, blocking reserved ranges by default. Configure DNS resolver destinations and any necessary exceptions. The policy also restricts worker traffic, including upstream proxies.
+
+Example managed-mode values (verify the DNS labels match your cluster):
+
+```yaml
+image:
+  tag: "1.77.0"
+multiContainer:
+  enabled: true
+  browserPool:
+    adminTokenSecret:
+      name: pl-browser-pool
+      key: token
+  networkPolicy:
+    mode: managed
+    dns:
+      to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+    # Optional: allow an upstream proxy without opening the whole private subnet.
+    additionalEgress:
+      - to:
+          - ipBlock:
+              cidr: 10.20.30.40/32
+        ports:
+          - protocol: TCP
+            port: 3128
+```
+
+For NodeLocal or custom DNS, replace `dns.to` with resolver `ipBlock` entries, for example `cidr: 169.254.20.10/32`; use your cluster's actual resolver addresses. DNS exceptions allow TCP/UDP port 53 only. Namespace and pod selectors in the same peer are combined, not alternatives.
+
+Set `allowedIPRanges` and `blockedIPRanges` under `multiContainer.networkPolicy` to match the intended worker configuration; the chart cannot read configuration from an external Secret. `allowedIPRanges`, DNS destinations and `additionalEgress` grant exceptions even inside blocked ranges. Set `enableDefaultBlockedIpRanges=false` only if you intend to allow reserved ranges except for your explicit blocks.
+
+This policy is not a complete replacement for the in-container firewall: it requires a CNI that enforces NetworkPolicies, other policies can broaden access, and ICMP filtering depends on the CNI. It cannot isolate containers within a pod or block a pod from itself. Validate actual DNS, proxy, ICMP/traceroute and blocked-destination behavior on your CNI before relying on it. See [Kubernetes NetworkPolicy semantics](https://kubernetes.io/docs/concepts/services-networking/network-policies/).
 
 The `traceroute-server` container needs the `NET_RAW` capability. On clusters that enforce the `restricted` Pod Security Standard, set `multiContainer.tracerouteServer.enabled=false`. Network path (traceroute) features are then not available.
 
-`podSecurityContext` applies to the pod and `securityContext` to the worker container. Both are merged over the hardened defaults, and your values take precedence.
+`podSecurityContext` applies to the pod and `securityContext` to the worker container. Both are merged over the hardened defaults, and your values take precedence. If `podSecurityContext.sysctls` supplies `net.ipv4.ping_group_range`, that value replaces the generated range; otherwise it defaults to the worker `securityContext.runAsGroup` (501). Ensure an explicit range includes the worker group. Duplicate sysctl names are rejected.
 
 ### OpenShift
 
@@ -46,6 +91,9 @@ The multi-container pod runs fixed non-root UIDs (501, 502 and 65534) with `fsGr
 ```bash
 helm install <RELEASE_NAME> datadog/synthetics-private-location --devel \
   --set-file configFile=config.json \
+  --set image.tag=1.77.0 \
+  --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
+  --set multiContainer.networkPolicy.mode=external \
   --set multiContainer.enabled=true \
   --set podSecurity.securityContextConstraints.create=true
 ```
@@ -76,18 +124,22 @@ If `extraVolumes` uses other volume types, add them to `podSecurity.securityCont
 | image.repository | string | `"gcr.io/datadoghq/synthetics-private-location-worker"` | Repository to use for Datadog Synthetics Private Location image |
 | image.tag | string | `"1.74.0"` | Define the Datadog Synthetics Private Location version to use |
 | imagePullSecrets | list | `[]` | Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials) |
+| multiContainer.browserPool.adminTokenSecret.key | string | `"token"` | Key containing the admin token in the existing Secret. Restart the Deployment after rotating the token. |
+| multiContainer.browserPool.adminTokenSecret.name | string | `""` | Required in multi-container mode. Existing Secret containing a cryptographically random browser-pool admin token (at least 32 random bytes), shared by the worker and browser-pool. Created and rotated outside this chart. |
 | multiContainer.browserPool.maxBrowserIdleMs | int | `300000` | Reclaim a browser after this long without a request from the worker. Not a cap on test duration. |
 | multiContainer.browserPool.maxConcurrent | int | `20` | Concurrent browsers per replica. Past it the worker waits for a slot. Keep it at about twice the worker `concurrency` (default 10) and size `browserPool.resources` to match. |
 | multiContainer.browserPool.resources | object | `{"limits":{"cpu":"2","memory":"6Gi"},"requests":{"cpu":"2","memory":"6Gi"}}` | Resource requests/limits for the browser-pool container |
 | multiContainer.browserPool.shmSizeLimit | string | `"2Gi"` | Size of the in-memory `/dev/shm` volume. The runtime default (64Mi) crashes renderers on heavier pages. |
 | multiContainer.denoExecutor.maxConcurrent | int | `10` | Concurrent `deno run` processes per replica. Past it the worker retries the run. |
-| multiContainer.denoExecutor.resources | object | `{"limits":{"cpu":"200m","memory":"256Mi"},"requests":{"cpu":"200m","memory":"256Mi"}}` | Resource requests/limits for the deno-executor container. Each JS-using test step uses ~30-50Mi. |
-| multiContainer.enabled | bool | `false` | Preview. Run the worker, deno-executor, browser-pool and traceroute-server as separate containers in one pod, none using `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Requires a private location image version that supports the multi-container layout. `podSecurityContext` applies to the pod and `securityContext` to the worker container, merged over hardened defaults. |
+| multiContainer.denoExecutor.resources | object | `{"limits":{"cpu":"200m","memory":"1Gi"},"requests":{"cpu":"200m","memory":"1Gi"}}` | Resource requests/limits for the deno-executor container. Each JS-using test step uses ~30-50Mi. |
+| multiContainer.enabled | bool | `false` | Preview. Run the worker, deno-executor, browser-pool and traceroute-server as separate containers in one pod, none using `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Requires a private location image version >= 1.77.0; prerelease and custom tags are not supported. `podSecurityContext` applies to the pod and `securityContext` to the worker container, merged over hardened defaults. |
+| multiContainer.networkPolicy.additionalEgress | list | `[]` | Additional standard NetworkPolicy egress rules, for example access to an upstream proxy. These exceptions take precedence over blocked ranges. |
 | multiContainer.networkPolicy.allowedIPRanges | object | `{"IPv4":[],"IPv6":[]}` | CIDRs that stay reachable even when inside a blocked range |
 | multiContainer.networkPolicy.blockedIPRanges | object | `{"IPv4":[],"IPv6":[]}` | Additional CIDRs to block, added to `defaultBlockedIPRanges` |
 | multiContainer.networkPolicy.defaultBlockedIPRanges | object | `{"IPv4":["0.0.0.0/8","10.0.0.0/8","100.64.0.0/10","127.0.0.0/8","169.254.0.0/16","172.16.0.0/12","192.0.0.0/24","192.0.0.0/29","192.0.0.8/32","192.0.0.9/32","192.0.0.10/32","192.0.0.170/32","192.0.0.171/32","192.0.2.0/24","192.31.196.0/24","192.52.193.0/24","192.88.99.0/24","192.168.0.0/16","192.175.48.0/24","198.18.0.0/15","198.51.100.0/24","203.0.113.0/24","240.0.0.0/4","224.0.0.0/4","255.255.255.255/32"],"IPv6":["::1/128","::/128","64:ff9b::/96","64:ff9b:1::/48","100::/64","2001::/23","2001::/32","2001:1::1/128","2001:1::2/128","2001:2::/48","2001:3::/32","2001:4:112::/48","2001:5::/32","2001:10::/28","2001:20::/28","2001:db8::/32","2002::/16","2620:4f:8000::/48","fc00::/7","fe80::/10"]}` | IANA reserved ranges blocked when `enableDefaultBlockedIpRanges` is true. Same list as the worker, without `::ffff:0:0/96` (rejected in a NetworkPolicy, and covered by the IPv4 list). |
-| multiContainer.networkPolicy.enableDefaultBlockedIpRanges | bool | `false` | Block the ranges in `defaultBlockedIPRanges`. Same as the worker `enableDefaultBlockedIpRanges` option. |
-| multiContainer.networkPolicy.enabled | bool | `false` | Create an egress NetworkPolicy for the pod. Replaces the in-container `iptables` firewall of the single-container layout. Applies to every container in the pod, including the worker. Requires a CNI that enforces NetworkPolicies. |
+| multiContainer.networkPolicy.dns.to | list | `[]` | Required in managed mode. NetworkPolicy peers for DNS (TCP/UDP 53). Use namespace/pod selectors for cluster DNS or ipBlock CIDRs for NodeLocal/custom resolvers. There is no allow-all DNS exception. |
+| multiContainer.networkPolicy.enableDefaultBlockedIpRanges | bool | `true` | Block the ranges in defaultBlockedIPRanges in managed mode. Explicit allowed ranges, DNS peers and additionalEgress can grant exceptions. |
+| multiContainer.networkPolicy.mode | string | `""` | Required in multi-container mode: `managed` creates a pod-wide egress NetworkPolicy; `external` creates none and leaves egress enforcement to the operator. Requires a CNI that enforces NetworkPolicies. Other policies can broaden access; ICMP filtering is CNI-dependent. |
 | multiContainer.terminationGracePeriodSeconds | int | `620` | Must stay above the browser-pool drain timeout (10 minutes) so in-flight browser tests can finish |
 | multiContainer.tracerouteServer.enabled | bool | `true` | Run the traceroute-server container, which needs the `NET_RAW` capability. Required for network path (traceroute) features. Disable on clusters enforcing the `restricted` Pod Security Standard. |
 | multiContainer.tracerouteServer.logLevel | string | `"info"` | Log level of the traceroute-server container (`debug`, `info`, `warn`, `error`). Set the worker log level with the worker `verbosity` option or `DATADOG_WORKER_LOG_VERBOSITY`. |

@@ -1,5 +1,13 @@
-{{- if and .Values.multiContainer.enabled .Values.multiContainer.networkPolicy.enabled }}
+{{- if and .Values.multiContainer.enabled (eq .Values.multiContainer.networkPolicy.mode "managed") }}
 {{- $np := .Values.multiContainer.networkPolicy }}
+{{- if not $np.dns.to }}
+{{- fail "multiContainer.networkPolicy.dns.to must specify DNS resolver peers in managed mode" }}
+{{- end }}
+{{- range $np.dns.to }}
+{{- if not (or (hasKey . "ipBlock") (hasKey . "namespaceSelector") (hasKey . "podSelector")) }}
+{{- fail "each multiContainer.networkPolicy.dns.to entry must specify an ipBlock, namespaceSelector or podSelector" }}
+{{- end }}
+{{- end }}
 {{- $rawIPv4 := $np.blockedIPRanges.IPv4 | default (list) }}
 {{- $rawIPv6 := $np.blockedIPRanges.IPv6 | default (list) }}
 {{- if $np.enableDefaultBlockedIpRanges }}
@@ -29,20 +37,16 @@ spec:
   policyTypes:
     - Egress
   egress:
-    - ports:
+    - to:
+        {{- toYaml $np.dns.to | nindent 8 }}
+      ports:
         - port: 53
           protocol: UDP
         - port: 53
           protocol: TCP
-    # Browsers reach the worker forward proxy on the pod IP (worker `managedPortRangeStart`/`End`).
-    - to:
-        - podSelector:
-            matchLabels:
-              {{- include "synthetics-private-location.selectorLabels" . | nindent 14 }}
-      ports:
-        - port: 30000
-          endPort: 40000
-          protocol: TCP
+    {{- with $np.additionalEgress }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
     {{- if $allowed }}
     - to:
         {{- range $allowed }}
