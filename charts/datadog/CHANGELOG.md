@@ -3,7 +3,6 @@
 ## 3.258.0
 
 * Bump Datadog Operator chart dependency to 2.30.0.
-* Bump Datadog CRD chart dependency to 2.25.0.
 * Bump Operator image tag to 1.31.1.
 
 ## 3.257.1
