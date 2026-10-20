@@ -1,5 +1,23 @@
 # Datadog changelog
 
+## 3.257.1
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.3 ([#2978](https://github.com/DataDog/helm-charts/pull/2978)).
+
+## 3.257.0
+
+* Grant the Cluster Agent read access to KubeAI custom resources collected by the orchestrator explorer.
+
+## 3.256.0
+
+* Collect Gateway API and Gateway API Inference Extension custom resources by default.
+
+## 3.255.0
+
+* Bump Datadog Operator chart dependency to 2.28.0.
+* Bump Datadog CRD chart dependency to 2.25.0.
+* Bump Operator image tag to 1.31.0.
+
 ## 3.254.1
 
 * Update `fips.image.tag` to `1.1.31` fixing CVEs and updating packages.
