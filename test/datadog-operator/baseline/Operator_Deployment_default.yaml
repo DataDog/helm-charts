@@ -7,9 +7,9 @@ metadata:
   namespace: datadog-agent
   labels:
     app.kubernetes.io/name: datadog-operator
-    helm.sh/chart: datadog-operator-2.30.0
+    helm.sh/chart: datadog-operator-2.31.0-dev.1
     app.kubernetes.io/instance: datadog-operator
-    app.kubernetes.io/version: "1.31.1"
+    app.kubernetes.io/version: "1.31.2-rc.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -35,7 +35,7 @@ spec:
       serviceAccountName: datadog-operator 
       containers:
         - name: datadog-operator
-          image: "registry.datadoghq.com/operator:1.31.1"
+          image: "registry.datadoghq.com/operator:1.31.2-rc.1"
           imagePullPolicy: IfNotPresent
           env:
             - name: WATCH_NAMESPACE
