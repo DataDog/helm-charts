@@ -354,6 +354,9 @@ phase_datadog() {
     prev_tag=$(awk '/^operator:/,0' "$values_yaml" | grep '^\s*tag:' | head -1 | awk '{print $2}')
     info "Previous operator image tag in datadog chart: ${prev_tag}"
 
+    local prev_crds_version
+    prev_crds_version=$(awk '/name: datadog-crds/ { found=1 } found && /version:/ { print $2; exit }' "$requirements")
+
     # Step 1: Update datadog-operator dependency in requirements.yaml
     step "Updating datadog-operator dependency to ${OPERATOR_CHART_VERSION}"
     update_dep_version "$requirements" "datadog-operator" "$OPERATOR_CHART_VERSION"
@@ -383,14 +386,25 @@ phase_datadog() {
 
     # Step 6: Add CHANGELOG entry
     step "Adding CHANGELOG entry for ${DATADOG_CHART_VERSION}"
-    add_changelog_entry "$changelog" "$DATADOG_CHART_VERSION" \
-        "* Bump Datadog Operator chart dependency to ${OPERATOR_CHART_VERSION}." \
-        "* Bump Datadog CRD chart dependency to ${CRDS_CHART_VERSION}." \
-        "* Bump Operator image tag to ${OPERATOR_VERSION}."
+    local entries=("* Bump Datadog Operator chart dependency to ${OPERATOR_CHART_VERSION}.")
+    if [[ "$prev_crds_version" != "$CRDS_CHART_VERSION" ]]; then
+        entries+=("* Bump Datadog CRD chart dependency to ${CRDS_CHART_VERSION}.")
+    fi
+    entries+=("* Bump Operator image tag to ${OPERATOR_VERSION}.")
+    add_changelog_entry "$changelog" "$DATADOG_CHART_VERSION" "${entries[@]}"
 
     # Step 7: Run helm-docs
     step "Running helm-docs..."
     run_helm_docs
+
+    # Step 8: Update test baselines
+    step "Updating test baselines (make update-test-baselines-datadog-agent)..."
+    if (cd "$ROOT_DIR" && make update-test-baselines-datadog-agent); then
+        success "Test baselines updated"
+    else
+        warn "Test baseline update failed (make update-test-baselines-datadog-agent)."
+        warn "Continuing without updated baselines -- Inspect for unit test failures from version bump."
+    fi
 
     success "=== Datadog chart phase complete ==="
 }
