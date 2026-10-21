@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.30.0
+
+* Bump private actions runner version to v1.22.1!
+
 ## 1.29.0
 
 * Bump private actions runner version to v1.22.0!
