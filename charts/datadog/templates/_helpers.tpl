@@ -1533,10 +1533,22 @@ false
 
 {{/*
 Returns whether Kubernetes Actions should be delivered to the Cluster Agent through
-the Private Action Runner (datadog.kubernetesActions.communication.par).
+Remote Configuration (datadog.kubernetesActions.communication.remoteConfiguration.enabled).
+*/}}
+{{- define "kubernetesActions-rc-enabled" -}}
+{{- if and .Values.datadog.kubernetesActions.enabled (((.Values.datadog.kubernetesActions.communication).remoteConfiguration).enabled) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether Kubernetes Actions should be delivered to the Cluster Agent through
+the Private Action Runner (datadog.kubernetesActions.communication.privateActionRunner.enabled).
 */}}
 {{- define "kubernetesActions-par-enabled" -}}
-{{- if and .Values.datadog.kubernetesActions.enabled (.Values.datadog.kubernetesActions.communication).par -}}
+{{- if and .Values.datadog.kubernetesActions.enabled (((.Values.datadog.kubernetesActions.communication).privateActionRunner).enabled) -}}
 true
 {{- else -}}
 false
@@ -1548,11 +1560,12 @@ Validate Kubernetes Actions configuration
 */}}
 {{- define "validate-kubernetes-actions-config" -}}
 {{- if .Values.datadog.kubernetesActions.enabled -}}
-{{- if not (or (.Values.datadog.kubernetesActions.communication).rc (.Values.datadog.kubernetesActions.communication).par) -}}
-{{- fail "Kubernetes Actions: at least one of datadog.kubernetesActions.communication.rc or datadog.kubernetesActions.communication.par must be true" }}
+{{- $rc := eq (include "kubernetesActions-rc-enabled" .) "true" -}}
+{{- if not (or $rc (eq (include "kubernetesActions-par-enabled" .) "true")) -}}
+{{- fail "Kubernetes Actions: at least one of datadog.kubernetesActions.communication.remoteConfiguration.enabled or datadog.kubernetesActions.communication.privateActionRunner.enabled must be true" }}
 {{- end -}}
-{{- if and (not (.Values.datadog.kubernetesActions.communication).rc) (ne (include "kubernetesActions-channel-toggles-supported" .) "true") -}}
-{{- fail "Kubernetes Actions: datadog.kubernetesActions.communication.rc=false requires Cluster Agent 7.86.0 or greater" }}
+{{- if and (not $rc) (ne (include "kubernetesActions-channel-toggles-supported" .) "true") -}}
+{{- fail "Kubernetes Actions: datadog.kubernetesActions.communication.remoteConfiguration.enabled=false requires Cluster Agent 7.86.0 or greater" }}
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -1573,7 +1586,7 @@ false
 {{/*
 Returns whether the Cluster Agent Private Action Runner should be enabled, either
 explicitly (clusterAgent.privateActionRunner.enabled) or because Kubernetes Actions
-communicates through it (datadog.kubernetesActions.communication.par).
+communicates through it (datadog.kubernetesActions.communication.privateActionRunner.enabled).
 */}}
 {{- define "clusterAgent-privateActionRunner-enabled" -}}
 {{- if or .Values.clusterAgent.privateActionRunner.enabled (eq (include "kubernetesActions-par-enabled" .) "true") -}}

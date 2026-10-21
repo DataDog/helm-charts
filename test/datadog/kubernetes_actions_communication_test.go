@@ -58,8 +58,8 @@ func Test_KubernetesActions_Communication_DefaultsToRC(t *testing.T) {
 
 func Test_KubernetesActions_Communication_PARAndRC(t *testing.T) {
 	manifest, envVars, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled":           "true",
-		"datadog.kubernetesActions.communication.par": "true",
+		"datadog.kubernetesActions.enabled":                                   "true",
+		"datadog.kubernetesActions.communication.privateActionRunner.enabled": "true",
 	})
 	require.NoError(t, err)
 
@@ -75,10 +75,10 @@ func Test_KubernetesActions_Communication_PARAndRC(t *testing.T) {
 
 func Test_KubernetesActions_Communication_PAROnly(t *testing.T) {
 	_, envVars, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled":           "true",
-		"datadog.kubernetesActions.communication.par": "true",
-		"datadog.kubernetesActions.communication.rc":  "false",
-		"clusterAgent.image.tag":                      channelTogglesDCATag,
+		"datadog.kubernetesActions.enabled":                                   "true",
+		"datadog.kubernetesActions.communication.privateActionRunner.enabled": "true",
+		"datadog.kubernetesActions.communication.remoteConfiguration.enabled": "false",
+		"clusterAgent.image.tag":                                              channelTogglesDCATag,
 	})
 	require.NoError(t, err)
 
@@ -99,7 +99,7 @@ func Test_KubernetesActions_Communication_RCOnly(t *testing.T) {
 
 	assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
 	assert.NotContains(t, envVars, DDKubeActionsRemoteConfigEnabled)
-	// par defaults to false: keep Kubernetes actions out of a PAR enabled for other workflows.
+	// privateActionRunner.enabled defaults to false: keep Kubernetes actions out of a PAR enabled for other workflows.
 	assert.Equal(t, "false", envVars[DDKubeActionsPAREnabled])
 	assert.NotContains(t, envVars, DDPAREnabled)
 }
@@ -118,22 +118,22 @@ func Test_KubernetesActions_Communication_PARDisabledWithPAREnabledForOtherWorkf
 
 func Test_KubernetesActions_Communication_RCDisabledRequiresClusterAgent786(t *testing.T) {
 	_, _, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled":           "true",
-		"datadog.kubernetesActions.communication.par": "true",
-		"datadog.kubernetesActions.communication.rc":  "false",
-		"clusterAgent.image.tag":                      "7.85.0",
+		"datadog.kubernetesActions.enabled":                                   "true",
+		"datadog.kubernetesActions.communication.privateActionRunner.enabled": "true",
+		"datadog.kubernetesActions.communication.remoteConfiguration.enabled": "false",
+		"clusterAgent.image.tag":                                              "7.85.0",
 	})
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "communication.rc=false requires Cluster Agent 7.86.0 or greater")
+	assert.Contains(t, err.Error(), "communication.remoteConfiguration.enabled=false requires Cluster Agent 7.86.0 or greater")
 }
 
 func Test_KubernetesActions_Communication_ChannelTogglesWithUncheckedTag(t *testing.T) {
 	_, envVars, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled":           "true",
-		"datadog.kubernetesActions.communication.par": "true",
-		"datadog.kubernetesActions.communication.rc":  "false",
-		"clusterAgent.image.tag":                      "my-custom-build",
-		"clusterAgent.image.doNotCheckTag":            "true",
+		"datadog.kubernetesActions.enabled":                                   "true",
+		"datadog.kubernetesActions.communication.privateActionRunner.enabled": "true",
+		"datadog.kubernetesActions.communication.remoteConfiguration.enabled": "false",
+		"clusterAgent.image.tag":                                              "my-custom-build",
+		"clusterAgent.image.doNotCheckTag":                                    "true",
 	})
 	require.NoError(t, err)
 
@@ -143,18 +143,18 @@ func Test_KubernetesActions_Communication_ChannelTogglesWithUncheckedTag(t *test
 
 func Test_KubernetesActions_Communication_NoneEnabled(t *testing.T) {
 	_, _, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled":           "true",
-		"datadog.kubernetesActions.communication.par": "false",
-		"datadog.kubernetesActions.communication.rc":  "false",
+		"datadog.kubernetesActions.enabled":                                   "true",
+		"datadog.kubernetesActions.communication.privateActionRunner.enabled": "false",
+		"datadog.kubernetesActions.communication.remoteConfiguration.enabled": "false",
 	})
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "at least one of datadog.kubernetesActions.communication.rc or datadog.kubernetesActions.communication.par must be true")
+	assert.Contains(t, err.Error(), "at least one of datadog.kubernetesActions.communication.remoteConfiguration.enabled or datadog.kubernetesActions.communication.privateActionRunner.enabled must be true")
 }
 
 func Test_KubernetesActions_Communication_PARIgnoredWhenFeatureDisabled(t *testing.T) {
 	_, envVars, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled":           "false",
-		"datadog.kubernetesActions.communication.par": "true",
+		"datadog.kubernetesActions.enabled":                                   "false",
+		"datadog.kubernetesActions.communication.privateActionRunner.enabled": "true",
 	})
 	require.NoError(t, err)
 
@@ -164,9 +164,9 @@ func Test_KubernetesActions_Communication_PARIgnoredWhenFeatureDisabled(t *testi
 
 func Test_KubernetesActions_Communication_PARRequiresLeaderElection(t *testing.T) {
 	_, _, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled":           "true",
-		"datadog.kubernetesActions.communication.par": "true",
-		"datadog.leaderElection":                      "false",
+		"datadog.kubernetesActions.enabled":                                   "true",
+		"datadog.kubernetesActions.communication.privateActionRunner.enabled": "true",
+		"datadog.leaderElection":                                              "false",
 	})
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "selfEnroll requires leader election")

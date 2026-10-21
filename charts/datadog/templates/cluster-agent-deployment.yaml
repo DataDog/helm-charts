@@ -441,11 +441,11 @@ spec:
           {{- /* Only emit a channel setting when turning that channel off, and only to a Cluster Agent
           that understands it, so older agents never log it as an unknown environment variable. */}}
           {{- if eq (include "kubernetesActions-channel-toggles-supported" .) "true" }}
-          {{- if not (.Values.datadog.kubernetesActions.communication).rc }}
+          {{- if ne (include "kubernetesActions-rc-enabled" .) "true" }}
           - name: DD_KUBEACTIONS_REMOTE_CONFIG_ENABLED
             value: "false"
           {{- end }}
-          {{- if not (.Values.datadog.kubernetesActions.communication).par }}
+          {{- if ne (include "kubernetesActions-par-enabled" .) "true" }}
           - name: DD_KUBEACTIONS_PRIVATE_ACTION_RUNNER_ENABLED
             value: "false"
           {{- end }}
