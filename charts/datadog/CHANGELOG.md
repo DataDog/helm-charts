@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.258.1
+
+* Pass the pod name to the node Agent using the Kubernetes downward API.
+
 ## 3.258.0
 
 * Bump Datadog Operator chart dependency to 2.30.0.

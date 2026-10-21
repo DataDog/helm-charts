@@ -74,6 +74,10 @@
 {{- end }}
 {{- end }}
   env:
+    - name: DD_POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
