@@ -96,6 +96,10 @@ func TestSecretReferenceAndHardening(t *testing.T) {
 				assert.Empty(t, tokens)
 			}
 			if container.Name == "deno-executor" {
+				require.NotNil(t, container.LivenessProbe)
+				require.NotNil(t, container.ReadinessProbe)
+				assert.EqualValues(t, 15, container.LivenessProbe.TimeoutSeconds)
+				assert.EqualValues(t, 15, container.ReadinessProbe.TimeoutSeconds)
 				assert.Equal(t, "1Gi", container.Resources.Requests.Memory().String())
 				assert.Equal(t, "1Gi", container.Resources.Limits.Memory().String())
 			}

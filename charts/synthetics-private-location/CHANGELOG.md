@@ -2,6 +2,8 @@
 
 ## 1.0.0
 
+* Allow 15 seconds for deno-executor readiness and liveness probes to accommodate health-check process startup under CPU limits.
+
 * Allocate 1Gi to deno-executor and clean stale browser profiles when browser-pool restarts.
 
 * (Preview) Add opt-in `multiContainer.enabled` to run the worker, `deno-executor`, `browser-pool` and `traceroute-server` as separate containers in one pod. No container uses `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Every container sets `readOnlyRootFilesystem`, `runAsNonRoot`, drops all capabilities (`traceroute-server` keeps `NET_RAW`) and uses the `RuntimeDefault` seccomp profile. Requires a private location image version >= 1.77.0; older versions, prerelease tags and custom tags are rejected. Nothing changes when `multiContainer.enabled` is `false`.
