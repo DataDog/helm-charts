@@ -235,8 +235,8 @@ func TestSysctlOverride(t *testing.T) {
 
 func TestTracerouteDisabledAndSCC(t *testing.T) {
 	command := multiContainerCommand(map[string]string{
-		"multiContainer.tracerouteServer.enabled":       "false",
-		"podSecurity.securityContextConstraints.create": "true",
+		"multiContainer.tracerouteServer.enabled":                      "false",
+		"multiContainer.podSecurity.securityContextConstraints.create": "true",
 	})
 	deployment := renderDeployment(t, command)
 	require.Len(t, deployment.Spec.Template.Spec.Containers, 3)

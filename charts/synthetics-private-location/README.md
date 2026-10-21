@@ -86,7 +86,7 @@ The `traceroute-server` container needs the `NET_RAW` capability. On clusters th
 
 ### OpenShift
 
-The multi-container pod runs fixed non-root UIDs (501, 502 and 65534) with `fsGroup` 502, and `traceroute-server` needs `NET_RAW`. The default `restricted-v2` SCC allows neither. Set `podSecurity.securityContextConstraints.create=true` to create an SCC that allows them and nothing more: no root, no privilege escalation, no privileged containers, a read-only root filesystem and all other capabilities dropped. Creating an SCC requires cluster-admin permissions.
+The multi-container pod runs fixed non-root UIDs (501, 502 and 65534) with `fsGroup` 502, and `traceroute-server` needs `NET_RAW`. The default `restricted-v2` SCC allows neither. Set `multiContainer.podSecurity.securityContextConstraints.create=true` to create an SCC that allows them and nothing more: no root, no privilege escalation, no privileged containers, a read-only root filesystem and all other capabilities dropped. Creating an SCC requires cluster-admin permissions.
 
 ```bash
 helm install <RELEASE_NAME> datadog/synthetics-private-location \
@@ -95,10 +95,10 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
   --set multiContainer.networkPolicy.mode=external \
   --set multiContainer.enabled=true \
-  --set podSecurity.securityContextConstraints.create=true
+  --set multiContainer.podSecurity.securityContextConstraints.create=true
 ```
 
-If `extraVolumes` uses other volume types, add them to `podSecurity.securityContextConstraints.volumes`.
+If `extraVolumes` uses other volume types, add them to `multiContainer.podSecurity.securityContextConstraints.volumes`.
 
 `env`, `envFrom` and `extraVolumeMounts` apply to the worker container only. Custom CA certificates mounted in the worker under `/etc/datadog/certs` are shared with `browser-pool`, and browsers send their traffic through the worker's proxy.
 
@@ -140,6 +140,8 @@ If `extraVolumes` uses other volume types, add them to `podSecurity.securityCont
 | multiContainer.networkPolicy.dns.to | list | `[]` | Required in managed mode. NetworkPolicy peers for DNS (TCP/UDP 53). Use namespace/pod selectors for cluster DNS or ipBlock CIDRs for NodeLocal/custom resolvers. There is no allow-all DNS exception. |
 | multiContainer.networkPolicy.enableDefaultBlockedIpRanges | bool | `true` | Block the ranges in defaultBlockedIPRanges in managed mode. Explicit allowed ranges, DNS peers and additionalEgress can grant exceptions. |
 | multiContainer.networkPolicy.mode | string | `""` | Required in multi-container mode: `managed` creates a pod-wide egress NetworkPolicy; `external` creates none and leaves egress enforcement to the operator. Requires a CNI that enforces NetworkPolicies. Other policies can broaden access; ICMP filtering is CNI-dependent. |
+| multiContainer.podSecurity.securityContextConstraints.create | bool | `false` | If true, create an OpenShift SecurityContextConstraints resource that allows the multi-container pod (fixed non-root UIDs, `NET_RAW` for traceroute-server). Requires `multiContainer.enabled`. |
+| multiContainer.podSecurity.securityContextConstraints.volumes | list | `["configMap","downwardAPI","emptyDir","projected","secret"]` | Allowed volume types. Add the types used by `extraVolumes`. |
 | multiContainer.terminationGracePeriodSeconds | int | `620` | Must stay above the browser-pool drain timeout (10 minutes) so in-flight browser tests can finish |
 | multiContainer.tracerouteServer.enabled | bool | `true` | Run the traceroute-server container, which needs the `NET_RAW` capability. Required for network path (traceroute) features. Disable on clusters enforcing the `restricted` Pod Security Standard. |
 | multiContainer.tracerouteServer.logLevel | string | `"info"` | Log level of the traceroute-server container (`debug`, `info`, `warn`, `error`). Set the worker log level with the worker `verbosity` option or `DATADOG_WORKER_LOG_VERBOSITY`. |
@@ -150,8 +152,6 @@ If `extraVolumes` uses other volume types, add them to `podSecurity.securityCont
 | podAnnotations | object | `{}` | Annotations to set to Datadog Synthetics Private Location PODs |
 | podDisruptionBudget | object | `{"enabled":false,"minAvailable":1}` | Allows to create and configure PodDisruptionBudget for Datadog Synthetics Private Location deployment |
 | podLabels | object | `{}` | Labels to be placed on pods managed by the deployment |
-| podSecurity.securityContextConstraints.create | bool | `false` | If true, create an OpenShift SecurityContextConstraints resource that allows the multi-container pod (fixed non-root UIDs, `NET_RAW` for traceroute-server). Requires `multiContainer.enabled`. |
-| podSecurity.securityContextConstraints.volumes | list | `["configMap","downwardAPI","emptyDir","projected","secret"]` | Allowed volume types. Add the types used by `extraVolumes`. |
 | podSecurityContext | object | `{}` | Security context to set to Datadog Synthetics Private Location PODs |
 | priorityClassName | string | `""` | Allows to specify PriorityClass for Datadog Synthetics Private Location PODs |
 | replicaCount | int | `1` | Number of instances of Datadog Synthetics Private Location |

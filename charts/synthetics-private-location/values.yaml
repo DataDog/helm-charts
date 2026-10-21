@@ -133,22 +133,21 @@ podDisruptionBudget:
   minAvailable: 1
   # maxUnavailable: 1
 
-podSecurity:
-  securityContextConstraints:
-    # podSecurity.securityContextConstraints.create -- If true, create an OpenShift SecurityContextConstraints resource that allows the multi-container pod (fixed non-root UIDs, `NET_RAW` for traceroute-server). Requires `multiContainer.enabled`.
-    create: false
-    # podSecurity.securityContextConstraints.volumes -- Allowed volume types. Add the types used by `extraVolumes`.
-    volumes:
-      - configMap
-      - downwardAPI
-      - emptyDir
-      - projected
-      - secret
-
 multiContainer:
   # multiContainer.enabled -- Preview. Run the worker, deno-executor, browser-pool and traceroute-server as separate containers in one pod, none using `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Requires a private location image version >= 1.77.0; prerelease and custom tags are not supported. `podSecurityContext` applies to the pod and `securityContext` to the worker container, merged over hardened defaults.
   enabled: false
 
+  podSecurity:
+    securityContextConstraints:
+      # multiContainer.podSecurity.securityContextConstraints.create -- If true, create an OpenShift SecurityContextConstraints resource that allows the multi-container pod (fixed non-root UIDs, `NET_RAW` for traceroute-server). Requires `multiContainer.enabled`.
+      create: false
+      # multiContainer.podSecurity.securityContextConstraints.volumes -- Allowed volume types. Add the types used by `extraVolumes`.
+      volumes:
+        - configMap
+        - downwardAPI
+        - emptyDir
+        - projected
+        - secret
 
   # multiContainer.terminationGracePeriodSeconds -- Must stay above the browser-pool drain timeout (10 minutes) so in-flight browser tests can finish
   terminationGracePeriodSeconds: 620

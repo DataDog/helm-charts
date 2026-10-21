@@ -86,7 +86,7 @@ The `traceroute-server` container needs the `NET_RAW` capability. On clusters th
 
 ### OpenShift
 
-The multi-container pod runs fixed non-root UIDs (501, 502 and 65534) with `fsGroup` 502, and `traceroute-server` needs `NET_RAW`. The default `restricted-v2` SCC allows neither. Set `podSecurity.securityContextConstraints.create=true` to create an SCC that allows them and nothing more: no root, no privilege escalation, no privileged containers, a read-only root filesystem and all other capabilities dropped. Creating an SCC requires cluster-admin permissions.
+The multi-container pod runs fixed non-root UIDs (501, 502 and 65534) with `fsGroup` 502, and `traceroute-server` needs `NET_RAW`. The default `restricted-v2` SCC allows neither. Set `multiContainer.podSecurity.securityContextConstraints.create=true` to create an SCC that allows them and nothing more: no root, no privilege escalation, no privileged containers, a read-only root filesystem and all other capabilities dropped. Creating an SCC requires cluster-admin permissions.
 
 ```bash
 helm install <RELEASE_NAME> datadog/synthetics-private-location \
@@ -95,10 +95,10 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
   --set multiContainer.networkPolicy.mode=external \
   --set multiContainer.enabled=true \
-  --set podSecurity.securityContextConstraints.create=true
+  --set multiContainer.podSecurity.securityContextConstraints.create=true
 ```
 
-If `extraVolumes` uses other volume types, add them to `podSecurity.securityContextConstraints.volumes`.
+If `extraVolumes` uses other volume types, add them to `multiContainer.podSecurity.securityContextConstraints.volumes`.
 
 `env`, `envFrom` and `extraVolumeMounts` apply to the worker container only. Custom CA certificates mounted in the worker under `/etc/datadog/certs` are shared with `browser-pool`, and browsers send their traffic through the worker's proxy.
 

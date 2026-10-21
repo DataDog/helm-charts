@@ -1,4 +1,4 @@
-{{- if and .Values.multiContainer.enabled .Values.podSecurity.securityContextConstraints.create }}
+{{- if and .Values.multiContainer.enabled .Values.multiContainer.podSecurity.securityContextConstraints.create }}
 kind: SecurityContextConstraints
 apiVersion: security.openshift.io/v1
 metadata:
@@ -38,5 +38,5 @@ allowHostNetwork: false
 allowHostPID: false
 allowHostPorts: false
 volumes:
-{{- toYaml .Values.podSecurity.securityContextConstraints.volumes | nindent 2 }}
+{{- toYaml .Values.multiContainer.podSecurity.securityContextConstraints.volumes | nindent 2 }}
 {{- end }}
