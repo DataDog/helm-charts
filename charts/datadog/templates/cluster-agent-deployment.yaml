@@ -438,8 +438,18 @@ spec:
           {{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.79.0-0" $dcaImageTag) }}
           - name: DD_KUBEACTIONS_ENABLED
             value: "true"
+          {{- /* Only emit a channel setting when turning that channel off, and only to a Cluster Agent
+          that understands it, so older agents never log it as an unknown environment variable. */}}
+          {{- if eq (include "kubernetesActions-channel-toggles-supported" .) "true" }}
+          {{- if not (.Values.datadog.kubernetesActions.communication).rc }}
           - name: DD_KUBEACTIONS_REMOTE_CONFIG_ENABLED
-            value: {{ (.Values.datadog.kubernetesActions.communication).rc | toString | quote }}
+            value: "false"
+          {{- end }}
+          {{- if not (.Values.datadog.kubernetesActions.communication).par }}
+          - name: DD_KUBEACTIONS_PRIVATE_ACTION_RUNNER_ENABLED
+            value: "false"
+          {{- end }}
+          {{- end }}
           {{- end }}
           {{- end }}
           - name: DD_KUBERNETES_USE_ENDPOINT_SLICES

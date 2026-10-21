@@ -1551,6 +1551,22 @@ Validate Kubernetes Actions configuration
 {{- if not (or (.Values.datadog.kubernetesActions.communication).rc (.Values.datadog.kubernetesActions.communication).par) -}}
 {{- fail "Kubernetes Actions: at least one of datadog.kubernetesActions.communication.rc or datadog.kubernetesActions.communication.par must be true" }}
 {{- end -}}
+{{- if and (not (.Values.datadog.kubernetesActions.communication).rc) (ne (include "kubernetesActions-channel-toggles-supported" .) "true") -}}
+{{- fail "Kubernetes Actions: datadog.kubernetesActions.communication.rc=false requires Cluster Agent 7.86.0 or greater" }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether the Cluster Agent understands the per-channel Kubernetes Actions settings
+(kubeactions.remote_config.enabled / kubeactions.private_action_runner.enabled), added in 7.86.0.
+*/}}
+{{- define "kubernetesActions-channel-toggles-supported" -}}
+{{- $dcaImageTag := .Values.clusterAgent.image.tag | toString -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.86.0-0" $dcaImageTag) -}}
+true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}
 

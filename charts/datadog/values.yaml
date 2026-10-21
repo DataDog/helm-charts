@@ -1190,12 +1190,14 @@ datadog:
     ## both can be enabled at the same time.
     communication:
       # datadog.kubernetesActions.communication.rc -- Receive Kubernetes actions through Remote Configuration.
-      # Setting this to false requires Cluster Agent version 7.86.0 or greater (older versions always use Remote Configuration).
+      # Setting this to false requires Cluster Agent version 7.86.0 or greater.
       rc: true
 
       # datadog.kubernetesActions.communication.par -- Receive Kubernetes actions through the Cluster Agent Private Action Runner.
       # When true, the Cluster Agent Private Action Runner is enabled automatically using the clusterAgent.privateActionRunner
-      # settings (self-enrollment by default, which requires datadog.leaderElection). Requires Cluster Agent version 7.84.0 or greater.
+      # settings (self-enrollment by default, which requires datadog.leaderElection). Requires Cluster Agent version 7.83.0 or greater.
+      # When false on Cluster Agent 7.86.0 or greater, Kubernetes actions are not allowed in the Private Action Runner even if it
+      # is enabled for other workflows.
       par: false
 
     helmActions:

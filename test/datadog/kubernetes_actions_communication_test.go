@@ -14,6 +14,10 @@ import (
 const (
 	DDKubeActionsEnabled             = "DD_KUBEACTIONS_ENABLED"
 	DDKubeActionsRemoteConfigEnabled = "DD_KUBEACTIONS_REMOTE_CONFIG_ENABLED"
+	DDKubeActionsPAREnabled          = "DD_KUBEACTIONS_PRIVATE_ACTION_RUNNER_ENABLED"
+
+	// First Cluster Agent version that understands the per-channel settings.
+	channelTogglesDCATag = "7.86.0"
 )
 
 func renderKubernetesActions(t *testing.T, overrides map[string]string) (string, map[string]string, error) {
@@ -44,7 +48,10 @@ func Test_KubernetesActions_Communication_DefaultsToRC(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
-	assert.Equal(t, "true", envVars[DDKubeActionsRemoteConfigEnabled])
+	// The default Cluster Agent predates the per-channel settings: emit neither, so it
+	// does not log them as unknown environment variables.
+	assert.NotContains(t, envVars, DDKubeActionsRemoteConfigEnabled)
+	assert.NotContains(t, envVars, DDKubeActionsPAREnabled)
 	assert.NotContains(t, envVars, DDPAREnabled, "PAR should not be enabled by default")
 	assert.NotContains(t, manifest, "datadog-private-action-runner", "PAR Role should not be created")
 }
@@ -57,7 +64,8 @@ func Test_KubernetesActions_Communication_PARAndRC(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
-	assert.Equal(t, "true", envVars[DDKubeActionsRemoteConfigEnabled])
+	assert.NotContains(t, envVars, DDKubeActionsRemoteConfigEnabled)
+	assert.NotContains(t, envVars, DDKubeActionsPAREnabled)
 	assert.Equal(t, "true", envVars[DDPAREnabled])
 	assert.Equal(t, "true", envVars[DDPARSelfEnroll])
 	assert.Equal(t, "datadog-private-action-runner-identity", envVars[DDPARIdentitySecret])
@@ -70,14 +78,67 @@ func Test_KubernetesActions_Communication_PAROnly(t *testing.T) {
 		"datadog.kubernetesActions.enabled":           "true",
 		"datadog.kubernetesActions.communication.par": "true",
 		"datadog.kubernetesActions.communication.rc":  "false",
+		"clusterAgent.image.tag":                      channelTogglesDCATag,
 	})
 	require.NoError(t, err)
 
 	assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
 	assert.Equal(t, "false", envVars[DDKubeActionsRemoteConfigEnabled])
+	assert.NotContains(t, envVars, DDKubeActionsPAREnabled)
 	assert.Equal(t, "true", envVars[DDPAREnabled])
 	// The PAR still needs Remote Configuration for its task-signing keys.
 	assert.Equal(t, "true", envVars["DD_REMOTE_CONFIGURATION_ENABLED"])
+}
+
+func Test_KubernetesActions_Communication_RCOnly(t *testing.T) {
+	_, envVars, err := renderKubernetesActions(t, map[string]string{
+		"datadog.kubernetesActions.enabled": "true",
+		"clusterAgent.image.tag":            channelTogglesDCATag,
+	})
+	require.NoError(t, err)
+
+	assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
+	assert.NotContains(t, envVars, DDKubeActionsRemoteConfigEnabled)
+	// par defaults to false: keep Kubernetes actions out of a PAR enabled for other workflows.
+	assert.Equal(t, "false", envVars[DDKubeActionsPAREnabled])
+	assert.NotContains(t, envVars, DDPAREnabled)
+}
+
+func Test_KubernetesActions_Communication_PARDisabledWithPAREnabledForOtherWorkflows(t *testing.T) {
+	_, envVars, err := renderKubernetesActions(t, map[string]string{
+		"datadog.kubernetesActions.enabled":        "true",
+		"clusterAgent.privateActionRunner.enabled": "true",
+		"clusterAgent.image.tag":                   channelTogglesDCATag,
+	})
+	require.NoError(t, err)
+
+	assert.Equal(t, "true", envVars[DDPAREnabled])
+	assert.Equal(t, "false", envVars[DDKubeActionsPAREnabled])
+}
+
+func Test_KubernetesActions_Communication_RCDisabledRequiresClusterAgent786(t *testing.T) {
+	_, _, err := renderKubernetesActions(t, map[string]string{
+		"datadog.kubernetesActions.enabled":           "true",
+		"datadog.kubernetesActions.communication.par": "true",
+		"datadog.kubernetesActions.communication.rc":  "false",
+		"clusterAgent.image.tag":                      "7.85.0",
+	})
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "communication.rc=false requires Cluster Agent 7.86.0 or greater")
+}
+
+func Test_KubernetesActions_Communication_ChannelTogglesWithUncheckedTag(t *testing.T) {
+	_, envVars, err := renderKubernetesActions(t, map[string]string{
+		"datadog.kubernetesActions.enabled":           "true",
+		"datadog.kubernetesActions.communication.par": "true",
+		"datadog.kubernetesActions.communication.rc":  "false",
+		"clusterAgent.image.tag":                      "my-custom-build",
+		"clusterAgent.image.doNotCheckTag":            "true",
+	})
+	require.NoError(t, err)
+
+	assert.Equal(t, "false", envVars[DDKubeActionsRemoteConfigEnabled])
+	assert.NotContains(t, envVars, DDKubeActionsPAREnabled)
 }
 
 func Test_KubernetesActions_Communication_NoneEnabled(t *testing.T) {
