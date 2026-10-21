@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.24.1
+## 2.25.0
 
 * Official image `2.24.1`
 
