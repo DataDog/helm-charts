@@ -39,14 +39,6 @@ rules:
   - apiGroups:
       - apps
     resources:
-      - daemonsets
-      - statefulsets
-    verbs:
-      - get
-      - patch
-  - apiGroups:
-      - apps
-    resources:
       - replicasets
     verbs:
       - get

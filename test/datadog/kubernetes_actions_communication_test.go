@@ -193,11 +193,13 @@ func Test_KubernetesActions_RBAC_CoversAllActions(t *testing.T) {
 			verbsByResource[res] = append(verbsByResource[res], rule.Verbs...)
 		}
 	}
-	// One entry per Kubernetes API call made by the kubeactions executors
-	// (comp/kubeactions/kubeactions/impl in datadog-agent), shared by the RC and PAR paths.
+	// One entry per Kubernetes API call made by the kubeactions executors exposed in the
+	// Datadog UI (comp/kubeactions/kubeactions/impl in datadog-agent), shared by the RC and PAR paths.
 	assert.Subset(t, verbsByResource["pods"], []string{"get", "delete"})
 	assert.Subset(t, verbsByResource["deployments"], []string{"get", "patch", "update"})
-	assert.Subset(t, verbsByResource["daemonsets"], []string{"get", "patch"})
-	assert.Subset(t, verbsByResource["statefulsets"], []string{"get", "patch"})
+	// The patch DaemonSet / StatefulSet actions are not exposed in the Datadog UI:
+	// do not grant cluster-wide patch on those workloads.
+	assert.NotContains(t, verbsByResource, "daemonsets")
+	assert.NotContains(t, verbsByResource, "statefulsets")
 	assert.Subset(t, verbsByResource["replicasets"], []string{"get", "list"})
 }

@@ -3,7 +3,7 @@
 ## 3.259.0
 
 * Add `datadog.kubernetesActions.communication.rc` and `datadog.kubernetesActions.communication.par` to choose how the Cluster Agent receives Kubernetes actions. Setting `par: true` enables the Cluster Agent Private Action Runner automatically. On Cluster Agent 7.86.0+, `rc: false` disables the Remote Configuration channel and `par: false` keeps Kubernetes actions out of the Private Action Runner.
-* Grant the Cluster Agent the Kubernetes Actions RBAC for the patch DaemonSet / StatefulSet actions (`daemonsets`, `statefulsets`: get, patch) and for rollback deployment (`replicasets`: get, list).
+* Grant the Cluster Agent the Kubernetes Actions RBAC for rollback deployment (`replicasets`: get, list).
 
 ## 3.258.0
 
