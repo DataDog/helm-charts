@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.259.1
+
+* Pass the pod name to the node Agent using the Kubernetes downward API.
+
 ## 3.259.0
 
 * Add opt-in `datadog.jemalloc.enabled` for the Linux node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners, with explicit environment overrides taking precedence.

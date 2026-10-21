@@ -74,6 +74,10 @@
 {{- end }}
 {{- end }}
   env:
+    - name: DD_POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
     {{- if eq (include "should-enable-jemalloc" .) "true" }}
     {{- include "jemalloc-env" . | nindent 4 }}
     {{- end }}
