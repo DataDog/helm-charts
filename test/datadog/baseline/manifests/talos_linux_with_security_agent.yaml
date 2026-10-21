@@ -2480,6 +2480,9 @@ spec:
               mountPropagation: None
               name: debugfs
               readOnly: false
+            - mountPath: /sys/kernel/tracing
+              name: tracefs
+              readOnly: false
             - mountPath: /etc/datadog-agent
               name: config
               readOnly: true
@@ -2757,6 +2760,9 @@ spec:
         - hostPath:
             path: /sys/kernel/debug
           name: debugfs
+        - hostPath:
+            path: /sys/kernel/tracing
+          name: tracefs
         - emptyDir: {}
           name: sysprobe-socket-dir
         - hostPath:

@@ -2585,6 +2585,9 @@ spec:
               mountPropagation: None
               name: debugfs
               readOnly: false
+            - mountPath: /sys/kernel/tracing
+              name: tracefs
+              readOnly: false
             - mountPath: /sys/fs/bpf
               mountPropagation: None
               name: bpffs
@@ -2752,6 +2755,9 @@ spec:
         - hostPath:
             path: /sys/kernel/debug
           name: debugfs
+        - hostPath:
+            path: /sys/kernel/tracing
+          name: tracefs
         - hostPath:
             path: /sys/fs/bpf
           name: bpffs

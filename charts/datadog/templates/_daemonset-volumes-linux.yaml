@@ -104,6 +104,14 @@
 - hostPath:
     path: /sys/kernel/debug
   name: debugfs
+{{- if .Values.providers.talos.enabled }}
+{{- /* Talos mounts tracefs standalone at /sys/kernel/tracing instead of nesting it under
+       debugfs, and a hostPath mount is not recursive across sibling mounts, so debugfs
+       alone leaves system-probe without tracefs and eBPF probe init fails. */}}
+- hostPath:
+    path: /sys/kernel/tracing
+  name: tracefs
+{{- end }}
 {{- if .Values.datadog.networkMonitoring.enabled }}
 - hostPath:
     path: /sys/fs/bpf

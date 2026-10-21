@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.259.0
+
+* Add a `tracefs` (`/sys/kernel/tracing`) volume and `system-probe` mount when `providers.talos.enabled` is set.
+* Fix NPM, USM, OOM kill, TCP queue length, and CWS failing to load their eBPF probes on Talos.
+
 ## 3.258.1
 
 * Extend config sync (`DD_AGENT_IPC_PORT` / `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL`) to CWS direct send and compliance running in `system-probe`, alongside the CNM direct send case it already covered. `system-probe` submits these payloads itself and cannot resolve an `ENC[...]` secret handle, so without config sync a secret-backed `datadog.apiKey` would prevent it from shipping CWS events or compliance findings.
