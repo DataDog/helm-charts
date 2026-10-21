@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.261.0](https://img.shields.io/badge/Version-3.261.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.262.0](https://img.shields.io/badge/Version-3.262.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -823,6 +823,7 @@ helm install <RELEASE_NAME> \
 | datadog.csi.enabled | bool | `false` | Enable datadog csi driver Requires version 7.67 or later of the cluster agent Note:   - When set to true, the CSI driver subchart will be installed automatically.   - Do not install the CSI driver separately if this is enabled, or you may hit conflicts. |
 | datadog.dataPlane.dogstatsd.enabled | bool | `true` | Whether or not DogStatsD is enabled in the data plane |
 | datadog.dataPlane.enabled | bool | `false` | Whether or not the data plane is enabled  Requires version 7.74 or later of the Datadog Agent.  The data plane feature is currently in preview. Please reach out to your Datadog representative for more information. |
+| datadog.dataSecurity.enabled | bool | `false` | Data Security: when true, the Agent can run Data Security scans scheduled from Datadog. Requires `shared_library_check.enabled` to also be true. |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
 | datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
@@ -1038,6 +1039,7 @@ helm install <RELEASE_NAME> \
 | datadog.serviceMonitoring.tls.istio.enabled | bool | `nil` | Enable TLS monitoring for Istio services (Requires Agent 7.50.0+). Empty values use the default setting in the datadog agent. |
 | datadog.serviceMonitoring.tls.native.enabled | bool | `nil` | Enable TLS monitoring for native (openssl, libssl, gnutls) services (Requires Agent 7.51.0+). Empty values use the default setting in the datadog agent. |
 | datadog.serviceMonitoring.tls.nodejs.enabled | bool | `nil` | Enable TLS monitoring for Node.js services (Requires Agent 7.54.0+). Empty values use the default setting in the datadog agent. |
+| datadog.sharedLibraryCheck.enabled | bool | `false` | Set to true to enable shared library checks (`shared_library_check.enabled`) on the core Agent container. Data Security requires this to also be true. |
 | datadog.site | string | `nil` | The site of the Datadog intake to send Agent data to. (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | datadog.systemProbe.apparmor | string | `"unconfined"` | Specify a apparmor profile for system-probe |
 | datadog.systemProbe.bpfDebug | bool | `false` | Enable logging for kernel debug |

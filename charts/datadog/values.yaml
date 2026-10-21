@@ -1368,6 +1368,16 @@ datadog:
         # access tracking, and sets `hostPID: true` on the agent pod. Requires Agent 7.79.0+.
         enabled: false
 
+  # Data Security configuration
+  dataSecurity:
+    # datadog.dataSecurity.enabled -- Data Security: when true, the Agent can run Data Security scans scheduled from Datadog. Requires `shared_library_check.enabled` to also be true.
+    enabled: false
+
+  # Shared library check configuration
+  sharedLibraryCheck:
+    # datadog.sharedLibraryCheck.enabled -- Set to true to enable shared library checks (`shared_library_check.enabled`) on the core Agent container. Data Security requires this to also be true.
+    enabled: false
+
   ## Enable security agent and provide custom configs
   securityAgent:
     compliance:
