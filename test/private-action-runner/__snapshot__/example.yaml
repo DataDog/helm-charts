@@ -6,10 +6,10 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.29.0
+    helm.sh/chart: private-action-runner-1.30.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.22.0"
+    app.kubernetes.io/version: "v1.22.1"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: private-action-runner/templates/secrets.yaml
@@ -204,10 +204,10 @@ metadata:
   name: example-test-private-action-runner-scripts
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.29.0
+    helm.sh/chart: private-action-runner-1.30.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.22.0"
+    app.kubernetes.io/version: "v1.22.1"
     app.kubernetes.io/managed-by: Helm
   annotations:
     checksum/scripts: 07b69ed4014b8716e5938f0efbe35e2c07897a48538054e6836a4b0fa9e7cc8d
@@ -273,10 +273,10 @@ metadata:
   name: example-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.29.0
+    helm.sh/chart: private-action-runner-1.30.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: example-test
-    app.kubernetes.io/version: "v1.22.0"
+    app.kubernetes.io/version: "v1.22.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -288,18 +288,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.29.0
+        helm.sh/chart: private-action-runner-1.30.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: example-test
-        app.kubernetes.io/version: "v1.22.0"
+        app.kubernetes.io/version: "v1.22.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: b7a24e5b8647b2922f11226776b916400096cf65343c7c365a213c80e5e22c29
+        checksum/values: 8b2fefba048f81217b2e0af75f722c9bb78bf827214595a242b6620ff4797763
     spec:
       serviceAccountName: example-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.22.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.22.1"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
