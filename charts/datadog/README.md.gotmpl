@@ -319,6 +319,14 @@ then upgrade your Datadog Helm chart:
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
+#### Process passwd mounts
+
+For stable Agent 7.x images at version 7.86.0 or later, eligible process containers mount host passwd read-only at `/host/etc/passwd`, preserving image-local accounts in `/etc/passwd`. Standard JMX, full, and FIPS variants are recognized. Older versions, aliases, prereleases, custom tags, and digest-pinned images retain `/etc/passwd`. `agents.image.doNotCheckTag` does not establish compatibility. GKE Autopilot retains the legacy destination pending an updated published allowlist. Existing mount exclusions and security-agent/system-probe mounts are unchanged.
+
+The chart does not inject `HOST_ETC`: the Agent normally initializes it to `/host/etc`. Explicit `HOST_ETC` and `ignore_host_etc` configuration remains effective. An empty/different `HOST_ETC`, or disabling initialization without setting `HOST_ETC=/host/etc`, prevents process lookup from using the new mount.
+
+**Known limitation:** the [process resolver change](https://github.com/DataDog/datadog-agent/pull/55789) does not update Gohai. Moving the core Agent mount can cause Gohai metadata to report numeric UIDs or image-local usernames instead of host usernames. A successful UID collision bypasses Gohai's numeric fallback. This is separate follow-up work; the version threshold covers Process Check and Process Discovery, not Gohai.
+
 ### Enabling NPM Collection
 
 The system-probe agent only runs in dedicated container environment. Update your `datadog-values.yaml` file with the NPM collection configuration:
