@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.0
+    app.kubernetes.io/version: 1.31.1
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -473,7 +473,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.0
+    app.kubernetes.io/version: 1.31.1
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -1111,6 +1111,17 @@ rules:
     resources:
       - ingressroutes
     verbs:
+      - list
+      - watch
+  - apiGroups:
+      - kueue.x-k8s.io
+    resources:
+      - clusterqueues
+      - localqueues
+      - resourceflavors
+      - workloads
+    verbs:
+      - get
       - list
       - watch
   - apiGroups:
@@ -2893,7 +2904,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.0
+    app.kubernetes.io/version: 1.31.1
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2952,7 +2963,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: registry.datadoghq.com/operator:1.31.0
+          image: registry.datadoghq.com/operator:1.31.1
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -3226,7 +3237,7 @@ spec:
             - /opt
           command:
             - cp
-            - -r
+            - -rf
           image: registry.datadoghq.com/cluster-agent:7.84.3
           imagePullPolicy: IfNotPresent
           name: init-volume

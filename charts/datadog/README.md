@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.257.2](https://img.shields.io/badge/Version-3.257.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.259.1](https://img.shields.io/badge/Version-3.259.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -34,7 +34,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 | https://helm.datadoghq.com | datadog-crds | 2.25.0 |
 | https://helm.datadoghq.com | datadog-instrumentation-crd(datadog-crds) | 2.25.0 |
 | https://helm.datadoghq.com | datadog-csi-driver | 0.18.0 |
-| https://helm.datadoghq.com | operator(datadog-operator) | 2.28.1 |
+| https://helm.datadoghq.com | operator(datadog-operator) | 2.30.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
 ## Quick start
@@ -866,6 +866,7 @@ helm install <RELEASE_NAME> \
 | datadog.hostVolumeMountPropagation | string | `"None"` | Allow to specify the `mountPropagation` value on all volumeMounts using HostPath |
 | datadog.ignoreAutoConfig | list | `[]` | List of integration to ignore auto_conf.yaml. |
 | datadog.instrumentationCrd.enabled | bool | `true` | Enable the DatadogInstrumentation CRD controller and reconciliation platform. Requires version 7.82.0 or later of both cluster and node agent. |
+| datadog.jemalloc.enabled | bool | `false` | Enable jemalloc for the node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners (Linux Agent 7.84.0+). |
 | datadog.kubeStateMetricsCore.annotationsAsTags | object | `{}` | Extra annotations to collect from resources and to turn into datadog tag. |
 | datadog.kubeStateMetricsCore.collectApiServicesMetrics | bool | `false` | Enable watching apiservices objects and collecting their corresponding metrics kubernetes_state.apiservice.* (Requires Cluster Agent 7.45.0+) |
 | datadog.kubeStateMetricsCore.collectConfigMaps | bool | `true` | Enable watching configmap objects and collecting their corresponding metrics kubernetes_state.configmap.* |
@@ -1099,7 +1100,7 @@ helm install <RELEASE_NAME> \
 | operator.datadogGenericResource.enabled | bool | `false` | Enables the Datadog Generic Resource controller |
 | operator.datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | operator.datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
-| operator.image.tag | string | `"1.31.0"` | Define the Datadog Operator version to use |
+| operator.image.tag | string | `"1.31.1"` | Define the Datadog Operator version to use |
 | operator.untaintController.enabled | bool | `false` | Enables the Datadog Operator untaint controller (removes the `agent.datadoghq.com/not-ready=presence:NoSchedule` startup taint once the Agent is ready) and adds the matching toleration to the Agent DaemonSet so it can schedule on tainted nodes. Requires Operator v1.28.0+ |
 | otelAgentGateway.additionalLabels | object | `{}` | Adds labels to the Agent Gateway workload and pods (applies to both `Deployment` and `StatefulSet`) |
 | otelAgentGateway.affinity | object | `{}` | Allow the Gateway to schedule using affinity rules (applies to both `Deployment` and `StatefulSet`) |
