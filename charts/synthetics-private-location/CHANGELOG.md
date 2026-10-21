@@ -1,6 +1,6 @@
 # Datadog changelog
 
-## 0.18.0-rc.1
+## 1.0.0
 
 * Allocate 1Gi to deno-executor and clean stale browser profiles when browser-pool restarts.
 

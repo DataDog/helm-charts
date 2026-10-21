@@ -28,7 +28,7 @@ Set `multiContainer.enabled=true` to run the private location without `sudo`, `N
 This mode requires a private location image version >= 1.77.0. The chart rejects older versions, prerelease tags and custom tags when this mode is enabled. Version 1.77.0 is not published yet; the examples below are for use once a compatible image is available.
 
 ```bash
-helm install <RELEASE_NAME> datadog/synthetics-private-location --devel \
+helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set-file configFile=config.json \
   --set image.tag=1.77.0 \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
@@ -89,7 +89,7 @@ The `traceroute-server` container needs the `NET_RAW` capability. On clusters th
 The multi-container pod runs fixed non-root UIDs (501, 502 and 65534) with `fsGroup` 502, and `traceroute-server` needs `NET_RAW`. The default `restricted-v2` SCC allows neither. Set `podSecurity.securityContextConstraints.create=true` to create an SCC that allows them and nothing more: no root, no privilege escalation, no privileged containers, a read-only root filesystem and all other capabilities dropped. Creating an SCC requires cluster-admin permissions.
 
 ```bash
-helm install <RELEASE_NAME> datadog/synthetics-private-location --devel \
+helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set-file configFile=config.json \
   --set image.tag=1.77.0 \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
