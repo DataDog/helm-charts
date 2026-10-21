@@ -1025,7 +1025,8 @@ datadog:
   processAgent:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
     # DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead.
-    ## Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled.
+    ## Note: host /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled.
+    ## Eligible process containers use /host/etc/passwd with stable Agent 7.x >= 7.86.0 (except GKE Autopilot); other images retain /etc/passwd.
     ## ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset
     enabled: true
 
@@ -1053,7 +1054,7 @@ datadog:
   # datadog.disableDefaultOsReleasePaths -- Set this to true to disable mounting datadog.osReleasePath in all containers
   disableDefaultOsReleasePaths: false
 
-  # datadog.disablePasswdMount -- Set this to true to disable mounting /etc/passwd in all containers
+  # datadog.disablePasswdMount -- Set this to true to disable mounting host /etc/passwd in all containers
   disablePasswdMount: false
 
   # datadog.osReleasePath -- Specify the path to your os-release file

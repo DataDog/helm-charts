@@ -393,7 +393,7 @@
       readOnly: true
     {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (and (eq (include "process-checks-enabled" .) "true") (eq (include "should-run-process-checks-on-core-agent" .) "true")) }}
     - name: passwd
-      mountPath: /etc/passwd
+      mountPath: {{ include "process-passwd-mount-path" . }}
       readOnly: true
     {{- end }}
     {{- end }}

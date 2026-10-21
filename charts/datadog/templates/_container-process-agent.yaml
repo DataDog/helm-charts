@@ -119,7 +119,7 @@
       readOnly: true
     {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery .Values.datadog.processAgent.containerCollection) }}
     - name: passwd
-      mountPath: /etc/passwd
+      mountPath: {{ include "process-passwd-mount-path" . }}
       readOnly: true
     {{- end }}
     - name: procdir

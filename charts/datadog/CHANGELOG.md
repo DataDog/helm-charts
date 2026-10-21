@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.258.2
+
+* Mount host passwd at `/host/etc/passwd` in eligible process containers for stable Agent 7.x versions >= 7.86.0. Preserve legacy mounts for old or unknown images and GKE Autopilot, and leave security mounts unchanged. Gohai username lookup remains a known limitation; see the README's process passwd mounts section.
+
 ## 3.258.1
 
 * Extend config sync (`DD_AGENT_IPC_PORT` / `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL`) to CWS direct send and compliance running in `system-probe`, alongside the CNM direct send case it already covered. `system-probe` submits these payloads itself and cannot resolve an `ENC[...]` secret handle, so without config sync a secret-backed `datadog.apiKey` would prevent it from shipping CWS events or compliance findings.

@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.258.1](https://img.shields.io/badge/Version-3.258.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.258.2](https://img.shields.io/badge/Version-3.258.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -325,6 +325,14 @@ then upgrade your Datadog Helm chart:
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
+
+#### Process passwd mounts
+
+For stable Agent 7.x images at version 7.86.0 or later, eligible process containers mount host passwd read-only at `/host/etc/passwd`, preserving image-local accounts in `/etc/passwd`. Standard JMX, full, and FIPS variants are recognized. Older versions, aliases, prereleases, custom tags, and digest-pinned images retain `/etc/passwd`. `agents.image.doNotCheckTag` does not establish compatibility. GKE Autopilot retains the legacy destination pending an updated published allowlist. Existing mount exclusions and security-agent/system-probe mounts are unchanged.
+
+The chart does not inject `HOST_ETC`: the Agent normally initializes it to `/host/etc`. Explicit `HOST_ETC` and `ignore_host_etc` configuration remains effective. An empty/different `HOST_ETC`, or disabling initialization without setting `HOST_ETC=/host/etc`, prevents process lookup from using the new mount.
+
+**Known limitation:** the [process resolver change](https://github.com/DataDog/datadog-agent/pull/55789) does not update Gohai. Moving the core Agent mount can cause Gohai metadata to report numeric UIDs or image-local usernames instead of host usernames. A successful UID collision bypasses Gohai's numeric fallback. This is separate follow-up work; the version threshold covers Process Check and Process Discovery, not Gohai.
 
 ### Enabling NPM Collection
 
@@ -825,7 +833,7 @@ helm install <RELEASE_NAME> \
 | datadog.dataPlane.enabled | bool | `false` | Whether or not the data plane is enabled  Requires version 7.74 or later of the Datadog Agent.  The data plane feature is currently in preview. Please reach out to your Datadog representative for more information. |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
-| datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
+| datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting host /etc/passwd in all containers |
 | datadog.discovery.enabled | bool | `nil` | Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`. |
 | datadog.discovery.networkStats.enabled | bool | `true` | Enable Service Discovery Network Stats |
 | datadog.discovery.serviceMap.enabled | bool | `false` | Enable Discovery Service Map (restricted USM) |
@@ -971,7 +979,7 @@ helm install <RELEASE_NAME> \
 | datadog.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a local file. Requires leader election to be enabled. |
 | datadog.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |
 | datadog.processAgent.containerCollection | bool | `true` | Set this to true to enable container collection # ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm |
-| datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
+| datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: host /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # Eligible process containers use /host/etc/passwd with stable Agent 7.x >= 7.86.0 (except GKE Autopilot); other images retain /etc/passwd. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
 | datadog.processAgent.processCollection | bool | `false` | Set this to true to enable process collection |
 | datadog.processAgent.processDiscovery | bool | `true` | Enables or disables autodiscovery of integrations |
 | datadog.processAgent.runInCoreAgent | bool | `true` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This requires Agent 7.60.0+ and Linux. # DEPRECATED: This behavior will be enabled by default for installations that meet the requirements. # For Agent 7.78.0+, this setting is ignored — process checks always run in the core agent on Linux. |
