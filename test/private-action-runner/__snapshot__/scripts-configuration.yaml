@@ -6,10 +6,10 @@ metadata:
   name: scripts-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.28.1
+    helm.sh/chart: private-action-runner-1.29.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: scripts-test
-    app.kubernetes.io/version: "v1.21.0"
+    app.kubernetes.io/version: "v1.22.0"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: private-action-runner/templates/secrets.yaml
@@ -44,10 +44,10 @@ metadata:
   name: scripts-test-private-action-runner-scripts
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.28.1
+    helm.sh/chart: private-action-runner-1.29.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: scripts-test
-    app.kubernetes.io/version: "v1.21.0"
+    app.kubernetes.io/version: "v1.22.0"
     app.kubernetes.io/managed-by: Helm
   annotations:
     checksum/scripts: 4851b03137485a89f46dace45318681a71dfca1317a040de2cb69d36929bd9f7
@@ -112,10 +112,10 @@ metadata:
   name: scripts-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.28.1
+    helm.sh/chart: private-action-runner-1.29.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: scripts-test
-    app.kubernetes.io/version: "v1.21.0"
+    app.kubernetes.io/version: "v1.22.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -127,18 +127,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.28.1
+        helm.sh/chart: private-action-runner-1.29.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: scripts-test
-        app.kubernetes.io/version: "v1.21.0"
+        app.kubernetes.io/version: "v1.22.0"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: b20ceb175ab8cfdb314cf2f78cebb25dacce7f2b7b2dcfb5da02d4f29f96d043
+        checksum/values: fb7412b06d8551c501151a486460ac165b5c2473b4c6421fa7d732feaa861c50
     spec:
       serviceAccountName: scripts-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.21.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.22.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

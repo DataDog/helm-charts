@@ -1,9 +1,18 @@
 # Datadog changelog
 
-## 3.258.0
+## 3.259.0
 
 * Add `datadog.kubernetesActions.communication.rc` and `datadog.kubernetesActions.communication.par` to choose how the Cluster Agent receives Kubernetes actions. Setting `par: true` enables the Cluster Agent Private Action Runner automatically; `rc: false` (Cluster Agent 7.86.0+) disables the Remote Configuration channel.
 * Grant the Cluster Agent the Kubernetes Actions RBAC for the patch DaemonSet / StatefulSet actions (`daemonsets`, `statefulsets`: get, patch) and for rollback deployment (`replicasets`: get, list).
+
+## 3.258.0
+
+* Bump Datadog Operator chart dependency to 2.30.0.
+* Bump Operator image tag to 1.31.1.
+
+## 3.257.2
+
+* Use `cp -rf` in the Cluster Agent `init-volume` init container so it can run again in the same pod, e.g. after an in-place node reboot, without failing on read-only files such as `private-action-runner/script-config.yaml`.
 
 ## 3.257.1
 
