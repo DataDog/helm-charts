@@ -74,6 +74,9 @@
 {{- end }}
 {{- end }}
   env:
+    {{- if eq (include "should-enable-jemalloc" .) "true" }}
+    {{- include "jemalloc-env" . | nindent 4 }}
+    {{- end }}
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
