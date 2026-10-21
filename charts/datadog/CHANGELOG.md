@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.259.0
+
+* Bump Datadog Operator chart dependency to 2.31.0.
+* Bump Operator image tag to 1.31.2.
+
 ## 3.258.0
 
 * Bump Datadog Operator chart dependency to 2.30.0.
