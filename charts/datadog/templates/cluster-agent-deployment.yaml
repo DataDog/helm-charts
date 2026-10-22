@@ -434,8 +434,7 @@ spec:
           {{- end }}
           {{- if .Values.datadog.kubernetesActions.enabled }}
           {{- include "validate-kubernetes-actions-config" . }}
-          {{- $dcaImageTag := .Values.clusterAgent.image.tag | toString }}
-          {{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.79.0-0" $dcaImageTag) }}
+          {{- if eq (include "kubernetesActions-supported" .) "true" }}
           - name: DD_KUBEACTIONS_ENABLED
             value: "true"
           {{- /* Only emit a channel setting when turning that channel off, and only to a Cluster Agent

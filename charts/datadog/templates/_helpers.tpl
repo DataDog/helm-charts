@@ -1544,14 +1544,24 @@ false
 {{- end -}}
 
 {{/*
+Returns whether the Cluster Agent supports the Kubernetes Actions feature (7.84.0 or greater).
+On older versions, datadog.kubernetesActions is ignored.
+*/}}
+{{- define "kubernetesActions-supported" -}}
+{{- $dcaImageTag := .Values.clusterAgent.image.tag | toString -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.84.0-0" $dcaImageTag) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Returns whether Kubernetes Actions should be delivered to the Cluster Agent through
 the Private Action Runner (datadog.kubernetesActions.communication.privateActionRunner.enabled).
-The Cluster Agent ships the Kubernetes Actions runner bundle from 7.83.0; on older versions the
-runner is not enabled for Kubernetes Actions.
 */}}
 {{- define "kubernetesActions-par-enabled" -}}
-{{- $dcaImageTag := .Values.clusterAgent.image.tag | toString -}}
-{{- if and .Values.datadog.kubernetesActions.enabled (((.Values.datadog.kubernetesActions.communication).privateActionRunner).enabled) (or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.83.0-0" $dcaImageTag)) -}}
+{{- if and .Values.datadog.kubernetesActions.enabled (((.Values.datadog.kubernetesActions.communication).privateActionRunner).enabled) (eq (include "kubernetesActions-supported" .) "true") -}}
 true
 {{- else -}}
 false

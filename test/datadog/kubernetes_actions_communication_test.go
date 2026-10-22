@@ -57,62 +57,45 @@ func Test_KubernetesActions_Communication_DefaultsToBothChannels(t *testing.T) {
 	assert.Contains(t, manifest, "datadog-private-action-runner-identity", "PAR identity secret RBAC should be created")
 }
 
-func Test_KubernetesActions_Communication_PARSkippedOnClusterAgentWithoutBundle(t *testing.T) {
+func Test_KubernetesActions_SkippedOnUnsupportedClusterAgent(t *testing.T) {
 	manifest, envVars, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled": "true",
-		"clusterAgent.image.tag":            "7.82.0",
-	})
-	require.NoError(t, err)
-
-	// The Kubernetes Actions runner bundle ships in Cluster Agent 7.83.0: do not enable
-	// a runner (and its RBAC) that cannot run Kubernetes actions.
-	assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
-	assert.NotContains(t, envVars, DDPAREnabled)
-	assert.NotContains(t, manifest, "datadog-private-action-runner", "PAR Role should not be created")
-}
-
-func Test_KubernetesActions_Communication_PAREnabledAtMinimumClusterAgent(t *testing.T) {
-	_, envVars, err := renderKubernetesActions(t, map[string]string{
 		"datadog.kubernetesActions.enabled": "true",
 		"clusterAgent.image.tag":            "7.83.0",
 	})
 	require.NoError(t, err)
 
-	assert.Equal(t, "true", envVars[DDPAREnabled])
+	// Kubernetes Actions requires Cluster Agent 7.84.0: nothing is configured on older versions.
+	assert.NotContains(t, envVars, DDKubeActionsEnabled)
+	assert.NotContains(t, envVars, DDPAREnabled)
+	assert.NotContains(t, manifest, "datadog-private-action-runner", "PAR Role should not be created")
+
+	_, err = common.RenderChart(t, common.HelmCommand{
+		ReleaseName: "datadog",
+		ChartPath:   "../../charts/datadog",
+		ShowOnly:    []string{"templates/cluster-agent-kubernetes-actions-rbac.yaml"},
+		Values:      []string{"../../charts/datadog/values.yaml"},
+		Overrides: map[string]string{
+			"datadog.kubernetesActions.enabled": "true",
+			"clusterAgent.image.tag":            "7.83.0",
+		},
+	})
+	require.Error(t, err, "the Kubernetes Actions ClusterRole should not be rendered")
+	assert.Contains(t, err.Error(), "could not find template")
 }
 
-func Test_KubernetesActions_Communication_PARAndRC(t *testing.T) {
-	manifest, envVars, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled":                                   "true",
-		"datadog.kubernetesActions.communication.privateActionRunner.enabled": "true",
-	})
-	require.NoError(t, err)
+func Test_KubernetesActions_EnabledAtMinimumClusterAgent(t *testing.T) {
+	for _, tag := range []string{"7.84.0", "7.84.0-rc.1"} {
+		t.Run(tag, func(t *testing.T) {
+			_, envVars, err := renderKubernetesActions(t, map[string]string{
+				"datadog.kubernetesActions.enabled": "true",
+				"clusterAgent.image.tag":            tag,
+			})
+			require.NoError(t, err)
 
-	assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
-	assert.NotContains(t, envVars, DDKubeActionsRemoteConfigEnabled)
-	assert.NotContains(t, envVars, DDKubeActionsPAREnabled)
-	assert.Equal(t, "true", envVars[DDPAREnabled])
-	assert.Equal(t, "true", envVars[DDPARSelfEnroll])
-	assert.Equal(t, "datadog-private-action-runner-identity", envVars[DDPARIdentitySecret])
-	assert.Equal(t, "true", envVars["DD_REMOTE_CONFIGURATION_ENABLED"])
-	assert.Contains(t, manifest, "datadog-private-action-runner-identity", "PAR identity secret RBAC should be created")
-}
-
-func Test_KubernetesActions_Communication_PAROnly(t *testing.T) {
-	_, envVars, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled":                                   "true",
-		"datadog.kubernetesActions.communication.privateActionRunner.enabled": "true",
-		"datadog.kubernetesActions.communication.remoteConfiguration.enabled": "false",
-		"clusterAgent.image.tag":                                              channelTogglesDCATag,
-	})
-	require.NoError(t, err)
-
-	assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
-	assert.Equal(t, "false", envVars[DDKubeActionsRemoteConfigEnabled])
-	assert.NotContains(t, envVars, DDKubeActionsPAREnabled)
-	assert.Equal(t, "true", envVars[DDPAREnabled])
-	// The PAR still needs Remote Configuration for its task-signing keys.
-	assert.Equal(t, "true", envVars["DD_REMOTE_CONFIGURATION_ENABLED"])
+			assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
+			assert.Equal(t, "true", envVars[DDPAREnabled])
+		})
+	}
 }
 
 func Test_KubernetesActions_Communication_RCOnly(t *testing.T) {
