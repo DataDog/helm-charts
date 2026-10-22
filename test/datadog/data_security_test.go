@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	ddDataSecurityEnabled       = "DD_DATA_SECURITY_ENABLED"
-	ddSharedLibraryCheckEnabled = "DD_SHARED_LIBRARY_CHECK_ENABLED"
+	ddDataSecurityEnabled        = "DD_DATA_SECURITY_ENABLED"
+	ddSharedLibraryCheckEnabled  = "DD_SHARED_LIBRARY_CHECK_ENABLED"
+	ddRemoteConfigurationEnabled = "DD_REMOTE_CONFIGURATION_ENABLED"
 )
 
 func renderDataSecurityDaemonSet(t *testing.T, overrides map[string]string) appsv1.DaemonSet {
@@ -68,6 +69,42 @@ func Test_dataSecurityEnabled(t *testing.T) {
 				assert.NotContains(t, env, ddDataSecurityEnabled)
 				assert.NotContains(t, env, ddSharedLibraryCheckEnabled)
 			}
+		})
+	}
+}
+
+// Enabling Data Security turns Remote Configuration on for the node Agent, unless the global switch is off.
+func Test_dataSecurityEnablesRemoteConfiguration(t *testing.T) {
+	tests := []struct {
+		name      string
+		overrides map[string]string
+		want      string
+	}{
+		{
+			name: "enabled despite datadog.remoteConfiguration disabled",
+			overrides: map[string]string{
+				"datadog.dataSecurity.enabled":        "true",
+				"datadog.remoteConfiguration.enabled": "false",
+			},
+			want: "true",
+		},
+		{
+			name: "global remoteConfiguration remains a kill switch",
+			overrides: map[string]string{
+				"datadog.dataSecurity.enabled": "true",
+				"remoteConfiguration.enabled":  "false",
+			},
+			want: "false",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			daemonSet := renderDataSecurityDaemonSet(t, tt.overrides)
+
+			agent, found := getContainer(t, daemonSet.Spec.Template.Spec.Containers, "agent")
+			require.True(t, found, "expected agent container")
+			assert.Equal(t, tt.want, getEnvVarMap(agent.Env)[ddRemoteConfigurationEnabled])
 		})
 	}
 }
