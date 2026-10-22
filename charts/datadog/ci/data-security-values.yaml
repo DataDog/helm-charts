@@ -6,5 +6,3 @@ datadog:
   site: datadoghq.eu
   dataSecurity:
     enabled: true
-  sharedLibraryCheck:
-    enabled: true

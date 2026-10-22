@@ -267,11 +267,9 @@
       value: "true"
     {{- end }}
     {{- end }}
-    {{- if and .Values.datadog.dataSecurity.enabled .Values.datadog.sharedLibraryCheck.enabled }}
+    {{- if .Values.datadog.dataSecurity.enabled }}
     - name: DD_DATA_SECURITY_ENABLED
       value: "true"
-    {{- end }}
-    {{- if .Values.datadog.sharedLibraryCheck.enabled }}
     - name: DD_SHARED_LIBRARY_CHECK_ENABLED
       value: "true"
     {{- end }}

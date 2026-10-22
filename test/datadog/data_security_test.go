@@ -40,40 +40,32 @@ func renderDataSecurityDaemonSet(t *testing.T, overrides map[string]string) apps
 	return daemonSet
 }
 
-// Data Security is set only when both flags are true. The shared library check follows its own flag.
-func Test_dataSecurityFlags(t *testing.T) {
+// datadog.dataSecurity.enabled sets both Data Security and the shared library check on the core agent.
+func Test_dataSecurityEnabled(t *testing.T) {
 	tests := []struct {
-		name               string
-		dataSecurity       string
-		sharedLibraryCheck string
-		wantDataSecurity   bool
-		wantSharedLibrary  bool
+		name    string
+		enabled string
+		want    bool
 	}{
-		{name: "both disabled", dataSecurity: "false", sharedLibraryCheck: "false"},
-		{name: "data security only", dataSecurity: "true", sharedLibraryCheck: "false"},
-		{name: "shared library check only", dataSecurity: "false", sharedLibraryCheck: "true", wantSharedLibrary: true},
-		{name: "both enabled", dataSecurity: "true", sharedLibraryCheck: "true", wantDataSecurity: true, wantSharedLibrary: true},
+		{name: "disabled", enabled: "false"},
+		{name: "enabled", enabled: "true", want: true},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			daemonSet := renderDataSecurityDaemonSet(t, map[string]string{
-				"datadog.dataSecurity.enabled":       tt.dataSecurity,
-				"datadog.sharedLibraryCheck.enabled": tt.sharedLibraryCheck,
+				"datadog.dataSecurity.enabled": tt.enabled,
 			})
 
 			agent, found := getContainer(t, daemonSet.Spec.Template.Spec.Containers, "agent")
 			require.True(t, found, "expected agent container")
 			env := getEnvVarMap(agent.Env)
 
-			if tt.wantDataSecurity {
+			if tt.want {
 				assert.Equal(t, "true", env[ddDataSecurityEnabled])
-			} else {
-				assert.NotContains(t, env, ddDataSecurityEnabled)
-			}
-			if tt.wantSharedLibrary {
 				assert.Equal(t, "true", env[ddSharedLibraryCheckEnabled])
 			} else {
+				assert.NotContains(t, env, ddDataSecurityEnabled)
 				assert.NotContains(t, env, ddSharedLibraryCheckEnabled)
 			}
 		})
