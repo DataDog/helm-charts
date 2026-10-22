@@ -7,7 +7,7 @@ multiContainer:
     adminTokenSecret:
       name: browser-pool-test-token
   networkPolicy:
-    mode: managed
+    create: true
     dns:
       to:
         - namespaceSelector:

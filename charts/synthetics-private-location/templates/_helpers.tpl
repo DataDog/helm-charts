@@ -83,15 +83,12 @@ Normalize a bare IP to a single-address CIDR, as the worker does for allowedIPRa
 {{- end -}}
 
 {{/*
-Validate multi-container values. Fails on removed or missing settings, a token passed through env, or an unsupported image tag.
+Validate multi-container values. Fails on missing settings, a token passed through env, or an unsupported image tag.
 */}}
 {{- define "synthetics-private-location.multiContainer.validate" -}}
 {{- $mc := .Values.multiContainer }}
-{{- if hasKey $mc.networkPolicy "enabled" }}
-{{- fail "multiContainer.networkPolicy.enabled has been replaced by mode: managed or external" }}
-{{- end }}
-{{- if not (has $mc.networkPolicy.mode (list "managed" "external")) }}
-{{- fail "multiContainer.networkPolicy.mode must be explicitly set to managed or external" }}
+{{- if not (kindIs "bool" $mc.networkPolicy.create) }}
+{{- fail "multiContainer.networkPolicy.create must be set to true or false" }}
 {{- end }}
 {{- $_ := required "multiContainer.browserPool.adminTokenSecret.name is required" $mc.browserPool.adminTokenSecret.name }}
 {{- $_ := required "multiContainer.browserPool.adminTokenSecret.key is required" $mc.browserPool.adminTokenSecret.key }}

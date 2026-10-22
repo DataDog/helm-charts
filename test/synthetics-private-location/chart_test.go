@@ -18,7 +18,7 @@ func multiContainerCommand(overrides map[string]string) common.HelmCommand {
 		"multiContainer.enabled": "true",
 		"multiContainer.browserPool.adminTokenSecret.name": `"pool-token"`,
 		"multiContainer.browserPool.adminTokenSecret.key":  `"admin"`,
-		"multiContainer.networkPolicy.mode":                `"external"`,
+		"multiContainer.networkPolicy.create":              "false",
 	}
 	for key, value := range overrides {
 		values[key] = value
@@ -120,12 +120,11 @@ func TestInvalidMultiContainerConfiguration(t *testing.T) {
 	}{
 		{"missing secret", map[string]string{"multiContainer.browserPool.adminTokenSecret.name": `""`}, "adminTokenSecret.name"},
 		{"missing key", map[string]string{"multiContainer.browserPool.adminTokenSecret.key": `""`}, "adminTokenSecret.key"},
-		{"missing mode", map[string]string{"multiContainer.networkPolicy.mode": `""`}, "explicitly set"},
-		{"unknown mode", map[string]string{"multiContainer.networkPolicy.mode": `"unknown"`}, "explicitly set"},
-		{"obsolete enabled", map[string]string{"multiContainer.networkPolicy.enabled": "true"}, "has been replaced"},
+		{"missing create", map[string]string{"multiContainer.networkPolicy.create": "null"}, "must be set to true or false"},
+		{"non-bool create", map[string]string{"multiContainer.networkPolicy.create": `"yes"`}, "must be set to true or false"},
 		{"token override", map[string]string{"env": `[{"name":"BROWSER_POOL_ADMIN_TOKEN","value":"unsafe"}]`}, "not env"},
-		{"missing DNS", map[string]string{"multiContainer.networkPolicy.mode": `"managed"`}, "must specify DNS"},
-		{"unrestricted DNS peer", map[string]string{"multiContainer.networkPolicy.mode": `"managed"`, "multiContainer.networkPolicy.dns.to": `[{}]`}, "each multiContainer.networkPolicy.dns.to entry"},
+		{"missing DNS", map[string]string{"multiContainer.networkPolicy.create": "true"}, "must specify DNS"},
+		{"unrestricted DNS peer", map[string]string{"multiContainer.networkPolicy.create": "true", "multiContainer.networkPolicy.dns.to": `[{}]`}, "each multiContainer.networkPolicy.dns.to entry"},
 		{"duplicate sysctl", map[string]string{"podSecurityContext.sysctls": `[{"name":"net.ipv4.ping_group_range","value":"501 501"},{"name":"net.ipv4.ping_group_range","value":"0 65535"}]`}, "duplicate name net.ipv4.ping_group_range"},
 	}
 	for _, test := range tests {
@@ -164,7 +163,7 @@ func TestImageVersions(t *testing.T) {
 func renderPolicy(t *testing.T, overrides map[string]string) networkingv1.NetworkPolicy {
 	t.Helper()
 	command := multiContainerCommand(map[string]string{
-		"multiContainer.networkPolicy.mode":   `"managed"`,
+		"multiContainer.networkPolicy.create": "true",
 		"multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"169.254.20.10/32"}}]`,
 	})
 	for key, value := range overrides {

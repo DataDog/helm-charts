@@ -32,18 +32,18 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set-file configFile=config.json \
   --set image.tag=1.77.0 \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
-  --set multiContainer.networkPolicy.mode=external \
+  --set multiContainer.networkPolicy.create=false \
   --set multiContainer.enabled=true
 ```
 
 Before installing, provision a Secret named `pl-browser-pool` in the release namespace with a `token` key containing at least 32 cryptographically random bytes (for example, hex-encoded). Use your secret manager or create it outside Helm. The chart references this Secret only in the worker and browser-pool containers; it does not generate or store the token in Helm values. Replicas share this credential. Restrict access to the Secret and restart the Deployment after rotating it, because environment variables do not reload automatically. The browser launcher must keep the admin token out of browser child-process environments.
 
-In this layout the worker cannot apply its `iptables` firewall. You must explicitly choose `multiContainer.networkPolicy.mode`:
+In this layout the worker cannot apply its `iptables` firewall. You must explicitly set `multiContainer.networkPolicy.create`:
 
-- `external`: the chart creates no policy. The operator is responsible for egress enforcement. The commands above use this mode; they do not restrict egress by themselves.
-- `managed`: the chart creates a pod-wide egress policy, blocking reserved ranges by default. Configure DNS resolver destinations and any necessary exceptions. The policy also restricts worker traffic, including upstream proxies.
+- `false`: the chart creates no policy. The operator is responsible for egress enforcement. The commands above use this setting; they do not restrict egress by themselves.
+- `true`: the chart creates a pod-wide egress policy, blocking reserved ranges by default. Configure DNS resolver destinations and any necessary exceptions. The policy also restricts worker traffic, including upstream proxies.
 
-Example managed-mode values (verify the DNS labels match your cluster):
+Example values with `create: true` (verify the DNS labels match your cluster):
 
 ```yaml
 image:
@@ -55,7 +55,7 @@ multiContainer:
       name: pl-browser-pool
       key: token
   networkPolicy:
-    mode: managed
+    create: true
     dns:
       to:
         - namespaceSelector:
@@ -93,7 +93,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set-file configFile=config.json \
   --set image.tag=1.77.0 \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
-  --set multiContainer.networkPolicy.mode=external \
+  --set multiContainer.networkPolicy.create=false \
   --set multiContainer.enabled=true \
   --set multiContainer.podSecurity.securityContextConstraints.create=true
 ```

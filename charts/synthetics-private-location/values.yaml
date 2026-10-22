@@ -210,14 +210,14 @@ multiContainer:
         memory: 128Mi
 
   networkPolicy:
-    # multiContainer.networkPolicy.mode -- Required in multi-container mode: `managed` creates a pod-wide egress NetworkPolicy; `external` creates none and leaves egress enforcement to the operator. Requires a CNI that enforces NetworkPolicies. Other policies can broaden access; ICMP filtering is CNI-dependent.
-    mode: ""
+    # multiContainer.networkPolicy.create -- (bool) Required in multi-container mode: `true` creates a pod-wide egress NetworkPolicy; `false` creates none and leaves egress enforcement to the operator. Requires a CNI that enforces NetworkPolicies. Other policies can broaden access; ICMP filtering is CNI-dependent.
+    create:
     dns:
-      # multiContainer.networkPolicy.dns.to -- Required in managed mode. NetworkPolicy peers for DNS (TCP/UDP 53). Use namespace/pod selectors for cluster DNS or ipBlock CIDRs for NodeLocal/custom resolvers. There is no allow-all DNS exception.
+      # multiContainer.networkPolicy.dns.to -- Required when `create` is `true`. NetworkPolicy peers for DNS (TCP/UDP 53). Use namespace/pod selectors for cluster DNS or ipBlock CIDRs for NodeLocal/custom resolvers. There is no allow-all DNS exception.
       to: []
     # multiContainer.networkPolicy.additionalEgress -- Additional standard NetworkPolicy egress rules, for example access to an upstream proxy. These exceptions take precedence over blocked ranges.
     additionalEgress: []
-    # multiContainer.networkPolicy.enableDefaultBlockedIpRanges -- Block the ranges in defaultBlockedIPRanges in managed mode. Explicit allowed ranges, DNS peers and additionalEgress can grant exceptions.
+    # multiContainer.networkPolicy.enableDefaultBlockedIpRanges -- Block the ranges in defaultBlockedIPRanges when `create` is `true`. Explicit allowed ranges, DNS peers and additionalEgress can grant exceptions.
     enableDefaultBlockedIpRanges: true
     # multiContainer.networkPolicy.defaultBlockedIPRanges -- IANA reserved ranges blocked when `enableDefaultBlockedIpRanges` is true. Same list as the worker, without `::ffff:0:0/96` (rejected in a NetworkPolicy, and covered by the IPv4 list).
     defaultBlockedIPRanges:

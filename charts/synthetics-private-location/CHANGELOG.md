@@ -10,7 +10,7 @@
 * `podSecurityContext` and `securityContext` are merged over the hardened defaults of the multi-container pod and worker container. The `net.ipv4.ping_group_range` sysctl follows `securityContext.runAsGroup` (default 501) unless explicitly supplied; duplicate sysctl names are rejected.
 * Add opt-in `multiContainer.podSecurity.securityContextConstraints.create` to create an OpenShift SCC for the multi-container pod.
 * Require an existing browser-pool admin token Secret instead of using the pod UID. The chart never generates or stores the credential in values.
-* Require an explicit `multiContainer.networkPolicy.mode`: `managed` creates a pod-wide egress policy with reserved ranges blocked by default and explicit DNS destinations; `external` leaves enforcement to the operator. Support additional egress exceptions and document CNI/ICMP limitations.
+* Require an explicit `multiContainer.networkPolicy.create` boolean: `true` creates a pod-wide egress policy with reserved ranges blocked by default and explicit DNS destinations; `false` leaves enforcement to the operator. Support additional egress exceptions and document CNI/ICMP limitations.
 
 ## 0.17.33
 

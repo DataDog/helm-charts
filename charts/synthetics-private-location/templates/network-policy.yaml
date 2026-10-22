@@ -1,7 +1,7 @@
-{{- if and .Values.multiContainer.enabled (eq .Values.multiContainer.networkPolicy.mode "managed") }}
+{{- if and .Values.multiContainer.enabled (kindIs "bool" .Values.multiContainer.networkPolicy.create) .Values.multiContainer.networkPolicy.create }}
 {{- $np := .Values.multiContainer.networkPolicy }}
 {{- if not $np.dns.to }}
-{{- fail "multiContainer.networkPolicy.dns.to must specify DNS resolver peers in managed mode" }}
+{{- fail "multiContainer.networkPolicy.dns.to must specify DNS resolver peers when multiContainer.networkPolicy.create is true" }}
 {{- end }}
 {{- range $np.dns.to }}
 {{- if not (or (hasKey . "ipBlock") (hasKey . "namespaceSelector") (hasKey . "podSelector")) }}
