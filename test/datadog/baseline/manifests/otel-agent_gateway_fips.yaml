@@ -2517,7 +2517,7 @@ spec:
               readOnly: false
             - mountPath: /etc/datadog-agent
               name: config
-              readOnly: true
+              readOnly: false
       initContainers:
         - args:
             - /etc/datadog-agent

@@ -1,5 +1,19 @@
 # Datadog changelog
 
+## 3.259.1
+
+* Fix OTel Agent Gateway pod failing to start when `agents.useConfigMap` is enabled: add the missing `datadog-yaml` volume and mount the config directory read-write so the `datadog.yaml` subPath mount can be created ([#2980](https://github.com/DataDog/helm-charts/pull/2980)).
+
+## 3.259.0
+
+* Add opt-in `datadog.jemalloc.enabled` for the Linux node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners, with explicit environment overrides taking precedence.
+
+## 3.258.1
+
+* Extend config sync (`DD_AGENT_IPC_PORT` / `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL`) to CWS direct send and compliance running in `system-probe`, alongside the CNM direct send case it already covered. `system-probe` submits these payloads itself and cannot resolve an `ENC[...]` secret handle, so without config sync a secret-backed `datadog.apiKey` would prevent it from shipping CWS events or compliance findings.
+* Carry the CWS and CSPM configuration onto the `system-probe` execution path. The `runtimepoliciesdir` and `complianceconfigdir` ConfigMap volumes, the compliance host mounts (`hostroot`, `cgroups`, `passwd`, `group`), `HOST_ROOT`, `hostPID`, and the `DD_COMPLIANCE_CONFIG_CHECK_INTERVAL` / `XCCDF_ENABLED` / `HOST_BENCHMARKS_ENABLED` / `CONTAINER_INCLUDE` / `CONTAINER_EXCLUDE` settings were all gated on the `security-agent` container existing, so they were dropped once CWS and CSPM moved into `system-probe`. With a custom `datadog.securityAgent.runtime.policies.configMap` this rendered a DaemonSet mounting an undeclared volume, which the API server rejects on apply.
+* Stop gating the Cluster Agent's compliance settings on the `security-agent` container. `DD_COMPLIANCE_CONFIG_ENABLED`, `DD_COMPLIANCE_CONFIG_CHECK_INTERVAL`, and the custom benchmarks ConfigMap mount are part of the CSPM feature, not of a node execution path, and were silently lost when `datadog.securityAgent.compliance.runInSystemProbe` was enabled - disabling the Kubernetes-level compliance checks.
+
 ## 3.258.0
 
 * Bump Datadog Operator chart dependency to 2.30.0.

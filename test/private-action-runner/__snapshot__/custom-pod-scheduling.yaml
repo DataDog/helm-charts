@@ -6,10 +6,10 @@ metadata:
   name: resources-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.29.0
+    helm.sh/chart: private-action-runner-1.30.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: resources-test
-    app.kubernetes.io/version: "v1.22.0"
+    app.kubernetes.io/version: "v1.22.1"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: private-action-runner/templates/secrets.yaml
@@ -89,10 +89,10 @@ metadata:
   name: resources-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.29.0
+    helm.sh/chart: private-action-runner-1.30.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: resources-test
-    app.kubernetes.io/version: "v1.22.0"
+    app.kubernetes.io/version: "v1.22.1"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 10
@@ -104,18 +104,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.29.0
+        helm.sh/chart: private-action-runner-1.30.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: resources-test
-        app.kubernetes.io/version: "v1.22.0"
+        app.kubernetes.io/version: "v1.22.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: 74ac0748d22b61df516612ba080aa26141e5ad70cc46789966772b4dfc1e3ee3
+        checksum/values: 786fcf68b07edb8d474d9d8e15178d70ce94239d3743cd3c533d9603b8bc8b93
     spec:
       serviceAccountName: resources-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.22.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.22.1"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
