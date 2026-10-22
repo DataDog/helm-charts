@@ -1197,10 +1197,10 @@ datadog:
       privateActionRunner:
         # datadog.kubernetesActions.communication.privateActionRunner.enabled -- Receive Kubernetes actions through the Cluster Agent
         # Private Action Runner. When true, the Cluster Agent Private Action Runner is enabled automatically using the
-        # clusterAgent.privateActionRunner settings (self-enrollment by default, which requires datadog.leaderElection). Requires
-        # Cluster Agent version 7.83.0 or greater. When false on Cluster Agent 7.86.0 or greater, Kubernetes actions are not allowed
-        # in the Private Action Runner even if it is enabled for other workflows.
-        enabled: false
+        # clusterAgent.privateActionRunner settings (self-enrollment by default, which requires datadog.leaderElection). Only takes
+        # effect on Cluster Agent version 7.83.0 or greater. When false on Cluster Agent 7.86.0 or greater, Kubernetes actions are not
+        # allowed in the Private Action Runner even if it is enabled for other workflows.
+        enabled: true
 
     helmActions:
       # datadog.kubernetesActions.helmActions.enabled -- Set this to true to enable Helm actions as part of the

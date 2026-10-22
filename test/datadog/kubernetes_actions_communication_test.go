@@ -41,19 +41,44 @@ func renderKubernetesActions(t *testing.T, overrides map[string]string) (string,
 	return manifest, envVars, nil
 }
 
-func Test_KubernetesActions_Communication_DefaultsToRC(t *testing.T) {
+func Test_KubernetesActions_Communication_DefaultsToBothChannels(t *testing.T) {
 	manifest, envVars, err := renderKubernetesActions(t, map[string]string{
 		"datadog.kubernetesActions.enabled": "true",
 	})
 	require.NoError(t, err)
 
 	assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
-	// The default Cluster Agent predates the per-channel settings: emit neither, so it
-	// does not log them as unknown environment variables.
+	// Both channels are on by default: emit neither channel setting (the agent defaults
+	// both to true), which also keeps older agents from logging them as unknown.
 	assert.NotContains(t, envVars, DDKubeActionsRemoteConfigEnabled)
 	assert.NotContains(t, envVars, DDKubeActionsPAREnabled)
-	assert.NotContains(t, envVars, DDPAREnabled, "PAR should not be enabled by default")
+	assert.Equal(t, "true", envVars[DDPAREnabled], "PAR should be enabled by default")
+	assert.Equal(t, "true", envVars[DDPARSelfEnroll])
+	assert.Contains(t, manifest, "datadog-private-action-runner-identity", "PAR identity secret RBAC should be created")
+}
+
+func Test_KubernetesActions_Communication_PARSkippedOnClusterAgentWithoutBundle(t *testing.T) {
+	manifest, envVars, err := renderKubernetesActions(t, map[string]string{
+		"datadog.kubernetesActions.enabled": "true",
+		"clusterAgent.image.tag":            "7.82.0",
+	})
+	require.NoError(t, err)
+
+	// The Kubernetes Actions runner bundle ships in Cluster Agent 7.83.0: do not enable
+	// a runner (and its RBAC) that cannot run Kubernetes actions.
+	assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
+	assert.NotContains(t, envVars, DDPAREnabled)
 	assert.NotContains(t, manifest, "datadog-private-action-runner", "PAR Role should not be created")
+}
+
+func Test_KubernetesActions_Communication_PAREnabledAtMinimumClusterAgent(t *testing.T) {
+	_, envVars, err := renderKubernetesActions(t, map[string]string{
+		"datadog.kubernetesActions.enabled": "true",
+		"clusterAgent.image.tag":            "7.83.0",
+	})
+	require.NoError(t, err)
+
+	assert.Equal(t, "true", envVars[DDPAREnabled])
 }
 
 func Test_KubernetesActions_Communication_PARAndRC(t *testing.T) {
@@ -92,23 +117,25 @@ func Test_KubernetesActions_Communication_PAROnly(t *testing.T) {
 
 func Test_KubernetesActions_Communication_RCOnly(t *testing.T) {
 	_, envVars, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled": "true",
-		"clusterAgent.image.tag":            channelTogglesDCATag,
+		"datadog.kubernetesActions.enabled":                                   "true",
+		"datadog.kubernetesActions.communication.privateActionRunner.enabled": "false",
+		"clusterAgent.image.tag":                                              channelTogglesDCATag,
 	})
 	require.NoError(t, err)
 
 	assert.Equal(t, "true", envVars[DDKubeActionsEnabled])
 	assert.NotContains(t, envVars, DDKubeActionsRemoteConfigEnabled)
-	// privateActionRunner.enabled defaults to false: keep Kubernetes actions out of a PAR enabled for other workflows.
+	// RC only: keep Kubernetes actions out of a PAR enabled for other workflows.
 	assert.Equal(t, "false", envVars[DDKubeActionsPAREnabled])
 	assert.NotContains(t, envVars, DDPAREnabled)
 }
 
 func Test_KubernetesActions_Communication_PARDisabledWithPAREnabledForOtherWorkflows(t *testing.T) {
 	_, envVars, err := renderKubernetesActions(t, map[string]string{
-		"datadog.kubernetesActions.enabled":        "true",
-		"clusterAgent.privateActionRunner.enabled": "true",
-		"clusterAgent.image.tag":                   channelTogglesDCATag,
+		"datadog.kubernetesActions.enabled":                                   "true",
+		"datadog.kubernetesActions.communication.privateActionRunner.enabled": "false",
+		"clusterAgent.privateActionRunner.enabled":                            "true",
+		"clusterAgent.image.tag":                                              channelTogglesDCATag,
 	})
 	require.NoError(t, err)
 

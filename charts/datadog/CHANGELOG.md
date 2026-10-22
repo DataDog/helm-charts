@@ -2,7 +2,7 @@
 
 ## 3.259.0
 
-* Add `datadog.kubernetesActions.communication.remoteConfiguration.enabled` and `datadog.kubernetesActions.communication.privateActionRunner.enabled` to choose how the Cluster Agent receives Kubernetes actions. Enabling `privateActionRunner` enables the Cluster Agent Private Action Runner automatically. On Cluster Agent 7.86.0+, disabling `remoteConfiguration` turns off the Remote Configuration channel, and disabling `privateActionRunner` keeps Kubernetes actions out of the Private Action Runner.
+* Add `datadog.kubernetesActions.communication.remoteConfiguration.enabled` and `datadog.kubernetesActions.communication.privateActionRunner.enabled` to choose how the Cluster Agent receives Kubernetes actions. Both are enabled by default, so `datadog.kubernetesActions.enabled: true` alone uses both channels; disable `privateActionRunner` for Remote Configuration only. Enabling `privateActionRunner` enables the Cluster Agent Private Action Runner automatically on Cluster Agent 7.83.0+. On Cluster Agent 7.86.0+, disabling `remoteConfiguration` turns off the Remote Configuration channel, and disabling `privateActionRunner` keeps Kubernetes actions out of the Private Action Runner.
 * Grant the Cluster Agent the Kubernetes Actions RBAC for rollback deployment (`replicasets`: get, list).
 
 ## 3.258.0
