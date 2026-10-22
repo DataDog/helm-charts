@@ -221,7 +221,7 @@
             readOnly: false
           - name: config
             mountPath: {{ template "datadog.confPath" . }}
-            readOnly: true
+            readOnly: false # Need RW to mount to config path
           {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
           - name: datadog-yaml
             mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
@@ -267,6 +267,11 @@
             - key: otel-gateway-config.yaml
               path: otel-gateway-config.yaml
           {{- end }}
+      {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux") }}
+      - name: datadog-yaml
+        configMap:
+          name: {{ include "agents-useConfigMap-configmap-name" . }}
+      {{- end }}
 {{- if .Values.otelAgentGateway.volumes }}
 {{ toYaml .Values.otelAgentGateway.volumes | indent 6 }}
 {{- end }}

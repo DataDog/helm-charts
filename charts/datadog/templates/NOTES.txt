@@ -369,6 +369,16 @@ You are using datadog.orchestratorExplorer.enabled but you disabled the cluster 
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
 
+{{- if and .Values.providers.gke.autopilot .Values.datadog.jemalloc.enabled }}
+
+#######################################################################################
+####   WARNING: jemalloc is not supported on GKE Autopilot                           ####
+#######################################################################################
+
+{{- fail "jemalloc is not supported on GKE Autopilot. Set 'datadog.jemalloc.enabled' to 'false'." }}
+
+{{- end }}
+
 {{- if and (.Values.providers.gke.autopilot) (not .Values.datadog.envDict.HELM_FORCE_RENDER)}}
 
 ###########################################################################################
