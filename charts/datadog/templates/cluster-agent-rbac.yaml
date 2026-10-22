@@ -67,6 +67,18 @@ rules:
   - patch
   - update
 {{- end }}
+{{- if eq (include "should-enable-kueue" .) "true" }}
+- apiGroups:
+  - "kueue.x-k8s.io"
+  resources:
+  - clusterqueues
+  - localqueues
+  - resourceflavors
+  - workloads
+  verbs:
+  - list
+  - watch
+{{- end }}
 {{- if .Values.datadog.collectEvents }}
 - apiGroups:
   - ""

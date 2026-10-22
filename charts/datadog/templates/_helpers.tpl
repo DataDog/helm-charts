@@ -308,6 +308,52 @@ false
 {{- end -}}
 
 {{/*
+Return true if the Cluster Agent version supports Kueue (7.82.0 or newer).
+*/}}
+{{- define "kueue-cluster-agent-version-supported" -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Agent version supports the Kueue check (7.82.0 or newer).
+*/}}
+{{- define "kueue-agent-version-supported" -}}
+{{- if or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if Kueue metadata collection should be enabled in the Cluster Agent.
+Requires datadog.kueue.enabled, a deployed Cluster Agent, and Cluster Agent 7.82.0 or newer.
+*/}}
+{{- define "should-enable-kueue" -}}
+{{- if and .Values.datadog.kueue.enabled (eq (include "should-deploy-cluster-agent" .) "true") (eq (include "kueue-cluster-agent-version-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Kueue check should be configured. It is scheduled by the Cluster Agent as an
+endpoints check on the node Agents, so it requires cluster checks and Agent 7.82.0 or newer.
+*/}}
+{{- define "should-enable-kueue-check" -}}
+{{- if and (eq (include "should-enable-kueue" .) "true") .Values.datadog.clusterChecks.enabled (eq (include "kueue-agent-version-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED should be set on the Cluster Agent.
 Sharding is only dispatched when cluster checks runners are enabled, and the Cluster Agent
 must be 7.83.0 or newer: sharding only coexists safely with the cluster_aggregates_only
@@ -1302,7 +1348,7 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (eq (include "should-enable-kueue-check" .) "true") (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
 true
 {{- else -}}
 false
