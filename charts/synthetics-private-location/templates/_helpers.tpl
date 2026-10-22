@@ -101,24 +101,30 @@ Validate multi-container values. Fails on missing settings or a token passed thr
 
 {{/*
 Node preStop script for a daemon container. Waits for the worker to exit, unless the daemon itself is unhealthy (liveness restart).
-Takes the JS health check of the daemon as argument.
+Takes the daemon's JS health check as argument.
 */}}
 {{- define "synthetics-private-location.multiContainer.waitForWorkerExit" -}}
-{{- printf "%s waitForWorkerExit(%s)" `const workerUp = () => fetch('http://127.0.0.1:8080/liveness', {signal: AbortSignal.timeout(2000)}).then(() => true, (error) => error?.cause?.code !== 'ECONNREFUSED'); const waitForWorkerExit = async (healthy) => { if (!(await healthy())) return; while (await workerUp()) await new Promise((resolve) => setTimeout(resolve, 2000)) };` . }}
+{{- $js := `const workerUp = () => fetch('http://127.0.0.1:8080/liveness', {signal: AbortSignal.timeout(2000)}).then(() => true, (error) => error?.cause?.code !== 'ECONNREFUSED'); const waitForWorkerExit = async (healthy) => { if (!(await healthy())) return; while (await workerUp()) await new Promise((resolve) => setTimeout(resolve, 2000)) };` }}
+{{- printf "%s waitForWorkerExit(%s)" $js . }}
 {{- end -}}
 
 {{/*
-JS health check for a daemon exposing /health on the given local port.
+JS health check for a daemon exposing /health on a local port.
+Takes the port number as argument.
 */}}
 {{- define "synthetics-private-location.multiContainer.httpHealthy" -}}
-{{- printf `() => fetch('http://127.0.0.1:%d/health', {signal: AbortSignal.timeout(2000)}).then((response) => response.ok, () => false)` . }}
+{{- $jsBeforePort := `() => fetch('http://127.0.0.1:` }}
+{{- $jsAfterPort := `/health', {signal: AbortSignal.timeout(2000)}).then((response) => response.ok, () => false)` }}
+{{- printf "%s%d%s" $jsBeforePort . $jsAfterPort }}
 {{- end -}}
 
 {{/*
 JS health check for the deno-executor socket.
+Takes no argument.
 */}}
 {{- define "synthetics-private-location.multiContainer.denoExecutorHealthy" -}}
-async () => require('node:child_process').spawnSync('node', ['--no-warnings', '/home/dog/packages/runtime/deno-executor/dist/cli/healthcheck.js', '/run/deno-executor/deno-executor.sock']).status === 0
+{{- $js := `async () => require('node:child_process').spawnSync('node', ['--no-warnings', '/home/dog/packages/runtime/deno-executor/dist/cli/healthcheck.js', '/run/deno-executor/deno-executor.sock']).status === 0` }}
+{{- printf "%s" $js }}
 {{- end -}}
 
 {{/*

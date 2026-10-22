@@ -135,7 +135,7 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ["node", "-e", {{ include "synthetics-private-location.multiContainer.waitForWorkerExit" (include "synthetics-private-location.multiContainer.denoExecutorHealthy" .) | quote }}]
+                command: ["node", "-e", {{ include "synthetics-private-location.multiContainer.waitForWorkerExit" (include "synthetics-private-location.multiContainer.denoExecutorHealthy" "") | quote }}]
           livenessProbe:
             exec:
               command: ["node", "--no-warnings", "/home/dog/packages/runtime/deno-executor/dist/cli/healthcheck.js", "/run/deno-executor/deno-executor.sock"]
