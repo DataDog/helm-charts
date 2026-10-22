@@ -83,12 +83,22 @@ Normalize a bare IP to a single-address CIDR, as the worker does for allowedIPRa
 {{- end -}}
 
 {{/*
-Validate multi-container values. Fails on missing settings or a token passed through env.
+Validate multi-container values. Fails on missing settings, missing or unrestricted DNS peers when the NetworkPolicy is created, or a token passed through env.
 */}}
 {{- define "synthetics-private-location.multiContainer.validate" -}}
 {{- $mc := .Values.multiContainer }}
 {{- if not (kindIs "bool" $mc.networkPolicy.create) }}
 {{- fail "multiContainer.networkPolicy.create must be set to true or false" }}
+{{- end }}
+{{- if $mc.networkPolicy.create }}
+{{- if not $mc.networkPolicy.dns.to }}
+{{- fail "multiContainer.networkPolicy.dns.to must specify DNS resolver peers when multiContainer.networkPolicy.create is true" }}
+{{- end }}
+{{- range $mc.networkPolicy.dns.to }}
+{{- if not (or (hasKey . "ipBlock") (hasKey . "namespaceSelector") (hasKey . "podSelector")) }}
+{{- fail "each multiContainer.networkPolicy.dns.to entry must specify an ipBlock, namespaceSelector or podSelector" }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{- $_ := required "multiContainer.browserPool.adminTokenSecret.name is required" $mc.browserPool.adminTokenSecret.name }}
 {{- $_ := required "multiContainer.browserPool.adminTokenSecret.key is required" $mc.browserPool.adminTokenSecret.key }}
@@ -172,4 +182,30 @@ seccompProfile:
   type: RuntimeDefault
 ` }}
 {{- toYaml (mustMergeOverwrite $workerSecurityContext (deepCopy .Values.securityContext)) }}
+{{- end -}}
+
+{{/*
+Blocked CIDRs of one IP family for the multi-container NetworkPolicy: the default ranges when enableDefaultBlockedIpRanges is true, then blockedIPRanges, each normalized with synthetics-private-location.cidr.
+Takes a dict with "Values" (the chart values) and "family" ("IPv4" or "IPv6"). Returns a JSON list.
+*/}}
+{{- define "synthetics-private-location.multiContainer.networkPolicy.blockedCIDRs" -}}
+{{- $np := .Values.multiContainer.networkPolicy }}
+{{- $raw := index ($np.blockedIPRanges | default dict) .family | default (list) }}
+{{- if $np.enableDefaultBlockedIpRanges }}
+{{- $raw = concat (index ($np.defaultBlockedIPRanges | default dict) .family | default (list)) $raw }}
+{{- end }}
+{{- $cidrs := list }}
+{{- range $raw }}{{ $cidrs = append $cidrs (include "synthetics-private-location.cidr" .) }}{{ end }}
+{{- toJson $cidrs }}
+{{- end -}}
+
+{{/*
+Allowed CIDRs for the multi-container NetworkPolicy: allowedIPRanges IPv4 then IPv6, each normalized with synthetics-private-location.cidr.
+Takes the root context. Returns a JSON list.
+*/}}
+{{- define "synthetics-private-location.multiContainer.networkPolicy.allowedCIDRs" -}}
+{{- $np := .Values.multiContainer.networkPolicy }}
+{{- $cidrs := list }}
+{{- range (concat ($np.allowedIPRanges.IPv4 | default (list)) ($np.allowedIPRanges.IPv6 | default (list))) }}{{ $cidrs = append $cidrs (include "synthetics-private-location.cidr" .) }}{{ end }}
+{{- toJson $cidrs }}
 {{- end -}}

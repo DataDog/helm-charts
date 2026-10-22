@@ -1,28 +1,11 @@
-{{- if and .Values.multiContainer.enabled (kindIs "bool" .Values.multiContainer.networkPolicy.create) .Values.multiContainer.networkPolicy.create }}
+{{- if and .Values.multiContainer.enabled .Values.multiContainer.networkPolicy.create }}
 {{- $np := .Values.multiContainer.networkPolicy }}
-{{- if not $np.dns.to }}
-{{- fail "multiContainer.networkPolicy.dns.to must specify DNS resolver peers when multiContainer.networkPolicy.create is true" }}
-{{- end }}
-{{- range $np.dns.to }}
-{{- if not (or (hasKey . "ipBlock") (hasKey . "namespaceSelector") (hasKey . "podSelector")) }}
-{{- fail "each multiContainer.networkPolicy.dns.to entry must specify an ipBlock, namespaceSelector or podSelector" }}
-{{- end }}
-{{- end }}
-{{- $rawIPv4 := $np.blockedIPRanges.IPv4 | default (list) }}
-{{- $rawIPv6 := $np.blockedIPRanges.IPv6 | default (list) }}
-{{- if $np.enableDefaultBlockedIpRanges }}
-{{- $rawIPv4 = concat ($np.defaultBlockedIPRanges.IPv4 | default (list)) $rawIPv4 }}
-{{- $rawIPv6 = concat ($np.defaultBlockedIPRanges.IPv6 | default (list)) $rawIPv6 }}
-{{- end }}
-{{- $blockedIPv4 := list }}
-{{- range $rawIPv4 }}{{ $blockedIPv4 = append $blockedIPv4 (include "synthetics-private-location.cidr" .) }}{{ end }}
-{{- $blockedIPv6 := list }}
-{{- range $rawIPv6 }}{{ $blockedIPv6 = append $blockedIPv6 (include "synthetics-private-location.cidr" .) }}{{ end }}
+{{- $blockedIPv4 := fromJsonArray (include "synthetics-private-location.multiContainer.networkPolicy.blockedCIDRs" (dict "Values" .Values "family" "IPv4")) }}
+{{- $blockedIPv6 := fromJsonArray (include "synthetics-private-location.multiContainer.networkPolicy.blockedCIDRs" (dict "Values" .Values "family" "IPv6")) }}
 {{- /* An except entry must be strictly inside its cidr, so a fully blocked family gets no allow rule. */}}
 {{- $allowIPv4 := not (has "0.0.0.0/0" $blockedIPv4) }}
 {{- $allowIPv6 := not (has "::/0" $blockedIPv6) }}
-{{- $allowed := list }}
-{{- range (concat ($np.allowedIPRanges.IPv4 | default (list)) ($np.allowedIPRanges.IPv6 | default (list))) }}{{ $allowed = append $allowed (include "synthetics-private-location.cidr" .) }}{{ end }}
+{{- $allowed := fromJsonArray (include "synthetics-private-location.multiContainer.networkPolicy.allowedCIDRs" .) }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
