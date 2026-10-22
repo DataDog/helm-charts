@@ -267,7 +267,7 @@
       value: "true"
     {{- end }}
     {{- end }}
-    {{- if .Values.datadog.dataSecurity.enabled }}
+    {{- if and .Values.datadog.dataSecurity.enabled .Values.datadog.sharedLibraryCheck.enabled }}
     - name: DD_DATA_SECURITY_ENABLED
       value: "true"
     {{- end }}
