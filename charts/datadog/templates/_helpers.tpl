@@ -1819,34 +1819,26 @@ false
 {{- end -}}
 
 {{/*
+  Select only the process containers' destination, independently of eligibility.
   Process Check and Process Discovery prefer HOST_ETC/passwd starting in 7.86.0.
   Check the actual image tag, not get-agent-version's inferred aliases, and never
   treat doNotCheckTag as evidence of compatibility. Digests, custom tags and
   prereleases (including 7.86.0-devel, which predates the resolver) fail closed.
   This is a process capability check only; Gohai still uses local user lookup.
-*/}}
-{{- define "process-agent-supports-host-passwd" -}}
-{{- $image := include "image-path" (dict "root" .Values "image" .Values.agents.image) -}}
-{{- $tag := last (splitList ":" $image) -}}
-{{- if and (not (contains "@" $image)) (regexMatch "^7\\.[0-9]+\\.[0-9]+(-jmx|-full|-fips|-fips-jmx|-fips-full)?$" $tag) -}}
-  {{- $version := regexFind "^7\\.[0-9]+\\.[0-9]+" $tag -}}
-  {{- semverCompare ">=7.86.0" $version -}}
-{{- else -}}
-  false
-{{- end -}}
-{{- end -}}
-
-{{/*
-  Select only the process containers' destination, independently of eligibility.
   Autopilot's published allowlists still require the legacy mount. Rely on the
   Agent's HOST_ETC initialization rather than overriding user configuration.
 */}}
 {{- define "process-passwd-mount-path" -}}
-{{- if and (eq .Values.targetSystem "linux") (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) (eq (include "process-agent-supports-host-passwd" .) "true") -}}
-/host/etc/passwd
-{{- else -}}
-/etc/passwd
+{{- $path := "/etc/passwd" -}}
+{{- $image := include "image-path" (dict "root" .Values "image" .Values.agents.image) -}}
+{{- $tag := last (splitList ":" $image) -}}
+{{- $stableTag := and (not (contains "@" $image)) (regexMatch "^7\\.[0-9]+\\.[0-9]+(-fips)?(-jmx|-full)?$" $tag) -}}
+{{- if and (eq .Values.targetSystem "linux") (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) $stableTag -}}
+  {{- if semverCompare ">=7.86.0" (first (splitList "-" $tag)) -}}
+    {{- $path = "/host/etc/passwd" -}}
+  {{- end -}}
 {{- end -}}
+{{- $path -}}
 {{- end -}}
 
 {{/*
