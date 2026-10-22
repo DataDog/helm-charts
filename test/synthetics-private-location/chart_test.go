@@ -138,28 +138,6 @@ func TestInvalidMultiContainerConfiguration(t *testing.T) {
 	}
 }
 
-func TestImageVersions(t *testing.T) {
-	for _, test := range []struct {
-		tag   string
-		valid bool
-	}{
-		{"1.74.0", false}, {"1.76.9", false}, {"1.77.0-rc.1", false}, {"latest", false}, {"", false},
-		{"1.77.0", true}, {"1.78.0", true}, {"2.0.0", true},
-	} {
-		t.Run(test.tag, func(t *testing.T) {
-			_, err := common.RenderChart(t, multiContainerCommand(map[string]string{"image.tag": `"` + test.tag + `"`}))
-			if test.valid {
-				require.NoError(t, err)
-			} else {
-				require.Error(t, err)
-				var output *shell.ErrWithCmdOutput
-				require.ErrorAs(t, err, &output)
-				assert.Contains(t, output.Output.Stderr(), ">= 1.77.0")
-			}
-		})
-	}
-}
-
 func renderPolicy(t *testing.T, overrides map[string]string) networkingv1.NetworkPolicy {
 	t.Helper()
 	command := multiContainerCommand(map[string]string{

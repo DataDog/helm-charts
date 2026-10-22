@@ -83,7 +83,7 @@ Normalize a bare IP to a single-address CIDR, as the worker does for allowedIPRa
 {{- end -}}
 
 {{/*
-Validate multi-container values. Fails on missing settings, a token passed through env, or an unsupported image tag.
+Validate multi-container values. Fails on missing settings or a token passed through env.
 */}}
 {{- define "synthetics-private-location.multiContainer.validate" -}}
 {{- $mc := .Values.multiContainer }}
@@ -96,13 +96,6 @@ Validate multi-container values. Fails on missing settings, a token passed throu
 {{- if eq .name "BROWSER_POOL_ADMIN_TOKEN" }}
 {{- fail "configure BROWSER_POOL_ADMIN_TOKEN through multiContainer.browserPool.adminTokenSecret, not env" }}
 {{- end }}
-{{- end }}
-{{- $imageTag := .Values.image.tag | default .Chart.AppVersion | toString }}
-{{- if not (regexMatch `^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$` $imageTag) }}
-{{- fail "multiContainer.enabled requires image.tag to be a semantic version >= 1.77.0 (prerelease and custom tags are not supported)" }}
-{{- end }}
-{{- if not (semverCompare ">=1.77.0" $imageTag) }}
-{{- fail "multiContainer.enabled requires a private location image version >= 1.77.0 (prerelease tags are not supported)" }}
 {{- end }}
 {{- end -}}
 

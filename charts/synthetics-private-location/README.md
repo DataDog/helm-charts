@@ -25,7 +25,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 
 Set `multiContainer.enabled=true` to run the private location without `sudo`, `NET_ADMIN` or privilege escalation. The worker, `deno-executor`, `browser-pool` and `traceroute-server` run as separate containers in the same pod, from the same image. This layout is compatible with clusters that enforce `allowPrivilegeEscalation: false` and `readOnlyRootFilesystem: true`.
 
-This mode requires a private location image version >= 1.77.0. The chart rejects older versions, prerelease tags and custom tags when this mode is enabled. Version 1.77.0 is not published yet; the examples below are for use once a compatible image is available.
+This mode requires a private location image version >= 1.77.0. Version 1.77.0 is not published yet; the examples below are for use once a compatible image is available.
 
 ```bash
 helm install <RELEASE_NAME> datadog/synthetics-private-location \
@@ -132,7 +132,7 @@ If `extraVolumes` uses other volume types, add them to `multiContainer.podSecuri
 | multiContainer.browserPool.shmSizeLimit | string | `"2Gi"` | Size of the in-memory `/dev/shm` volume. The runtime default (64Mi) crashes renderers on heavier pages. |
 | multiContainer.denoExecutor.maxConcurrent | int | `10` | Concurrent `deno run` processes per replica. Past it the worker retries the run. |
 | multiContainer.denoExecutor.resources | object | `{"limits":{"cpu":"200m","memory":"1Gi"},"requests":{"cpu":"200m","memory":"1Gi"}}` | Resource requests/limits for the deno-executor container. Each JS-using test step uses ~30-50Mi. |
-| multiContainer.enabled | bool | `false` | Preview. Run the worker, deno-executor, browser-pool and traceroute-server as separate containers in one pod, none using `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Requires a private location image version >= 1.77.0; prerelease and custom tags are not supported. `podSecurityContext` applies to the pod and `securityContext` to the worker container, merged over hardened defaults. |
+| multiContainer.enabled | bool | `false` | Preview. Run the worker, deno-executor, browser-pool and traceroute-server as separate containers in one pod, none using `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Requires a private location image version >= 1.77.0. `podSecurityContext` applies to the pod and `securityContext` to the worker container, merged over hardened defaults. |
 | multiContainer.networkPolicy.additionalEgress | list | `[]` | Additional standard NetworkPolicy egress rules, for example access to an upstream proxy. These exceptions take precedence over blocked ranges. |
 | multiContainer.networkPolicy.allowedIPRanges | object | `{"IPv4":[],"IPv6":[]}` | CIDRs that stay reachable even when inside a blocked range |
 | multiContainer.networkPolicy.blockedIPRanges | object | `{"IPv4":[],"IPv6":[]}` | Additional CIDRs to block, added to `defaultBlockedIPRanges` |

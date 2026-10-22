@@ -6,7 +6,7 @@
 
 * Allocate 1Gi to deno-executor and clean stale browser profiles when browser-pool restarts.
 
-* (Preview) Add opt-in `multiContainer.enabled` to run the worker, `deno-executor`, `browser-pool` and `traceroute-server` as separate containers in one pod. No container uses `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Every container sets `readOnlyRootFilesystem`, `runAsNonRoot`, drops all capabilities (`traceroute-server` keeps `NET_RAW`) and uses the `RuntimeDefault` seccomp profile. Requires a private location image version >= 1.77.0; older versions, prerelease tags and custom tags are rejected. Nothing changes when `multiContainer.enabled` is `false`.
+* (Preview) Add opt-in `multiContainer.enabled` to run the worker, `deno-executor`, `browser-pool` and `traceroute-server` as separate containers in one pod. No container uses `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Every container sets `readOnlyRootFilesystem`, `runAsNonRoot`, drops all capabilities (`traceroute-server` keeps `NET_RAW`) and uses the `RuntimeDefault` seccomp profile. Requires a private location image version >= 1.77.0. Nothing changes when `multiContainer.enabled` is `false`.
 * `podSecurityContext` and `securityContext` are merged over the hardened defaults of the multi-container pod and worker container. The `net.ipv4.ping_group_range` sysctl follows `securityContext.runAsGroup` (default 501) unless explicitly supplied; duplicate sysctl names are rejected.
 * Add opt-in `multiContainer.podSecurity.securityContextConstraints.create` to create an OpenShift SCC for the multi-container pod.
 * Require an existing browser-pool admin token Secret instead of using the pod UID. The chart never generates or stores the credential in values.

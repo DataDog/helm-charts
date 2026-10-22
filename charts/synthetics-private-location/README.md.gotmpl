@@ -25,7 +25,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file confi
 
 Set `multiContainer.enabled=true` to run the private location without `sudo`, `NET_ADMIN` or privilege escalation. The worker, `deno-executor`, `browser-pool` and `traceroute-server` run as separate containers in the same pod, from the same image. This layout is compatible with clusters that enforce `allowPrivilegeEscalation: false` and `readOnlyRootFilesystem: true`.
 
-This mode requires a private location image version >= 1.77.0. The chart rejects older versions, prerelease tags and custom tags when this mode is enabled. Version 1.77.0 is not published yet; the examples below are for use once a compatible image is available.
+This mode requires a private location image version >= 1.77.0. Version 1.77.0 is not published yet; the examples below are for use once a compatible image is available.
 
 ```bash
 helm install <RELEASE_NAME> datadog/synthetics-private-location \
