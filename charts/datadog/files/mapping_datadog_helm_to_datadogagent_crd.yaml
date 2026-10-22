@@ -597,7 +597,6 @@ datadog.serviceMonitoring.tls.go.enabled: ""
 datadog.serviceMonitoring.tls.istio.enabled: ""
 datadog.serviceMonitoring.tls.native.enabled: ""
 datadog.serviceMonitoring.tls.nodejs.enabled: ""
-datadog.sharedLibraryCheck.enabled: ""
 datadog.site: spec.global.site
 datadog.systemProbe.apparmor: ""
 datadog.systemProbe.bpfDebug: ""
