@@ -48,7 +48,7 @@ spec:
         {{- .Values.hostAliases | toYaml | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ include "synthetics-private-location.multiContainer.image" . | quote }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/bash", "/home/dog/scripts/multi-pod/start-worker.sh"]
           securityContext:
@@ -116,7 +116,7 @@ spec:
       {{- toYaml .Values.env | nindent 12 }}
       {{- end }}
         - name: deno-executor
-          image: {{ include "synthetics-private-location.multiContainer.image" . | quote }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["node", "--no-warnings", "/home/dog/packages/runtime/deno-executor/dist/cli/daemon.js", "/run/deno-executor/deno-executor.sock"]
           securityContext:
@@ -158,7 +158,7 @@ spec:
           resources:
             {{- toYaml $mc.denoExecutor.resources | nindent 12 }}
         - name: browser-pool
-          image: {{ include "synthetics-private-location.multiContainer.image" . | quote }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           # dumb-init reaps browser descendants (crashpad handlers) that outlive the tracked PID.
           # emptyDir survives container restarts; remove profiles left by a crashed browser pool.
@@ -221,7 +221,7 @@ spec:
             {{- toYaml $mc.browserPool.resources | nindent 12 }}
         {{- if $mc.tracerouteServer.enabled }}
         - name: traceroute-server
-          image: {{ include "synthetics-private-location.multiContainer.image" . | quote }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/usr/bin/datadog-traceroute-server", "--addr", ":3765", "--log-level", {{ $mc.tracerouteServer.logLevel | quote }}]
           securityContext:

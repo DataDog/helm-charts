@@ -100,27 +100,13 @@ Validate multi-container values. Fails on removed or missing settings, a token p
 {{- fail "configure BROWSER_POOL_ADMIN_TOKEN through multiContainer.browserPool.adminTokenSecret, not env" }}
 {{- end }}
 {{- end }}
-{{- $imageTag := include "synthetics-private-location.multiContainer.imageTag" . }}
+{{- $imageTag := .Values.image.tag | default .Chart.AppVersion | toString }}
 {{- if not (regexMatch `^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$` $imageTag) }}
 {{- fail "multiContainer.enabled requires image.tag to be a semantic version >= 1.77.0 (prerelease and custom tags are not supported)" }}
 {{- end }}
 {{- if not (semverCompare ">=1.77.0" $imageTag) }}
 {{- fail "multiContainer.enabled requires a private location image version >= 1.77.0 (prerelease tags are not supported)" }}
 {{- end }}
-{{- end -}}
-
-{{/*
-Image tag used by all multi-container containers.
-*/}}
-{{- define "synthetics-private-location.multiContainer.imageTag" -}}
-{{- .Values.image.tag | default .Chart.AppVersion | toString }}
-{{- end -}}
-
-{{/*
-Full image reference used by all multi-container containers.
-*/}}
-{{- define "synthetics-private-location.multiContainer.image" -}}
-{{- printf "%s:%s" .Values.image.repository (include "synthetics-private-location.multiContainer.imageTag" .) }}
 {{- end -}}
 
 {{/*
