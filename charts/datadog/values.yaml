@@ -1370,7 +1370,7 @@ datadog:
 
   # Data Security configuration
   dataSecurity:
-    # datadog.dataSecurity.enabled -- Data Security: when true, the Agent can run Data Security scans scheduled from Datadog. Requires `shared_library_check.enabled` to also be true.
+    # datadog.dataSecurity.enabled -- Data Security: when true together with `datadog.sharedLibraryCheck.enabled`, the Agent can run Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer.
     enabled: false
 
   # Shared library check configuration
