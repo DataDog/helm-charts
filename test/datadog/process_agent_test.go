@@ -277,10 +277,11 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 	const legacy = "/etc/passwd"
 	const host = "/host/etc/passwd"
 	tests := []struct {
-		name         string
-		tag          string
-		overrides    map[string]string
-		expectedPath string // empty means no process passwd mount
+		name           string
+		tag            string
+		overrides      map[string]string
+		expectedPath   string // empty means no process passwd mount
+		expectedMounts int    // defaults to one when expectedPath is set
 	}{
 		{name: "old stable", tag: "7.85.99", expectedPath: legacy},
 		{name: "first supported release", tag: "7.86.0", expectedPath: host},
@@ -288,6 +289,7 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 		{name: "newer minor", tag: "7.87.0", expectedPath: host},
 		{name: "jmx tag", tag: "7.86.0-jmx", expectedPath: host},
 		{name: "full suffix", tag: "7.86.0", overrides: map[string]string{"agents.image.tagSuffix": "full"}, expectedPath: host},
+		{name: "fips tag", tag: "7.86.0-fips", expectedPath: host},
 		{name: "fips full tag", tag: "7.86.0-fips-full", expectedPath: host},
 		{name: "fips jmx tag", tag: "7.86.0-fips-jmx", expectedPath: host},
 		{name: "devel predates resolver", tag: "7.86.0-devel", expectedPath: legacy},
@@ -303,7 +305,7 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 		{name: "skip check still checks known tag", tag: "7.85.0", overrides: map[string]string{"agents.image.doNotCheckTag": "true"}, expectedPath: legacy},
 		{name: "custom repository", tag: "7.86.0", overrides: map[string]string{"agents.image.repository": "registry.example:5000/mirror/agent"}, expectedPath: host},
 		{name: "supported old separate process agent", tag: "7.59.0", expectedPath: legacy},
-		{name: "core and network process sidecar", tag: "7.86.0", overrides: map[string]string{"datadog.networkMonitoring.enabled": "true"}, expectedPath: host},
+		{name: "core and network process sidecar", tag: "7.86.0", overrides: map[string]string{"datadog.networkMonitoring.enabled": "true"}, expectedPath: host, expectedMounts: 2},
 		{name: "autopilot legacy", tag: "7.86.0", overrides: map[string]string{"providers.gke.autopilot": "true"}, expectedPath: legacy},
 		{name: "autopilot workload allowlist", tag: "7.86.0", overrides: map[string]string{"providers.gke.autopilot": "true", "datadog.envDict.HELM_FORCE_RENDER": "true"}, expectedPath: legacy},
 		{name: "GDC exclusion", tag: "7.86.0", overrides: map[string]string{"providers.gke.gdc": "true"}},
@@ -350,14 +352,11 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 				}
 				assert.LessOrEqual(t, mounts, 1, "never dual-mount passwd in %s", container.Name)
 			}
-			if tt.expectedPath == "" {
-				assert.Zero(t, processMounts)
-			} else {
-				assert.Positive(t, processMounts)
+			expectedMounts := tt.expectedMounts
+			if tt.expectedPath != "" && expectedMounts == 0 {
+				expectedMounts = 1
 			}
-			if tt.name == "core and network process sidecar" {
-				assert.Equal(t, 2, processMounts)
-			}
+			assert.Equal(t, expectedMounts, processMounts)
 		})
 	}
 }
@@ -374,16 +373,14 @@ func TestProcessPasswdPreservesHostEtcConfiguration(t *testing.T) {
 			common.Unmarshal(t, manifest, &ds)
 			container, found := getContainer(t, ds.Spec.Template.Spec.Containers, "agent")
 			require.True(t, found)
-			env := getEnvVarMap(container.Env)
-			assert.Equal(t, hostEtc, env["HOST_ETC"])
-			assert.Equal(t, "true", env["DD_IGNORE_HOST_ETC"])
-			count := 0
-			for _, entry := range container.Env {
-				if entry.Name == "HOST_ETC" {
-					count++
+			expectedEnv := []corev1.EnvVar{{Name: "HOST_ETC", Value: hostEtc}, {Name: "DD_IGNORE_HOST_ETC", Value: "true"}}
+			var hostEtcEnv []corev1.EnvVar
+			for _, env := range container.Env {
+				if env.Name == "HOST_ETC" || env.Name == "DD_IGNORE_HOST_ETC" {
+					hostEtcEnv = append(hostEtcEnv, env)
 				}
 			}
-			assert.Equal(t, 1, count, "must not inject a conflicting HOST_ETC")
+			assert.ElementsMatch(t, expectedEnv, hostEtcEnv, "preserve explicit configuration without duplicates")
 		})
 	}
 }
