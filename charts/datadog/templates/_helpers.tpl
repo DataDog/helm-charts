@@ -1607,7 +1607,7 @@ false
 Returns whether Remote Configuration should be enabled in the agent
 */}}
 {{- define "datadog-remoteConfiguration-enabled" -}}
-{{- if and (.Values.remoteConfiguration.enabled) (or (.Values.datadog.remoteConfiguration.enabled) (.Values.datadog.privateActionRunner.enabled)) (not .Values.providers.gke.gdc) -}}
+{{- if and (.Values.remoteConfiguration.enabled) (or (.Values.datadog.remoteConfiguration.enabled) (.Values.datadog.privateActionRunner.enabled) .Values.datadog.dataSecurity.enabled) (not .Values.providers.gke.gdc) -}}
 true
 {{- else -}}
 false

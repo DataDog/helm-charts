@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.262.0
+
+* Add `datadog.dataSecurity.enabled` (default `false`) to enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer. Enabling it also enables Remote Configuration on the node Agent when `remoteConfiguration.enabled` is true.
+
 ## 3.261.0
 
 * Add a `tracefs` (`/sys/kernel/tracing`) volume and `system-probe` mount when `providers.talos.enabled` is set.
