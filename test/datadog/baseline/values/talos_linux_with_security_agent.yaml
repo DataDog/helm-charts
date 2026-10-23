@@ -1,0 +1,17 @@
+datadog:
+  kubelet:
+    tlsVerify: false
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  securityAgent:
+    runtime:
+      enabled: true
+    compliance:
+      enabled: true
+  ignoreAutoConfig:
+    - etcd
+    - kube_scheduler
+    - kube_controller_manager
+providers:
+  talos:
+    enabled: true

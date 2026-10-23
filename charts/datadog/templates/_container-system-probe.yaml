@@ -101,6 +101,11 @@
       mountPath: /sys/kernel/debug
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: false # Need RW for kprobe_events
+{{- if .Values.providers.talos.enabled }}
+    - name: tracefs
+      mountPath: /sys/kernel/tracing
+      readOnly: false # Need RW for kprobe_events
+{{- end }}
 {{- if .Values.datadog.networkMonitoring.enabled }}
     - name: bpffs
       mountPath: /sys/fs/bpf

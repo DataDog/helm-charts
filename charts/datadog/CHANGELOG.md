@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.261.0
+
+* Add a `tracefs` (`/sys/kernel/tracing`) volume and `system-probe` mount when `providers.talos.enabled` is set.
+* Fix NPM, USM, OOM kill, TCP queue length, and CWS failing to load their eBPF probes on Talos.
+
 ## 3.260.1
 
 * Update `fips.image.tag` to `1.1.32` fixing CVEs and updating packages.
