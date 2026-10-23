@@ -1,0 +1,33 @@
+{{- if (.Values.eventRouting | default dict).enabled -}}
+{{- if not .Values.serviceHeadless.enabled }}
+{{- fail "`eventRouting.enabled` requires `serviceHeadless.enabled`" }}
+{{- end }}
+{{- if not .Values.datadog.pipelineId }}
+{{- fail "`eventRouting.enabled` requires `datadog.pipelineId`" }}
+{{- end }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "opw.fullname" . }}-event-routing
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "opw.labels" . | nindent 4 }}
+rules:
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "opw.fullname" . }}-event-routing
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "opw.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "opw.fullname" . }}-event-routing
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "opw.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end -}}
