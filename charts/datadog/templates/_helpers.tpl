@@ -1819,22 +1819,13 @@ false
 {{- end -}}
 
 {{/*
-  Select only the process containers' destination, independently of eligibility.
-  Process Check and Process Discovery prefer HOST_ETC/passwd starting in 7.86.0.
-  Check the actual image tag, not get-agent-version's inferred aliases, and never
-  treat doNotCheckTag as evidence of compatibility. Digests, custom tags and
-  prereleases (including 7.86.0-devel, which predates the resolver) fail closed.
-  This is a process capability check only; Gohai still uses local user lookup.
-  Autopilot's published allowlists still require the legacy mount. Rely on the
-  Agent's HOST_ETC initialization rather than overriding user configuration.
+  Returns the process passwd mount path for the configured Agent version.
 */}}
 {{- define "process-passwd-mount-path" -}}
 {{- $path := "/etc/passwd" -}}
-{{- $image := include "image-path" (dict "root" .Values "image" .Values.agents.image) -}}
-{{- $tag := last (splitList ":" $image) -}}
-{{- $stableTag := and (not (contains "@" $image)) (regexMatch "^7\\.[0-9]+\\.[0-9]+(-fips)?(-jmx|-full)?$" $tag) -}}
-{{- if and (eq .Values.targetSystem "linux") (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) $stableTag -}}
-  {{- if semverCompare ">=7.86.0" (first (splitList "-" $tag)) -}}
+{{- $canCheckVersion := and (not .Values.agents.image.digest) (not .Values.agents.image.doNotCheckTag) -}}
+{{- if and (eq .Values.targetSystem "linux") (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) $canCheckVersion -}}
+  {{- if semverCompare ">=7.86.0" (include "get-agent-version" .) -}}
     {{- $path = "/host/etc/passwd" -}}
   {{- end -}}
 {{- end -}}
