@@ -297,10 +297,8 @@ Quickwit environment
       resource: requests.memory
 - name: QW_CONFIG
   value: {{ .Values.configLocation }}
-{{- if not .Values.config.cluster_id }}
 - name: QW_CLUSTER_ID
-  value: {{ include "quickwit.defaultClusterID" . }}
-{{- end }}
+  value: {{ .Values.config.cluster_id | default (include "quickwit.defaultClusterID" .) | quote }}
 - name: QW_NODE_ID
   value: "$(KUBERNETES_POD_NAME)"
 - name: QW_AVAILABILITY_ZONE
@@ -377,7 +375,7 @@ Quickwit environment
 - name: BYOC_TELEMETRY_ENABLED
   value: "true"
 - name: OTEL_RESOURCE_ATTRIBUTES
-  value: {{ printf "cluster_id=%s,node_id=$(QW_NODE_ID),host.name=$(KUBERNETES_NODE_NAME),component=$(KUBERNETES_COMPONENT),chart.version=%s" $clusterID .Chart.Version | quote }}
+  value: {{ printf "cluster_id=%s,node_id=$(QW_NODE_ID),kube_node=$(KUBERNETES_NODE_NAME),component=$(KUBERNETES_COMPONENT),chart.version=%s" $clusterID .Chart.Version | quote }}
 - name: OTEL_EXPORTER_OTLP_PROTOCOL
   value: "http/protobuf"
 - name: OTEL_EXPORTER_OTLP_LOGS_ENDPOINT

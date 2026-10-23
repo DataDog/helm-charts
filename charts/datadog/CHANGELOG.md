@@ -1,9 +1,21 @@
 # Datadog changelog
 
-## 3.259.0
+## 3.261.0
 
 * Add a `tracefs` (`/sys/kernel/tracing`) volume and `system-probe` mount when `providers.talos.enabled` is set.
 * Fix NPM, USM, OOM kill, TCP queue length, and CWS failing to load their eBPF probes on Talos.
+
+## 3.260.0
+
+* Add `datadog.kueue.enabled` to enable Kueue metadata collection in the Cluster Agent and the Kueue check (requires Agent and Cluster Agent 7.82.0+). The check runs as an endpoints check against each Kueue controller pod and requires `datadog.clusterChecks.enabled`. Use `datadog.kueue.metricsService` to point it at a non-default Kueue metrics Service, and `datadog.kueue.collectWorkloadEvents` to disable Workload lifecycle events and the node Agent read access to Kueue Workloads.
+
+## 3.259.1
+
+* Fix OTel Agent Gateway pod failing to start when `agents.useConfigMap` is enabled: add the missing `datadog-yaml` volume and mount the config directory read-write so the `datadog.yaml` subPath mount can be created ([#2980](https://github.com/DataDog/helm-charts/pull/2980)).
+
+## 3.259.0
+
+* Add opt-in `datadog.jemalloc.enabled` for the Linux node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners, with explicit environment overrides taking precedence.
 
 ## 3.258.1
 

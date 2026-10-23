@@ -18,6 +18,9 @@
 {{- end }}
 {{- end }}
   env:
+    {{- if eq (include "should-enable-jemalloc" .) "true" }}
+    {{- include "jemalloc-env" . | nindent 4 }}
+    {{- end }}
     {{- include "containers-common-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
