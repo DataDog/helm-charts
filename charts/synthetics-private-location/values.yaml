@@ -132,3 +132,147 @@ podDisruptionBudget:
   enabled: false
   minAvailable: 1
   # maxUnavailable: 1
+
+multiContainer:
+  # multiContainer.enabled -- Preview. Run the worker, deno-executor, browser-pool and traceroute-server as separate containers in one pod, none using `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Requires a private location image version >= 1.77.0. `podSecurityContext` applies to the pod and `securityContext` to the worker container, merged over hardened defaults.
+  enabled: false
+
+  podSecurity:
+    securityContextConstraints:
+      # multiContainer.podSecurity.securityContextConstraints.create -- If true, create an OpenShift SecurityContextConstraints resource that allows the multi-container pod (fixed non-root UIDs, `NET_RAW` for traceroute-server). Requires `multiContainer.enabled`.
+      create: false
+      # multiContainer.podSecurity.securityContextConstraints.volumes -- Allowed volume types. Add the types used by `extraVolumes`.
+      volumes:
+        - configMap
+        - downwardAPI
+        - emptyDir
+        - projected
+        - secret
+
+  # multiContainer.terminationGracePeriodSeconds -- Must stay above the browser-pool drain timeout (10 minutes) so in-flight browser tests can finish
+  terminationGracePeriodSeconds: 620
+
+  worker:
+    # multiContainer.worker.resources -- Resource requests/limits for the worker container. Browsers run in the browser-pool container, so the worker needs less than in the single-container layout. `resources` is not used in the multi-container layout.
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+  denoExecutor:
+    # multiContainer.denoExecutor.maxConcurrent -- Concurrent `deno run` processes per replica. Past it the worker retries the run.
+    maxConcurrent: 10
+    # multiContainer.denoExecutor.resources -- Resource requests/limits for the deno-executor container. Each JS-using test step uses ~30-50Mi.
+    resources:
+      requests:
+        cpu: 200m
+        memory: 1Gi
+      limits:
+        cpu: 200m
+        memory: 1Gi
+
+  browserPool:
+    adminTokenSecret:
+      # multiContainer.browserPool.adminTokenSecret.name -- Required in multi-container mode. Existing Secret containing a cryptographically random browser-pool admin token (at least 32 random bytes), shared by the worker and browser-pool. Created and rotated outside this chart.
+      name: ""
+      # multiContainer.browserPool.adminTokenSecret.key -- Key containing the admin token in the existing Secret. Restart the Deployment after rotating the token.
+      key: token
+    # multiContainer.browserPool.maxConcurrent -- Concurrent browsers per replica. Past it the worker waits for a slot. Keep it at about twice the worker `concurrency` (default 10) and size `browserPool.resources` to match.
+    maxConcurrent: 20
+    # multiContainer.browserPool.maxBrowserIdleMs -- Reclaim a browser after this long without a request from the worker. Not a cap on test duration.
+    maxBrowserIdleMs: 300000
+    # multiContainer.browserPool.shmSizeLimit -- Size of the in-memory `/dev/shm` volume. The runtime default (64Mi) crashes renderers on heavier pages.
+    shmSizeLimit: 2Gi
+    # multiContainer.browserPool.resources -- Resource requests/limits for the browser-pool container
+    resources:
+      requests:
+        cpu: "2"
+        memory: 6Gi
+      limits:
+        cpu: "2"
+        memory: 6Gi
+
+  tracerouteServer:
+    # multiContainer.tracerouteServer.enabled -- Run the traceroute-server container, which needs the `NET_RAW` capability. Required for network path (traceroute) features. Disable on clusters enforcing the `restricted` Pod Security Standard.
+    enabled: true
+    # multiContainer.tracerouteServer.logLevel -- Log level of the traceroute-server container (`debug`, `info`, `warn`, `error`). Set the worker log level with the worker `verbosity` option or `DATADOG_WORKER_LOG_VERBOSITY`.
+    logLevel: info
+    # multiContainer.tracerouteServer.resources -- Resource requests/limits for the traceroute-server container
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+
+  networkPolicy:
+    # multiContainer.networkPolicy.create -- (bool) Required in multi-container mode: `true` creates a pod-wide egress NetworkPolicy; `false` creates none and leaves egress enforcement to the operator. Requires a CNI that enforces NetworkPolicies. Other policies can broaden access; ICMP filtering is CNI-dependent.
+    create:
+    dns:
+      # multiContainer.networkPolicy.dns.to -- Required when `create` is `true`. NetworkPolicy peers for DNS (TCP/UDP 53). Use namespace/pod selectors for cluster DNS or ipBlock CIDRs for NodeLocal/custom resolvers. There is no allow-all DNS exception.
+      to: []
+    # multiContainer.networkPolicy.additionalEgress -- Additional standard NetworkPolicy egress rules, for example access to an upstream proxy. These exceptions take precedence over blocked ranges.
+    additionalEgress: []
+    # multiContainer.networkPolicy.enableDefaultBlockedIpRanges -- Block the ranges in defaultBlockedIPRanges when `create` is `true`. Explicit allowed ranges, DNS peers and additionalEgress can grant exceptions.
+    enableDefaultBlockedIpRanges: true
+    # multiContainer.networkPolicy.defaultBlockedIPRanges -- IANA reserved ranges blocked when `enableDefaultBlockedIpRanges` is true. Same list as the worker, without `::ffff:0:0/96` (rejected in a NetworkPolicy, and covered by the IPv4 list).
+    defaultBlockedIPRanges:
+      IPv4:
+        - 0.0.0.0/8
+        - 10.0.0.0/8
+        - 100.64.0.0/10
+        - 127.0.0.0/8
+        - 169.254.0.0/16
+        - 172.16.0.0/12
+        - 192.0.0.0/24
+        - 192.0.0.0/29
+        - 192.0.0.8/32
+        - 192.0.0.9/32
+        - 192.0.0.10/32
+        - 192.0.0.170/32
+        - 192.0.0.171/32
+        - 192.0.2.0/24
+        - 192.31.196.0/24
+        - 192.52.193.0/24
+        - 192.88.99.0/24
+        - 192.168.0.0/16
+        - 192.175.48.0/24
+        - 198.18.0.0/15
+        - 198.51.100.0/24
+        - 203.0.113.0/24
+        - 240.0.0.0/4
+        - 224.0.0.0/4
+        - 255.255.255.255/32
+      IPv6:
+        - ::1/128
+        - ::/128
+        - 64:ff9b::/96
+        - 64:ff9b:1::/48
+        - 100::/64
+        - 2001::/23
+        - 2001::/32
+        - 2001:1::1/128
+        - 2001:1::2/128
+        - 2001:2::/48
+        - 2001:3::/32
+        - 2001:4:112::/48
+        - 2001:5::/32
+        - 2001:10::/28
+        - 2001:20::/28
+        - 2001:db8::/32
+        - 2002::/16
+        - 2620:4f:8000::/48
+        - fc00::/7
+        - fe80::/10
+    # multiContainer.networkPolicy.allowedIPRanges -- CIDRs that stay reachable even when inside a blocked range
+    allowedIPRanges:
+      IPv4: []
+      IPv6: []
+    # multiContainer.networkPolicy.blockedIPRanges -- Additional CIDRs to block, added to `defaultBlockedIPRanges`
+    blockedIPRanges:
+      IPv4: []
+      IPv6: []
