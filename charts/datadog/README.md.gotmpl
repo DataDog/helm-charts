@@ -321,7 +321,7 @@ helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 
 #### Process passwd mounts
 
-For stable Agent 7.x images at version 7.86.0 or later, eligible process containers mount host passwd read-only at `/host/etc/passwd`, preserving image-local accounts in `/etc/passwd`. Standard JMX, full, and FIPS variants are recognized. Older versions, aliases, prereleases, custom tags, and digest-pinned images retain `/etc/passwd`. `agents.image.doNotCheckTag` does not establish compatibility. GKE Autopilot retains the legacy destination pending an updated published allowlist. Existing mount exclusions and security-agent/system-probe mounts are unchanged.
+Eligible process containers mount host passwd read-only at `/host/etc/passwd` when the chart resolves the Agent version to a stable version 7.86.0 or later, preserving image-local accounts in `/etc/passwd`. Version selection uses the chart's standard handling of image variants and floating tags. Older or prerelease versions, digest-pinned images, and `agents.image.doNotCheckTag=true` retain `/etc/passwd`. GKE Autopilot retains the legacy destination pending an updated published allowlist. Existing mount exclusions and security-agent/system-probe mounts are unchanged.
 
 The chart does not inject `HOST_ETC`: the Agent normally initializes it to `/host/etc`. Explicit `HOST_ETC` and `ignore_host_etc` configuration remains effective. An empty/different `HOST_ETC`, or disabling initialization without setting `HOST_ETC=/host/etc`, prevents process lookup from using the new mount.
 
