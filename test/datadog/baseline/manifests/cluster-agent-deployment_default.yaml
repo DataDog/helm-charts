@@ -2290,7 +2290,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.84.3
+          image: registry.datadoghq.com/cluster-agent:7.84.5
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2363,7 +2363,7 @@ spec:
           command:
             - cp
             - -rf
-          image: registry.datadoghq.com/cluster-agent:7.84.3
+          image: registry.datadoghq.com/cluster-agent:7.84.5
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:
