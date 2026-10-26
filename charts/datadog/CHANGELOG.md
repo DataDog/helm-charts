@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.261.1
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.6 ([#2994](https://github.com/DataDog/helm-charts/pull/2994)).
+* Bump Datadog Operator chart dependency to 2.31.0 and Operator image tag to 1.31.2.
+
 ## 3.261.0
 
 * Add a `tracefs` (`/sys/kernel/tracing`) volume and `system-probe` mount when `providers.talos.enabled` is set.
