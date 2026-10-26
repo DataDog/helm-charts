@@ -75,19 +75,35 @@ false
 {{- define "resolved-discovery-enabled" -}}
 {{- if eq (include "discovery-enabled-explicitly-set" .) "true" -}}
 {{- .Values.datadog.discovery.enabled -}}
+{{- else if and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "false") -}}
+false
 {{- else -}}
-  {{- if and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "false") -}}
-false
-  {{- else -}}
-  {{- $version := include "get-agent-version-for-discovery" . -}}
-  {{- if eq $version "latest" -}}
+{{- include "discovery-agent-default" . -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns the Agent's own default for discovery.enabled, as a function of the resolved agent version.
+  Agent >= 7.78.0 (or a non-semver-ish version, treated as latest) enables discovery by default.
+*/}}
+{{- define "discovery-agent-default" -}}
+{{- $version := include "get-agent-version-for-discovery" . -}}
+{{- if or (eq $version "latest") (semverCompare ">=7.78.0-0" $version) -}}
 true
-  {{- else if semverCompare ">=7.78.0-0" $version -}}
-true
-  {{- else -}}
+{{- else -}}
 false
-  {{- end -}}
-  {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns true if DD_DISCOVERY_ENABLED must be set on the core agent container, i.e. when the
+  resolved discovery state differs from what the Agent would pick by default on its own.
+*/}}
+{{- define "should-render-core-agent-discovery-env" -}}
+{{- if ne (include "resolved-discovery-enabled" .) (include "discovery-agent-default" .) -}}
+true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}
 
@@ -290,11 +306,11 @@ Create chart name and version as used by the chart label.
 
 {{/*
 Return true if the DatadogInstrumentation CRD controller should be enabled.
-Requires datadog.instrumentationCrd.enabled and both the node Agent and Cluster Agent to be
-version 7.82.0 or newer; otherwise falls back to disabled.
+Requires datadog.instrumentationCrd.enabled, the Cluster Agent to be enabled, and both the node
+Agent and Cluster Agent to be version 7.82.0 or newer; otherwise falls back to disabled.
 */}}
 {{- define "should-enable-instrumentation-crd-controller" -}}
-{{- if .Values.datadog.instrumentationCrd.enabled -}}
+{{- if and .Values.datadog.instrumentationCrd.enabled (eq (include "cluster-agent-enabled" .) "true") -}}
 {{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
 {{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
 {{- if and $agentVersionOK $dcaVersionOK -}}

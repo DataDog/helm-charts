@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.262.0
+
+* Improve the user experience when disabling the cluster agent ([#2938](https://github.com/DataDog/helm-charts/pull/2938)).
+
 ## 3.261.1
 
 * Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.6 ([#2994](https://github.com/DataDog/helm-charts/pull/2994)).

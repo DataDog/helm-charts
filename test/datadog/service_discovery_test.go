@@ -30,6 +30,10 @@ func Test_serviceDiscoveryResolvedDefaulting(t *testing.T) {
 		expectDiscoveryEnabled      bool
 		expectUseSystemProbeLiteKey bool
 		expectUseSystemProbeLite    bool
+		// expectCoreAgentDiscoveryEnv is the expected DD_DISCOVERY_ENABLED value on the core agent
+		// container, or empty if it must not be rendered. It is only rendered when the resolved
+		// discovery state differs from the Agent's own default for the resolved version.
+		expectCoreAgentDiscoveryEnv string
 	}{
 		{
 			name: "omitted discovery with agent 7.78.0 enables discovery",
@@ -83,8 +87,9 @@ func Test_serviceDiscoveryResolvedDefaulting(t *testing.T) {
 				"agents.image.tag":          "7.78.0",
 				"datadog.discovery.enabled": "false",
 			},
-			expectSystemProbe:    false,
-			expectDiscoveryBlock: false,
+			expectSystemProbe:           false,
+			expectDiscoveryBlock:        false,
+			expectCoreAgentDiscoveryEnv: "false",
 		},
 		{
 			name: "explicit true with agent 7.77.9 keeps discovery enabled",
@@ -97,6 +102,7 @@ func Test_serviceDiscoveryResolvedDefaulting(t *testing.T) {
 			expectDiscoveryEnabled:      true,
 			expectUseSystemProbeLiteKey: true,
 			expectUseSystemProbeLite:    false,
+			expectCoreAgentDiscoveryEnv: "true",
 		},
 		{
 			name: "omitted discovery with partial image override inherits default tag policy",
@@ -154,6 +160,14 @@ func Test_serviceDiscoveryResolvedDefaulting(t *testing.T) {
 				assert.NotEmpty(t, systemProbeContainer.Command, "expected system-probe container command to be rendered")
 			}
 
+			coreAgentContainer, hasCoreAgent := getContainer(t, daemonset.Spec.Template.Spec.Containers, "agent")
+			require.True(t, hasCoreAgent, "expected core agent container to be rendered")
+			discoveryEnvValue, hasDiscoveryEnv := getEnvValue(coreAgentContainer.Env, "DD_DISCOVERY_ENABLED")
+			assert.Equal(t, tt.expectCoreAgentDiscoveryEnv != "", hasDiscoveryEnv, "unexpected DD_DISCOVERY_ENABLED presence on core agent container")
+			if tt.expectCoreAgentDiscoveryEnv != "" {
+				assert.Equal(t, tt.expectCoreAgentDiscoveryEnv, discoveryEnvValue, "unexpected DD_DISCOVERY_ENABLED value on core agent container")
+			}
+
 			systemProbeConfig, hasSystemProbeConfig := extractSystemProbeConfig(t, manifest)
 			assert.Equal(t, tt.expectDiscoveryBlock, hasSystemProbeConfig, "unexpected system-probe config presence")
 
@@ -189,6 +203,13 @@ func Test_serviceDiscoveryExplicitFalseRendersWhenAnotherSystemProbeFeatureIsEna
 	networkConfig, found := nestedMap(systemProbeConfig, "network_config")
 	require.True(t, found, "expected network_config block to be rendered")
 	assert.Equal(t, true, networkConfig["enabled"])
+
+	daemonset := extractAgentDaemonset(t, manifest)
+	coreAgentContainer, hasCoreAgent := getContainer(t, daemonset.Spec.Template.Spec.Containers, "agent")
+	require.True(t, hasCoreAgent, "expected core agent container to be rendered")
+	discoveryEnvValue, hasDiscoveryEnv := getEnvValue(coreAgentContainer.Env, "DD_DISCOVERY_ENABLED")
+	require.True(t, hasDiscoveryEnv, "expected DD_DISCOVERY_ENABLED on core agent container")
+	assert.Equal(t, "false", discoveryEnvValue, "expected core agent to receive the explicit disable")
 }
 
 func renderDiscoveryManifest(t *testing.T, overrides map[string]string) string {
