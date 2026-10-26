@@ -305,7 +305,7 @@
       value: {{ .Values.datadog.networkMonitoring.enabled | quote }}
     {{- end }}
     {{- end }}
-    {{- if eq (include "should-render-discovery-config" .) "true" }}
+    {{- if eq (include "should-render-core-agent-discovery-env" .) "true" }}
     - name: DD_DISCOVERY_ENABLED
       value: {{ include "resolved-discovery-enabled" . | quote }}
     {{- end }}
