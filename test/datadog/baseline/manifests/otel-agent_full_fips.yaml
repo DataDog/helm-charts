@@ -23,25 +23,6 @@ metadata:
 ---
 apiVersion: v1
 data:
-  kubernetes_apiserver.yaml: |-
-    init_config:
-    instances:
-      -
-        filtering_enabled: false
-        unbundle_events: false
-kind: ConfigMap
-metadata:
-  annotations: {}
-  labels:
-    app.kubernetes.io/instance: datadog
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: datadog
-    app.kubernetes.io/version: "7"
-  name: datadog-cluster-agent-confd
-  namespace: datadog-agent
----
-apiVersion: v1
-data:
   api-key-secret-name: datadog-secret
   app-key-secret-name: datadog-secret
 kind: ConfigMap
