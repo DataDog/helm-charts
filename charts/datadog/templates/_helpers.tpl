@@ -12,7 +12,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.84.3" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -25,7 +25,7 @@
 {{- $version := .Values.clusterChecksRunner.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.84.3" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -37,7 +37,7 @@
 {{- $version := .Values.clusterAgent.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.84.3" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -302,6 +302,52 @@ true
 {{- else -}}
 false
 {{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Cluster Agent version supports Kueue (7.82.0 or newer).
+*/}}
+{{- define "kueue-cluster-agent-version-supported" -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Agent version supports the Kueue check (7.82.0 or newer).
+*/}}
+{{- define "kueue-agent-version-supported" -}}
+{{- if or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if Kueue metadata collection should be enabled in the Cluster Agent.
+Requires datadog.kueue.enabled, a deployed Cluster Agent, and Cluster Agent 7.82.0 or newer.
+*/}}
+{{- define "should-enable-kueue" -}}
+{{- if and .Values.datadog.kueue.enabled (eq (include "should-deploy-cluster-agent" .) "true") (eq (include "kueue-cluster-agent-version-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Kueue check should be configured. It is scheduled by the Cluster Agent as an
+endpoints check on the node Agents, so it requires cluster checks and Agent 7.82.0 or newer.
+*/}}
+{{- define "should-enable-kueue-check" -}}
+{{- if and (eq (include "should-enable-kueue" .) "true") .Values.datadog.clusterChecks.enabled (eq (include "kueue-agent-version-supported" .) "true") -}}
+true
 {{- else -}}
 false
 {{- end -}}
@@ -1302,7 +1348,7 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (eq (include "should-enable-kueue-check" .) "true") (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
 true
 {{- else -}}
 false

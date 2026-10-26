@@ -1139,7 +1139,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.84.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1246,7 +1246,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.84.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: process-agent
           resources: {}
@@ -1272,7 +1272,7 @@ spec:
           command:
             - pwsh
             - -Command
-          image: registry.datadoghq.com/agent:7.84.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -1316,7 +1316,7 @@ spec:
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: registry.datadoghq.com/agent:7.84.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -1534,7 +1534,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.84.3
+          image: registry.datadoghq.com/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1607,7 +1607,7 @@ spec:
           command:
             - cp
             - -rf
-          image: registry.datadoghq.com/cluster-agent:7.84.3
+          image: registry.datadoghq.com/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

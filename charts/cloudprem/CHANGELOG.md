@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.6
+
+* Update Docker image to `v0.1.35`.
+* Always export `QW_CLUSTER_ID` to CloudPrem pods, using `config.cluster_id` when set. Previously the variable was only set when `config.cluster_id` was empty.
+* Report the Kubernetes node name as the `kube_node` OpenTelemetry resource attribute instead of `host.name`. EC2 default node names (`ip-<private-ip>.ec2.internal`) are only unique within a VPC, so as `host.name` they could be resolved to an unrelated host through Datadog host aliasing, which swapped the `host` tag and attached that host's tags to CloudPrem telemetry.
+
 ## 0.5.5
 
 * Fix load-estimation configuration: set `QW_DISABLE_LOAD_ESTIMATION=true` on searchers instead of indexers by default. Explicit overrides remain supported.
