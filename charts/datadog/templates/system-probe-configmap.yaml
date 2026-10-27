@@ -389,6 +389,21 @@ data:
           "includes": {},
           "excludes": {}
         },
+        {{- if and (eq (include "should-enable-compliance-in-system-probe" .) "true") (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) }}
+        {
+          "names": [
+            "chroot",
+            "fchdir",
+            "mlock",
+            "munlock"
+          ],
+          "action": "SCMP_ACT_ALLOW",
+          "args": null,
+          "comment": "allow host benchmarks to enter the host root and lock libgcrypt secure memory",
+          "includes": {},
+          "excludes": {}
+        },
+        {{- end }}
         {
           "names": [
             "kill"
