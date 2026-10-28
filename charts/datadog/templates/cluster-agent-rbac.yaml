@@ -422,7 +422,7 @@ subjects:
     name: {{ template "datadog.fullname" . }}-cluster-agent
     namespace: {{ .Release.Namespace }}
 {{- end }}
-{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+{{- if eq (include "clusterAgent-privateActionRunner-enabled" .) "true" }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: Role
@@ -454,7 +454,7 @@ subjects:
     name: {{ template "datadog.fullname" . }}-cluster-agent
     namespace: {{ .Release.Namespace }}
 {{- end }}
-{{- if and .Values.clusterAgent.privateActionRunner.enabled .Values.clusterAgent.privateActionRunner.k8sRemediationEnabled }}
+{{- if and (eq (include "clusterAgent-privateActionRunner-enabled" .) "true") .Values.clusterAgent.privateActionRunner.k8sRemediationEnabled }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
