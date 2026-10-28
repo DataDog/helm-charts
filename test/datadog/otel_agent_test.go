@@ -42,13 +42,13 @@ func Test_otelAgentConfigs(t *testing.T) {
 				},
 			},
 			expectedIpcEnv: ExpectedIpcEnv{
-				ipcUseSocket:             "true",
+				ipcPort:                  "5009",
 				ipcConfigRefreshInterval: "60",
 			},
 			assertions: verifyOtelAgentEnvVars,
 		},
 		{
-			name: "agent without unix socket support falls back to the ipc port",
+			name: "agent with unix socket support uses the socket",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",
 				ChartPath:   "../../charts/datadog",
@@ -58,11 +58,11 @@ func Test_otelAgentConfigs(t *testing.T) {
 					"datadog.apiKeyExistingSecret":  "datadog-secret",
 					"datadog.appKeyExistingSecret":  "datadog-secret",
 					"datadog.otelCollector.enabled": "true",
-					"agents.image.tag":              "7.74.0",
+					"agents.image.tag":              "7.85.0",
 				},
 			},
 			expectedIpcEnv: ExpectedIpcEnv{
-				ipcPort:                  "5009",
+				ipcUseSocket:             "true",
 				ipcConfigRefreshInterval: "60",
 			},
 			assertions: verifyOtelAgentEnvVars,
