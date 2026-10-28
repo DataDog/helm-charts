@@ -1559,8 +1559,8 @@ spec:
               value: "false"
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
-            - name: DD_AGENT_IPC_USE_SOCKET
-              value: "true"
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
             - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
               value: "60"
             - name: DD_LOG_LEVEL
@@ -2003,8 +2003,8 @@ spec:
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "false"
-            - name: DD_AGENT_IPC_USE_SOCKET
-              value: "true"
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
             - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
               value: "60"
             - name: DD_OTELCOLLECTOR_ENABLED
