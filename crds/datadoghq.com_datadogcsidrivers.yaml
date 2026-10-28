@@ -50,6 +50,11 @@ spec:
                         x-kubernetes-map-type: atomic
                       type: array
                       x-kubernetes-list-type: atomic
+                    registryAllowList:
+                      items:
+                        type: string
+                      type: array
+                      x-kubernetes-list-type: set
                   type: object
                 apmSocketPath:
                   type: string
@@ -2165,6 +2170,8 @@ spec:
                     tag:
                       type: string
                   type: object
+                registry:
+                  type: string
               type: object
             status:
               properties:

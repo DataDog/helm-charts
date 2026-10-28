@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.1
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -149,7 +149,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.1
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -1895,7 +1895,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.84.3
+          image: gcr.io/datadoghq/agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1972,7 +1972,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.84.3
+          image: gcr.io/datadoghq/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -2026,7 +2026,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-gdc
-          image: gcr.io/datadoghq/agent:7.84.3
+          image: gcr.io/datadoghq/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2078,7 +2078,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.1
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2137,7 +2137,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: registry.datadoghq.com/operator:1.31.1
+          image: registry.datadoghq.com/operator:1.31.2
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2345,7 +2345,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.84.3
+          image: gcr.io/datadoghq/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2418,7 +2418,7 @@ spec:
           command:
             - cp
             - -rf
-          image: gcr.io/datadoghq/cluster-agent:7.84.3
+          image: gcr.io/datadoghq/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

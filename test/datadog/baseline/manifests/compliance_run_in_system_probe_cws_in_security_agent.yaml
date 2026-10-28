@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.1
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -403,7 +403,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.1
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -2120,6 +2120,10 @@ spec:
               value: "false"
             - name: DD_PROCESS_CONFIG_RUN_IN_CORE_AGENT_ENABLED
               value: "true"
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
+            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+              value: "60"
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_DOGSTATSD_PORT
@@ -2196,7 +2200,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.84.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2354,7 +2358,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/agent:7.84.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -2439,7 +2443,17 @@ spec:
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
               value: "true"
-          image: registry.datadoghq.com/agent:7.84.3
+            - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+              value: 20m
+            - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+              value: "true"
+            - name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
+              value: "true"
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
+            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+              value: "60"
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -2608,7 +2622,7 @@ spec:
               value: "true"
             - name: DD_DOGSTATSD_SOCKET
               value: /var/run/datadog/dsd.socket
-          image: registry.datadoghq.com/agent:7.84.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: security-agent
           resources: {}
@@ -2651,7 +2665,7 @@ spec:
           command:
             - bash
             - -c
-          image: registry.datadoghq.com/agent:7.84.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -2692,7 +2706,7 @@ spec:
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: registry.datadoghq.com/agent:7.84.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2719,7 +2733,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: registry.datadoghq.com/agent:7.84.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -2855,7 +2869,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.1
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2914,7 +2928,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: registry.datadoghq.com/operator:1.31.1
+          image: registry.datadoghq.com/operator:1.31.2
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -3120,7 +3134,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.84.3
+          image: registry.datadoghq.com/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -3193,7 +3207,7 @@ spec:
           command:
             - cp
             - -rf
-          image: registry.datadoghq.com/cluster-agent:7.84.3
+          image: registry.datadoghq.com/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

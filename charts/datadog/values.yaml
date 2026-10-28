@@ -57,6 +57,10 @@ registry:  # gcr.io/datadoghq
 registryMigrationMode: "auto"
 
 datadog:
+  jemalloc:
+    # datadog.jemalloc.enabled -- Enable jemalloc for the node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners (Linux Agent 7.84.0+).
+    enabled: false
+
   # datadog.apiKey -- Your Datadog API key
 
   ## ref: https://app.datadoghq.com/account/settings#agent/kubernetes
@@ -1224,6 +1228,22 @@ datadog:
     valuesAsTags: {}
       #   <HELM_VALUE>: <LABEL_NAME>
 
+  kueue:
+    # datadog.kueue.enabled -- Enable Kueue metadata collection in the Cluster Agent and the Kueue check (Requires Agent and Cluster Agent 7.82.0+. Kueue with more than one replica requires Agent 7.86.0+)
+    # The Kueue check runs as an endpoints check against each Kueue controller pod, so it requires
+    # datadog.clusterChecks.enabled and a node Agent scheduled on the Kueue controller nodes.
+    enabled: false
+
+    # datadog.kueue.collectWorkloadEvents -- Collect Kueue Workload lifecycle events. Grants the node Agent read access to Kueue Workloads
+    collectWorkloadEvents: true
+
+    metricsService:
+      # datadog.kueue.metricsService.name -- Name of the Service exposing the Kueue controller metrics
+      name: kueue-controller-manager-metrics-service
+
+      # datadog.kueue.metricsService.namespace -- Namespace of the Service exposing the Kueue controller metrics
+      namespace: kueue-system
+
   networkMonitoring:
     # datadog.networkMonitoring.enabled -- Enable Cloud Network Monitoring
     enabled: false
@@ -1363,6 +1383,11 @@ datadog:
         # Requires the system-probe container (auto-enabled when set to true) for eBPF-based file
         # access tracking, and sets `hostPID: true` on the agent pod. Requires Agent 7.79.0+.
         enabled: false
+
+  # Data Security configuration
+  dataSecurity:
+    # datadog.dataSecurity.enabled -- Enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer.
+    enabled: false
 
   ## Enable security agent and provide custom configs
   securityAgent:
@@ -1629,7 +1654,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.84.3
+    tag: 7.84.6
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2210,7 +2235,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.31
+    tag: 1.1.32
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -2254,7 +2279,7 @@ agents:
 
     # agents.image.tag -- Define the Agent version to use
     # Set a pinned version here. Do not append build variants: put `full` or `jmx` in `agents.image.tagSuffix`, and enable FIPS with `useFIPSAgent`. To stay on the latest stable Agent, leave this unset and upgrade the chart periodically.
-    tag: 7.84.3
+    tag: 7.84.6
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2950,7 +2975,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.84.3
+    tag: 7.84.6
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -3201,7 +3226,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.31.1
+    tag: 1.31.2
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller

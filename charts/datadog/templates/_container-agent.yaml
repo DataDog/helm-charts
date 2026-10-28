@@ -74,6 +74,9 @@
 {{- end }}
 {{- end }}
   env:
+    {{- if eq (include "should-enable-jemalloc" .) "true" }}
+    {{- include "jemalloc-env" . | nindent 4 }}
+    {{- end }}
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
@@ -263,6 +266,12 @@
     - name: DD_SBOM_ENRICHMENT_USAGE_ENABLED
       value: "true"
     {{- end }}
+    {{- end }}
+    {{- if .Values.datadog.dataSecurity.enabled }}
+    - name: DD_DATA_SECURITY_ENABLED
+      value: "true"
+    - name: DD_SHARED_LIBRARY_CHECK_ENABLED
+      value: "true"
     {{- end }}
     - name: DD_KUBELET_CORE_CHECK_ENABLED
       value: {{ .Values.datadog.kubelet.coreCheckEnabled | quote | default "true" }}

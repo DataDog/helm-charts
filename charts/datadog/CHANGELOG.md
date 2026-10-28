@@ -1,10 +1,46 @@
 # Datadog changelog
 
-## 3.259.0
+## 3.263.0
 
 * Add `datadog.kubernetesActions.communication.remoteConfiguration.enabled` and `datadog.kubernetesActions.communication.privateActionRunner.enabled` to choose how the Cluster Agent receives Kubernetes actions. Both are enabled by default, so `datadog.kubernetesActions.enabled: true` alone uses both channels; disable `privateActionRunner` for Remote Configuration only. Enabling `privateActionRunner` enables the Cluster Agent Private Action Runner automatically.
 * Kubernetes Actions now requires Cluster Agent 7.84.0 or greater (previously 7.79.0); `datadog.kubernetesActions` is ignored on older versions. On Cluster Agent 7.86.0+, disabling `remoteConfiguration` turns off the Remote Configuration channel, and disabling `privateActionRunner` keeps Kubernetes actions out of the Private Action Runner.
 * Grant the Cluster Agent the Kubernetes Actions RBAC for rollback deployment (`replicasets`: get, list).
+
+## 3.262.0
+
+* Add `datadog.dataSecurity.enabled` (default `false`) to enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer. Enabling it also enables Remote Configuration on the node Agent when `remoteConfiguration.enabled` is true.
+
+## 3.261.1
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.6 ([#2994](https://github.com/DataDog/helm-charts/pull/2994)).
+* Bump Datadog Operator chart dependency to 2.31.0 and Operator image tag to 1.31.2.
+
+## 3.261.0
+
+* Add a `tracefs` (`/sys/kernel/tracing`) volume and `system-probe` mount when `providers.talos.enabled` is set.
+* Fix NPM, USM, OOM kill, TCP queue length, and CWS failing to load their eBPF probes on Talos.
+
+## 3.260.1
+
+* Update `fips.image.tag` to `1.1.32` fixing CVEs and updating packages.
+
+## 3.260.0
+
+* Add `datadog.kueue.enabled` to enable Kueue metadata collection in the Cluster Agent and the Kueue check (requires Agent and Cluster Agent 7.82.0+). The check runs as an endpoints check against each Kueue controller pod and requires `datadog.clusterChecks.enabled`. Use `datadog.kueue.metricsService` to point it at a non-default Kueue metrics Service, and `datadog.kueue.collectWorkloadEvents` to disable Workload lifecycle events and the node Agent read access to Kueue Workloads.
+
+## 3.259.1
+
+* Fix OTel Agent Gateway pod failing to start when `agents.useConfigMap` is enabled: add the missing `datadog-yaml` volume and mount the config directory read-write so the `datadog.yaml` subPath mount can be created ([#2980](https://github.com/DataDog/helm-charts/pull/2980)).
+
+## 3.259.0
+
+* Add opt-in `datadog.jemalloc.enabled` for the Linux node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners, with explicit environment overrides taking precedence.
+
+## 3.258.1
+
+* Extend config sync (`DD_AGENT_IPC_PORT` / `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL`) to CWS direct send and compliance running in `system-probe`, alongside the CNM direct send case it already covered. `system-probe` submits these payloads itself and cannot resolve an `ENC[...]` secret handle, so without config sync a secret-backed `datadog.apiKey` would prevent it from shipping CWS events or compliance findings.
+* Carry the CWS and CSPM configuration onto the `system-probe` execution path. The `runtimepoliciesdir` and `complianceconfigdir` ConfigMap volumes, the compliance host mounts (`hostroot`, `cgroups`, `passwd`, `group`), `HOST_ROOT`, `hostPID`, and the `DD_COMPLIANCE_CONFIG_CHECK_INTERVAL` / `XCCDF_ENABLED` / `HOST_BENCHMARKS_ENABLED` / `CONTAINER_INCLUDE` / `CONTAINER_EXCLUDE` settings were all gated on the `security-agent` container existing, so they were dropped once CWS and CSPM moved into `system-probe`. With a custom `datadog.securityAgent.runtime.policies.configMap` this rendered a DaemonSet mounting an undeclared volume, which the API server rejects on apply.
+* Stop gating the Cluster Agent's compliance settings on the `security-agent` container. `DD_COMPLIANCE_CONFIG_ENABLED`, `DD_COMPLIANCE_CONFIG_CHECK_INTERVAL`, and the custom benchmarks ConfigMap mount are part of the CSPM feature, not of a node execution path, and were silently lost when `datadog.securityAgent.compliance.runInSystemProbe` was enabled - disabling the Kubernetes-level compliance checks.
 
 ## 3.258.0
 

@@ -12,7 +12,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.84.3" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -25,7 +25,7 @@
 {{- $version := .Values.clusterChecksRunner.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.84.3" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -37,7 +37,7 @@
 {{- $version := .Values.clusterAgent.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.84.3" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -137,12 +137,13 @@ true
 {{- end -}}
 
 {{/*
-Return true if config sync must be enabled for CNM direct send. With direct send, system-probe
-submits network payloads itself, and it cannot resolve an ENC[...] api_key because it wires the
+Return true if config sync must be enabled because system-probe submits payloads itself. This
+covers CNM direct send, CWS direct send, and compliance running in system-probe. In all three cases
+system-probe needs a resolved api_key, and it cannot resolve an ENC[...] handle because it wires the
 no-op secrets component. Config sync is what hands it the value the core agent already resolved.
 */}}
 {{- define "should-enable-config-sync-for-direct-send" -}}
-{{- if and (eq (include "cnm-use-direct-send" .) "true") (or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled) -}}
+{{- if or (and (eq (include "cnm-use-direct-send" .) "true") (or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled)) (and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.directSendFromSystemProbe) (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) -}}
 true
 {{- else -}}
 false
@@ -301,6 +302,52 @@ true
 {{- else -}}
 false
 {{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Cluster Agent version supports Kueue (7.82.0 or newer).
+*/}}
+{{- define "kueue-cluster-agent-version-supported" -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Agent version supports the Kueue check (7.82.0 or newer).
+*/}}
+{{- define "kueue-agent-version-supported" -}}
+{{- if or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if Kueue metadata collection should be enabled in the Cluster Agent.
+Requires datadog.kueue.enabled, a deployed Cluster Agent, and Cluster Agent 7.82.0 or newer.
+*/}}
+{{- define "should-enable-kueue" -}}
+{{- if and .Values.datadog.kueue.enabled (eq (include "should-deploy-cluster-agent" .) "true") (eq (include "kueue-cluster-agent-version-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Kueue check should be configured. It is scheduled by the Cluster Agent as an
+endpoints check on the node Agents, so it requires cluster checks and Agent 7.82.0 or newer.
+*/}}
+{{- define "should-enable-kueue-check" -}}
+{{- if and (eq (include "should-enable-kueue" .) "true") .Values.datadog.clusterChecks.enabled (eq (include "kueue-agent-version-supported" .) "true") -}}
+true
 {{- else -}}
 false
 {{- end -}}
@@ -878,6 +925,32 @@ false
 {{- end -}}
 
 {{/*
+Return true if the compliance features should be enabled in system-probe. Mirrors
+"should-enable-compliance" for the other execution path, so the two are mutually exclusive.
+*/}}
+{{- define "should-enable-compliance-in-system-probe" -}}
+{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the compliance feature is enabled, whichever container runs the host checks.
+Settings that belong to the feature itself rather than to an execution path - the Cluster Agent
+Kubernetes checks and the custom benchmarks ConfigMap - must be gated on this instead of on
+"should-enable-security-agent", or they silently disappear when compliance moves to system-probe.
+*/}}
+{{- define "should-enable-compliance-feature" -}}
+{{- if and (not .Values.providers.gke.gdc) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the runtime security features should be enabled.
 */}}
 {{- define "should-enable-runtime-security" -}}
@@ -906,7 +979,7 @@ Return true if the hostPid features should be enabled for the Agent pod.
 {{- define "should-enable-host-pid" -}}
 {{- if eq .Values.targetSystem "windows" -}}
 false
-{{- else if and (not .Values.providers.gke.gdc) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
+{{- else if and (not .Values.providers.gke.gdc) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-compliance-in-system-probe" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
 true
 {{- else -}}
 false
@@ -1275,7 +1348,7 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (eq (include "should-enable-kueue-check" .) "true") (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
 true
 {{- else -}}
 false
@@ -1340,6 +1413,27 @@ true
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Enable jemalloc only when requested and the component's Agent image is 7.84+.
+*/}}
+{{- define "should-enable-jemalloc" -}}
+{{- $image := .image | default .Values.agents.image -}}
+{{- $versionContext := dict "Values" (dict "agents" (dict "image" $image)) -}}
+{{- if and .Values.datadog.jemalloc.enabled (or $image.doNotCheckTag (semverCompare ">=7.84.0-0" (include "get-agent-version" $versionContext))) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/* Environment variables for the jemalloc allocator. */}}
+{{- define "jemalloc-env" -}}
+- name: LD_PRELOAD
+  value: "/opt/lib/nosys.so /opt/datadog-agent/embedded/lib/libjemalloc.so"
+- name: MALLOC_CONF
+  value: "background_thread:true,dirty_decay_ms:5000"
 {{- end -}}
 
 {{/*
@@ -1513,7 +1607,7 @@ false
 Returns whether Remote Configuration should be enabled in the agent
 */}}
 {{- define "datadog-remoteConfiguration-enabled" -}}
-{{- if and (.Values.remoteConfiguration.enabled) (or (.Values.datadog.remoteConfiguration.enabled) (.Values.datadog.privateActionRunner.enabled)) (not .Values.providers.gke.gdc) -}}
+{{- if and (.Values.remoteConfiguration.enabled) (or (.Values.datadog.remoteConfiguration.enabled) (.Values.datadog.privateActionRunner.enabled) .Values.datadog.dataSecurity.enabled) (not .Values.providers.gke.gdc) -}}
 true
 {{- else -}}
 false

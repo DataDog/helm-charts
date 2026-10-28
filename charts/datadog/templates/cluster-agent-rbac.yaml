@@ -67,6 +67,18 @@ rules:
   - patch
   - update
 {{- end }}
+{{- if eq (include "should-enable-kueue" .) "true" }}
+- apiGroups:
+  - "kueue.x-k8s.io"
+  resources:
+  - clusterqueues
+  - localqueues
+  - resourceflavors
+  - workloads
+  verbs:
+  - list
+  - watch
+{{- end }}
 {{- if .Values.datadog.collectEvents }}
 - apiGroups:
   - ""
@@ -214,8 +226,7 @@ rules:
   verbs: ["create"]
 {{- end }}
 {{- end }}
-{{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if .Values.datadog.securityAgent.compliance.enabled }}
+{{- if eq  (include "should-enable-compliance-feature" .) "true" }}
 - apiGroups:
   - ""
   resources:
@@ -248,7 +259,6 @@ rules:
   - networkpolicies
   verbs:
   - list
-{{- end }}
 {{- end }}
 {{- if and .Values.clusterAgent.podSecurity.podSecurityPolicy.create (.Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy") }}
 - apiGroups:
