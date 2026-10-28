@@ -48,7 +48,7 @@ vet:
 	go vet -C test ./...
 
 .PHONY: unit-test
-unit-test: unit-test-datadog unit-test-operator unit-test-private-action-runner unit-test-datadog-csi-driver unit-test-ci-scripts
+unit-test: unit-test-synthetics-private-location unit-test-datadog unit-test-operator unit-test-private-action-runner unit-test-datadog-csi-driver unit-test-ci-scripts
 
 .PHONY: unit-test-datadog
 unit-test-datadog:
@@ -68,6 +68,10 @@ unit-test-datadog-csi-driver:
 .PHONY: unit-test-private-action-runner
 unit-test-private-action-runner:
 	go test -C test ./private-action-runner -count=1
+
+.PHONY: unit-test-synthetics-private-location
+unit-test-synthetics-private-location:
+	go test -C test ./synthetics-private-location -count=1
 
 .PHONY: unit-test-ci-scripts
 unit-test-ci-scripts:

@@ -1,0 +1,41 @@
+{{- if and .Values.multiContainer.enabled .Values.multiContainer.podSecurity.securityContextConstraints.create }}
+kind: SecurityContextConstraints
+apiVersion: security.openshift.io/v1
+metadata:
+  name: {{ include "synthetics-private-location.fullname" . }}
+  labels:
+    {{- include "synthetics-private-location.labels" . | nindent 4 }}
+users:
+- system:serviceaccount:{{ .Release.Namespace }}:{{ include "synthetics-private-location.serviceAccountName" . }}
+# The multi-container pod runs fixed non-root UIDs (501, 502, 65534) and fsGroup 502.
+runAsUser:
+  type: MustRunAsNonRoot
+fsGroup:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny
+seLinuxContext:
+  type: MustRunAs
+seccompProfiles:
+- runtime/default
+allowPrivilegeEscalation: false
+defaultAllowPrivilegeEscalation: false
+allowPrivilegedContainer: false
+readOnlyRootFilesystem: true
+requiredDropCapabilities:
+- ALL
+allowedCapabilities:
+{{- if .Values.multiContainer.tracerouteServer.enabled }}
+- NET_RAW
+{{- else }} []
+{{- end }}
+defaultAddCapabilities: []
+allowedUnsafeSysctls: []
+allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+volumes:
+{{- toYaml .Values.multiContainer.podSecurity.securityContextConstraints.volumes | nindent 2 }}
+{{- end }}

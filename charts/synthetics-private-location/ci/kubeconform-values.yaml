@@ -1,0 +1,18 @@
+# Render-only fixture. The Secret is not provisioned here.
+image:
+  tag: "1.75.0"
+multiContainer:
+  enabled: true
+  browserPool:
+    adminTokenSecret:
+      name: browser-pool-test-token
+  networkPolicy:
+    create: true
+    dns:
+      to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns

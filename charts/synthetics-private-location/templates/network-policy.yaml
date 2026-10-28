@@ -1,0 +1,66 @@
+{{- if and .Values.multiContainer.enabled .Values.multiContainer.networkPolicy.create }}
+{{- $np := .Values.multiContainer.networkPolicy }}
+{{- $blocked := fromJson (include "synthetics-private-location.multiContainer.networkPolicy.blockedCIDRs" .) }}
+{{- $blockedIPv4 := $blocked.IPv4 }}
+{{- $blockedIPv6 := $blocked.IPv6 }}
+{{- /* An except entry must be strictly inside its cidr, so a fully blocked family gets no allow rule. */}}
+{{- $allowIPv4 := true }}
+{{- range $blockedIPv4 }}{{ if hasSuffix "/0" . }}{{ $allowIPv4 = false }}{{ end }}{{ end }}
+{{- $allowIPv6 := true }}
+{{- range $blockedIPv6 }}{{ if hasSuffix "/0" . }}{{ $allowIPv6 = false }}{{ end }}{{ end }}
+{{- $allowed := fromJsonArray (include "synthetics-private-location.multiContainer.networkPolicy.allowedCIDRs" .) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "synthetics-private-location.fullname" . }}-egress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "synthetics-private-location.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "synthetics-private-location.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        {{- toYaml $np.dns.to | nindent 8 }}
+      ports:
+        {{- range $np.dns.ports }}
+        - port: {{ .port }}
+          protocol: {{ .protocol }}
+        {{- end }}
+    {{- with $np.additionalEgress }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- if $allowed }}
+    - to:
+        {{- range $allowed }}
+        - ipBlock:
+            cidr: {{ . | quote }}
+        {{- end }}
+    {{- end }}
+    {{- if or $allowIPv4 $allowIPv6 }}
+    - to:
+        {{- if $allowIPv4 }}
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            {{- with $blockedIPv4 }}
+            except:
+              {{- range . }}
+              - {{ . | quote }}
+              {{- end }}
+            {{- end }}
+        {{- end }}
+        {{- if $allowIPv6 }}
+        - ipBlock:
+            cidr: "::/0"
+            {{- with $blockedIPv6 }}
+            except:
+              {{- range . }}
+              - {{ . | quote }}
+              {{- end }}
+            {{- end }}
+        {{- end }}
+    {{- end }}
+{{- end }}

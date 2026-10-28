@@ -21,4 +21,154 @@ To install the chart with the release name `<RELEASE_NAME>`, retrieve your Priva
 helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file configFile=config.json
 ```
 
+## Multi-container deployment
+
+Set `multiContainer.enabled=true` to run the worker, `deno-executor`, `browser-pool` and `traceroute-server` as separate containers in one pod, without `sudo`, `NET_ADMIN` or privilege escalation. This works on clusters that enforce `allowPrivilegeEscalation: false` and `readOnlyRootFilesystem: true`.
+
+This mode requires a private location image version >= 1.75.0.
+
+Create the browser-pool admin token Secret in the release namespace before installing. `openssl rand -hex 32` generates 32 random bytes:
+
+```bash
+kubectl -n <NAMESPACE> create secret generic pl-browser-pool \
+  --from-literal=token="$(openssl rand -hex 32)"
+```
+
+Then install the chart with the same Secret name:
+
+```bash
+helm install <RELEASE_NAME> datadog/synthetics-private-location \
+  --namespace <NAMESPACE> \
+  --set-file configFile=config.json \
+  --set image.tag=1.75.0 \
+  --set multiContainer.enabled=true \
+  --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
+  --set multiContainer.networkPolicy.create=false
+```
+
+On clusters that enforce the `restricted` Pod Security Standard, set `multiContainer.tracerouteServer.enabled=false`. Traceroute features are then not available.
+
+### Firewall Changes
+
+The worker cannot apply its `iptables` firewall in this mode, so you must set `multiContainer.networkPolicy.create`:
+
+- `false`: the chart creates no policy. You are responsible for egress enforcement.
+- `true`: the chart creates an egress NetworkPolicy that blocks reserved ranges. You must set `multiContainer.networkPolicy.dns.to`. This requires a CNI that enforces NetworkPolicies.
+
+How the policy decides:
+
+- DNS goes only to `dns.to`, on `dns.ports` (default 53 UDP/TCP).
+- All other traffic is allowed, except the blocked ranges: `defaultBlockedIPRanges` when `enableDefaultBlockedIpRanges` is true, plus `blockedIPRanges`.
+- `allowedIPRanges` are exceptions inside the blocked ranges, on all ports.
+- `additionalEgress` adds raw NetworkPolicy rules, for example to open an exception on one port only.
+
+Example 1: block private ranges, with exceptions.
+
+```yaml
+multiContainer:
+  # ...
+  networkPolicy:
+    create: true
+    dns:
+      to:
+        # Cluster DNS. Check that these labels match your cluster.
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+    enableDefaultBlockedIpRanges: true # Blocks private and reserved ranges (default)
+    blockedIPRanges:
+      IPv4:
+        - 1.2.3.4 # Example public IP to also block. A bare IP means /32.
+    allowedIPRanges:
+      IPv4:
+        - 10.1.2.0/24 # Internal subnet inside the blocked 10.0.0.0/8, all ports
+    additionalEgress:
+      # Upstream proxy. Only this port is opened.
+      - to:
+          - ipBlock:
+              cidr: 10.20.30.40/32
+        ports:
+          - protocol: TCP
+            port: 3128
+```
+
+Example 2: allow only specific destinations.
+
+```yaml
+multiContainer:
+  # ...
+  networkPolicy:
+    create: true
+    dns:
+      to:
+        - ipBlock:
+            cidr: 169.254.20.10/32 # NodeLocal DNS. Use your resolver address.
+    blockedIPRanges:
+      IPv4:
+        - 0.0.0.0/0 # Block everything. The chart then drops the allow-all rule.
+      IPv6:
+        - ::/0
+    allowedIPRanges:
+      IPv4:
+        - 203.0.113.0/24 # Then allow only these. Add the Datadog ranges for your site.
+```
+
+The worker must still reach Datadog. Also allow the [Datadog IP ranges](https://ip-ranges.datadoghq.com) for your site, or send traffic through a proxy with `additionalEgress`.
+
+### OpenShift
+
+Set `multiContainer.podSecurity.securityContextConstraints.create=true` to create the SCC the pod needs. This requires cluster-admin permissions.
+
+```bash
+helm install <RELEASE_NAME> datadog/synthetics-private-location \
+  --set-file configFile=config.json \
+  --set image.tag=1.75.0 \
+  --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
+  --set multiContainer.networkPolicy.create=false \
+  --set multiContainer.enabled=true \
+  --set multiContainer.podSecurity.securityContextConstraints.create=true
+```
+
+The pod runs each container with a fixed non-root UID:
+
+| Container | UID | Configurable |
+|---|---|---|
+| worker | 501 (group 501) | Yes, with `securityContext.runAsUser` / `securityContext.runAsGroup` |
+| deno-executor | 502 | No |
+| browser-pool | 65534 | No |
+| traceroute-server | 65534 | No |
+| pod `fsGroup` | 502 | Yes, with `podSecurityContext.fsGroup` |
+
+`podSecurityContext.runAsUser` has no effect because every container sets its own `runAsUser`.
+
+The default `restricted-v2` SCC does not work with this layout. It only allows UIDs from the project range (for example `1000680000/10000`), and the deno-executor and browser-pool UIDs cannot be moved into it. Use the chart SCC, or a custom SCC that allows:
+
+- `runAsUser`: 501, 502 and 65534 (for example `MustRunAsRange` with `uidRangeMin: 501` and `uidRangeMax: 65534`)
+- `fsGroup` and `supplementalGroups`: 502, or the `podSecurityContext.fsGroup` you set
+- the `NET_RAW` capability when `multiContainer.tracerouteServer.enabled` is true
+
+OpenShift DNS pods listen on port 5353, so set `dns.ports` to 5353 when the NetworkPolicy is created.
+
+```yaml
+multiContainer:
+  networkPolicy:
+    create: true
+    dns:
+      to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-dns
+          podSelector:
+            matchLabels:
+              dns.operator.openshift.io/daemonset-dns: default
+      ports:
+        - port: 5353
+          protocol: UDP
+        - port: 5353
+          protocol: TCP
+```
+
 {{ template "chart.valuesSection" . }}
