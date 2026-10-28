@@ -18,9 +18,9 @@ Project-level context for AI coding assistants working on this repository.
 
 ## Every Chart Change (all charts, not only datadog)
 
-1. Bump `charts/<chart>/Chart.yaml` (patch for fixes, minor for features) and apply the matching `<chart>/patch-version`, `<chart>/minor-version`, or `<chart>/no-version-bump` label. An image or appVersion bump still needs a chart version bump.
-2. Add an entry to `charts/<chart>/CHANGELOG.md`.
-3. Regenerate docs with `.github/helm-docs.sh` after bumping.
+1. Apply one label per changed chart: `<chart>/patch-version` (fixes), `<chart>/minor-version` (features), or `<chart>/no-version-bump` (CI, tests, docs only). An image or appVersion bump still needs a version label. The `Chart Version` workflow (`.github/scripts/bump-chart-version.js`) then sets the `Chart.yaml` version, fixes or adds the `CHANGELOG.md` entry, runs `.github/helm-docs.sh`, and pushes a commit to the PR branch; pull it before pushing again.
+2. Write the `charts/<chart>/CHANGELOG.md` entry yourself when the PR title isn't a good changelog line (CI corrects its version header; without an entry it uses the PR title). With `no-version-bump`, CI reverts CHANGELOG edits.
+3. Run `.github/helm-docs.sh` locally after changing values so the README diff is reviewable in the same commit.
 4. Run `make unit-test-<chart>` and `make update-test-baselines-<chart>` where the chart has them (datadog via `-datadog` / `-datadog-agent`, operator, datadog-csi-driver, private-action-runner), and review the baseline diffs you commit.
 5. After bumping a subchart dependency (e.g. `datadog-operator` in `charts/datadog/requirements.yaml`), regenerate baselines and check that RBAC still covers versions users can still pin.
 6. Open PRs from a branch in `DataDog/helm-charts`, not a fork, so CI jobs that need write permissions (labels, version checks, OIDC) can run.
