@@ -139,8 +139,7 @@
       mountPath: /opt/datadog-agent/run
       readOnly: false
 {{- end }}
-{{/* Mount the shared run_path volume when config sync uses the agent IPC unix socket, so that
-system-probe can reach the socket created by the core agent. */}}
+{{/* Mount the shared run_path volume so system-probe can reach the IPC socket created by the core agent. */}}
 {{- if and (eq (include "should-enable-config-sync-for-direct-send" .) "true") (eq (include "should-use-agent-ipc-socket" .) "true") }}
     - name: {{ include "datadog.agentRunVolumeName" . }}
       mountPath: /opt/datadog-agent/run
