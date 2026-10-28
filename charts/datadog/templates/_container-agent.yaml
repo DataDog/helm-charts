@@ -87,8 +87,13 @@
       value: "true"
     {{- end }}
     {{- if or (eq (include "should-enable-otel-agent" .) "true") (eq (include "should-enable-host-profiler" .) "true") (eq (include "should-enable-config-sync-for-direct-send" .) "true") }}
+    {{- if eq (include "should-use-agent-ipc-socket" .) "true" }}
+    - name: DD_AGENT_IPC_USE_SOCKET
+      value: "true"
+    {{- else }}
     - name: DD_AGENT_IPC_PORT
       value: "5009"
+    {{- end }}
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
     {{- end }}

@@ -11,11 +11,13 @@ import (
 
 const (
 	DDAgentIpcPort                  = "DD_AGENT_IPC_PORT"
+	DDAgentIpcUseSocket             = "DD_AGENT_IPC_USE_SOCKET"
 	DDAgentIpcConfigRefreshInterval = "DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL"
 )
 
 type ExpectedIpcEnv struct {
 	ipcPort                  string
+	ipcUseSocket             string
 	ipcConfigRefreshInterval string
 }
 
@@ -45,6 +47,26 @@ func Test_otelAgentConfigs(t *testing.T) {
 			},
 			assertions: verifyOtelAgentEnvVars,
 		},
+		{
+			name: "agent with unix socket support uses the socket",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret":  "datadog-secret",
+					"datadog.appKeyExistingSecret":  "datadog-secret",
+					"datadog.otelCollector.enabled": "true",
+					"agents.image.tag":              "7.85.0",
+				},
+			},
+			expectedIpcEnv: ExpectedIpcEnv{
+				ipcUseSocket:             "true",
+				ipcConfigRefreshInterval: "60",
+			},
+			assertions: verifyOtelAgentEnvVars,
+		},
 	}
 
 	for _, tt := range tests {
@@ -64,6 +86,7 @@ func verifyOtelAgentEnvVars(t *testing.T, manifest string, expectedIpcEnv Expect
 	assert.True(t, ok)
 	coreEnvs := getEnvVarMap(otelAgentContainer.Env)
 	assert.Equal(t, expectedIpcEnv.ipcPort, coreEnvs[DDAgentIpcPort])
+	assert.Equal(t, expectedIpcEnv.ipcUseSocket, coreEnvs[DDAgentIpcUseSocket])
 	assert.Equal(t, expectedIpcEnv.ipcConfigRefreshInterval, coreEnvs[DDAgentIpcConfigRefreshInterval])
 
 	// core agent
@@ -71,6 +94,7 @@ func verifyOtelAgentEnvVars(t *testing.T, manifest string, expectedIpcEnv Expect
 	assert.True(t, ok)
 	coreEnvs = getEnvVarMap(coreAgentContainer.Env)
 	assert.Equal(t, expectedIpcEnv.ipcPort, coreEnvs[DDAgentIpcPort])
+	assert.Equal(t, expectedIpcEnv.ipcUseSocket, coreEnvs[DDAgentIpcUseSocket])
 	assert.Equal(t, expectedIpcEnv.ipcConfigRefreshInterval, coreEnvs[DDAgentIpcConfigRefreshInterval])
 }
 
