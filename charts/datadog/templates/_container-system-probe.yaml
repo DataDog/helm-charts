@@ -64,8 +64,13 @@
       value: "true"
     {{- end }}
     {{- if eq (include "should-enable-config-sync-for-direct-send" .) "true" }}
+    {{- if eq (include "should-use-agent-ipc-socket" .) "true" }}
+    - name: DD_AGENT_IPC_USE_SOCKET
+      value: "true"
+    {{- else }}
     - name: DD_AGENT_IPC_PORT
       value: "5009"
+    {{- end }}
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
     {{- end }}
@@ -131,6 +136,13 @@
       readOnly: false # Need RW for sys-probe socket
 {{- if and .Values.providers.gke.autopilot (eq (include "gke-autopilot-workloadallowlists-enabled" .) "true") }}
     - name: datadogrun
+      mountPath: /opt/datadog-agent/run
+      readOnly: false
+{{- end }}
+{{/* Mount the shared run_path volume when config sync uses the agent IPC unix socket, so that
+system-probe can reach the socket created by the core agent. */}}
+{{- if and (eq (include "should-enable-config-sync-for-direct-send" .) "true") (eq (include "should-use-agent-ipc-socket" .) "true") }}
+    - name: {{ include "datadog.agentRunVolumeName" . }}
       mountPath: /opt/datadog-agent/run
       readOnly: false
 {{- end }}

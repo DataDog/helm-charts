@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.263.0
+
+* Config sync now uses the Agent IPC unix socket instead of the `agent_ipc` TCP port on linux, when the agent image supports it (7.76.0+): `DD_AGENT_IPC_USE_SOCKET` is set instead of `DD_AGENT_IPC_PORT` on the Agent, OTel Agent and system-probe containers. The socket is created in the shared run_path volume mounted across the agent containers, which is also mounted in system-probe when config sync is enabled for direct send. Windows, GKE Autopilot and GKE GDC keep the TCP port.
+
 ## 3.262.0
 
 * Add `datadog.dataSecurity.enabled` (default `false`) to enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer. Enabling it also enables Remote Configuration on the node Agent when `remoteConfiguration.enabled` is true.

@@ -150,6 +150,26 @@ false
 {{- end -}}
 {{- end -}}
 
+{{/*
+Return true if config sync should use the agent IPC unix socket instead of the agent_ipc TCP
+port. Requires linux (the socket listener is not supported on other platforms), a shared
+run_path volume between the agent containers (not available on GKE Autopilot or GDC), and
+an agent image with unix socket support (7.76.0+); older images ignore the setting, which
+would disable the IPC server entirely, so they keep the port. Custom images
+(agents.image.doNotCheckTag) are assumed to support it.
+*/}}
+{{- define "should-use-agent-ipc-socket" -}}
+{{- if not (and (eq .Values.targetSystem "linux") (not .Values.providers.gke.autopilot) (not .Values.providers.gke.gdc)) -}}
+false
+{{- else if .Values.agents.image.doNotCheckTag -}}
+true
+{{- else if semverCompare ">=7.76.0-0" (include "get-agent-version" .) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
 {{- define "check-version" -}}
 {{- if not .Values.agents.image.doNotCheckTag -}}
 {{- $version := (include "get-agent-version" .) -}}
