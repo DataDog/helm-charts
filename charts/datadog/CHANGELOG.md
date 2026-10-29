@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 3.263.1
+
+* Fix CSPM host benchmarks run in system-probe (`datadog.securityAgent.compliance.runInSystemProbe`), which evaluated no rule on RPM-based nodes, ran their SCE checks against the system-probe container, and aborted on FIPS hosts.
+* Allow `chroot`, `fchdir`, `mlock` and `munlock` in the system-probe seccomp profile when host benchmarks run in system-probe.
+
 ## 3.263.0
 
 * Leave `datadog.traceroute.enabled` unset by default and render `traceroute.enabled` in `system-probe.yaml` only when it is set. With Agent 7.84.0+, system-probe then enables traceroute automatically when Network Path dynamic tests are enabled, which lets Network Path basic dynamic tests run on hosts with `datadog.networkMonitoring.enabled`. Set `datadog.traceroute.enabled: false` to keep traceroute disabled.

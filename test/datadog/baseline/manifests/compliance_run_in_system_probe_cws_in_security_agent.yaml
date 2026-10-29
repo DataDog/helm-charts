@@ -370,6 +370,19 @@ data:
         },
         {
           "names": [
+            "chroot",
+            "fchdir",
+            "mlock",
+            "munlock"
+          ],
+          "action": "SCMP_ACT_ALLOW",
+          "args": null,
+          "comment": "allow host benchmarks to enter the host root and lock libgcrypt secure memory",
+          "includes": {},
+          "excludes": {}
+        },
+        {
+          "names": [
             "kill"
           ],
           "action": "SCMP_ACT_ALLOW",
