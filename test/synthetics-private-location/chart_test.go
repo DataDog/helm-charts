@@ -379,10 +379,38 @@ func TestTracerouteDisabledAndSCC(t *testing.T) {
 	manifest, err := common.RenderChart(t, command)
 	require.NoError(t, err)
 	var scc struct {
+		Metadata struct {
+			Name string `json:"name"`
+		} `json:"metadata"`
 		AllowedCapabilities []string `json:"allowedCapabilities"`
 	}
 	common.Unmarshal(t, manifest, &scc)
 	assert.Empty(t, scc.AllowedCapabilities)
+	assert.Equal(t, "test-synthetics-private-location-datadog-agent", scc.Metadata.Name)
+}
+
+func TestSCCNameIncludesNamespace(t *testing.T) {
+	names := map[string]bool{}
+	for _, namespace := range []string{"team-a", "team-b"} {
+		command := multiContainerCommand(map[string]string{
+			"multiContainer.podSecurity.securityContextConstraints.create": "true",
+		})
+		command.Namespace = namespace
+		command.ShowOnly = []string{"templates/scc.yaml"}
+		manifest, err := common.RenderChart(t, command)
+		require.NoError(t, err)
+		var scc struct {
+			Metadata struct {
+				Name string `json:"name"`
+			} `json:"metadata"`
+			Users []string `json:"users"`
+		}
+		common.Unmarshal(t, manifest, &scc)
+		assert.Equal(t, "test-synthetics-private-location-"+namespace, scc.Metadata.Name)
+		assert.Equal(t, []string{"system:serviceaccount:" + namespace + ":test-synthetics-private-location"}, scc.Users)
+		names[scc.Metadata.Name] = true
+	}
+	assert.Len(t, names, 2)
 }
 
 func TestConfigSources(t *testing.T) {

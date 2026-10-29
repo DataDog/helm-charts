@@ -201,3 +201,10 @@ Takes a dict with "ports" (multiContainer.networkPolicy.dns.ports) and "protocol
 {{- else if lt $start 65535 }}{{ $ranges = append $ranges (dict "port" $start "endPort" 65535) }}{{ end }}
 {{- toJson $ranges }}
 {{- end -}}
+
+{{/*
+Name of the cluster-scoped OpenShift SCC: the fullname plus the release namespace, so same-named releases in different namespaces do not collide. Truncated to 253 characters.
+*/}}
+{{- define "synthetics-private-location.multiContainer.sccName" -}}
+{{- printf "%s-%s" (include "synthetics-private-location.fullname" .) .Release.Namespace | trunc 253 | trimSuffix "-" }}
+{{- end -}}

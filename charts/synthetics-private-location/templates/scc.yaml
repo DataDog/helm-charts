@@ -2,7 +2,7 @@
 kind: SecurityContextConstraints
 apiVersion: security.openshift.io/v1
 metadata:
-  name: {{ include "synthetics-private-location.fullname" . }}
+  name: {{ include "synthetics-private-location.multiContainer.sccName" . }}
   labels:
     {{- include "synthetics-private-location.labels" . | nindent 4 }}
 users:
