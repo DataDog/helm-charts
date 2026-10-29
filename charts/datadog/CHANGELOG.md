@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.264.0
+
+* Add `cumulativetodelta` to the converter features of the OTel Agent Gateway and of the OTel Agent DaemonSet in the Gateway setup, and set `DD_OTELCOLLECTOR_GATEWAY_DAEMONSET=true` on that DaemonSet. The DaemonSet then converts cumulative metrics to delta before they reach the Gateway, so deltas stay correct with any number of Gateway replicas; the Gateway converts metrics sent to it directly, which is correct with one replica (the default). Requires Agent 7.83.0 or newer for the Gateway and an Agent release with DataDog/datadog-agent#59235 for the DaemonSet; older images ignore these settings.
+
 ## 3.263.2
 
 * Pass the pod name to the node Agent using the Kubernetes downward API.

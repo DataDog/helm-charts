@@ -2073,7 +2073,9 @@ spec:
             - name: DD_OTELCOLLECTOR_INSTALLATION_METHOD
               value: kubernetes
             - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
-              value: health_check,zpages,pprof,ddflare,datadog
+              value: health_check,zpages,pprof,ddflare,datadog,cumulativetodelta
+            - name: DD_OTELCOLLECTOR_GATEWAY_DAEMONSET
+              value: "true"
             - name: DD_LOG_LEVEL
               value: INFO
           image: registry.datadoghq.com/ddot-collector:7.78.0
@@ -2481,7 +2483,7 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
             - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
-              value: zpages,pprof,datadog
+              value: zpages,pprof,datadog,cumulativetodelta
             - name: DD_ENABLE_METADATA_COLLECTION
               value: "false"
             - name: DD_PROCESS_AGENT_ENABLED
