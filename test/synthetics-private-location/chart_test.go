@@ -158,6 +158,11 @@ func TestInvalidMultiContainerConfiguration(t *testing.T) {
 
 func renderPolicy(t *testing.T, overrides map[string]string) networkingv1.NetworkPolicy {
 	t.Helper()
+	return renderPolicyFor(t, "1.30.0", overrides)
+}
+
+func renderPolicyFor(t *testing.T, kubeVersion string, overrides map[string]string) networkingv1.NetworkPolicy {
+	t.Helper()
 	command := multiContainerCommand(map[string]string{
 		"multiContainer.networkPolicy.create": "true",
 		"multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"169.254.20.10/32"}}]`,
@@ -166,6 +171,7 @@ func renderPolicy(t *testing.T, overrides map[string]string) networkingv1.Networ
 		command.OverridesJson[key] = value
 	}
 	command.ShowOnly = []string{"templates/network-policy.yaml"}
+	command.ExtraArgs = []string{"--kube-version", kubeVersion}
 	manifest, err := common.RenderChart(t, command)
 	require.NoError(t, err)
 	var policy networkingv1.NetworkPolicy
@@ -231,6 +237,78 @@ func TestDefaultBlockedRangesAreValid(t *testing.T) {
 		cidrs = append(cidrs, peer.IPBlock.CIDR)
 	}
 	assert.Equal(t, append(defaults["IPv4"], defaults["IPv6"]...), cidrs)
+}
+
+type portRange struct {
+	protocol corev1.Protocol
+	port     int32
+	endPort  int32
+}
+
+func allowAllPorts(t *testing.T, policy networkingv1.NetworkPolicy) []portRange {
+	t.Helper()
+	rule := policy.Spec.Egress[len(policy.Spec.Egress)-1]
+	require.Equal(t, "0.0.0.0/0", rule.To[0].IPBlock.CIDR)
+	var ranges []portRange
+	for _, port := range rule.Ports {
+		r := portRange{protocol: *port.Protocol}
+		if port.Port != nil {
+			r.port = port.Port.IntVal
+		}
+		if port.EndPort != nil {
+			r.endPort = *port.EndPort
+		}
+		ranges = append(ranges, r)
+	}
+	return ranges
+}
+
+func TestAllowAllSkipsDNSPorts(t *testing.T) {
+	tests := []struct {
+		name     string
+		dnsPorts string
+		want     []portRange
+	}{
+		{"default", "", []portRange{
+			{corev1.ProtocolTCP, 1, 52}, {corev1.ProtocolTCP, 54, 65535},
+			{corev1.ProtocolUDP, 1, 52}, {corev1.ProtocolUDP, 54, 65535},
+			{corev1.ProtocolSCTP, 0, 0},
+		}},
+		{"openshift", `[{"port":5353,"protocol":"UDP"},{"port":5353,"protocol":"TCP"}]`, []portRange{
+			{corev1.ProtocolTCP, 1, 5352}, {corev1.ProtocolTCP, 5354, 65535},
+			{corev1.ProtocolUDP, 1, 5352}, {corev1.ProtocolUDP, 5354, 65535},
+			{corev1.ProtocolSCTP, 0, 0},
+		}},
+		{"per protocol, unsorted, duplicates and edges", `[{"port":5353,"protocol":"TCP"},{"port":53,"protocol":"UDP"},{"port":53,"protocol":"UDP"},{"port":1},{"port":65535,"protocol":"UDP"}]`, []portRange{
+			{corev1.ProtocolTCP, 2, 5352}, {corev1.ProtocolTCP, 5354, 65535},
+			{corev1.ProtocolUDP, 1, 52}, {corev1.ProtocolUDP, 54, 65534},
+			{corev1.ProtocolSCTP, 0, 0},
+		}},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			overrides := map[string]string{}
+			if test.dnsPorts != "" {
+				overrides["multiContainer.networkPolicy.dns.ports"] = test.dnsPorts
+			}
+			assert.Equal(t, test.want, allowAllPorts(t, renderPolicy(t, overrides)))
+		})
+	}
+}
+
+func TestAllowAllBeforeKubernetes125(t *testing.T) {
+	policy := renderPolicyFor(t, "1.24.0", map[string]string{})
+	assert.Empty(t, allowAllPorts(t, policy))
+}
+
+func TestFullyBlockedFamilyWithDNSPorts(t *testing.T) {
+	policy := renderPolicy(t, map[string]string{
+		"multiContainer.networkPolicy.blockedIPRanges": `{"IPv4":["0.0.0.0/0"]}`,
+	})
+	rule := policy.Spec.Egress[len(policy.Spec.Egress)-1]
+	require.Len(t, rule.To, 1)
+	assert.Equal(t, "::/0", rule.To[0].IPBlock.CIDR)
+	assert.Len(t, rule.Ports, 5)
 }
 
 func TestFullFamilyBlocksAndExceptions(t *testing.T) {

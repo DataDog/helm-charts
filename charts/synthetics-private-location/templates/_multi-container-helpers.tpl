@@ -177,3 +177,27 @@ UID and GID of the dog user in the image, used by the worker container.
 {{- define "synthetics-private-location.multiContainer.dogUser" -}}
 501
 {{- end -}}
+
+{{/*
+Port ranges of one protocol that the allow-all egress rule may use: every port from 1 to 65535 except the dns.ports of that protocol (protocol defaults to TCP).
+Takes a dict with "ports" (multiContainer.networkPolicy.dns.ports) and "protocol" ("TCP" or "UDP"). Returns a JSON list of {"port": N} or {"port": N, "endPort": M}, sorted.
+*/}}
+{{- define "synthetics-private-location.multiContainer.networkPolicy.nonDNSPortRanges" -}}
+{{- $protocol := .protocol }}
+{{- $padded := list }}
+{{- range .ports }}
+{{- if not (kindIs "float64" .port) }}{{ fail (printf "multiContainer.networkPolicy.dns.ports port %v must be a number" .port) }}{{ end }}
+{{- if eq (.protocol | default "TCP") $protocol }}{{ $padded = append $padded (printf "%05d" (.port | int)) }}{{ end }}
+{{- end }}
+{{- $ranges := list }}
+{{- $start := 1 }}
+{{- range ($padded | uniq | sortAlpha) }}
+{{- $p := . | atoi }}
+{{- if eq $start (sub $p 1) }}{{ $ranges = append $ranges (dict "port" $start) }}
+{{- else if lt $start $p }}{{ $ranges = append $ranges (dict "port" $start "endPort" (sub $p 1)) }}{{ end }}
+{{- $start = add $p 1 }}
+{{- end }}
+{{- if eq $start 65535 }}{{ $ranges = append $ranges (dict "port" $start) }}
+{{- else if lt $start 65535 }}{{ $ranges = append $ranges (dict "port" $start "endPort" 65535) }}{{ end }}
+{{- toJson $ranges }}
+{{- end -}}

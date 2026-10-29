@@ -57,8 +57,9 @@ The worker cannot apply its `iptables` firewall in this mode, so you must set `m
 
 How the policy decides:
 
-- DNS goes only to `dns.to`, on `dns.ports` (default 53 UDP/TCP).
+- DNS goes to `dns.to`, on `dns.ports` (default 53 UDP/TCP).
 - All other traffic is allowed, except the blocked ranges: `defaultBlockedIPRanges` when `enableDefaultBlockedIpRanges` is true, plus `blockedIPRanges`.
+- On Kubernetes >= 1.25 the DNS ports reach only `dns.to`, and the CNI must support NetworkPolicy `endPort`. ICMP (ping / traceroute) and DNS tests to resolvers outside `dns.to` / `allowedIPRanges` then do not work. On older Kubernetes versions DNS to other resolvers is not blocked.
 - `allowedIPRanges` are exceptions inside the blocked ranges, on all ports.
 - `additionalEgress` adds raw NetworkPolicy rules, for example to open an exception on one port only.
 
