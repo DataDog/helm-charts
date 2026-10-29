@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.264.0
+
+* Add `cumulativetodelta` to the OTel Agent Gateway converter features, so the Gateway converts cumulative metrics to delta before the Datadog exporter (requires Agent 7.83.0 or newer; older images ignore it). The Gateway default runs one replica: with more replicas or the HPA, points of one series can reach different pods and get wrong deltas.
+
 ## 3.263.0
 
 * Leave `datadog.traceroute.enabled` unset by default and render `traceroute.enabled` in `system-probe.yaml` only when it is set. With Agent 7.84.0+, system-probe then enables traceroute automatically when Network Path dynamic tests are enabled, which lets Network Path basic dynamic tests run on hosts with `datadog.networkMonitoring.enabled`. Set `datadog.traceroute.enabled: false` to keep traceroute disabled.

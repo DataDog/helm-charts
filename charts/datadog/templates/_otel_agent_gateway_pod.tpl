@@ -169,7 +169,9 @@
               fieldRef:
                 fieldPath: spec.nodeName
           - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
-            value: "zpages,pprof,datadog" # exclude infra attribute, prometheus and DD flare; health_check is configured explicitly in the OTel config
+            # exclude infra attribute, prometheus and DD flare; health_check is configured explicitly in the OTel config.
+            # cumulativetodelta converts cumulative metrics to delta here: the DaemonSet forwards them over otlphttp unconverted.
+            value: "zpages,pprof,datadog,cumulativetodelta"
 
           # A subset of components-common-env that makes sense to otel agent in gateway
           {{- if .Values.datadog.site }}

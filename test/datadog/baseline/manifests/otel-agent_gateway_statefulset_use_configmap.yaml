@@ -2547,7 +2547,7 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
             - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
-              value: zpages,pprof,datadog
+              value: zpages,pprof,datadog,cumulativetodelta
             - name: DD_ENABLE_METADATA_COLLECTION
               value: "false"
             - name: DD_PROCESS_AGENT_ENABLED
