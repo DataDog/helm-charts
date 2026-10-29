@@ -8,6 +8,10 @@
 * Exclude GKE Autopilot and GDC from the Agent container's `DD_COMPLIANCE_CONFIG_ENABLED` unless `datadog.securityAgent.compliance.runInSystemProbe` is set, matching the Security Agent's own gate. Without this, streaming would start compliance in the Security Agent on platforms where the chart disables it.
 * Set `DD_RUNTIME_SECURITY_CONFIG_ENABLED` and `DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE` on the Agent container, mirroring the existing compliance pair. Agent 7.85.0+ streams configuration from the Agent to the Security Agent and System Probe and discards their local environment, so without this the Security Agent received the default (`false`) for `runtime_security_config.enabled` and exited with all components deactivated, crash-looping the pod.
 
+## 3.263.2
+
+* Pass the pod name to the node Agent using the Kubernetes downward API.
+
 ## 3.263.1
 
 * Fix CSPM host benchmarks run in system-probe (`datadog.securityAgent.compliance.runInSystemProbe`), which evaluated no rule on RPM-based nodes, ran their SCE checks against the system-probe container, and aborted on FIPS hosts.
