@@ -1795,6 +1795,10 @@ spec:
             - agent
             - run
           env:
+            - name: DD_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:

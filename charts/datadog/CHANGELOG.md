@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.263.2
+
+* Pass the pod name to the node Agent using the Kubernetes downward API.
+
 ## 3.263.1
 
 * Fix CSPM host benchmarks run in system-probe (`datadog.securityAgent.compliance.runInSystemProbe`), which evaluated no rule on RPM-based nodes, ran their SCE checks against the system-probe container, and aborted on FIPS hosts.
