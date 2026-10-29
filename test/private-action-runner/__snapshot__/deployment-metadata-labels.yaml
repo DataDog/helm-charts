@@ -6,10 +6,10 @@ metadata:
   name: deployment-metadata-labels-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.28.1
+    helm.sh/chart: private-action-runner-1.30.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: deployment-metadata-labels-test
-    app.kubernetes.io/version: "v1.21.0"
+    app.kubernetes.io/version: "v1.22.1"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: private-action-runner/templates/secrets.yaml
@@ -89,10 +89,10 @@ metadata:
   name: deployment-metadata-labels-test-private-action-runner
   namespace: datadog-agent
   labels:
-    helm.sh/chart: private-action-runner-1.28.1
+    helm.sh/chart: private-action-runner-1.30.0
     app.kubernetes.io/name: private-action-runner
     app.kubernetes.io/instance: deployment-metadata-labels-test
-    app.kubernetes.io/version: "v1.21.0"
+    app.kubernetes.io/version: "v1.22.1"
     app.kubernetes.io/managed-by: Helm
     custom-label: custom-value
     environment: production
@@ -106,18 +106,18 @@ spec:
   template:
     metadata:
       labels:
-        helm.sh/chart: private-action-runner-1.28.1
+        helm.sh/chart: private-action-runner-1.30.0
         app.kubernetes.io/name: private-action-runner
         app.kubernetes.io/instance: deployment-metadata-labels-test
-        app.kubernetes.io/version: "v1.21.0"
+        app.kubernetes.io/version: "v1.22.1"
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/values: ba80ae331125236ababf30499a953c32a22c74f47f1e4c000f445aa795cc2c22
+        checksum/values: 20e529ef52d33ff90b712a43857ca1a1501664dec8b810f5c875cd8fc432e61a
     spec:
       serviceAccountName: deployment-metadata-labels-test-private-action-runner
       containers:
         - name: runner
-          image: "gcr.io/datadoghq/private-action-runner:v1.21.0"
+          image: "gcr.io/datadoghq/private-action-runner:v1.22.1"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

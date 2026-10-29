@@ -1,12 +1,149 @@
 # Datadog changelog
 
-## 3.249.0
+## 3.264.0
 
 * Add `datadog.configStream.enabled` to control whether the Trace Agent, Process Agent, Security Agent and System Probe take their configuration from the Agent. Unset follows the Agent version, enabled from 7.85.0 onwards; an explicit value overrides it. The settings the chart mirrors onto the Agent container are gated on the same value, so the chart and the Agent cannot disagree.
 * Set the per-remote-agent log levels (`DD_SECURITY_AGENT_LOG_LEVEL`, `DD_PROCESS_CONFIG_LOG_LEVEL`, `DD_APM_LOG_LEVEL`, `DD_SYSTEM_PROBE_LOG_LEVEL`) on the Agent container when the corresponding `agents.containers.<name>.logLevel` is set. Under config streaming the remote agents take their log level from the Agent.
 * Mirror the settings that were rendered only on a remote agent's container -- five `DD_COMPLIANCE_CONFIG_*` and three `DD_RUNTIME_SECURITY_CONFIG_*` on the Security Agent, six `DD_NETWORK_PATH_*` on the Process Agent -- onto the Agent container, so config streaming carries them.
 * Exclude GKE Autopilot and GDC from the Agent container's `DD_COMPLIANCE_CONFIG_ENABLED` unless `datadog.securityAgent.compliance.runInSystemProbe` is set, matching the Security Agent's own gate. Without this, streaming would start compliance in the Security Agent on platforms where the chart disables it.
 * Set `DD_RUNTIME_SECURITY_CONFIG_ENABLED` and `DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE` on the Agent container, mirroring the existing compliance pair. Agent 7.85.0+ streams configuration from the Agent to the Security Agent and System Probe and discards their local environment, so without this the Security Agent received the default (`false`) for `runtime_security_config.enabled` and exited with all components deactivated, crash-looping the pod.
+
+## 3.263.1
+
+* Fix CSPM host benchmarks run in system-probe (`datadog.securityAgent.compliance.runInSystemProbe`), which evaluated no rule on RPM-based nodes, ran their SCE checks against the system-probe container, and aborted on FIPS hosts.
+* Allow `chroot`, `fchdir`, `mlock` and `munlock` in the system-probe seccomp profile when host benchmarks run in system-probe.
+
+## 3.263.0
+
+* Leave `datadog.traceroute.enabled` unset by default and render `traceroute.enabled` in `system-probe.yaml` only when it is set. With Agent 7.84.0+, system-probe then enables traceroute automatically when Network Path dynamic tests are enabled, which lets Network Path basic dynamic tests run on hosts with `datadog.networkMonitoring.enabled`. Set `datadog.traceroute.enabled: false` to keep traceroute disabled.
+
+## 3.262.0
+
+* Add `datadog.dataSecurity.enabled` (default `false`) to enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer. Enabling it also enables Remote Configuration on the node Agent when `remoteConfiguration.enabled` is true.
+
+## 3.261.1
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.6 ([#2994](https://github.com/DataDog/helm-charts/pull/2994)).
+* Bump Datadog Operator chart dependency to 2.31.0 and Operator image tag to 1.31.2.
+
+## 3.261.0
+
+* Add a `tracefs` (`/sys/kernel/tracing`) volume and `system-probe` mount when `providers.talos.enabled` is set.
+* Fix NPM, USM, OOM kill, TCP queue length, and CWS failing to load their eBPF probes on Talos.
+
+## 3.260.1
+
+* Update `fips.image.tag` to `1.1.32` fixing CVEs and updating packages.
+
+## 3.260.0
+
+* Add `datadog.kueue.enabled` to enable Kueue metadata collection in the Cluster Agent and the Kueue check (requires Agent and Cluster Agent 7.82.0+). The check runs as an endpoints check against each Kueue controller pod and requires `datadog.clusterChecks.enabled`. Use `datadog.kueue.metricsService` to point it at a non-default Kueue metrics Service, and `datadog.kueue.collectWorkloadEvents` to disable Workload lifecycle events and the node Agent read access to Kueue Workloads.
+
+## 3.259.1
+
+* Fix OTel Agent Gateway pod failing to start when `agents.useConfigMap` is enabled: add the missing `datadog-yaml` volume and mount the config directory read-write so the `datadog.yaml` subPath mount can be created ([#2980](https://github.com/DataDog/helm-charts/pull/2980)).
+
+## 3.259.0
+
+* Add opt-in `datadog.jemalloc.enabled` for the Linux node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners, with explicit environment overrides taking precedence.
+
+## 3.258.1
+
+* Extend config sync (`DD_AGENT_IPC_PORT` / `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL`) to CWS direct send and compliance running in `system-probe`, alongside the CNM direct send case it already covered. `system-probe` submits these payloads itself and cannot resolve an `ENC[...]` secret handle, so without config sync a secret-backed `datadog.apiKey` would prevent it from shipping CWS events or compliance findings.
+* Carry the CWS and CSPM configuration onto the `system-probe` execution path. The `runtimepoliciesdir` and `complianceconfigdir` ConfigMap volumes, the compliance host mounts (`hostroot`, `cgroups`, `passwd`, `group`), `HOST_ROOT`, `hostPID`, and the `DD_COMPLIANCE_CONFIG_CHECK_INTERVAL` / `XCCDF_ENABLED` / `HOST_BENCHMARKS_ENABLED` / `CONTAINER_INCLUDE` / `CONTAINER_EXCLUDE` settings were all gated on the `security-agent` container existing, so they were dropped once CWS and CSPM moved into `system-probe`. With a custom `datadog.securityAgent.runtime.policies.configMap` this rendered a DaemonSet mounting an undeclared volume, which the API server rejects on apply.
+* Stop gating the Cluster Agent's compliance settings on the `security-agent` container. `DD_COMPLIANCE_CONFIG_ENABLED`, `DD_COMPLIANCE_CONFIG_CHECK_INTERVAL`, and the custom benchmarks ConfigMap mount are part of the CSPM feature, not of a node execution path, and were silently lost when `datadog.securityAgent.compliance.runInSystemProbe` was enabled - disabling the Kubernetes-level compliance checks.
+
+## 3.258.0
+
+* Bump Datadog Operator chart dependency to 2.30.0.
+* Bump Operator image tag to 1.31.1.
+
+## 3.257.2
+
+* Use `cp -rf` in the Cluster Agent `init-volume` init container so it can run again in the same pod, e.g. after an in-place node reboot, without failing on read-only files such as `private-action-runner/script-config.yaml`.
+
+## 3.257.1
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.3 ([#2978](https://github.com/DataDog/helm-charts/pull/2978)).
+
+## 3.257.0
+
+* Grant the Cluster Agent read access to KubeAI custom resources collected by the orchestrator explorer.
+
+## 3.256.0
+
+* Collect Gateway API and Gateway API Inference Extension custom resources by default.
+
+## 3.255.0
+
+* Bump Datadog Operator chart dependency to 2.28.0.
+* Bump Datadog CRD chart dependency to 2.25.0.
+* Bump Operator image tag to 1.31.0.
+
+## 3.254.1
+
+* Update `fips.image.tag` to `1.1.31` fixing CVEs and updating packages.
+
+## 3.254.0
+
+* Bump the Datadog CSI Driver chart dependency to 0.18.0. On GKE Autopilot with WorkloadAllowlist, the CSI driver now gets APM registry authentication (`datadog-csi-driver.apm.pullSecrets`) and `global.apmRegistryAllowList`. This also fixes the CSI DaemonSet rejection on GKE Autopilot when `global.apmRegistryAllowList` is set.
+
+## 3.253.2
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.2 ([#2961](https://github.com/DataDog/helm-charts/pull/2961)).
+
+## 3.253.1
+
+* Grant the Cluster Agent read access to Gateway API Inference Extension InferencePools collected by Orchestrator Explorer.
+
+## 3.253.0
+
+- Add `datadog.kubeStateMetricsCore.shardingEnabled` (default `false`) to split the `kubernetes_state_core` check into three check instances (pods, nodes, and all other resources), each dispatched as a separate cluster check. Only takes effect when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is true and the Cluster Agent is 7.83.0 or newer, which is the first version where sharding coexists safely with the `cluster_aggregates_only` collection mode ([datadog-agent#54126](https://github.com/DataDog/datadog-agent/pull/54126)). Note that label joins do not cross shard boundaries: because pods and nodes are split into separate shards, enabling this drops six node-derived tags from pod metrics — `kube_region`, `kube_zone`, `container_runtime_version`, `kernel_version`, `kubelet_version`, and `os_image`.
+
+## 3.252.1
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.1 ([#2956](https://github.com/DataDog/helm-charts/pull/2956)).
+
+## 3.252.0
+
+* Grant the Cluster Agent read access to KServe custom resources collected by the orchestrator explorer.
+
+## 3.251.1
+
+* Expose `datadog.apm.instrumentation.onDemand` (default `true`) and set `DD_APM_INSTRUMENTATION_ON_DEMAND` on the Cluster Agent.
+* Enable Cluster Agent Remote Configuration when the admission controller is enabled and on-demand SSI is on, so `APM_POLICIES` Remote Config rules work without `clusterAgent.admissionController.remoteInstrumentation.enabled`.
+
+## 3.251.0
+
+- Grant the Cluster Agent `get` access to `pods/log` to run the getPodLogs action.
+
+## 3.250.4
+
+- Update the default Agent, Cluster Agent, and Cluster Checks Runner image version to 7.84.0.
+
+## 3.250.3
+
+- Disable Service Discovery on Cluster Checks Runners to prevent requests to the unavailable system-probe socket ([#2943](https://github.com/DataDog/helm-charts/issues/2943)).
+
+## 3.250.2
+
+* Internal cleanup: Use get-agent-version for semverCompare ([#2885](https://github.com/DataDog/helm-charts/pull/2885)).
+
+## 3.250.1
+
+- Allow the Cluster Agent to collect stats from Cluster Checks Runners when network policies are enabled.
+
+## 3.250.0
+
+- Announce an upcoming change in Agent 7.85: when config streaming is enabled, remote-agent configuration overrides must be set on the core Agent instead of `agents.containers.<name>.{env,envDict,envFrom}`. This release adds notice only ([#2933](https://github.com/DataDog/helm-charts/pull/2933)).
+
+## 3.249.0
+
+* [NETPATH-1165] Add `datadog.networkPath.collector.filters` to configure ordered include and exclude filters for dynamic Network Path tests. This option requires a stable Datadog Agent 7.83.2 or newer.
+
+## 3.248.1
+
+- Grant the Cluster Agent `get` access to Secrets named `datadog-secret` when Agent sidecar injection is enabled.
 
 ## 3.248.0
 

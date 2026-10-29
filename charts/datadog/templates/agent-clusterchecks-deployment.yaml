@@ -185,6 +185,8 @@ spec:
             value: "false"
           {{- end }}
           # Remove unused features
+          - name: DD_DISCOVERY_ENABLED
+            value: "false"
           - name: DD_PROCESS_AGENT_ENABLED
             value: "false"
           - name: DD_LOGS_ENABLED
@@ -203,6 +205,9 @@ spec:
           {{- end }}
           {{- include "provider-env" . | nindent 10 }}
           {{- include "fips-envvar" . | nindent 10 }}
+          {{- if eq (include "should-enable-jemalloc" (dict "Values" .Values "image" .Values.clusterChecksRunner.image)) "true" }}
+          {{- include "jemalloc-env" . | nindent 10 }}
+          {{- end }}
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
         resources:

@@ -62,6 +62,8 @@ Actual memory request/limit = (nominal pod memory - Kubernetes system memory res
 
 The presets do not set a CPU limit, allowing a pod to use idle CPU on its node without being throttled. Memory requests and limits are equal to keep memory usage within the allocatable node capacity.
 
+For indexers, `podSize` also sets `QW_INDEXING_MAX_WRITE_THROUGHPUT`, which caps each indexer's write throughput and scales with the CPU request: `25MiB` for `large`, `50MiB` for `xlarge`, `100MiB` for `2xlarge`, `200MiB` for `4xlarge`, `300MiB` for `6xlarge`, and `400MiB` for `8xlarge`. The variable is not set when `indexer.resources` is set. To override it, set `QW_INDEXING_MAX_WRITE_THROUGHPUT` in `indexer.extraEnv` or `environment`.
+
 ```yaml
 datadog:
   # The Datadog [site](https://docs.datadoghq.com/getting_started/site/) to connect to. Defaults to `datadoghq.com`.

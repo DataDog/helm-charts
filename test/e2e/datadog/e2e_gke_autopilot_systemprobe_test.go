@@ -61,8 +61,14 @@ datadog:
 				kubernetesagentparams.WithHelmRepoURL(""),
 				kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
 				kubernetesagentparams.WithHelmValues(helmValues),
+				kubernetesagentparams.WithHelmValues(networkPathFiltersHelmValues),
 			),
 			gcpkubernetes.WithExtraConfigParams(config))))
+}
+
+// Verifies that GKE Autopilot admits system-probe with the configured Network Path filters.
+func (v *gkeAutopilotSystemProbeSuite) TestNetworkPathCollectorFilters() {
+	v.testNetworkPathCollectorFilters()
 }
 
 func (v *gkeAutopilotSystemProbeSuite) TestGKEAutopilotSystemProbe() {

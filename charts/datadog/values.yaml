@@ -57,6 +57,10 @@ registry:  # gcr.io/datadoghq
 registryMigrationMode: "auto"
 
 datadog:
+  jemalloc:
+    # datadog.jemalloc.enabled -- Enable jemalloc for the node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners (Linux Agent 7.84.0+).
+    enabled: false
+
   # datadog.apiKey -- Your Datadog API key
 
   ## ref: https://app.datadoghq.com/account/settings#agent/kubernetes
@@ -243,6 +247,28 @@ datadog:
     ## If clusterChecksRunner.enabled is true, it's recommended to set this flag to true as well to better utilize dedicated workers and reduce load on the Cluster Agent.
     ## ref: https://docs.datadoghq.com/agent/cluster_agent/clusterchecksrunner?tab=helm
     useClusterCheckRunners: false
+
+    # datadog.kubeStateMetricsCore.shardingEnabled -- Split the kubernetes_state_core check into three check instances (pods, nodes, and all other resources), each dispatched as a separate cluster check. (Requires Cluster Agent 7.83.0+) Trade-off: label joins cannot cross shards, so pod metrics lose exactly these six node-derived tags: `kube_region`, `kube_zone`, `container_runtime_version`, `kernel_version`, `kubelet_version`, `os_image`.
+
+    ## Only takes effect when datadog.kubeStateMetricsCore.useClusterCheckRunners is true.
+    ## Ignored on Cluster Agents older than 7.83.0, which do not support sharding alongside the cluster_aggregates_only collection mode.
+    ## Safe to combine with datadog.kubeStateMetricsCore.podCollectionMode: node_kubelet.
+    ##
+    ## Known gap -- label joins do not cross shard boundaries. Each shard is a separate check
+    ## instance that builds its own label-join store from only the collectors it owns, so a join
+    ## works only when the source and the target resource land in the same shard. Because pods and
+    ## nodes are deliberately split into different shards, the default node joins no longer enrich
+    ## pod metrics. Pod metrics keep their own `node` tag, but these six tags are absent:
+    ##   - kube_region                 (from kube_node_labels, via topology.kubernetes.io/region)
+    ##   - kube_zone                   (from kube_node_labels, via topology.kubernetes.io/zone)
+    ##   - container_runtime_version   (from kube_node_info)
+    ##   - kernel_version              (from kube_node_info)
+    ##   - kubelet_version             (from kube_node_info)
+    ##   - os_image                    (from kube_node_info)
+    ## Any custom label_joins whose source resource sits in a different shard than its target are
+    ## dropped the same way -- no error is emitted, the tags are simply absent.
+    ## Leave sharding disabled if you rely on these tags for dashboards, monitors, or filtering.
+    shardingEnabled: false
 
     # datadog.kubeStateMetricsCore.labelsAsTags -- Extra labels to collect from resources and to turn into datadog tag.
 
@@ -676,6 +702,10 @@ datadog:
     instrumentation:
       # datadog.apm.instrumentation.enabled -- Enable injecting the Datadog APM libraries into all pods in the cluster.
       enabled: false
+
+      # datadog.apm.instrumentation.onDemand -- Keep the SSI admission webhook available for runtime workload
+      # selection (annotations and Remote Config APM_POLICIES). Matches the agent default (true).
+      onDemand: true
 
       # datadog.apm.instrumentation.enabledNamespaces -- Enable injecting the Datadog APM libraries into pods in specific namespaces.
       enabledNamespaces: []
@@ -1150,8 +1180,9 @@ datadog:
     # datadog.orchestratorExplorer.rbac.create -- If true, create & use a dedicated ClusterRole and ClusterRoleBinding for orchestrator explorer permissions
       create: true
 
-    # datadog.orchestratorExplorer.networkCRDs.enabled -- Enable RBAC for Gateway API, service mesh, and ingress controller CRD collection.
-    # Set to true to add RBAC rules for these resources to the orchestrator explorer ClusterRole
+    # datadog.orchestratorExplorer.networkCRDs.enabled -- Enable RBAC for service mesh and ingress controller CRD collection.
+    # Gateway API and Gateway API Inference Extension resources are collected by default.
+    # Set to true to add RBAC rules for service mesh and ingress controller resources to the orchestrator explorer ClusterRole
     networkCRDs:
       enabled: false
 
@@ -1189,6 +1220,22 @@ datadog:
     valuesAsTags: {}
       #   <HELM_VALUE>: <LABEL_NAME>
 
+  kueue:
+    # datadog.kueue.enabled -- Enable Kueue metadata collection in the Cluster Agent and the Kueue check (Requires Agent and Cluster Agent 7.82.0+. Kueue with more than one replica requires Agent 7.86.0+)
+    # The Kueue check runs as an endpoints check against each Kueue controller pod, so it requires
+    # datadog.clusterChecks.enabled and a node Agent scheduled on the Kueue controller nodes.
+    enabled: false
+
+    # datadog.kueue.collectWorkloadEvents -- Collect Kueue Workload lifecycle events. Grants the node Agent read access to Kueue Workloads
+    collectWorkloadEvents: true
+
+    metricsService:
+      # datadog.kueue.metricsService.name -- Name of the Service exposing the Kueue controller metrics
+      name: kueue-controller-manager-metrics-service
+
+      # datadog.kueue.metricsService.namespace -- Namespace of the Service exposing the Kueue controller metrics
+      namespace: kueue-system
+
   networkMonitoring:
     # datadog.networkMonitoring.enabled -- Enable Cloud Network Monitoring
     enabled: false
@@ -1202,6 +1249,15 @@ datadog:
       # datadog.networkPath.connectionsMonitoring.enabled -- Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled.
       enabled: false
     collector:
+      # datadog.networkPath.collector.filters -- Custom ordered filters for dynamic Network Path tests. Each filter can include or exclude destinations using `match_domain` (wildcard by default, or regex with `match_domain_strategy: regex`) or `match_ip` (IP or CIDR). The last matching filter takes precedence. Requires a stable Datadog Agent 7.83.2 or newer. For a verified compatible prerelease or custom image, set `agents.image.doNotCheckTag=true`.
+      filters: []
+        # - type: exclude
+        #   match_domain: "*.example.com"
+        # - type: include
+        #   match_domain: '^api-[0-9]+\.example\.com$'
+        #   match_domain_strategy: regex
+        # - type: exclude
+        #   match_ip: "10.0.0.0/8"
       # datadog.networkPath.collector.workers -- Override the number of workers
       workers:
       # datadog.networkPath.collector.pathtestTTL -- Override TTL in minutes for pathtests
@@ -1238,8 +1294,8 @@ datadog:
         enabled:
 
   traceroute:
-    # datadog.traceroute.enabled -- (bool) Enable traceroutes in system-probe for Network Path
-    enabled: false
+    # datadog.traceroute.enabled -- (bool) Enable traceroutes in system-probe for Network Path. Empty values use the default setting in the datadog agent: Agent 7.84.0+ enables traceroute automatically when Network Path dynamic tests are enabled.
+    enabled:
 
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`.
@@ -1319,6 +1375,11 @@ datadog:
         # Requires the system-probe container (auto-enabled when set to true) for eBPF-based file
         # access tracking, and sets `hostPID: true` on the agent pod. Requires Agent 7.79.0+.
         enabled: false
+
+  # Data Security configuration
+  dataSecurity:
+    # datadog.dataSecurity.enabled -- Enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer.
+    enabled: false
 
   ## Enable security agent and provide custom configs
   securityAgent:
@@ -1585,7 +1646,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.82.3
+    tag: 7.84.6
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2166,7 +2227,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.30
+    tag: 1.1.32
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -2210,7 +2271,7 @@ agents:
 
     # agents.image.tag -- Define the Agent version to use
     # Set a pinned version here. Do not append build variants: put `full` or `jmx` in `agents.image.tagSuffix`, and enable FIPS with `useFIPSAgent`. To stay on the latest stable Agent, leave this unset and upgrade the chart periodically.
-    tag: 7.82.3
+    tag: 7.84.6
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2437,17 +2498,17 @@ agents:
           add: ["NET_RAW"]
 
     processAgent:
-      # agents.containers.processAgent.env -- Additional environment variables for the process-agent container
+      # agents.containers.processAgent.env -- Additional environment variables for the process-agent container BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled.
       env: []
 
-      # agents.containers.processAgent.envFrom -- Set environment variables specific to process-agent from configMaps and/or secrets
+      # agents.containers.processAgent.envFrom -- Set environment variables specific to process-agent from configMaps and/or secrets BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; add the ConfigMap or Secret reference to agents.containers.agent.envFrom instead, or datadog.envFrom for shared settings. Keep the existing settings here while streaming is disabled.
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.processAgent.envDict -- Set environment variables specific to process-agent defined in a dict
+      # agents.containers.processAgent.envDict -- Set environment variables specific to process-agent defined in a dict BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled.
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
@@ -2561,17 +2622,17 @@ agents:
       #     readOnly: true
 
     traceAgent:
-      # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container
+      # agents.containers.traceAgent.env -- Additional environment variables for the trace-agent container BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled.
       env: []
 
-      # agents.containers.traceAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets
+      # agents.containers.traceAgent.envFrom -- Set environment variables specific to trace-agent from configMaps and/or secrets BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; add the ConfigMap or Secret reference to agents.containers.agent.envFrom instead, or datadog.envFrom for shared settings. Keep the existing settings here while streaming is disabled.
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.traceAgent.envDict -- Set environment variables specific to trace-agent defined in a dict
+      # agents.containers.traceAgent.envDict -- Set environment variables specific to trace-agent defined in a dict BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled.
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
@@ -2603,17 +2664,17 @@ agents:
       ports: []
 
     systemProbe:
-      # agents.containers.systemProbe.env -- Additional environment variables for the system-probe container
+      # agents.containers.systemProbe.env -- Additional environment variables for the system-probe container BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled.
       env: []
 
-      # agents.containers.systemProbe.envFrom -- Set environment variables specific to system-probe from configMaps and/or secrets
+      # agents.containers.systemProbe.envFrom -- Set environment variables specific to system-probe from configMaps and/or secrets BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; add the ConfigMap or Secret reference to agents.containers.agent.envFrom instead, or datadog.envFrom for shared settings. Keep the existing settings here while streaming is disabled.
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.systemProbe.envDict -- Set environment variables specific to system-probe defined in a dict
+      # agents.containers.systemProbe.envDict -- Set environment variables specific to system-probe defined in a dict BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled.
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
@@ -2644,17 +2705,17 @@ agents:
       ports: []
 
     securityAgent:
-      # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container
+      # agents.containers.securityAgent.env -- Additional environment variables for the security-agent container BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled.
       env: []
 
-      # agents.containers.securityAgent.envFrom -- Set environment variables specific to security-agent from configMaps and/or secrets
+      # agents.containers.securityAgent.envFrom -- Set environment variables specific to security-agent from configMaps and/or secrets BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; add the ConfigMap or Secret reference to agents.containers.agent.envFrom instead, or datadog.envFrom for shared settings. Keep the existing settings here while streaming is disabled.
       envFrom: []
       #   - configMapRef:
       #       name: <CONFIGMAP_NAME>
       #   - secretRef:
       #       name: <SECRET_NAME>
 
-      # agents.containers.securityAgent.envDict -- Set environment variables specific to security-agent defined in a dict
+      # agents.containers.securityAgent.envDict -- Set environment variables specific to security-agent defined in a dict BREAKING: from Agent 7.85.0, when config streaming is enabled, this container takes its configuration from the core Agent and configuration overrides set here no longer take effect; set them on the core Agent instead, through datadog.env or agents.containers.agent.env. Keep the existing settings here while streaming is disabled.
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
@@ -2911,7 +2972,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.82.3
+    tag: 7.84.6
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -3162,7 +3223,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.30.0
+    tag: 1.31.2
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller

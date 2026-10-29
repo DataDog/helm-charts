@@ -55,7 +55,7 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: {{ include "quickwit.image" . | quote }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.signals.metrics.enabled }}
           command: ["quickwit-metrics"]
@@ -67,7 +67,7 @@ spec:
           {{- end }}
           env:
             {{- include "quickwit.environment" . | nindent 12 }}
-            {{- with (include "quickwit.extraEnv" .Values.control_plane.extraEnv) }}
+            {{- with (include "quickwit.renderEnv" .Values.control_plane.extraEnv) }}
             {{- . | nindent 12 }}
             {{- end }}
           {{- if or (.Values.environmentFrom) (.Values.control_plane.extraEnvFrom) }}
@@ -85,8 +85,10 @@ spec:
             {{- toYaml .Values.control_plane.startupProbe | nindent 12 }}
           livenessProbe:
             {{- toYaml .Values.control_plane.livenessProbe | nindent 12 }}
+          {{- with .Values.control_plane.readinessProbe }}
           readinessProbe:
-            {{- toYaml .Values.control_plane.readinessProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: config
               mountPath: /quickwit/node.yaml

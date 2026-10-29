@@ -6,6 +6,15 @@ metadata:
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
 rules:
+{{- /*
+  ============================================================================
+  AUTO-GENERATED RULES: DO NOT EDIT BY HAND
+  ============================================================================
+  Everything between here and the "MANUAL RULES" marker below is regenerated
+  from the upstream operator config/rbac/role.yaml by
+  scripts/update-clusterrole.py on every operator release. Hand edits in this
+  section WILL be dropped. Put manual RBAC patches in the MANUAL RULES section.
+*/}}
 - nonResourceURLs:
   - /metrics
   - /metrics/slis
@@ -446,6 +455,17 @@ rules:
   - list
   - watch
 - apiGroups:
+  - kueue.x-k8s.io
+  resources:
+  - clusterqueues
+  - localqueues
+  - resourceflavors
+  - workloads
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - kustomize.toolkit.fluxcd.io
   resources:
   - kustomizations
@@ -645,6 +665,28 @@ rules:
   verbs:
   - list
   - watch
+{{- /*
+  ============================================================================
+  MANUAL RULES: hand-maintained, preserved across operator releases
+  ============================================================================
+  scripts/update-clusterrole.py keeps everything from this marker to the end
+  of the file verbatim. Add RBAC the operator needs that is NOT in the upstream
+  config/rbac/role.yaml here (unconditional rules first, then the feature-gated
+  {{ if .Values.<feature> }} blocks). If a rule later lands upstream, remove it
+  from this section to avoid duplicates.
+*/}}
+{{- /* Kueue: lets the operator grant the Agent read access to Kueue resources (#2976). */}}
+- apiGroups:
+  - kueue.x-k8s.io
+  resources:
+  - clusterqueues
+  - localqueues
+  - resourceflavors
+  - workloads
+  verbs:
+  - get
+  - list
+  - watch
 {{- if .Values.datadogAgentInternal.enabled }}
 - apiGroups:
   - datadoghq.com
@@ -809,6 +851,29 @@ rules:
   - csidrivers
   verbs:
   - get
+{{- end }}
+{{- if and (eq (toString .Values.supportExtendedDaemonset) "true") (semverCompare "<1.31.0-0" (include "check-image-tag" .)) }}
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - extendeddaemonsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - extendeddaemonsetreplicasets
+  verbs:
+  - delete
+  - get
+  - list
+  - watch
 {{- end }}
 {{- if .Values.clusterRole.allowReadAllResources }}
 - apiGroups:

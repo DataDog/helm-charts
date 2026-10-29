@@ -1,0 +1,11 @@
+issuer: https://token.actions.githubusercontent.com
+subject: repo:DataDog/helm-charts:pull_request
+
+claim_pattern:
+  event_name: "^pull_request_target$"
+  ref: "^refs/heads/main$"
+  job_workflow_ref: ^DataDog/helm-charts/\.github/workflows/agent-release\.yaml@refs/heads/main$
+
+permissions:
+  contents: write
+  pull_requests: read

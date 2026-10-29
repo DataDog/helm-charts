@@ -355,6 +355,7 @@ datadog.apm.errorTrackingStandalone.enabled: spec.features.apm.errorTrackingStan
 datadog.apm.hostSocketPath: ""
 datadog.apm.instrumentation.disabledNamespaces: ""
 datadog.apm.instrumentation.enabled: spec.features.apm.instrumentation.enabled
+datadog.apm.instrumentation.onDemand: spec.features.apm.instrumentation.onDemand
 datadog.apm.instrumentation.enabledNamespaces: ""
 datadog.apm.instrumentation.injector.imageTag: ""
 datadog.apm.instrumentation.language_detection.enabled: ""
@@ -417,6 +418,7 @@ datadog.containerLifecycle.enabled: ""
 datadog.containerRuntimeSupport.enabled: ""
 datadog.criSocketPath: spec.global.criSocketPath
 datadog.csi.enabled: ""
+datadog.dataSecurity.enabled: ""
 datadog.dd_url: spec.global.endpoint.url
 datadog.disableDefaultOsReleasePaths: ""
 datadog.disablePasswdMount: ""
@@ -493,6 +495,7 @@ datadog.logs.enabled: spec.features.logCollection.enabled
 datadog.namespaceAnnotationsAsTags: ""
 datadog.namespaceLabelsAsTags: ""
 datadog.networkMonitoring.enabled: spec.features.npm.enabled
+datadog.networkPath.collector.filters: ""
 datadog.networkPath.collector.pathtestContextsLimit: ""
 datadog.networkPath.collector.pathtestInterval: ""
 datadog.networkPath.collector.pathtestMaxPerMinute: ""

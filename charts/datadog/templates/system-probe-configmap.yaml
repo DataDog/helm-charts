@@ -1,6 +1,6 @@
 {{- if .Values.datadog.networkMonitoring.enabled }}
 {{- if not .Values.agents.image.doNotCheckTag -}}
-{{- $version := (.Values.agents.image.tag | toString | trimSuffix "-jmx") }}
+{{- $version := (include "get-agent-version" .) }}
 {{- $length := len (split "." $version ) -}}
 {{- if (gt $length 1) }}
 {{- if not (semverCompare "^6.24.1-0 || ^7.24.1-0" $version) -}}
@@ -76,8 +76,10 @@ data:
         native:
           enabled: {{ $.Values.datadog.serviceMonitoring.tls.native.enabled }}
         {{- end }}
+    {{- if not (eq .Values.datadog.traceroute.enabled nil) }}
     traceroute:
       enabled: {{ $.Values.datadog.traceroute.enabled }}
+    {{- end }}
     {{- if eq (include "should-render-discovery-config" .) "true" }}
     discovery:
       enabled: {{ include "resolved-discovery-enabled" . }}
@@ -387,6 +389,21 @@ data:
           "includes": {},
           "excludes": {}
         },
+        {{- if and (eq (include "should-enable-compliance-in-system-probe" .) "true") (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) }}
+        {
+          "names": [
+            "chroot",
+            "fchdir",
+            "mlock",
+            "munlock"
+          ],
+          "action": "SCMP_ACT_ALLOW",
+          "args": null,
+          "comment": "allow host benchmarks to enter the host root and lock libgcrypt secure memory",
+          "includes": {},
+          "excludes": {}
+        },
+        {{- end }}
         {
           "names": [
             "kill"

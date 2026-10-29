@@ -1,5 +1,33 @@
 # Changelog
 
+## 2.25.0
+
+* Official image `2.25.0`
+
+## 2.24.1
+
+* Official image `2.24.1`
+
+## 2.24.0
+
+* Official image `2.24.0`
+
+## 2.23.2
+
+* Official image `2.23.2`
+
+## 2.23.1
+
+* Official image `2.23.1`
+
+## 2.23.0
+
+* Official image `2.23.0`
+
+## 2.22.0
+
+* Official image `2.22.0`
+
 ## 2.21.2
 
 * Fix `sgc_path` in bootstrap template: remove hardcoded path to `datadog-secret-backend` (renamed to `sgc` since 2.15.1) and defer to the worker's built-in default. Also skip emitting the auto-generated `secret:` block when `bootstrap.config` already defines one, preventing duplicate YAML key errors.

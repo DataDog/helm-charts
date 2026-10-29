@@ -6,6 +6,11 @@
 # Resource requests/limits are rounded down to the nearest 100m/Mi to preserve headroom.
 # Quickwit memory tuning below uses the allocatable memory rounded down to Gi.
 large:
+  # Environment variables
+  env:
+    # Indexer environment variables
+    indexer:
+      QW_INDEXING_MAX_WRITE_THROUGHPUT: 25MiB
   resources:
     limits:
       memory: 5700Mi
@@ -30,6 +35,11 @@ large:
       aggregation_memory_limit: 500M
 
 xlarge:
+  # Environment variables
+  env:
+    # Indexer environment variables
+    indexer:
+      QW_INDEXING_MAX_WRITE_THROUGHPUT: 50MiB
   resources:
     limits:
       memory: 13100Mi
@@ -54,6 +64,11 @@ xlarge:
       aggregation_memory_limit: 500M
 
 2xlarge:
+  # Environment variables
+  env:
+    # Indexer environment variables
+    indexer:
+      QW_INDEXING_MAX_WRITE_THROUGHPUT: 100MiB
   resources:
     limits:
       memory: 28500Mi
@@ -78,6 +93,11 @@ xlarge:
       aggregation_memory_limit: 500M
 
 4xlarge:
+  # Environment variables
+  env:
+    # Indexer environment variables
+    indexer:
+      QW_INDEXING_MAX_WRITE_THROUGHPUT: 200MiB
   resources:
     limits:
       memory: 59300Mi
@@ -102,6 +122,11 @@ xlarge:
       aggregation_memory_limit: 500M
 
 6xlarge:
+  # Environment variables
+  env:
+    # Indexer environment variables
+    indexer:
+      QW_INDEXING_MAX_WRITE_THROUGHPUT: 300MiB
   resources:
     limits:
       memory: 90100Mi
@@ -126,6 +151,11 @@ xlarge:
       aggregation_memory_limit: 500M
 
 8xlarge:
+  # Environment variables
+  env:
+    # Indexer environment variables
+    indexer:
+      QW_INDEXING_MAX_WRITE_THROUGHPUT: 400MiB
   resources:
     limits:
       memory: 120900Mi

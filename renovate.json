@@ -2,11 +2,48 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "minimumReleaseAge": "7 days",
-  "enabledManagers": ["github-actions"],
+  "enabledManagers": ["github-actions", "custom.regex"],
+  "gitIgnoredAuthors": ["200755185+dd-octo-sts[bot]@users.noreply.github.com"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Datadog Agent image tags and floating-tag version fallbacks",
+      "managerFilePatterns": [
+        "/^charts/datadog/values\\.yaml$/",
+        "/^charts/datadog/templates/_helpers\\.tpl$/"
+      ],
+      "matchStrings": [
+        "    # (?:agents|clusterAgent|clusterChecksRunner)\\.image\\.tag --[^\\n]*\\n(?:    #[^\\n]*\\n)*    tag: (?<currentValue>7\\.\\d+\\.\\d+)\\n",
+        "\\{\\{- if and \\(eq \\$length 1\\) \\(or \\(eq \\$version \"7\"\\) \\(eq \\$version \"latest\"\\)\\) -\\}\\}\\n\\{\\{- \\$version = \"(?<currentValue>7\\.\\d+\\.\\d+)\" -\\}\\}",
+        "\\{\\{- if and \\(eq \\$length 1\\) \\(eq \\$version \"latest\"\\) -\\}\\}\\n\\{\\{- \\$version = \"(?<currentValue>7\\.\\d+\\.\\d+)\" -\\}\\}"
+      ],
+      "depNameTemplate": "DataDog/datadog-agent",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
+    }
+  ],
   "packageRules": [
     {
       "matchManagers": ["github-actions"],
       "schedule": ["at any time"]
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDatasources": ["github-releases"],
+      "matchPackageNames": ["DataDog/datadog-agent"],
+      "minimumReleaseAge": "1 day",
+      "allowedVersions": "/^7\\.\\d+\\.\\d+$/",
+      "ignoreUnstable": true,
+      "groupName": "Datadog Agent",
+      "groupSlug": "datadog-agent",
+      "branchTopic": "datadog-agent",
+      "separateMinorPatch": false,
+      "rebaseWhen": "behind-base-branch",
+      "automerge": false,
+      "addLabels": ["datadog/patch-version"],
+      "prBodyNotes": [
+        "Updates the default Agent, Cluster Agent, and Cluster Checks Runner together. Chart CI generates the chart release metadata, README, and test baselines. Review the release notes and generated manifests before merging; this PR is not auto-merged."
+      ]
     }
   ]
 }

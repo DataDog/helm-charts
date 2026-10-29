@@ -1,0 +1,99 @@
+name: Generate Agent Release Files
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: agent-release-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    if: >-
+      github.event.pull_request.user.login == 'renovate[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'renovate/datadog-agent'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: read
+      id-token: write
+    steps:
+      # Never check out the PR head in this privileged workflow.
+      - name: Check out trusted base
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      - name: Validate Renovate changes and prepare chart release
+        id: prepare
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const { prepare } = require('./.github/scripts/agent-release');
+            await prepare({ github, context, core, baseSha: context.payload.pull_request.base.sha });
+
+      - name: Verify default images are published
+        env:
+          AGENT_VERSION: ${{ steps.prepare.outputs.version }}
+        run: |
+          for registry in gcr.io/datadoghq public.ecr.aws/datadog; do
+            for image in agent cluster-agent; do
+              docker buildx imagetools inspect "${registry}/${image}:${AGENT_VERSION}" > /dev/null
+            done
+          done
+
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: test/go.mod
+          cache: false
+
+      - name: Set up Helm
+        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+        with:
+          version: v4.3.0
+
+      - name: Regenerate and test chart baselines
+        run: |
+          helm repo add datadog https://helm.datadoghq.com
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm dependency build charts/datadog
+          go test -C test ./datadog -count=1 -args -updateBaselines=true
+          go test -C test ./datadog -count=1
+          helm lint charts/datadog
+
+      - name: Regenerate chart documentation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v1.14.2 --repo norwoodj/helm-docs \
+            --pattern helm-docs_1.14.2_Linux_x86_64.tar.gz --dir "$RUNNER_TEMP"
+          tar -xzf "$RUNNER_TEMP/helm-docs_1.14.2_Linux_x86_64.tar.gz" -C "$RUNNER_TEMP" helm-docs
+          "$RUNNER_TEMP/helm-docs" --chart-search-root charts/datadog
+          git diff --check
+
+      - name: Get scoped write token
+        uses: DataDog/dd-octo-sts-action@c85802a58e202b7e764b5441e4378c76043c8108 # v1.0.5
+        id: octo-sts
+        with:
+          scope: DataDog/helm-charts
+          policy: self.agent-release.create-commit
+
+      - name: Commit generated files to Renovate branch
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          EXPECTED_HEAD_SHA: ${{ steps.prepare.outputs.head-sha }}
+        with:
+          github-token: ${{ steps.octo-sts.outputs.token }}
+          script: |
+            const { publish } = require('./.github/scripts/agent-release');
+            await publish({ github, context, core, headSha: process.env.EXPECTED_HEAD_SHA, baseSha: context.payload.pull_request.base.sha });

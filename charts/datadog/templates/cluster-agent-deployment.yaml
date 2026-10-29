@@ -116,7 +116,7 @@ spec:
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
           - cp
-          - -r
+          - -rf
         args:
           - /etc/datadog-agent
           - /opt
@@ -311,6 +311,8 @@ spec:
           - name: DD_APM_INSTRUMENTATION_ENABLED
             value: {{ .Values.datadog.apm.instrumentation.enabled | quote }}
           {{- end }}
+          - name: DD_APM_INSTRUMENTATION_ON_DEMAND
+            value: {{ .Values.datadog.apm.instrumentation.onDemand | quote }}
           {{- if .Values.datadog.apm.instrumentation.enabledNamespaces }}
           - name: DD_APM_INSTRUMENTATION_ENABLED_NAMESPACES
             value: {{ .Values.datadog.apm.instrumentation.enabledNamespaces | toJson | quote }}
@@ -476,13 +478,11 @@ spec:
           {{- end }}
           - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
             value: {{ include "language-detection-enabled" .  | quote }}
-          {{- if eq  (include "should-enable-security-agent" .) "true" }}
+          {{- if eq (include "should-enable-compliance-feature" .) "true" }}
           - name: DD_COMPLIANCE_CONFIG_ENABLED
-            value:  {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
-          {{- if .Values.datadog.securityAgent.compliance.enabled }}
+            value: "true"
           - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
             value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
-          {{- end }}
           {{- end }}
           {{- if .Values.datadog.prometheusScrape.enabled }}
           - name: DD_PROMETHEUS_SCRAPE_ENABLED
@@ -598,6 +598,14 @@ spec:
             value: {{ .Values.datadog.appsec.injector.processor.service.namespace | quote }}
           {{- end }}
           {{- end }}
+          {{- if eq (include "should-enable-kueue" .) "true" }}
+          - name: DD_CLUSTER_AGENT_KUEUE_ENABLED
+            value: "true"
+          {{- end }}
+          {{- if eq (include "should-shard-ksm-config" .) "true" }}
+          - name: DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED
+            value: {{ .Values.datadog.kubeStateMetricsCore.shardingEnabled | quote }}
+          {{- end }}
           {{- include "fips-envvar" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterAgent.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterAgent.envDict | indent 10 }}
@@ -646,12 +654,10 @@ spec:
             subPath: datadog-cluster.yaml
             readOnly: true
 {{- end}}
-{{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.configMap }}
+{{- if and (eq (include "should-enable-compliance-feature" .) "true") .Values.datadog.securityAgent.compliance.configMap }}
           - name: complianceconfigdir
             mountPath: /etc/datadog-agent/compliance.d
             readOnly: true
-{{- end}}
 {{- end}}
           - name: config
             mountPath: /etc/datadog-agent
@@ -690,6 +696,10 @@ spec:
             - key: helm.yaml
               path: helm.d/helm.yaml
             {{- end }}
+            {{- if eq (include "should-enable-kueue-check" .) "true" }}
+            - key: kueue.yaml
+              path: kueue.d/kueue.yaml
+            {{- end }}
             {{- if eq (include "need-kubernetes-apiserver-check-config" .) "true" }}
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.d/kubernetes_apiserver.yaml
@@ -716,12 +726,10 @@ spec:
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-config
 {{- end}}
-{{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if  and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.configMap }}
+{{- if and (eq (include "should-enable-compliance-feature" .) "true") .Values.datadog.securityAgent.compliance.configMap }}
         - name: complianceconfigdir
           configMap:
             name: {{ .Values.datadog.securityAgent.compliance.configMap }}
-{{- end}}
 {{- end}}
         - name: config
           emptyDir: {}

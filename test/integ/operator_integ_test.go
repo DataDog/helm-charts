@@ -13,6 +13,7 @@ import (
 	"github.com/DataDog/helm-charts/test/common"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/random"
+	"github.com/gruntwork-io/terratest/modules/retry"
 	"github.com/stretchr/testify/require"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -83,7 +84,10 @@ func Test(t *testing.T) {
 			defer cleanupSecrets()
 			t.Log("Applying DatadogAgent manifest")
 			k8s.KubectlApply(t, kubectlOptions, tt.datadogAgentManifestPath)
-			defer k8s.KubectlDelete(t, kubectlOptions, tt.datadogAgentManifestPath)
+			defer func() {
+				k8s.KubectlDelete(t, kubectlOptions, tt.datadogAgentManifestPath)
+				waitForDatadogAgentInternalCleanup(t, kubectlOptions, 60*time.Second)
+			}()
 
 			// Verify Agent Setup
 			t.Log("Verifying agent pods are running")
@@ -93,6 +97,45 @@ func Test(t *testing.T) {
 			//t.Log("Sleeping for 2 minutes")
 			//time.Sleep(120 * time.Second)
 		})
+	}
+}
+
+// waitForDatadogAgentInternalCleanup waits until no DatadogAgentInternal is left
+// in the namespace.
+//
+// A DatadogAgentInternal is owned by its DatadogAgent, so it is only garbage
+// collected once the DatadogAgent is gone, and it carries a finalizer that only
+// the operator can remove. Uninstalling the chart right after deleting the
+// DatadogAgent therefore races that cleanup: helm deletes the operator
+// Deployment and the datadogagentinternals CRD at the same time, and if the
+// operator pod goes first the finalizer is never removed, so deleting the CRD
+// blocks until `helm delete --wait` times out.
+func waitForDatadogAgentInternalCleanup(t *testing.T, kubectlOptions *k8s.KubectlOptions, timeout time.Duration) {
+	sleepInterval := 2 * time.Second
+	maxRetries := int(timeout / sleepInterval)
+
+	_, err := retry.DoWithRetryE(t, "waiting for DatadogAgentInternal to be deleted",
+		maxRetries, sleepInterval, func() (string, error) {
+			output, err := k8s.RunKubectlAndGetOutputE(t, kubectlOptions, "get", "datadogagentinternal", "-o", "name")
+			if err != nil {
+				if strings.Contains(err.Error(), "the server doesn't have a resource type") {
+					return "", nil
+				}
+				return "", err
+			}
+			// `-o name` prints one "<resource>.<group>/<name>" line per object.
+			// Match on that name rather than on an empty output: terratest
+			// returns stdout and stderr combined, so any warning kubectl emits
+			// would otherwise read as a leftover object.
+			if strings.Contains(output, "datadogagentinternal") && strings.Contains(output, "/") {
+				return "", fmt.Errorf("still waiting for DatadogAgentInternal to be deleted: %s", strings.TrimSpace(output))
+			}
+			return "", nil
+		})
+	// Do not fail the test from this deferred call: t.Fatal here would skip the
+	// remaining cleanup. Let the helm uninstall surface the problem instead.
+	if err != nil {
+		t.Log("DatadogAgentInternal cleanup did not complete, chart uninstall may time out:", err)
 	}
 }
 

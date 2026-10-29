@@ -239,6 +239,32 @@ APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
 
+{{- if and .Values.datadog.kueue.enabled (ne (include "should-enable-kueue-check" .) "true") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+{{- if eq (include "should-enable-kueue" .) "true" }}
+`datadog.kueue.enabled` is set, but only Kueue metadata collection is enabled in the
+Cluster Agent. The Kueue check is not configured because:
+{{- else }}
+`datadog.kueue.enabled` is set, but Kueue support is disabled because:
+{{- end }}
+{{- if ne (include "should-deploy-cluster-agent" .) "true" }}
+* The Cluster Agent is not deployed by this chart (`clusterAgent.enabled` is false or `existingClusterAgent.join` is set).
+{{- else if ne (include "kueue-cluster-agent-version-supported" .) "true" }}
+* The Cluster Agent version ({{ include "get-cluster-agent-version" . }}) is older than 7.82.0.
+{{- end }}
+{{- if not .Values.datadog.clusterChecks.enabled }}
+* `datadog.clusterChecks.enabled` is false.
+{{- end }}
+{{- if ne (include "kueue-agent-version-supported" .) "true" }}
+* The Agent version ({{ include "get-agent-version" . }}) is older than 7.82.0.
+{{- end }}
+
+{{- end }}
+
 {{- if or .Values.clusterAgent.createPodDisruptionBudget .Values.clusterChecksRunner.createPodDisruptionBudget }}
 
 #################################################################
@@ -367,6 +393,16 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 
 You are using datadog.orchestratorExplorer.enabled but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
 To enable it please set clusterAgent.enabled to 'true'.
+{{- end }}
+
+{{- if and .Values.providers.gke.autopilot .Values.datadog.jemalloc.enabled }}
+
+#######################################################################################
+####   WARNING: jemalloc is not supported on GKE Autopilot                           ####
+#######################################################################################
+
+{{- fail "jemalloc is not supported on GKE Autopilot. Set 'datadog.jemalloc.enabled' to 'false'." }}
+
 {{- end }}
 
 {{- if and (.Values.providers.gke.autopilot) (not .Values.datadog.envDict.HELM_FORCE_RENDER)}}
@@ -1063,5 +1099,35 @@ To disable it, set `datadog.logs.autoMultiLineDetection` to `false`:
 
     helm upgrade {{ .Release.Name }} datadog/datadog \
         --set datadog.logs.autoMultiLineDetection=false
+
+{{- end }}
+
+{{- $streamingContainers := dict "securityAgent" "security-agent" "processAgent" "process-agent" "systemProbe" "system-probe" "traceAgent" "trace-agent" }}
+{{- $withLocalEnv := list }}
+{{- range $key, $name := $streamingContainers }}
+{{- $c := index $.Values.agents.containers $key }}
+{{- if or $c.env $c.envDict $c.envFrom }}
+{{- $withLocalEnv = append $withLocalEnv $key }}
+{{- end }}
+{{- end }}
+{{- if $withLocalEnv }}
+
+#################################################################
+####          WARNING: Breaking change in Agent 7.85         ####
+#################################################################
+
+You set `env`, `envDict` or `envFrom` on these containers: {{ join ", " (sortAlpha $withLocalEnv) }}.
+
+From Agent 7.85.0, when config streaming is enabled, these containers take their configuration
+from the core Agent. Configuration overrides set through their own `env`, `envDict` or `envFrom`
+will no longer take effect.
+
+Prepare your configuration before enabling streaming. Set configuration overrides on the core Agent
+through `datadog.env` or `agents.containers.agent.env`. Some container-specific settings require a
+namespaced variable, such as `DD_SECURITY_AGENT_LOG_LEVEL` or `DD_APM_LOG_LEVEL`.
+Keep the existing remote-container settings while streaming is disabled.
+
+For `envFrom`, add the ConfigMap or Secret reference to `agents.containers.agent.envFrom`,
+or use `datadog.envFrom` for shared settings.
 
 {{- end }}

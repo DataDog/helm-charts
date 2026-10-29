@@ -61,6 +61,10 @@ Version auto-calculation:
                  current 2.22.0-dev.1 -> 2.22.0-dev.2 (subsequent RC)
   Final release: current 2.22.0-dev.2 -> 2.22.0       (strip suffix)
                  current 2.22.0       -> 2.23.0       (bump minor)
+  Operator patch releases (e.g. 1.26.1, 1.26.1-rc.1) bump the patch version of
+  the datadog-operator and datadog charts instead of the minor:
+                 current 2.22.0       -> 2.22.1-dev.1 (first RC)
+                 current 2.22.0       -> 2.22.1       (final)
 EOF
     exit 0
 }
@@ -72,10 +76,29 @@ EOF
 is_rc() { [[ "$1" == *"-rc."* ]]; }
 is_dev() { [[ "$1" == *"-dev."* ]]; }
 
+# Bump the minor or patch component of a release version: 2.21.0 -> 2.22.0 | 2.21.1
+bump_version() {
+    local current="$1" bump="$2"
+    local major minor patch
+    IFS=. read -r major minor patch <<< "$current"
+    if [[ "$bump" == "patch" ]]; then
+        echo "${major}.${minor}.$((patch + 1))"
+    else
+        echo "${major}.$((minor + 1)).0"
+    fi
+}
+
+# Operator patch releases (e.g. 1.31.1, 1.31.2-rc.1) get a patch chart bump.
+operator_bump_type() {
+    local patch="${1%%-*}"
+    patch="${patch##*.}"
+    if [[ "$patch" != "0" ]]; then echo "patch"; else echo "minor"; fi
+}
+
 # Calculate the next chart version based on current version and release type.
-# Args: current_version, release_type (rc|final)
+# Args: current_version, release_type (rc|final), bump (minor|patch)
 calc_next_version() {
-    local current="$1" release_type="$2"
+    local current="$1" release_type="$2" bump="$3"
 
     if [[ "$release_type" == "rc" ]]; then
         if is_dev "$current"; then
@@ -85,12 +108,8 @@ calc_next_version() {
             dev_num="${current##*-dev.}"
             echo "${base}-dev.$((dev_num + 1))"
         else
-            # Bump minor, add -dev.1: 2.21.0 -> 2.22.0-dev.1
-            local major minor
-            major="${current%%.*}"
-            minor="${current#*.}"
-            minor="${minor%%.*}"
-            echo "${major}.$((minor + 1)).0-dev.1"
+            # Bump and add -dev.1: 2.21.0 -> 2.22.0-dev.1 (or 2.21.1-dev.1 for patch)
+            echo "$(bump_version "$current" "$bump")-dev.1"
         fi
     else
         # Final release
@@ -98,12 +117,8 @@ calc_next_version() {
             # Strip dev suffix: 2.22.0-dev.2 -> 2.22.0
             echo "${current%-dev.*}"
         else
-            # Bump minor: 2.21.0 -> 2.22.0 (only datadog chart, which doesn't recieve any -dev)
-            local major minor
-            major="${current%%.*}"
-            minor="${current#*.}"
-            minor="${minor%%.*}"
-            echo "${major}.$((minor + 1)).0"
+            # Bump: 2.21.0 -> 2.22.0 (or 2.21.1 for patch)
+            bump_version "$current" "$bump"
         fi
     fi
 }
@@ -236,10 +251,14 @@ phase_crds() {
     (cd "$ROOT_DIR" && bash "$chart_dir/update-crds.sh" "v${OPERATOR_VERSION}")
     success "CRDs downloaded and formatted"
 
-    # During RC, if update-crds.sh produced no changes, skip the rest —
-    # a previous RC already has the CRDs we need.
-    if is_rc "$OPERATOR_VERSION" && git diff --quiet -- "$chart_dir"; then
-        info "No CRD changes detected for this RC, skipping CRDs chart bump."
+    # If update-crds.sh produced no changes, skip the rest — the current chart
+    # already has the CRDs we need. The exception is a final release on top of
+    # a -dev chart version, which still needs the suffix stripped. This also
+    # covers patch releases (e.g. 1.31.1) that have no RCs and no CRD changes.
+    local current_version
+    current_version=$(get_chart_version "$chart_yaml")
+    if git diff --quiet -- "$chart_dir" && { is_rc "$OPERATOR_VERSION" || ! is_dev "$current_version"; }; then
+        info "No CRD changes detected, skipping CRDs chart bump."
         return 0
     fi
 
@@ -350,6 +369,9 @@ phase_datadog() {
     prev_tag=$(awk '/^operator:/,0' "$values_yaml" | grep '^\s*tag:' | head -1 | awk '{print $2}')
     info "Previous operator image tag in datadog chart: ${prev_tag}"
 
+    local prev_crds_version
+    prev_crds_version=$(awk '/name: datadog-crds/ { found=1 } found && /version:/ { print $2; exit }' "$requirements")
+
     # Step 1: Update datadog-operator dependency in requirements.yaml
     step "Updating datadog-operator dependency to ${OPERATOR_CHART_VERSION}"
     update_dep_version "$requirements" "datadog-operator" "$OPERATOR_CHART_VERSION"
@@ -379,14 +401,25 @@ phase_datadog() {
 
     # Step 6: Add CHANGELOG entry
     step "Adding CHANGELOG entry for ${DATADOG_CHART_VERSION}"
-    add_changelog_entry "$changelog" "$DATADOG_CHART_VERSION" \
-        "* Bump Datadog Operator chart dependency to ${OPERATOR_CHART_VERSION}." \
-        "* Bump Datadog CRD chart dependency to ${CRDS_CHART_VERSION}." \
-        "* Bump Operator image tag to ${OPERATOR_VERSION}."
+    local entries=("* Bump Datadog Operator chart dependency to ${OPERATOR_CHART_VERSION}.")
+    if [[ "$prev_crds_version" != "$CRDS_CHART_VERSION" ]]; then
+        entries+=("* Bump Datadog CRD chart dependency to ${CRDS_CHART_VERSION}.")
+    fi
+    entries+=("* Bump Operator image tag to ${OPERATOR_VERSION}.")
+    add_changelog_entry "$changelog" "$DATADOG_CHART_VERSION" "${entries[@]}"
 
     # Step 7: Run helm-docs
     step "Running helm-docs..."
     run_helm_docs
+
+    # Step 8: Update test baselines
+    step "Updating test baselines (make update-test-baselines-datadog-agent)..."
+    if (cd "$ROOT_DIR" && make update-test-baselines-datadog-agent); then
+        success "Test baselines updated"
+    else
+        warn "Test baseline update failed (make update-test-baselines-datadog-agent)."
+        warn "Continuing without updated baselines -- Inspect for unit test failures from version bump."
+    fi
 
     success "=== Datadog chart phase complete ==="
 }
@@ -447,17 +480,19 @@ check_prereqs
 # Determine release type
 RELEASE_TYPE="final"
 is_rc "$OPERATOR_VERSION" && RELEASE_TYPE="rc"
+BUMP_TYPE=$(operator_bump_type "$OPERATOR_VERSION")
 
 echo ""
 info "Operator version:  ${OPERATOR_VERSION}"
 info "Release type:      ${RELEASE_TYPE}"
+info "Chart bump:        ${BUMP_TYPE} (datadog-operator, datadog)"
 
 # Auto-calculate chart versions.
 # Each phase only bumps its own chart version; other versions default to current.
 if [[ -z "$CRDS_CHART_VERSION" ]]; then
     current=$(get_chart_version "$ROOT_DIR/charts/datadog-crds/Chart.yaml")
     if [[ "$PHASE" == "crds" ]]; then
-        CRDS_CHART_VERSION=$(calc_next_version "$current" "$RELEASE_TYPE")
+        CRDS_CHART_VERSION=$(calc_next_version "$current" "$RELEASE_TYPE" minor)
         info "CRDs chart:        ${current} -> ${CRDS_CHART_VERSION} (auto)"
     else
         CRDS_CHART_VERSION="$current"
@@ -470,7 +505,7 @@ fi
 if [[ -z "$OPERATOR_CHART_VERSION" ]]; then
     current=$(get_chart_version "$ROOT_DIR/charts/datadog-operator/Chart.yaml")
     if [[ "$PHASE" == "operator" ]]; then
-        OPERATOR_CHART_VERSION=$(calc_next_version "$current" "$RELEASE_TYPE")
+        OPERATOR_CHART_VERSION=$(calc_next_version "$current" "$RELEASE_TYPE" "$BUMP_TYPE")
         info "Operator chart:    ${current} -> ${OPERATOR_CHART_VERSION} (auto)"
     else
         OPERATOR_CHART_VERSION="$current"
@@ -483,7 +518,7 @@ fi
 if [[ -z "$DATADOG_CHART_VERSION" ]]; then
     current=$(get_chart_version "$ROOT_DIR/charts/datadog/Chart.yaml")
     if [[ "$PHASE" == "datadog" ]]; then
-        DATADOG_CHART_VERSION=$(calc_next_version "$current" "$RELEASE_TYPE")
+        DATADOG_CHART_VERSION=$(calc_next_version "$current" "$RELEASE_TYPE" "$BUMP_TYPE")
         info "Datadog chart:     ${current} -> ${DATADOG_CHART_VERSION} (auto)"
     else
         DATADOG_CHART_VERSION="$current"

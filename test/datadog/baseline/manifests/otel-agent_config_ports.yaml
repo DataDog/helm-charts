@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.30.0
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -215,7 +215,7 @@ metadata:
 ---
 apiVersion: v1
 data:
-  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: false\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: false\n  conntrack_init_timeout: 10s\n  direct_send: true\nservice_monitoring_config:\n  enabled: false\n  tls:\ntraceroute:\n  enabled: false\ndiscovery:\n  enabled: true\n  use_system_probe_lite: true\n  network_stats:\n    enabled: true\n  service_map:\n    enabled: false\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: false\n  use_secruntime_track: true\n  direct_send_from_system_probe: false\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: false \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: false\n  compliance_module:\n    enabled: false\ndynamic_instrumentation:\n  enabled: false\ncompliance_config:\n  enabled: false\n"
+  system-probe.yaml: "system_probe_config:\n  enabled: true\n  debug_port:  0\n  sysprobe_socket: /var/run/sysprobe/sysprobe.sock\n  enable_conntrack: true\n  bpf_debug: false\n  enable_tcp_queue_length: false\n  enable_oom_kill: false\n  collect_dns_stats: true\n  max_tracked_connections: 131072\n  conntrack_max_state_size: 131072\n  runtime_compiler_output_dir: /var/tmp/datadog-agent/system-probe/build\n  kernel_header_download_dir: /var/tmp/datadog-agent/system-probe/kernel-headers\n  apt_config_dir: /host/etc/apt\n  yum_repos_dir: /host/etc/yum.repos.d\n  zypper_repos_dir: /host/etc/zypp/repos.d\n  btf_path: \nnetwork_config:\n  enabled: false\n  conntrack_init_timeout: 10s\n  direct_send: true\nservice_monitoring_config:\n  enabled: false\n  tls:\ndiscovery:\n  enabled: true\n  use_system_probe_lite: true\n  network_stats:\n    enabled: true\n  service_map:\n    enabled: false\ngpu_monitoring:\n  enabled: false\n  configure_cgroup_perms: false\nevent_monitoring_config:\n  socket: /var/run/sysprobe/event-monitor.sock\nruntime_security_config:\n  enabled: false\n  use_secruntime_track: true\n  direct_send_from_system_probe: false\n  socket: /var/run/sysprobe/runtime-security.sock\n  policies:\n    dir: /etc/datadog-agent/runtime-security.d\n  syscall_monitor:\n    enabled: false\n  network:\n    enabled: true\n  remote_configuration:\n    enabled: false \n  activity_dump:\n    enabled: true\n    traced_cgroups_count: 3\n    cgroup_dump_timeout: 20\n    cgroup_wait_list_size:  0\n    path_merge:\n      enabled: false\n    local_storage:\n      output_directory: /var/run/sysprobe/runtime-security/profiles\n\n  security_profile:\n    enabled: true\n    anomaly_detection:\n      enabled: true\n    auto_suppression:\n      enabled: true\n    dir: /var/run/sysprobe/runtime-security/profiles\n  enforcement:\n    enabled: false\n  compliance_module:\n    enabled: false\ndynamic_instrumentation:\n  enabled: false\ncompliance_config:\n  enabled: false\n"
 kind: ConfigMap
 metadata:
   labels:
@@ -473,7 +473,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.30.0
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -749,7 +749,6 @@ rules:
       - datadogmonitors/finalizers
       - datadogslos
       - datadogslos/finalizers
-      - extendeddaemonsets
     verbs:
       - create
       - delete
@@ -811,15 +810,6 @@ rules:
     verbs:
       - '*'
   - apiGroups:
-      - datadoghq.com
-    resources:
-      - extendeddaemonsetreplicasets
-    verbs:
-      - delete
-      - get
-      - list
-      - watch
-  - apiGroups:
       - discovery.k8s.io
     resources:
       - endpointslices
@@ -850,6 +840,18 @@ rules:
   - apiGroups:
       - gateway.networking.k8s.io
     resources:
+      - backendtlspolicies
+      - grpcroutes
+      - listenersets
+      - tcproutes
+      - tlsroutes
+      - udproutes
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
       - gatewayclasses
       - gateways
       - httproutes
@@ -861,21 +863,29 @@ rules:
   - apiGroups:
       - gateway.networking.k8s.io
     resources:
-      - grpcroutes
-      - listenersets
-      - tlsroutes
-    verbs:
-      - list
-      - watch
-  - apiGroups:
-      - gateway.networking.k8s.io
-    resources:
       - referencegrants
     verbs:
       - create
       - delete
       - get
+      - list
       - patch
+      - watch
+  - apiGroups:
+      - inference.networking.k8s.io
+    resources:
+      - inferencepools
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - inference.networking.x-k8s.io
+    resources:
+      - inferencepoolimports
+      - inferencepools
+    verbs:
+      - list
+      - watch
   - apiGroups:
       - k8s.nginx.org
     resources:
@@ -897,6 +907,13 @@ rules:
       - update
       - watch
   - apiGroups:
+      - kubeai.org
+    resources:
+      - models
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - kustomize.toolkit.fluxcd.io
     resources:
       - kustomizations
@@ -909,6 +926,14 @@ rules:
       - kcm/metrics
       - ksh/metrics
     verbs:
+      - get
+  - apiGroups:
+      - networking.gke.io
+    resources:
+      - gcptrafficextensions
+    verbs:
+      - create
+      - delete
       - get
   - apiGroups:
       - networking.istio.io
@@ -966,6 +991,19 @@ rules:
       - update
       - watch
   - apiGroups:
+      - nvidia.com
+    resources:
+      - dynamocheckpoints
+      - dynamocomponentdeployments
+      - dynamographdeploymentrequests
+      - dynamographdeployments
+      - dynamographdeploymentscalingadapters
+      - dynamomodels
+      - dynamoworkermetadatas
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - policy
     resources:
       - poddisruptionbudgets
@@ -984,6 +1022,16 @@ rules:
     verbs:
       - get
       - list
+  - apiGroups:
+      - ray.io
+    resources:
+      - rayclusters
+      - raycronjobs
+      - rayjobs
+      - rayservices
+    verbs:
+      - list
+      - watch
   - apiGroups:
       - rbac.authorization.k8s.io
     resources:
@@ -1020,6 +1068,24 @@ rules:
     verbs:
       - use
   - apiGroups:
+      - serving.kserve.io
+    resources:
+      - clusterservingruntimes
+      - clusterstoragecontainers
+      - inferencegraphs
+      - inferenceservices
+      - llminferenceserviceconfigs
+      - llminferenceservices
+      - localmodelcaches
+      - localmodelnamespacecaches
+      - localmodelnodegroups
+      - localmodelnodes
+      - servingruntimes
+      - trainedmodels
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - source.toolkit.fluxcd.io
     resources:
       - buckets
@@ -1045,6 +1111,17 @@ rules:
     resources:
       - ingressroutes
     verbs:
+      - list
+      - watch
+  - apiGroups:
+      - kueue.x-k8s.io
+    resources:
+      - clusterqueues
+      - localqueues
+      - resourceflavors
+      - workloads
+    verbs:
+      - get
       - list
       - watch
   - apiGroups:
@@ -1644,6 +1721,13 @@ rules:
       - list
       - watch
   - apiGroups:
+      - kubeai.org
+    resources:
+      - models
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - nvidia.com
     resources:
       - dynamocheckpoints
@@ -1653,6 +1737,55 @@ rules:
       - dynamographdeploymentscalingadapters
       - dynamomodels
       - dynamoworkermetadatas
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - serving.kserve.io
+    resources:
+      - clusterstoragecontainers
+      - llminferenceserviceconfigs
+      - llminferenceservices
+      - localmodelcaches
+      - localmodelnamespacecaches
+      - localmodelnodegroups
+      - localmodelnodes
+      - clusterservingruntimes
+      - inferencegraphs
+      - inferenceservices
+      - servingruntimes
+      - trainedmodels
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - gateway.networking.k8s.io
+    resources:
+      - gatewayclasses
+      - gateways
+      - httproutes
+      - grpcroutes
+      - backendtlspolicies
+      - listenersets
+      - referencegrants
+      - tcproutes
+      - tlsroutes
+      - udproutes
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - inference.networking.k8s.io
+    resources:
+      - inferencepools
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - inference.networking.x-k8s.io
+    resources:
+      - inferencepools
+      - inferencepoolimports
     verbs:
       - list
       - watch
@@ -2128,7 +2261,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: registry.datadoghq.com/agent:7.82.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2288,7 +2421,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/agent:7.82.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 15
@@ -2369,7 +2502,7 @@ spec:
               value: INFO
             - name: DD_DOGSTATSD_PORT
               value: "8125"
-          image: registry.datadoghq.com/agent:7.82.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: system-probe
           resources: {}
@@ -2527,7 +2660,7 @@ spec:
               value: kubernetes
             - name: DD_LOG_LEVEL
               value: INFO
-          image: registry.datadoghq.com/ddot-collector:7.82.3
+          image: registry.datadoghq.com/ddot-collector:7.84.6
           imagePullPolicy: IfNotPresent
           name: otel-agent
           ports:
@@ -2587,7 +2720,7 @@ spec:
           command:
             - bash
             - -c
-          image: registry.datadoghq.com/agent:7.82.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -2628,7 +2761,7 @@ spec:
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
-          image: registry.datadoghq.com/agent:7.82.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2655,7 +2788,7 @@ spec:
             - cp
             - /etc/config/system-probe-seccomp.json
             - /host/var/lib/kubelet/seccomp/system-probe
-          image: registry.datadoghq.com/agent:7.82.3
+          image: registry.datadoghq.com/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: seccomp-setup
           resources: {}
@@ -2791,7 +2924,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.30.0
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2850,7 +2983,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: registry.datadoghq.com/operator:1.30.0
+          image: registry.datadoghq.com/operator:1.31.2
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2868,6 +3001,11 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       serviceAccountName: datadog-operator
+      tolerations:
+        - effect: NoSchedule
+          key: agent.datadoghq.com/not-ready
+          operator: Equal
+          value: presence
       volumes: null
 ---
 apiVersion: apps/v1
@@ -2980,7 +3118,9 @@ spec:
             - name: DD_ADMISSION_CONTROLLER_CONTAINER_REGISTRY
               value: registry.datadoghq.com
             - name: DD_REMOTE_CONFIGURATION_ENABLED
-              value: "false"
+              value: "true"
+            - name: DD_APM_INSTRUMENTATION_ON_DEMAND
+              value: "true"
             - name: DD_CLUSTER_CHECKS_ENABLED
               value: "true"
             - name: DD_EXTRA_CONFIG_PROVIDERS
@@ -3045,7 +3185,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.82.3
+          image: registry.datadoghq.com/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -3117,8 +3257,8 @@ spec:
             - /opt
           command:
             - cp
-            - -r
-          image: registry.datadoghq.com/cluster-agent:7.82.3
+            - -rf
+          image: registry.datadoghq.com/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

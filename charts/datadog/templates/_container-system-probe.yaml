@@ -18,11 +18,14 @@
 {{- end }}
 {{- end }}
   env:
+    {{- if eq (include "should-enable-jemalloc" .) "true" }}
+    {{- include "jemalloc-env" . | nindent 4 }}
+    {{- end }}
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "configstream-consumer-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
-    {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+    {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) (eq (include "should-enable-compliance-in-system-probe" .) "true") }}
     - name: HOST_ROOT
       value: "/host/root"
     {{- end }}
@@ -41,6 +44,22 @@
     - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
       value: {{ .Values.datadog.securityAgent.compliance.runInSystemProbe | quote }}
     {{- end }}
+    {{- if eq (include "should-enable-compliance-in-system-probe" .) "true" }}
+    - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+      value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
+    - name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+      value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+    - name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
+      value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+    {{- if .Values.datadog.securityAgent.compliance.containerInclude }}
+    - name: DD_COMPLIANCE_CONFIG_CONTAINER_INCLUDE
+      value: {{ .Values.datadog.securityAgent.compliance.containerInclude | quote }}
+    {{- end }}
+    {{- if .Values.datadog.securityAgent.compliance.containerExclude }}
+    - name: DD_COMPLIANCE_CONFIG_CONTAINER_EXCLUDE
+      value: {{ .Values.datadog.securityAgent.compliance.containerExclude | quote }}
+    {{- end }}
+    {{- end }}
     {{- if eq (include "should-enable-sbom-enrichment-usage" .) "true" }}
     - name: DD_SBOM_ENRICHMENT_USAGE_ENABLED
       value: "true"
@@ -50,6 +69,14 @@
       value: "5009"
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
+    {{- end }}
+    {{- if and .Values.datadog.networkPath.connectionsMonitoring.enabled (eq (include "cnm-use-direct-send" .) "true") }}
+    - name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
+      value: {{ .Values.datadog.networkPath.connectionsMonitoring.enabled | quote }}
+    {{- end }}
+    {{- if .Values.datadog.networkPath.collector.filters }}
+    - name: DD_NETWORK_PATH_COLLECTOR_FILTERS
+      value: {{ .Values.datadog.networkPath.collector.filters | toJson | quote }}
     {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.systemProbe.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.systemProbe.envDict | indent 4 }}
@@ -75,6 +102,11 @@
       mountPath: /sys/kernel/debug
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: false # Need RW for kprobe_events
+{{- if .Values.providers.talos.enabled }}
+    - name: tracefs
+      mountPath: /sys/kernel/tracing
+      readOnly: false # Need RW for kprobe_events
+{{- end }}
 {{- if .Values.datadog.networkMonitoring.enabled }}
     - name: bpffs
       mountPath: /sys/fs/bpf
@@ -107,13 +139,13 @@
       mountPath: /host/proc
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled (eq (include "resolved-discovery-enabled" .) "true") (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) (eq (include "should-enable-sbom-enrichment-usage" .) "true") }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.networkMonitoring.enabled (eq (include "resolved-discovery-enabled" .) "true") (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) (eq (include "should-enable-sbom-enrichment-usage" .) "true") (eq (include "should-enable-compliance-in-system-probe" .) "true") }}
     - name: cgroups
       mountPath: /host/sys/fs/cgroup
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
 {{- end }}
-{{- if .Values.datadog.securityAgent.runtime.enabled }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled (eq (include "should-enable-compliance-in-system-probe" .) "true") }}
 {{- if (eq (include "should-add-host-path-for-etc-passwd" .) "true") }}
     - name: passwd
       mountPath: /etc/passwd
@@ -143,7 +175,7 @@
       readOnly: true
     {{- end }}
   {{- end }}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) }}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) (eq (include "should-enable-compliance-in-system-probe" .) "true") }}
     - name: hostroot
       mountPath: /host/root
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
@@ -181,6 +213,11 @@
 {{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.policies.configMap }}
     - name: runtimepoliciesdir
       mountPath: /etc/datadog-agent/runtime-security.d
+      readOnly: true
+{{- end }}
+{{- if and (eq (include "should-enable-compliance-in-system-probe" .) "true") .Values.datadog.securityAgent.compliance.configMap }}
+    - name: complianceconfigdir
+      mountPath: /etc/datadog-agent/compliance.d
       readOnly: true
 {{- end }}
 {{- if .Values.datadog.dynamicInstrumentationGo.enabled }}

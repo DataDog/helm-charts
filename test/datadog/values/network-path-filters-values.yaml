@@ -1,0 +1,23 @@
+agents:
+  image:
+    tag: 7.83.2
+
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  networkMonitoring:
+    enabled: true
+  networkPath:
+    connectionsMonitoring:
+      enabled: true
+    collector:
+      filters:
+        - type: exclude
+          match_domain: "*.example.com"
+        - type: include
+          match_domain: '^api-[0-9]+\.example\.com$'
+          match_domain_strategy: regex
+        - type: exclude
+          match_ip: "10.0.0.0/8"
+  traceroute:
+    enabled: true

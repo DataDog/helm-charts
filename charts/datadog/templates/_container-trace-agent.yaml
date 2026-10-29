@@ -43,6 +43,9 @@
 {{- end }}
 {{- end }}
   env:
+    {{- if eq (include "should-enable-jemalloc" .) "true" }}
+    {{- include "jemalloc-env" . | nindent 4 }}
+    {{- end }}
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "configstream-consumer-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}

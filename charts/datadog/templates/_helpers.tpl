@@ -4,13 +4,15 @@
   Returns node agent version based on image tag. This assumes `agents.image.doNotCheckTag` is false.
 */}}
 {{- define "get-agent-version" -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
+{{- $version := .Values.agents.image.tag | toString -}}
+{{/* Strip build-variant suffixes so version guards compare on a clean version. */}}
+{{- $version = regexReplaceAll "(-jmx|-full|-fips|-servercore)+$" $version "" -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "6") -}}
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.82.3" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -23,7 +25,7 @@
 {{- $version := .Values.clusterChecksRunner.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.82.3" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -35,7 +37,7 @@
 {{- $version := .Values.clusterAgent.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.82.3" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -135,12 +137,13 @@ true
 {{- end -}}
 
 {{/*
-Return true if config sync must be enabled for CNM direct send. With direct send, system-probe
-submits network payloads itself, and it cannot resolve an ENC[...] api_key because it wires the
+Return true if config sync must be enabled because system-probe submits payloads itself. This
+covers CNM direct send, CWS direct send, and compliance running in system-probe. In all three cases
+system-probe needs a resolved api_key, and it cannot resolve an ENC[...] handle because it wires the
 no-op secrets component. Config sync is what hands it the value the core agent already resolved.
 */}}
 {{- define "should-enable-config-sync-for-direct-send" -}}
-{{- if and (eq (include "cnm-use-direct-send" .) "true") (or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled) -}}
+{{- if or (and (eq (include "cnm-use-direct-send" .) "true") (or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled)) (and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.directSendFromSystemProbe) (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) -}}
 true
 {{- else -}}
 false
@@ -152,6 +155,9 @@ false
 {{- $version := (include "get-agent-version" .) -}}
 {{- if not (semverCompare "^6.36.0-0 || ^7.36.0-0" $version) -}}
 {{- fail "This version of the chart requires an agent image 7.36.0 or greater. If you want to force and skip this check, use `--set agents.image.doNotCheckTag=true`" -}}
+{{- end -}}
+{{- if and .Values.datadog.networkPath.collector.filters (not (semverCompare ">=7.83.2" $version)) -}}
+{{- fail "datadog.networkPath.collector.filters requires a stable Datadog Agent 7.83.2 or newer. Set agents.image.tag to an explicit stable version 7.83.2 or newer. For a verified compatible prerelease or custom image, set agents.image.doNotCheckTag=true." -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
@@ -292,6 +298,71 @@ version 7.82.0 or newer; otherwise falls back to disabled.
 {{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
 {{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
 {{- if and $agentVersionOK $dcaVersionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Cluster Agent version supports Kueue (7.82.0 or newer).
+*/}}
+{{- define "kueue-cluster-agent-version-supported" -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Agent version supports the Kueue check (7.82.0 or newer).
+*/}}
+{{- define "kueue-agent-version-supported" -}}
+{{- if or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if Kueue metadata collection should be enabled in the Cluster Agent.
+Requires datadog.kueue.enabled, a deployed Cluster Agent, and Cluster Agent 7.82.0 or newer.
+*/}}
+{{- define "should-enable-kueue" -}}
+{{- if and .Values.datadog.kueue.enabled (eq (include "should-deploy-cluster-agent" .) "true") (eq (include "kueue-cluster-agent-version-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Kueue check should be configured. It is scheduled by the Cluster Agent as an
+endpoints check on the node Agents, so it requires cluster checks and Agent 7.82.0 or newer.
+*/}}
+{{- define "should-enable-kueue-check" -}}
+{{- if and (eq (include "should-enable-kueue" .) "true") .Values.datadog.clusterChecks.enabled (eq (include "kueue-agent-version-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED should be set on the Cluster Agent.
+Sharding is only dispatched when cluster checks runners are enabled, and the Cluster Agent
+must be 7.83.0 or newer: sharding only coexists safely with the cluster_aggregates_only
+collection mode as of https://github.com/DataDog/datadog-agent/pull/54126. On older Cluster
+Agents the env var is omitted so the Agent keeps its own default.
+*/}}
+{{- define "should-shard-ksm-config" -}}
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.83.0-0" (include "get-cluster-agent-version" .)) -}}
 true
 {{- else -}}
 false
@@ -692,8 +763,8 @@ Return a remote otel-agent based on `.Values` (passed as .)
     */}}
     {{- $agentTag := .Values.agents.image.tag | toString -}}
     {{- if hasSuffix "-full" $agentTag -}}
-      {{- $cleanVersion := $agentTag | trimSuffix "-full" -}}
-      {{- if semverCompare "<7.67.0" $cleanVersion -}}
+      {{/* `get-agent-version` strips the `-full` suffix and resolves floating tags, so this compares on a clean version. */}}
+      {{- if semverCompare "<7.67.0" (include "get-agent-version" .) -}}
         {{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}
       {{- else -}}
         {{- fail "Setting `7.X.Y-full` in `agents.image.tag` with `datadog.otelCollector.useStandaloneImage=true` is not supported for agent versions >= 7.67.0. Options: (1) Remove the `-full` suffix from `agents.image.tag`, or (2) Set `datadog.otelCollector.useStandaloneImage=false`." -}}
@@ -854,6 +925,32 @@ false
 {{- end -}}
 
 {{/*
+Return true if the compliance features should be enabled in system-probe. Mirrors
+"should-enable-compliance" for the other execution path, so the two are mutually exclusive.
+*/}}
+{{- define "should-enable-compliance-in-system-probe" -}}
+{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the compliance feature is enabled, whichever container runs the host checks.
+Settings that belong to the feature itself rather than to an execution path - the Cluster Agent
+Kubernetes checks and the custom benchmarks ConfigMap - must be gated on this instead of on
+"should-enable-security-agent", or they silently disappear when compliance moves to system-probe.
+*/}}
+{{- define "should-enable-compliance-feature" -}}
+{{- if and (not .Values.providers.gke.gdc) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the runtime security features should be enabled.
 */}}
 {{- define "should-enable-runtime-security" -}}
@@ -882,7 +979,7 @@ Return true if the hostPid features should be enabled for the Agent pod.
 {{- define "should-enable-host-pid" -}}
 {{- if eq .Values.targetSystem "windows" -}}
 false
-{{- else if and (not .Values.providers.gke.gdc) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
+{{- else if and (not .Values.providers.gke.gdc) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-compliance-in-system-probe" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
 true
 {{- else -}}
 false
@@ -1251,7 +1348,7 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (eq (include "should-enable-kueue-check" .) "true") (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
 true
 {{- else -}}
 false
@@ -1316,6 +1413,27 @@ true
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Enable jemalloc only when requested and the component's Agent image is 7.84+.
+*/}}
+{{- define "should-enable-jemalloc" -}}
+{{- $image := .image | default .Values.agents.image -}}
+{{- $versionContext := dict "Values" (dict "agents" (dict "image" $image)) -}}
+{{- if and .Values.datadog.jemalloc.enabled (or $image.doNotCheckTag (semverCompare ">=7.84.0-0" (include "get-agent-version" $versionContext))) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/* Environment variables for the jemalloc allocator. */}}
+{{- define "jemalloc-env" -}}
+- name: LD_PRELOAD
+  value: "/opt/lib/nosys.so /opt/datadog-agent/embedded/lib/libjemalloc.so"
+- name: MALLOC_CONF
+  value: "background_thread:true,dirty_decay_ms:5000"
 {{- end -}}
 
 {{/*
@@ -1462,9 +1580,7 @@ In 7.36, `--config` was deprecated and `--cfgpath` should be used instead.
 {{- if  .Values.providers.gke.autopilot -}}
 -config
 {{- else if not .Values.agents.image.doNotCheckTag -}}
-{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
-{{- $length := len (split "." $version ) -}}
-{{- if and (gt $length 1) (not (semverCompare "^6.36.0 || ^7.36.0" $version)) -}}
+{{- if not (semverCompare "^6.36.0 || ^7.36.0" (include "get-agent-version" .)) -}}
 --config
 {{- else -}}
 --cfgpath
@@ -1491,7 +1607,7 @@ false
 Returns whether Remote Configuration should be enabled in the agent
 */}}
 {{- define "datadog-remoteConfiguration-enabled" -}}
-{{- if and (.Values.remoteConfiguration.enabled) (or (.Values.datadog.remoteConfiguration.enabled) (.Values.datadog.privateActionRunner.enabled)) (not .Values.providers.gke.gdc) -}}
+{{- if and (.Values.remoteConfiguration.enabled) (or (.Values.datadog.remoteConfiguration.enabled) (.Values.datadog.privateActionRunner.enabled) .Values.datadog.dataSecurity.enabled) (not .Values.providers.gke.gdc) -}}
 true
 {{- else -}}
 false
@@ -1502,7 +1618,7 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (and .Values.clusterAgent.admissionController.enabled .Values.datadog.apm.instrumentation.onDemand) .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
 true
 {{- else -}}
 false
