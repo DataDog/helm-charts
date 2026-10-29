@@ -22,6 +22,7 @@
     {{- include "jemalloc-env" . | nindent 4 }}
     {{- end }}
     {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "configstream-consumer-env" . | nindent 4 }}
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.systemProbe.logLevel | default .Values.datadog.logLevel | quote }}
     {{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) (eq (include "should-enable-compliance-in-system-probe" .) "true") }}

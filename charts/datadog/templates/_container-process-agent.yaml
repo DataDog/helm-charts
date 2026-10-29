@@ -34,6 +34,7 @@
 {{- end }}
   env:
     {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "configstream-consumer-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}

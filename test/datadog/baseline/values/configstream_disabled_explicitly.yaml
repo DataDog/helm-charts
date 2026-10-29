@@ -1,0 +1,15 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  securityAgent:
+    runtime:
+      enabled: true
+  networkMonitoring:
+    enabled: true
+  configStream:
+    # An explicit value wins over the version floor, which doNotCheckTag would otherwise satisfy.
+    enabled: false
+
+agents:
+  image:
+    doNotCheckTag: true

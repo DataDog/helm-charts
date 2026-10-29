@@ -1,0 +1,8 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+
+agents:
+  image:
+    # An unchecked tag can be any version, so the switch assumes the floor is met.
+    doNotCheckTag: true
