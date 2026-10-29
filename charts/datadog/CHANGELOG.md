@@ -4,6 +4,11 @@
 
 * Add `cumulativetodelta` to the OTel Agent Gateway converter features, so the Gateway converts cumulative metrics to delta before the Datadog exporter (requires Agent 7.83.0 or newer; older images ignore it). The Gateway default runs one replica: with more replicas or the HPA, points of one series can reach different pods and get wrong deltas.
 
+## 3.263.1
+
+* Fix CSPM host benchmarks run in system-probe (`datadog.securityAgent.compliance.runInSystemProbe`), which evaluated no rule on RPM-based nodes, ran their SCE checks against the system-probe container, and aborted on FIPS hosts.
+* Allow `chroot`, `fchdir`, `mlock` and `munlock` in the system-probe seccomp profile when host benchmarks run in system-probe.
+
 ## 3.263.0
 
 * Leave `datadog.traceroute.enabled` unset by default and render `traceroute.enabled` in `system-probe.yaml` only when it is set. With Agent 7.84.0+, system-probe then enables traceroute automatically when Network Path dynamic tests are enabled, which lets Network Path basic dynamic tests run on hosts with `datadog.networkMonitoring.enabled`. Set `datadog.traceroute.enabled: false` to keep traceroute disabled.
