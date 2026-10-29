@@ -271,6 +271,12 @@
       value: "true"
     {{- end }}
     {{- end }}
+    {{- if .Values.datadog.dataSecurity.enabled }}
+    - name: DD_DATA_SECURITY_ENABLED
+      value: "true"
+    - name: DD_SHARED_LIBRARY_CHECK_ENABLED
+      value: "true"
+    {{- end }}
     - name: DD_KUBELET_CORE_CHECK_ENABLED
       value: {{ .Values.datadog.kubelet.coreCheckEnabled | quote | default "true" }}
     {{- if eq (include "should-enable-otel-agent" .) "true" }}

@@ -1286,8 +1286,8 @@ datadog:
         enabled:
 
   traceroute:
-    # datadog.traceroute.enabled -- (bool) Enable traceroutes in system-probe for Network Path
-    enabled: false
+    # datadog.traceroute.enabled -- (bool) Enable traceroutes in system-probe for Network Path. Empty values use the default setting in the datadog agent: Agent 7.84.0+ enables traceroute automatically when Network Path dynamic tests are enabled.
+    enabled:
 
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`.
@@ -1367,6 +1367,11 @@ datadog:
         # Requires the system-probe container (auto-enabled when set to true) for eBPF-based file
         # access tracking, and sets `hostPID: true` on the agent pod. Requires Agent 7.79.0+.
         enabled: false
+
+  # Data Security configuration
+  dataSecurity:
+    # datadog.dataSecurity.enabled -- Enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer.
+    enabled: false
 
   ## Enable security agent and provide custom configs
   securityAgent:

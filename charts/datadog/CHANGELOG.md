@@ -1,8 +1,21 @@
 # Datadog changelog
 
-## 3.261.2
+## 3.263.2
 
 * Pass the pod name to the node Agent using the Kubernetes downward API.
+
+## 3.263.1
+
+* Fix CSPM host benchmarks run in system-probe (`datadog.securityAgent.compliance.runInSystemProbe`), which evaluated no rule on RPM-based nodes, ran their SCE checks against the system-probe container, and aborted on FIPS hosts.
+* Allow `chroot`, `fchdir`, `mlock` and `munlock` in the system-probe seccomp profile when host benchmarks run in system-probe.
+
+## 3.263.0
+
+* Leave `datadog.traceroute.enabled` unset by default and render `traceroute.enabled` in `system-probe.yaml` only when it is set. With Agent 7.84.0+, system-probe then enables traceroute automatically when Network Path dynamic tests are enabled, which lets Network Path basic dynamic tests run on hosts with `datadog.networkMonitoring.enabled`. Set `datadog.traceroute.enabled: false` to keep traceroute disabled.
+
+## 3.262.0
+
+* Add `datadog.dataSecurity.enabled` (default `false`) to enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer. Enabling it also enables Remote Configuration on the node Agent when `remoteConfiguration.enabled` is true.
 
 ## 3.261.1
 
