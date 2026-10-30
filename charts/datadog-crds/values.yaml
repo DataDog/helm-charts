@@ -29,7 +29,7 @@ crds:
   datadogCSIDrivers: false
   # crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
   datadogInstrumentations: false
-  # crds.datadogBYOCClusters -- Set to true to deploy the DatadogBYOCClusters CRD. Also deploys the DatadogObservabilityPipelinesWorkers CRD it requires
+  # crds.datadogBYOCClusters -- Set to true to deploy the DatadogBYOCClusters CRD. Requires the DatadogObservabilityPipelinesWorkers CRD
   datadogBYOCClusters: false
   # crds.datadogObservabilityPipelinesWorkers -- Set to true to deploy the DatadogObservabilityPipelinesWorkers CRD
   datadogObservabilityPipelinesWorkers: false

@@ -15,7 +15,7 @@ download_crd() {
     repo=$1
     tag=$2
     name=$3
-    installOption=$4 # Name of the option to install the CRD (defined in values.yaml). Comma-separated names install it when any of them is set
+    installOption=$4 # Name of the option to install the CRD (defined in values.yaml)
     version=$5
 
     inFile=datadoghq.com_$name.yaml
@@ -30,11 +30,7 @@ download_crd() {
         yq -i eval 'del(.. | select(has("description") and (.description | kind == "scalar") and (path | .[-1] != "openAPIV3Schema")) | .description)' "$path"
     fi
 
-    if [[ "$installOption" == *,* ]]; then
-        ifCondition="{{- if or .Values.crds.${installOption//,/ .Values.crds.} }}"
-    else
-        ifCondition="{{- if .Values.crds.$installOption }}"
-    fi
+    ifCondition="{{- if .Values.crds.$installOption }}"
     cp "$path" "$ROOT/crds/datadoghq.com_$name.yaml"
 
     VALUE="'{{ include \"datadog-crds.chart\" . }}'" \
@@ -67,5 +63,4 @@ download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagentintern
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogcsidrivers datadogCSIDrivers v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadoginstrumentations datadogInstrumentations v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogbyocclusters datadogBYOCClusters v1
-# DatadogBYOCCluster creates and watches DatadogObservabilityPipelinesWorkers, so datadogBYOCClusters also installs this CRD.
-download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogobservabilitypipelinesworkers datadogObservabilityPipelinesWorkers,datadogBYOCClusters v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogobservabilitypipelinesworkers datadogObservabilityPipelinesWorkers v1
