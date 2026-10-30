@@ -2097,6 +2097,31 @@ false
 {{- end -}}
 
 {{/*
+Return true if the component running the kubernetes_state_core check supports the DRA
+(resource.k8s.io) collectors: the Cluster Checks Runner when
+datadog.kubeStateMetricsCore.useClusterCheckRunners is set, the Cluster Agent otherwise,
+7.85.0 or newer. Older versions fail the whole check on DRA collectors, so tags that are
+not versions fail closed unless doNotCheckTag is set.
+*/}}
+{{- define "ksm-dra-rbac-supported" -}}
+{{- $doNotCheckTag := .Values.clusterAgent.image.doNotCheckTag -}}
+{{- $version := include "get-cluster-agent-version" . -}}
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners -}}
+{{- $doNotCheckTag = .Values.clusterChecksRunner.image.doNotCheckTag -}}
+{{- $version = include "get-cluster-checks-runner-version" . -}}
+{{- end -}}
+{{- $versionOK := $doNotCheckTag -}}
+{{- if and (not $versionOK) (regexMatch "^v?[0-9]+(\\.[0-9]+){0,2}(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$" $version) -}}
+{{- $versionOK = semverCompare ">=7.85.0-0" $version -}}
+{{- end -}}
+{{- if $versionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Fail if DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED is set through env or envDict. A
 container's own env renders after the chart's, so such a value would win and leave the
 rendered spec streaming while the mirrored settings stay ungated.

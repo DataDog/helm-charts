@@ -179,9 +179,25 @@ datadog:
     create: false
 
   kubeStateMetricsCore:
-    # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+)
+    # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+). To collect Dynamic Resource Allocation (DRA) metrics, override `kubernetes_state_core.yaml` in `clusterAgent.confd` with the default collectors plus `resourceclaims`, `resourceslices` and `devicetaintrules` (Requires Cluster Agent 7.85.0+, or Cluster Checks Runner 7.85.0+ with useClusterCheckRunners; older versions fail the whole check on clusters serving the DRA API). With useClusterCheckRunners, the override must also set `cluster_check: true` and, on each instance, `skip_leader_election: true`. The chart adds the resource.k8s.io RBAC for 7.85.0+.
 
     ## ref: https://docs.datadoghq.com/integrations/kubernetes_state_core
+    ## To enable DRA collection, copy the generated kubernetes_state_core.yaml.default from the
+    ## <release>-cluster-agent-confd ConfigMap into clusterAgent.confd as kubernetes_state_core.yaml
+    ## and append the DRA collectors (Kubernetes 1.34+; devicetaintrules needs the DeviceTaintRule API,
+    ## stable in Kubernetes 1.37, earlier behind a feature gate):
+    ##   clusterAgent:
+    ##     confd:
+    ##       kubernetes_state_core.yaml: |-
+    ##         # cluster_check: true          # required with useClusterCheckRunners
+    ##         init_config:
+    ##         instances:
+    ##           - collectors:
+    ##             # ... default collectors ...
+    ##             - resourceclaims
+    ##             - resourceslices
+    ##             - devicetaintrules
+    ##             # skip_leader_election: true # required with useClusterCheckRunners
     enabled: true
 
     rbac:

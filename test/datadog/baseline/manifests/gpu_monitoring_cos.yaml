@@ -2261,6 +2261,9 @@ spec:
               readOnly: false
             - mountPath: /var/run/nvidia-container-devices/all
               name: gpu-devices
+            - mountPath: /host/var/run/cdi
+              name: host-var-run-cdi
+              readOnly: true
             - mountPath: /host/run/nvidia/driver/usr/lib/x86_64-linux-gnu
               name: gke-nvidia-driver-lib64
               readOnly: true
@@ -2671,6 +2674,10 @@ spec:
         - hostPath:
             path: /var/lib/kubelet/pod-resources
           name: pod-resources-socket
+        - hostPath:
+            path: /var/run/cdi
+            type: DirectoryOrCreate
+          name: host-var-run-cdi
         - hostPath:
             path: /run/systemd/transient
           name: host-systemd-transient
