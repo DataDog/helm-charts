@@ -342,6 +342,18 @@ false
 {{- end -}}
 
 {{/*
+Return true if KAI Scheduler metadata collection should be enabled in the Cluster Agent.
+Requires datadog.kaiScheduler.enabled, a deployed Cluster Agent, and Cluster Agent 7.86.0 or newer.
+*/}}
+{{- define "should-enable-kai-scheduler" -}}
+{{- if and .Values.datadog.kaiScheduler.enabled (eq (include "should-deploy-cluster-agent" .) "true") (or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.86.0-0" (include "get-cluster-agent-version" .))) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the Kueue check should be configured. It is scheduled by the Cluster Agent as an
 endpoints check on the node Agents, so it requires cluster checks and Agent 7.82.0 or newer.
 */}}
