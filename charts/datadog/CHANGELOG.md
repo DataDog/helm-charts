@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.265.0
+
+* Enable Kubernetes Actions by default on compatible Cluster Agents, including its pod deletion and deployment restart RBAC and Remote Configuration delivery. Set `datadog.kubernetesActions.enabled=false` to opt out before upgrading. The separate `clusterAgent.privateActionRunner.enabled` and Helm actions settings remain opt-in.
+
 ## 3.264.0
 
 * Add `datadog.configStream.enabled` to control whether the Trace Agent, Process Agent, Security Agent and System Probe take their configuration from the Agent. Unset follows the Agent version, enabled from 7.85.0 onwards; an explicit value overrides it. The settings the chart mirrors onto the Agent container are gated on the same value, so the chart and the Agent cannot disagree.

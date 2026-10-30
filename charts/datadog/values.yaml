@@ -1193,10 +1193,11 @@ datadog:
     useClusterCheckRunners: false
 
   kubernetesActions:
-    # datadog.kubernetesActions.enabled -- Set this to true to enable the Kubernetes Actions feature on the Cluster Agent.
+    # datadog.kubernetesActions.enabled -- Enable Kubernetes Actions on compatible Cluster Agents. Set to false to opt out, including on existing installations.
     # This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog
     # Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater.
-    enabled: false
+    # Disabled when Remote Configuration is disabled or on GDC.
+    enabled: true
 
     helmActions:
       # datadog.kubernetesActions.helmActions.enabled -- Set this to true to enable Helm actions as part of the
