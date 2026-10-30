@@ -18,15 +18,18 @@
 | datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |
 | datadogAgentInternal.enabled | bool | `true` | Enables the Datadog Agent Internal controller |
 | datadogAgentProfile.enabled | bool | `false` | If true, enables DatadogAgentProfile controller (beta). Requires v1.5.0+ |
+| datadogBYOCCluster.enabled | bool | `false` | Enables the DatadogBYOCCluster and DatadogObservabilityPipelinesWorker controllers. Requires the `datadogCRDs.crds.datadogBYOCClusters` and `datadogCRDs.crds.datadogObservabilityPipelinesWorkers` CRDs. Requires v1.32.0+ |
 | datadogCRDs.crds.datadogAgentInternals | bool | `true` | Set to true to deploy the DatadogAgentInternals CRD |
 | datadogCRDs.crds.datadogAgentProfiles | bool | `false` | Set to true to deploy the DatadogAgentProfile CRD |
 | datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
+| datadogCRDs.crds.datadogBYOCClusters | bool | `false` | Set to true to deploy the DatadogBYOCClusters CRD |
 | datadogCRDs.crds.datadogCSIDrivers | bool | `true` | Set to true to deploy the DatadogCSIDriver CRD |
 | datadogCRDs.crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboard CRD |
 | datadogCRDs.crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResource CRD |
 | datadogCRDs.crds.datadogInstrumentations | bool | `true` | Set to true to deploy the DatadogInstrumentations CRD |
 | datadogCRDs.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
+| datadogCRDs.crds.datadogObservabilityPipelinesWorkers | bool | `false` | Set to true to deploy the DatadogObservabilityPipelinesWorkers CRD. Required by `datadogBYOCCluster.enabled` |
 | datadogCRDs.crds.datadogPodAutoscalerClusterProfiles | bool | `true` | Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD |
 | datadogCRDs.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
