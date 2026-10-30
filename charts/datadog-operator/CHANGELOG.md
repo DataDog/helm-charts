@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.32.0-dev.2
+
+* Add KAI Scheduler PodGroup RBAC to the Operator ClusterRole ([#3023](https://github.com/DataDog/helm-charts/pull/3023)).
+
 ## 2.32.0-dev.1
 
 * Update Datadog Operator chart for 1.32.0-rc.1.
