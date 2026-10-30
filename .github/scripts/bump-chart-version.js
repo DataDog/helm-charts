@@ -27,7 +27,7 @@ module.exports = async ({github, context, core, exec}) => {
   // Get the list of charts that need a version bump (or changelog update)
   const chartsToBump = [];
   for (const label of labelNames) {
-    const match = label.match(/^(?<chartName>[^/]+)\/(?<versionType>minor-version|patch-version|no-version-bump)$/);
+    const match = label.match(/^(?<chartName>[^/]+)\/(?<versionType>major-version|minor-version|patch-version|no-version-bump)$/);
     if (match) {
       chartsToBump.push({
         chartName: match.groups.chartName,
