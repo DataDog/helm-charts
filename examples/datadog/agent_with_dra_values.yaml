@@ -1,0 +1,74 @@
+# Datadog Agent with GPU monitoring and Kubernetes Dynamic Resource Allocation (DRA)
+# metrics (kubernetes_state.resourceclaim.*, kubernetes_state.resourceslice.*,
+# kubernetes_state.dra.*)
+#
+# Requires Kubernetes 1.34+ (devicetaintrules requires Kubernetes 1.37+) and
+# Agent / Cluster Agent 7.85.0+.
+
+targetSystem: "linux"
+datadog:
+  # apiKey: <DATADOG_API_KEY>
+  # appKey: <DATADOG_APP_KEY>
+  # If not using secrets, then use apiKey and appKey instead
+  apiKeyExistingSecret: <DATADOG_API_KEY_SECRET>
+  appKeyExistingSecret: <DATADOG_APP_KEY_SECRET>
+  clusterName: <CLUSTER_NAME>
+  tags: []
+  # Mounts the host CDI directory so the Agent can attribute GPUs to pods using DRA
+  gpuMonitoring:
+    enabled: true
+  kubeStateMetricsCore:
+    enabled: true
+agents:
+  image:
+    # GPU attribution for DRA pods requires Agent 7.85.0+
+    tag: 7.85.0
+clusterAgent:
+  enabled: true
+  image:
+    # The chart grants the resource.k8s.io RBAC only for Cluster Agent 7.85.0+.
+    # Older versions fail the whole kubernetes_state_core check when DRA collectors are listed.
+    # With datadog.kubeStateMetricsCore.useClusterCheckRunners: true, the check runs on the
+    # Cluster Checks Runner instead, so clusterChecksRunner.image.tag must be 7.85.0+.
+    tag: 7.85.0
+  confd:
+    # This file replaces the chart-generated kubernetes_state_core.yaml.default, so it must
+    # list every default collector plus the DRA ones. Other datadog.kubeStateMetricsCore
+    # values that feed the default file (labelsAsTags, annotationsAsTags, tags, namespaces,
+    # collect*) do not apply with this override.
+    kubernetes_state_core.yaml: |-
+      init_config:
+      instances:
+        - collectors:
+          - secrets
+          - configmaps
+          - nodes
+          - pods
+          - services
+          - resourcequotas
+          - replicationcontrollers
+          - limitranges
+          - persistentvolumeclaims
+          - persistentvolumes
+          - namespaces
+          - endpoints
+          - endpointslices
+          - daemonsets
+          - deployments
+          - replicasets
+          - statefulsets
+          - controllerrevisions
+          - cronjobs
+          - jobs
+          - horizontalpodautoscalers
+          - poddisruptionbudgets
+          - storageclasses
+          - volumeattachments
+          - ingresses
+          # DRA collectors
+          - resourceclaims
+          - resourceslices
+          - devicetaintrules  # Kubernetes 1.37+; skipped on clusters that do not serve it
+          # Optional: only count claims requesting these DeviceClasses (default: all claims)
+          # dra_device_classes:
+          #   - gpu.nvidia.com
