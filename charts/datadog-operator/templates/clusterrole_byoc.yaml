@@ -1,0 +1,91 @@
+{{- if and .Values.rbac.create .Values.datadogBYOCCluster.enabled (semverCompare ">=1.32.0-0" (include "check-image-tag" .)) -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "datadog-operator.fullname" . }}-byoc
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+rules:
+{{- /* BEGIN AUTO-GENERATED RULES: regenerated from upstream config/rbac/byoc/role.yaml by scripts/update-clusterrole.py */}}
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - serviceaccounts
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - autoscaling
+  resources:
+  - horizontalpodautoscalers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogbyocclusters
+  - datadogobservabilitypipelinesworkers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogbyocclusters/finalizers
+  - datadogobservabilitypipelinesworkers/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - datadogbyocclusters/status
+  - datadogobservabilitypipelinesworkers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+{{- /* END AUTO-GENERATED RULES: hand-maintained rules go below */}}
+{{- end -}}

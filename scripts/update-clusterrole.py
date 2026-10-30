@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Update the datadog-operator clusterrole.yaml from upstream operator role.yaml.
+Update a datadog-operator ClusterRole template from an upstream operator role.
 
 Downloads the upstream config/rbac/role.yaml, filters out resources that are
 handled by conditional blocks in the helm chart, adds template directives,
-and reconstructs clusterrole.yaml preserving the header and everything from the
-MANUAL RULES marker onward (hand-maintained rules and conditional blocks).
+and replaces the lines between the BEGIN and END AUTO-GENERATED RULES markers
+of clusterrole.yaml. Everything outside the markers (the ClusterRole header,
+hand-maintained rules and conditional blocks) is preserved verbatim.
 
 Usage:
     python3 update-clusterrole.py <upstream_role_yaml> <clusterrole_yaml>
@@ -50,29 +51,9 @@ CONDITIONAL_RESOURCES = {
 }
 
 
-HEADER = """\
-{{- if .Values.rbac.create -}}
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: {{ include "datadog-operator.fullname" . }}
-  labels:
-{{ include "datadog-operator.labels" . | indent 4 }}
-rules:
-{{- /*
-  ============================================================================
-  AUTO-GENERATED RULES: DO NOT EDIT BY HAND
-  ============================================================================
-  Everything between here and the "MANUAL RULES" marker below is regenerated
-  from the upstream operator config/rbac/role.yaml by
-  scripts/update-clusterrole.py on every operator release. Hand edits in this
-  section WILL be dropped. Put manual RBAC patches in the MANUAL RULES section.
-*/}}
-"""
-
-# Marks the start of the hand-maintained tail of clusterrole.yaml. Everything
-# from the line containing this marker to EOF is preserved verbatim.
-MANUAL_RULES_MARKER = "MANUAL RULES: hand-maintained"
+# Only the lines between the lines containing these markers are regenerated.
+BEGIN_MARKER = "BEGIN AUTO-GENERATED RULES"
+END_MARKER = "END AUTO-GENERATED RULES"
 
 
 def quote_val(v):
@@ -153,23 +134,25 @@ def add_template_directives(lines):
     return result
 
 
-def extract_preserved_tail(clusterrole_file):
-    """Extract the manual rules and conditional blocks from the current clusterrole.yaml."""
+def find_marker(lines, marker, clusterrole_file):
+    """Return the index of the only line containing marker."""
+    found = [i for i, line in enumerate(lines) if marker in line]
+    if len(found) != 1:
+        sys.exit(f"error: expected one '{marker}' marker in {clusterrole_file}, found {len(found)}")
+    return found[0]
+
+
+def split_template(clusterrole_file):
+    """Return the lines through the BEGIN marker and the lines from the END marker onward."""
     with open(clusterrole_file) as f:
         lines = f.readlines()
 
-    # The manual rules section starts at the "{{- /*" line that opens the marker comment.
-    for i, line in enumerate(lines):
-        if MANUAL_RULES_MARKER in line:
-            start = i
-            while start > 0 and not lines[start].lstrip().startswith("{{- /*"):
-                start -= 1
-            return "".join(lines[start:])
+    begin = find_marker(lines, BEGIN_MARKER, clusterrole_file)
+    end = find_marker(lines, END_MARKER, clusterrole_file)
+    if end < begin:
+        sys.exit(f"error: '{END_MARKER}' comes before '{BEGIN_MARKER}' in {clusterrole_file}")
 
-    sys.exit(
-        f"error: '{MANUAL_RULES_MARKER}' marker not found in {clusterrole_file}; "
-        "refusing to regenerate and drop manual rules"
-    )
+    return "".join(lines[:begin + 1]), "".join(lines[end:])
 
 
 def main():
@@ -191,10 +174,10 @@ def main():
 
     main_lines = add_template_directives(main_lines)
 
-    preserved_tail = extract_preserved_tail(clusterrole_file)
+    preserved_head, preserved_tail = split_template(clusterrole_file)
 
     with open(clusterrole_file, "w") as f:
-        f.write(HEADER)
+        f.write(preserved_head)
         f.write("\n".join(main_lines))
         f.write("\n")
         f.write(preserved_tail)

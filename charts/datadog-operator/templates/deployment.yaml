@@ -206,6 +206,9 @@ spec:
           {{- if (semverCompare ">=1.26.0-0" $version) }}
             - "-datadogCSIDriverEnabled={{ .Values.datadogCSIDriver.enabled }}"
           {{- end }}
+          {{- if (semverCompare ">=1.32.0-0" $version) }}
+            - "-datadogBYOCClusterEnabled={{ .Values.datadogBYOCCluster.enabled }}"
+          {{- end }}
           {{- if (semverCompare ">=1.28.0-0" $version) }}
             - "-untaintControllerEnabled={{ .Values.untaintController.enabled }}"
           {{- if .Values.untaintController.enabled }}

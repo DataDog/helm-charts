@@ -1,14 +1,17 @@
 name: Check Operator ClusterRole
 
 # Fails when the auto-generated section of the datadog-operator ClusterRole is
-# edited by hand. That section is regenerated from the upstream operator
-# config/rbac/role.yaml by scripts/update-clusterrole.py on every operator
-# release, so hand edits there get silently dropped. Manual RBAC patches belong
-# in the MANUAL RULES section of clusterrole.yaml, which the script preserves.
+# edited by hand. The lines between the BEGIN and END AUTO-GENERATED RULES
+# markers are regenerated from the upstream operator config/rbac/role.yaml by
+# scripts/update-clusterrole.py on every operator release, so hand edits there
+# get silently dropped. Manual RBAC patches belong after the END marker, which
+# the script preserves. clusterrole_byoc.yaml is checked the same way against
+# config/rbac/byoc/role.yaml.
 on:
   pull_request:
     paths:
       - "charts/datadog-operator/templates/clusterrole.yaml"
+      - "charts/datadog-operator/templates/clusterrole_byoc.yaml"
       - "scripts/update-clusterrole.py"
       - ".github/workflows/check-operator-clusterrole.yaml"
 
@@ -27,16 +30,22 @@ jobs:
           python-version: 3.14
       - name: Install PyYAML
         run: pip install pyyaml
-      - name: Regenerate clusterrole.yaml from upstream role.yaml
+      - name: Regenerate ClusterRole templates from upstream RBAC
         run: |
           version=$(awk '/^appVersion:/ {print $2}' charts/datadog-operator/Chart.yaml | tr -d '"')
-          upstream_url="https://raw.githubusercontent.com/DataDog/datadog-operator/v${version}/config/rbac/role.yaml"
-          echo "Regenerating against ${upstream_url}"
-          curl --silent --show-error --fail --location -o "$RUNNER_TEMP/role.yaml" "$upstream_url"
-          python3 scripts/update-clusterrole.py "$RUNNER_TEMP/role.yaml" charts/datadog-operator/templates/clusterrole.yaml
+          regenerate() {
+            upstream_url="https://raw.githubusercontent.com/DataDog/datadog-operator/v${version}/config/rbac/$1"
+            echo "Regenerating $2 against ${upstream_url}"
+            curl --silent --show-error --fail --location -o "$RUNNER_TEMP/role.yaml" "$upstream_url"
+            python3 scripts/update-clusterrole.py "$RUNNER_TEMP/role.yaml" "charts/datadog-operator/templates/$2"
+          }
+          regenerate role.yaml clusterrole.yaml
+          regenerate byoc/role.yaml clusterrole_byoc.yaml
       - name: Check for diff
         run: |
-          if ! git diff --exit-code -- charts/datadog-operator/templates/clusterrole.yaml; then
-            echo "::error file=charts/datadog-operator/templates/clusterrole.yaml::The auto-generated section of clusterrole.yaml does not match upstream role.yaml for this operator version (diff above). It is regenerated on every operator release, so hand edits there will be dropped. Move manual RBAC rules into the MANUAL RULES section."
-            exit 1
-          fi
+          for template in clusterrole.yaml clusterrole_byoc.yaml; do
+            if ! git diff --exit-code -- "charts/datadog-operator/templates/${template}"; then
+              echo "::error file=charts/datadog-operator/templates/${template}::The auto-generated section of ${template} does not match upstream RBAC for this operator version (diff above). It is regenerated on every operator release, so hand edits there will be dropped. Move manual RBAC rules after the END AUTO-GENERATED RULES marker."
+              exit 1
+            fi
+          done

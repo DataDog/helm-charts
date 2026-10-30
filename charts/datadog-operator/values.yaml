@@ -89,6 +89,9 @@ datadogAgent:
 datadogAgentInternal:
   # datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
   enabled: true
+datadogBYOCCluster:
+  # datadogBYOCCluster.enabled -- Enables the DatadogBYOCCluster and DatadogObservabilityPipelinesWorker controllers. Requires the CRDs installed by `datadogCRDs.crds.datadogBYOCClusters`. Requires v1.32.0+
+  enabled: false
 datadogCSIDriver:
   # datadogCSIDriver.enabled -- Enables the Datadog CSI Driver controller
   enabled: true
@@ -194,6 +197,8 @@ datadogCRDs:
     datadogAgentInternals: true
     # datadogCRDs.crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
     datadogInstrumentations: true
+    # datadogCRDs.crds.datadogBYOCClusters -- Set to true to deploy the DatadogBYOCClusters and DatadogObservabilityPipelinesWorkers CRDs
+    datadogBYOCClusters: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}

@@ -270,6 +270,37 @@ func Test_operator_chart(t *testing.T) {
 				assert.Equal(t, "true", eventsEnabled.Value)
 			},
 		},
+		{
+			name: "datadogBYOCCluster disabled by default renders no BYOC RBAC",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				assert.NotContains(t, manifest, "datadog-operator-byoc")
+			},
+		},
+		{
+			name: "datadogBYOCCluster enabled sets flag and renders BYOC RBAC",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"datadogBYOCCluster.enabled": "true",
+				},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				assert.Contains(t, manifest, "-datadogBYOCClusterEnabled=true")
+				assert.Contains(t, manifest, "name: datadog-operator-byoc")
+			},
+		},
 	}
 
 	for _, tt := range tests {
