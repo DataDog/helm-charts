@@ -239,6 +239,21 @@ APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
 
+{{- if and .Values.datadog.kaiScheduler.enabled (ne (include "should-enable-kai-scheduler" .) "true") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+`datadog.kaiScheduler.enabled` is set, but KAI Scheduler metadata collection is disabled because:
+{{- if ne (include "should-deploy-cluster-agent" .) "true" }}
+* The Cluster Agent is not deployed by this chart (`clusterAgent.enabled` is false or `existingClusterAgent.join` is set).
+{{- else }}
+* The Cluster Agent version ({{ include "get-cluster-agent-version" . }}) is older than 7.86.0.
+{{- end }}
+
+{{- end }}
+
 {{- if and .Values.datadog.kueue.enabled (ne (include "should-enable-kueue-check" .) "true") }}
 
 #################################################################

@@ -67,6 +67,15 @@ rules:
   - patch
   - update
 {{- end }}
+{{- if eq (include "should-enable-kai-scheduler" .) "true" }}
+- apiGroups:
+  - "scheduling.run.ai"
+  resources:
+  - podgroups
+  verbs:
+  - list
+  - watch
+{{- end }}
 {{- if eq (include "should-enable-kueue" .) "true" }}
 - apiGroups:
   - "kueue.x-k8s.io"

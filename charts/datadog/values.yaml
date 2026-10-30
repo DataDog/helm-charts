@@ -1220,6 +1220,11 @@ datadog:
     valuesAsTags: {}
       #   <HELM_VALUE>: <LABEL_NAME>
 
+  kaiScheduler:
+    # datadog.kaiScheduler.enabled -- Enable KAI Scheduler PodGroup collection in the Cluster Agent, to tag pods with their KAI workload and queue (Requires Agent and Cluster Agent 7.86.0+)
+    # With datadog.gpuMonitoring.enabled, it also maps KAI fractional GPUs to the containers using them.
+    enabled: false
+
   kueue:
     # datadog.kueue.enabled -- Enable Kueue metadata collection in the Cluster Agent and the Kueue check (Requires Agent and Cluster Agent 7.82.0+. Kueue with more than one replica requires Agent 7.86.0+)
     # The Kueue check runs as an endpoints check against each Kueue controller pod, so it requires

@@ -598,6 +598,10 @@ spec:
             value: {{ .Values.datadog.appsec.injector.processor.service.namespace | quote }}
           {{- end }}
           {{- end }}
+          {{- if eq (include "should-enable-kai-scheduler" .) "true" }}
+          - name: DD_CLUSTER_AGENT_KAI_SCHEDULER_ENABLED
+            value: "true"
+          {{- end }}
           {{- if eq (include "should-enable-kueue" .) "true" }}
           - name: DD_CLUSTER_AGENT_KUEUE_ENABLED
             value: "true"
