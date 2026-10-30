@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.264.1
+
+* Remove the experimental label from the `csi` value of `datadog.apm.instrumentation.injectionMode`. CSI injection is generally available.
+
 ## 3.264.0
 
 * Add `datadog.configStream.enabled` to control whether the Trace Agent, Process Agent, Security Agent and System Probe take their configuration from the Agent. Unset follows the Agent version, enabled from 7.85.0 onwards; an explicit value overrides it. The settings the chart mirrors onto the Agent container are gated on the same value, so the chart and the Agent cannot disagree.
