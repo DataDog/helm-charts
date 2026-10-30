@@ -62,3 +62,6 @@ download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadoggenericreso
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogagentinternals datadogAgentInternals v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogcsidrivers datadogCSIDrivers v1
 download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadoginstrumentations datadogInstrumentations v1
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogbyocclusters datadogBYOCClusters v1
+# DatadogBYOCCluster creates and watches DatadogObservabilityPipelinesWorkers, so its option installs both CRDs.
+download_crd "$DATADOG_OPERATOR_REPO" "$DATADOG_OPERATOR_TAG" datadogobservabilitypipelinesworkers datadogBYOCClusters v1
