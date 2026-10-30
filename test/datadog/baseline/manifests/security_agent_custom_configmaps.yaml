@@ -1148,6 +1148,46 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: datadog
     app.kubernetes.io/version: "7"
+  name: datadog-kubernetes-actions
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods/log
+    verbs:
+      - get
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - patch
+      - update
+  - apiGroups:
+      - apps
+    resources:
+      - deployments/status
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
   name: datadog-cluster-agent
 rules:
   - apiGroups:
@@ -1827,6 +1867,24 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: datadog-operator
+    namespace: datadog-agent
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: datadog
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: datadog
+    app.kubernetes.io/version: "7"
+  name: datadog-kubernetes-actions
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: datadog-kubernetes-actions
+subjects:
+  - kind: ServiceAccount
+    name: datadog-cluster-agent
     namespace: datadog-agent
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -3035,6 +3093,8 @@ spec:
             - name: DD_CLUSTER_AGENT_TOKEN_NAME
               value: datadogtoken
             - name: DD_COLLECT_KUBERNETES_EVENTS
+              value: "true"
+            - name: DD_KUBEACTIONS_ENABLED
               value: "true"
             - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
               value: "true"

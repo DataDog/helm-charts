@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.264.0](https://img.shields.io/badge/Version-3.264.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.265.0](https://img.shields.io/badge/Version-3.265.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -897,7 +897,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubelet.podResourcesSocketDir | string | /var/lib/kubelet/pod-resources | Path (on host) where the kubelet.sock socket for the PodResources API is located |
 | datadog.kubelet.tlsVerify | string | true | Toggle kubelet TLS verification |
 | datadog.kubelet.useApiServer | bool | false | Enable this to query the pod list from the API Server instead of the Kubelet. (Requires Agent 7.65.0+) |
-| datadog.kubernetesActions.enabled | bool | `false` | Set this to true to enable the Kubernetes Actions feature on the Cluster Agent. This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater. |
+| datadog.kubernetesActions.enabled | bool | `true` | Enable Kubernetes Actions on compatible Cluster Agents. Set to false to opt out, including on existing installations. This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater. Disabled when Remote Configuration is disabled or on GDC. |
 | datadog.kubernetesActions.helmActions.enabled | bool | `false` | Set this to true to enable Helm actions as part of the Kubernetes Actions feature. This grants the Cluster Agent RBAC to create a Job (and the Job the RBAC it needs) to perform Helm actions (e.g. rollback) so that the Datadog Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.85.0 or greater. Requires datadog.kubernetesActions.enabled to also be set to true. |
 | datadog.kubernetesEvents.collectedEventTypes | list | `[{"kind":"Pod","reasons":["Failed","BackOff","Unhealthy","FailedScheduling","FailedMount","FailedAttachVolume"]},{"kind":"Node","reasons":["TerminatingEvictedPod","NodeNotReady","Rebooted","HostPortConflict"]},{"kind":"CronJob","reasons":["SawCompletedJob"]}]` | Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true. |
 | datadog.kubernetesEvents.filteringEnabled | bool | `false` | Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+). |
