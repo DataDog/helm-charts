@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.266.0
+
+* Add `datadog.kaiScheduler.enabled` to enable KAI Scheduler PodGroup collection in the Cluster Agent, which tags pods with their KAI workload and queue, and grant the Cluster Agent `list` and `watch` on KAI PodGroups (requires Agent and Cluster Agent 7.86.0+). With `datadog.gpuMonitoring.enabled`, it also maps KAI fractional GPUs to the containers using them.
+
 ## 3.265.0
 
 * Add `datadog.kubernetesActions.communication.remoteConfiguration.enabled` and `datadog.kubernetesActions.communication.privateActionRunner.enabled` to choose how the Cluster Agent receives Kubernetes actions. Both are enabled by default, so `datadog.kubernetesActions.enabled: true` alone uses both channels; disable `privateActionRunner` for Remote Configuration only. Enabling `privateActionRunner` enables the Cluster Agent Private Action Runner automatically.
