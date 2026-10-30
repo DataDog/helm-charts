@@ -35,3 +35,4 @@ test/datadog-operator/baseline/DatadogAgent_CRD_default.yaml    @DataDog/contain
 test/datadog-operator/baseline/Operator_Deployment_default.yaml @DataDog/container-platform @DataDog/agent-delivery
 test/datadog-operator/operator_deployment_test.go               @DataDog/container-platform @DataDog/agent-delivery
 test/private-action-runner                                      @DataDog/action-platform
+test/synthetics-private-location                                @DataDog/synthetics
