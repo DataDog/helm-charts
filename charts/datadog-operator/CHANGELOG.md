@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.32.0-dev.2
+
+* [datadog-operator] Add opt-in DatadogBYOCCluster controller and RBAC ([#3027](https://github.com/DataDog/helm-charts/pull/3027)).
+
 ## 2.32.0-dev.1
 
 * Update Datadog Operator chart for 1.32.0-rc.1.
