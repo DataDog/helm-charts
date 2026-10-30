@@ -687,6 +687,14 @@ rules:
   - get
   - list
   - watch
+{{- /* KAI Scheduler: lets the operator grant the Cluster Agent read access to KAI PodGroups (#3023). */}}
+- apiGroups:
+  - scheduling.run.ai
+  resources:
+  - podgroups
+  verbs:
+  - list
+  - watch
 {{- if .Values.datadogAgentInternal.enabled }}
 - apiGroups:
   - datadoghq.com
