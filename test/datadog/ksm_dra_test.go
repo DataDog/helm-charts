@@ -121,60 +121,101 @@ func TestKSMDraRBAC(t *testing.T) {
 }
 
 func TestGPUMonitoringCDIMount(t *testing.T) {
-	for _, enabled := range []bool{true, false} {
-		overrides := map[string]string{
-			"datadog.apiKeyExistingSecret": "datadog-secret",
-			"datadog.appKeyExistingSecret": "datadog-secret",
-		}
-		if enabled {
-			overrides["datadog.gpuMonitoring.enabled"] = "true"
-		}
-		manifest, err := common.RenderChart(t, common.HelmCommand{
-			ReleaseName: "datadog",
-			ChartPath:   "../../charts/datadog",
-			ShowOnly:    []string{"templates/daemonset.yaml"},
-			Values:      []string{"../../charts/datadog/values.yaml"},
-			Overrides:   overrides,
-		})
-		require.NoError(t, err)
+	tests := []struct {
+		name      string
+		overrides map[string]string
+		enabled   bool
+	}{
+		{
+			name:      "gpu monitoring enabled",
+			overrides: map[string]string{"datadog.gpuMonitoring.enabled": "true"},
+			enabled:   true,
+		},
+		{
+			name: "gpu monitoring disabled",
+		},
+		{
+			// AllowlistedV2Workload mode, as in gke_autopilot_allowlistedv2workload_test.go.
+			name: "gke autopilot allowlisted v2 workload",
+			overrides: map[string]string{
+				"datadog.gpuMonitoring.enabled":     "true",
+				"providers.gke.autopilot":           "true",
+				"datadog.envDict.HELM_FORCE_RENDER": "false",
+			},
+		},
+		{
+			// WorkloadAllowlist mode, as in gke_autopilot_workloadallowlist_test.go.
+			name: "gke autopilot workload allowlist",
+			overrides: map[string]string{
+				"datadog.gpuMonitoring.enabled":     "true",
+				"providers.gke.autopilot":           "true",
+				"datadog.envDict.HELM_FORCE_RENDER": "true",
+			},
+		},
+		{
+			name: "gke gdc",
+			overrides: map[string]string{
+				"datadog.gpuMonitoring.enabled": "true",
+				"providers.gke.gdc":             "true",
+				"agents.image.doNotCheckTag":    "true",
+			},
+		},
+	}
 
-		var ds appsv1.DaemonSet
-		common.Unmarshal(t, manifest, &ds)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			overrides := map[string]string{
+				"datadog.apiKeyExistingSecret": "datadog-secret",
+				"datadog.appKeyExistingSecret": "datadog-secret",
+			}
+			for k, v := range tt.overrides {
+				overrides[k] = v
+			}
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides:   overrides,
+			})
+			require.NoError(t, err)
 
-		var volume *corev1.Volume
-		for i := range ds.Spec.Template.Spec.Volumes {
-			if ds.Spec.Template.Spec.Volumes[i].Name == "host-var-run-cdi" {
-				volume = &ds.Spec.Template.Spec.Volumes[i]
-			}
-		}
-		var mount *corev1.VolumeMount
-		for _, c := range ds.Spec.Template.Spec.Containers {
-			if c.Name != "agent" {
-				continue
-			}
-			seen := map[string]bool{}
-			for i, m := range c.VolumeMounts {
-				assert.False(t, seen[m.MountPath], "duplicate mountPath %s", m.MountPath)
-				seen[m.MountPath] = true
-				if m.Name == "host-var-run-cdi" {
-					mount = &c.VolumeMounts[i]
+			var ds appsv1.DaemonSet
+			common.Unmarshal(t, manifest, &ds)
+
+			var volume *corev1.Volume
+			for i := range ds.Spec.Template.Spec.Volumes {
+				if ds.Spec.Template.Spec.Volumes[i].Name == "host-var-run-cdi" {
+					volume = &ds.Spec.Template.Spec.Volumes[i]
 				}
 			}
-		}
+			var mount *corev1.VolumeMount
+			for _, c := range ds.Spec.Template.Spec.Containers {
+				seen := map[string]bool{}
+				for i, m := range c.VolumeMounts {
+					assert.False(t, seen[m.MountPath], "container %q: duplicate mountPath %s", c.Name, m.MountPath)
+					seen[m.MountPath] = true
+					if m.Name == "host-var-run-cdi" {
+						assert.Equal(t, "agent", c.Name, "CDI dir must only be mounted in the agent container")
+						mount = &c.VolumeMounts[i]
+					}
+				}
+			}
 
-		if !enabled {
-			assert.Nil(t, volume)
-			assert.Nil(t, mount)
-			continue
-		}
-		require.NotNil(t, volume)
-		require.NotNil(t, volume.HostPath)
-		assert.Equal(t, "/var/run/cdi", volume.HostPath.Path)
-		require.NotNil(t, volume.HostPath.Type)
-		assert.Equal(t, corev1.HostPathDirectoryOrCreate, *volume.HostPath.Type)
-		require.NotNil(t, mount)
-		assert.Equal(t, "/host/var/run/cdi", mount.MountPath)
-		assert.True(t, mount.ReadOnly)
+			if !tt.enabled {
+				assert.Nil(t, volume)
+				assert.Nil(t, mount)
+				return
+			}
+			require.NotNil(t, volume)
+			require.NotNil(t, volume.HostPath)
+			assert.Equal(t, "/var/run/cdi", volume.HostPath.Path)
+			require.NotNil(t, volume.HostPath.Type)
+			assert.Equal(t, corev1.HostPathDirectoryOrCreate, *volume.HostPath.Type)
+			require.NotNil(t, mount)
+			assert.Equal(t, "/host/var/run/cdi", mount.MountPath)
+			assert.True(t, mount.ReadOnly)
+		})
 	}
 }
 

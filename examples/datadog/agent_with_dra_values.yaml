@@ -2,8 +2,8 @@
 # metrics (kubernetes_state.resourceclaim.*, kubernetes_state.resourceslice.*,
 # kubernetes_state.dra.*)
 #
-# Requires Kubernetes 1.34+ (devicetaintrules requires Kubernetes 1.37+) and
-# Agent / Cluster Agent 7.85.0+.
+# Requires Kubernetes 1.34+ and Agent / Cluster Agent 7.85.0+. The devicetaintrules collector
+# needs the DeviceTaintRule API (stable in Kubernetes 1.37, earlier behind a feature gate).
 
 targetSystem: "linux"
 datadog:
@@ -36,7 +36,12 @@ clusterAgent:
     # list every default collector plus the DRA ones. Other datadog.kubeStateMetricsCore
     # values that feed the default file (labelsAsTags, annotationsAsTags, tags, namespaces,
     # collect*) do not apply with this override.
+    # With datadog.kubeStateMetricsCore.useClusterCheckRunners: true, also uncomment
+    # cluster_check and skip_leader_election below: the chart only adds them to its own default
+    # file, and without them the check stays on the Cluster Agent while the KSM RBAC is bound
+    # to the Cluster Checks Runner service account.
     kubernetes_state_core.yaml: |-
+      # cluster_check: true
       init_config:
       instances:
         - collectors:
@@ -68,7 +73,8 @@ clusterAgent:
           # DRA collectors
           - resourceclaims
           - resourceslices
-          - devicetaintrules  # Kubernetes 1.37+; skipped on clusters that do not serve it
+          - devicetaintrules  # needs the DeviceTaintRule API; skipped on clusters that do not serve it
+          # skip_leader_election: true
           # Optional: only count claims requesting these DeviceClasses (default: all claims)
           # dra_device_classes:
           #   - gpu.nvidia.com
