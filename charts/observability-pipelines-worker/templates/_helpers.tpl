@@ -117,6 +117,25 @@ Return a Container.Port for the Worker API
 {{- end -}}
 
 {{/*
+Return a Service.Port for event routing
+*/}}
+{{- define "opw.eventRouting.servicePort" -}}
+- name: event-routing
+  port: {{ .Values.eventRouting.port }}
+  protocol: TCP
+  targetPort: {{ .Values.eventRouting.port }}
+{{- end -}}
+
+{{/*
+Return a Container.Port for event routing
+*/}}
+{{- define "opw.eventRouting.containerPort" -}}
+- name: event-routing
+  containerPort: {{ .Values.eventRouting.port }}
+  protocol: TCP
+{{- end -}}
+
+{{/*
 The helpers below are used to attempt to parse the configuration passed into the `config` option and construct
 the Container and Service Ports without manual specification.
 
