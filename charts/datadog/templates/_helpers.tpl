@@ -1977,12 +1977,15 @@ false
 
 {{/*
   Returns the process passwd mount path for the configured Agent version.
+  Legacy Autopilot admission does not support the relocated mount.
 */}}
 {{- define "process-passwd-mount-path" -}}
 {{- $path := "/etc/passwd" -}}
 {{- $canCheckVersion := and (not .Values.agents.image.digest) (not .Values.agents.image.doNotCheckTag) -}}
-{{- if and (eq .Values.targetSystem "linux") (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc)) $canCheckVersion -}}
-  {{- if semverCompare ">=7.86.0" (include "get-agent-version" .) -}}
+{{- $legacyAutopilot := and .Values.providers.gke.autopilot (ne (include "gke-autopilot-workloadallowlists-enabled" .) "true") -}}
+{{- if and (eq .Values.targetSystem "linux") (not $legacyAutopilot) $canCheckVersion -}}
+  {{- /* -0 includes 7.86.0+ prereleases (RC/devel), matching the chart's other Agent feature guards. */ -}}
+  {{- if semverCompare ">=7.86.0-0" (include "get-agent-version" .) -}}
     {{- $path = "/host/etc/passwd" -}}
   {{- end -}}
 {{- end -}}

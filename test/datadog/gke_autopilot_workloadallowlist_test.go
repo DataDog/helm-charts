@@ -229,6 +229,8 @@ func Test_autopilotAllowlistSynchronizerPaths(t *testing.T) {
 
 			const v105Path = "Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.5.yaml"
 			assert.True(t, common.Contains(v105Path, synchronizer.Spec.AllowlistPaths), "expected v1.0.5 exemption path")
+			const v108Path = "Datadog/datadog/datadog-datadog-daemonset-exemption-v1.0.8.yaml"
+			assert.True(t, common.Contains(v108Path, synchronizer.Spec.AllowlistPaths), "expected v1.0.8 exemption for host passwd mounts")
 		})
 	}
 }

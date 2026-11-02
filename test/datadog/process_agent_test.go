@@ -279,11 +279,16 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 	expectedCoreLegacy := map[string][]string{"agent": {legacy}}
 	expectedCoreHost := map[string][]string{"agent": {host}}
 	expectedNone := map[string][]string{}
+	gkeCRDArgs := []string{
+		"--api-versions", "auto.gke.io/v1/AllowlistSynchronizer",
+		"--api-versions", "auto.gke.io/v1/WorkloadAllowlist",
+	}
 
 	tests := []struct {
 		name           string
 		tag            string
 		overrides      map[string]string
+		extraArgs      []string
 		expectedMounts map[string][]string
 	}{
 		{name: "old stable", tag: "7.85.99", expectedMounts: expectedCoreLegacy},
@@ -297,9 +302,10 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 		{name: "fips jmx tag", tag: "7.86.0-fips-jmx", expectedMounts: expectedCoreHost},
 		{name: "version prefix uses standard parsing", tag: "v7.86.0", expectedMounts: expectedCoreHost},
 		{name: "tag suffix uses configured version", tag: "7.86.0", overrides: map[string]string{"agents.image.tagSuffix": "custom"}, expectedMounts: expectedCoreHost},
-		{name: "devel predates resolver", tag: "7.86.0-devel", expectedMounts: expectedCoreLegacy},
-		{name: "release candidate", tag: "7.86.0-rc.1", expectedMounts: expectedCoreLegacy},
-		{name: "future prerelease", tag: "7.87.0-rc.1", expectedMounts: expectedCoreLegacy},
+		{name: "devel prerelease", tag: "7.86.0-devel", expectedMounts: expectedCoreHost},
+		{name: "release candidate", tag: "7.86.0-rc.1", expectedMounts: expectedCoreHost},
+		{name: "future prerelease", tag: "7.87.0-rc.1", expectedMounts: expectedCoreHost},
+		{name: "old prerelease", tag: "7.85.0-rc.1", expectedMounts: expectedCoreLegacy},
 		{name: "major alias", tag: "7", expectedMounts: expectedCoreLegacy},
 		{name: "latest alias", tag: "latest", expectedMounts: expectedCoreLegacy},
 		{name: "minor alias", tag: "7.86", expectedMounts: expectedCoreHost},
@@ -315,7 +321,29 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 		{name: "core and network process sidecar", tag: "7.86.0", overrides: map[string]string{"datadog.networkMonitoring.enabled": "true"},
 			expectedMounts: map[string][]string{"agent": {host}, "process-agent": {host}}},
 		{name: "autopilot legacy", tag: "7.86.0", overrides: map[string]string{"providers.gke.autopilot": "true"}, expectedMounts: expectedCoreLegacy},
-		{name: "autopilot workload allowlist", tag: "7.86.0", overrides: map[string]string{"providers.gke.autopilot": "true", "datadog.envDict.HELM_FORCE_RENDER": "true"}, expectedMounts: expectedCoreLegacy},
+		{name: "autopilot workload allowlist forced render", tag: "7.86.0", overrides: map[string]string{"providers.gke.autopilot": "true", "datadog.envDict.HELM_FORCE_RENDER": "true"}, expectedMounts: expectedCoreHost},
+		{name: "autopilot workload allowlist old Agent", tag: "7.85.0", overrides: map[string]string{"providers.gke.autopilot": "true", "datadog.envDict.HELM_FORCE_RENDER": "true"}, expectedMounts: expectedCoreLegacy},
+		{name: "autopilot workload allowlist old separate process agent", tag: "7.59.0", overrides: map[string]string{"providers.gke.autopilot": "true"},
+			extraArgs: append([]string{"--kube-version", "v1.33.0"}, gkeCRDArgs...), expectedMounts: map[string][]string{"process-agent": {legacy}}},
+		{name: "autopilot workload allowlist detected", tag: "7.86.0", overrides: map[string]string{"providers.gke.autopilot": "true"},
+			extraArgs: append([]string{"--kube-version", "v1.33.0"}, gkeCRDArgs...), expectedMounts: expectedCoreHost},
+		// Helm --kube-version strips GKE build suffixes, so use distinct patch versions.
+		{name: "autopilot workload allowlist supported GKE patch", tag: "7.86.0", overrides: map[string]string{"providers.gke.autopilot": "true"},
+			extraArgs: append([]string{"--kube-version", "v1.32.1"}, gkeCRDArgs...), expectedMounts: expectedCoreHost},
+		{name: "autopilot before workload allowlist minimum GKE patch", tag: "7.86.0", overrides: map[string]string{"providers.gke.autopilot": "true"},
+			extraArgs: append([]string{"--kube-version", "v1.32.0"}, gkeCRDArgs...), expectedMounts: expectedCoreLegacy},
+		{name: "autopilot missing WorkloadAllowlist CRD", tag: "7.86.0", overrides: map[string]string{"providers.gke.autopilot": "true"},
+			extraArgs: []string{"--kube-version", "v1.33.0", "--api-versions", "auto.gke.io/v1/AllowlistSynchronizer"}, expectedMounts: expectedCoreLegacy},
+		{name: "autopilot missing AllowlistSynchronizer CRD", tag: "7.86.0", overrides: map[string]string{"providers.gke.autopilot": "true"},
+			extraArgs: []string{"--kube-version", "v1.33.0", "--api-versions", "auto.gke.io/v1/WorkloadAllowlist"}, expectedMounts: expectedCoreLegacy},
+		{name: "autopilot core and network process sidecar", tag: "7.86.0", overrides: map[string]string{
+			"providers.gke.autopilot": "true", "datadog.envDict.HELM_FORCE_RENDER": "true", "datadog.networkMonitoring.enabled": "true",
+		}, expectedMounts: map[string][]string{"agent": {host}, "process-agent": {host}}},
+		// CWS remains unsupported on Autopilot; force rendering only to check the unchanged security mount.
+		{name: "autopilot forced system probe mount unchanged", tag: "7.86.0", overrides: map[string]string{
+			"providers.gke.autopilot": "true", "datadog.envDict.HELM_FORCE_RENDER": "true",
+			"datadog.securityAgent.runtime.enabled": "true", "datadog.securityAgent.runtime.directSendFromSystemProbe": "true",
+		}, expectedMounts: map[string][]string{"agent": {host}, "system-probe": {legacy}}},
 		{name: "GDC exclusion", tag: "7.86.0", overrides: map[string]string{"providers.gke.gdc": "true"}, expectedMounts: expectedNone},
 		{name: "Talos exclusion", tag: "7.86.0", overrides: map[string]string{"providers.talos.enabled": "true"}, expectedMounts: expectedNone},
 		{name: "Windows exclusion", tag: "7.86.0", overrides: map[string]string{"targetSystem": "windows"}, expectedMounts: expectedNone},
@@ -337,7 +365,7 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 				overrides[key] = value
 			}
 			manifest, err := common.RenderChart(t, common.HelmCommand{
-				ReleaseName: "datadog", ChartPath: "../../charts/datadog", ShowOnly: []string{"templates/daemonset.yaml"}, Overrides: overrides,
+				ReleaseName: "datadog", ChartPath: "../../charts/datadog", ShowOnly: []string{"templates/daemonset.yaml"}, Overrides: overrides, ExtraArgs: tt.extraArgs,
 			})
 			require.NoError(t, err)
 			var ds appsv1.DaemonSet
