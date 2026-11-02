@@ -186,6 +186,11 @@
 - hostPath:
     path: /etc/passwd
   name: passwd
+{{- if eq (include "process-passwd-volume-name" .) "host-passwd" }}
+- hostPath:
+    path: /etc/passwd
+  name: host-passwd
+{{- end }}
 {{- end }}
 {{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) (eq (include "should-enable-compliance-in-system-probe" .) "true") }}
 - hostPath:

@@ -1993,6 +1993,18 @@ false
 {{- end -}}
 
 {{/*
+  Returns the volume name for the process passwd mount. GKE Warden matches volumeMounts by name,
+  so the relocated mount needs its own volume rather than a second passwd mount path.
+*/}}
+{{- define "process-passwd-volume-name" -}}
+{{- if eq (include "process-passwd-mount-path" .) "/host/etc/passwd" -}}
+host-passwd
+{{- else -}}
+passwd
+{{- end -}}
+{{- end -}}
+
+{{/*
   Returns true if the host file /etc/group should be mounted, else return false.
 */}}
 {{- define "should-add-host-path-for-etc-group" -}}

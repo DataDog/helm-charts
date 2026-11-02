@@ -119,7 +119,7 @@
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
     {{- if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (or .Values.datadog.processAgent.processCollection .Values.datadog.processAgent.processDiscovery .Values.datadog.processAgent.containerCollection) }}
-    - name: passwd
+    - name: {{ include "process-passwd-volume-name" . }}
       mountPath: {{ include "process-passwd-mount-path" . }}
       readOnly: true
     {{- end }}

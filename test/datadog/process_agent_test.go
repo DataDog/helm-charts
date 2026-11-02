@@ -370,13 +370,26 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			require.NoError(t, err)
 			var ds appsv1.DaemonSet
 			common.Unmarshal(t, manifest, &ds)
+			volumes := map[string]string{}
+			for _, volume := range ds.Spec.Template.Spec.Volumes {
+				if volume.HostPath != nil {
+					volumes[volume.Name] = volume.HostPath.Path
+				}
+			}
 			// Keep every path so duplicate mounts fail the comparison too.
 			actualMounts := map[string][]string{}
 			for _, container := range ds.Spec.Template.Spec.Containers {
 				for _, mount := range container.VolumeMounts {
 					switch mount.Name {
-					case "passwd":
+					case "passwd", "host-passwd":
 						require.True(t, mount.ReadOnly)
+						// GKE Warden matches volumeMounts by name, so each path keeps a distinct volume name.
+						expectedName := "passwd"
+						if mount.MountPath == host {
+							expectedName = "host-passwd"
+						}
+						assert.Equal(t, expectedName, mount.Name, "%s mounts %s", container.Name, mount.MountPath)
+						assert.Equal(t, legacy, volumes[mount.Name], "%s volume must use host /etc/passwd", mount.Name)
 						actualMounts[container.Name] = append(actualMounts[container.Name], mount.MountPath)
 					case "group":
 						assert.Equal(t, "/etc/group", mount.MountPath)
@@ -619,7 +632,7 @@ func assertFalseCommonProcessEnvs(t *testing.T, envs map[string]string) {
 
 func getPasswdMount(t *testing.T, volumeMounts []corev1.VolumeMount) bool {
 	for _, vm := range volumeMounts {
-		if vm.Name == "passwd" {
+		if vm.Name == "passwd" || vm.Name == "host-passwd" {
 			return true
 		}
 	}
