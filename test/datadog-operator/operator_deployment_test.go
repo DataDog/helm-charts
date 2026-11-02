@@ -282,6 +282,7 @@ func Test_operator_chart(t *testing.T) {
 			skipTest: SkipTest,
 			assertions: func(t *testing.T, manifest string) {
 				assert.NotContains(t, manifest, "datadog-operator-byoc")
+				assert.NotContains(t, manifest, "-datadogBYOCClusterEnabled")
 			},
 		},
 		{
