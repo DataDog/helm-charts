@@ -43,17 +43,18 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set image.tag=1.75.0 \
   --set multiContainer.enabled=true \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
-  --set multiContainer.networkPolicy.create=false
+  --set 'multiContainer.networkPolicy.dns.to[0].namespaceSelector.matchLabels.kubernetes\.io/metadata\.name=kube-system' \
+  --set 'multiContainer.networkPolicy.dns.to[0].podSelector.matchLabels.k8s-app=kube-dns'
 ```
 
 On clusters that enforce the `restricted` Pod Security Standard, set `multiContainer.tracerouteServer.enabled=false`. Traceroute features are then not available.
 
 ### Firewall Changes
 
-The worker cannot apply its `iptables` firewall in this mode, so you must set `multiContainer.networkPolicy.create`:
+The worker cannot apply its `iptables` firewall in this mode, so `multiContainer.networkPolicy.create` defaults to `true`:
 
+- `true` (default): the chart creates an egress NetworkPolicy that blocks reserved ranges. You must set `multiContainer.networkPolicy.dns.to`. This requires a CNI that enforces NetworkPolicies.
 - `false`: the chart creates no policy. You are responsible for egress enforcement.
-- `true`: the chart creates an egress NetworkPolicy that blocks reserved ranges. You must set `multiContainer.networkPolicy.dns.to`. This requires a CNI that enforces NetworkPolicies.
 
 How the policy decides:
 
@@ -128,7 +129,11 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set-file configFile=config.json \
   --set image.tag=1.75.0 \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
-  --set multiContainer.networkPolicy.create=false \
+  --set 'multiContainer.networkPolicy.dns.to[0].namespaceSelector.matchLabels.kubernetes\.io/metadata\.name=openshift-dns' \
+  --set 'multiContainer.networkPolicy.dns.ports[0].port=5353' \
+  --set 'multiContainer.networkPolicy.dns.ports[0].protocol=UDP' \
+  --set 'multiContainer.networkPolicy.dns.ports[1].port=5353' \
+  --set 'multiContainer.networkPolicy.dns.ports[1].protocol=TCP' \
   --set multiContainer.enabled=true \
   --set multiContainer.podSecurity.securityContextConstraints.create=true
 ```

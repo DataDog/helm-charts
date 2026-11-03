@@ -156,6 +156,21 @@ func TestInvalidMultiContainerConfiguration(t *testing.T) {
 	}
 }
 
+func TestNetworkPolicyCreatedByDefault(t *testing.T) {
+	command := multiContainerCommand(nil)
+	delete(command.OverridesJson, "multiContainer.networkPolicy.create")
+	_, err := common.RenderChart(t, command)
+	var output *shell.ErrWithCmdOutput
+	require.ErrorAs(t, err, &output)
+	assert.Contains(t, output.Output.Stderr(), "must specify DNS")
+
+	command.OverridesJson["multiContainer.networkPolicy.dns.to"] = `[{"ipBlock":{"cidr":"169.254.20.10/32"}}]`
+	command.ShowOnly = []string{"templates/network-policy.yaml"}
+	manifest, err := common.RenderChart(t, command)
+	require.NoError(t, err)
+	assert.Contains(t, manifest, "kind: NetworkPolicy")
+}
+
 func renderPolicy(t *testing.T, overrides map[string]string) networkingv1.NetworkPolicy {
 	t.Helper()
 	return renderPolicyFor(t, "1.30.0", overrides)
