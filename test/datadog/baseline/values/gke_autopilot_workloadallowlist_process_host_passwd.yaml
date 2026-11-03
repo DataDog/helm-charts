@@ -1,0 +1,14 @@
+# Baseline test for GKE Autopilot WorkloadAllowlist v1.0.8: Agent 7.86.0+ process collection mounts host passwd at /host/etc/passwd from the host-passwd volume.
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  envDict:
+    HELM_FORCE_RENDER: true  # workaround to force helm template rendering of GKE Autopilot WorkloadAllowlist-enabled resources
+  processAgent:
+    processCollection: true
+agents:
+  image:
+    tag: 7.86.0
+providers:
+  gke:
+    autopilot: true
