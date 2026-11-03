@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.32.0-dev.5
+
+* Add KAI Scheduler PodGroup RBAC to the Operator ClusterRole ([#3023](https://github.com/DataDog/helm-charts/pull/3023)).
+
 ## 2.32.0-dev.4
 
 * Only pass `-datadogBYOCClusterEnabled` to the operator when `datadogBYOCCluster.enabled` is true, avoiding an args change on upgrade.
