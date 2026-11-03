@@ -131,10 +131,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
   --set 'multiContainer.networkPolicy.dns.to[0].namespaceSelector.matchLabels.kubernetes\.io/metadata\.name=openshift-dns' \
   --set 'multiContainer.networkPolicy.dns.to[0].podSelector.matchLabels.dns\.operator\.openshift\.io/daemonset-dns=default' \
-  --set 'multiContainer.networkPolicy.dns.ports[0].port=5353' \
-  --set 'multiContainer.networkPolicy.dns.ports[0].protocol=UDP' \
-  --set 'multiContainer.networkPolicy.dns.ports[1].port=5353' \
-  --set 'multiContainer.networkPolicy.dns.ports[1].protocol=TCP' \
+  --set-json 'multiContainer.networkPolicy.dns.ports=[{"port":5353,"protocol":"UDP"},{"port":5353,"protocol":"TCP"}]' \
   --set multiContainer.enabled=true \
   --set multiContainer.podSecurity.securityContextConstraints.create=true
 ```
