@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.33.0
+
+* Add `topologySpreadConstraints` and `strategy` parameters to the Datadog Operator Deployment.
+
 ## 2.32.0-dev.4
 
 * Only pass `-datadogBYOCClusterEnabled` to the operator when `datadogBYOCCluster.enabled` is true, avoiding an args change on upgrade.
