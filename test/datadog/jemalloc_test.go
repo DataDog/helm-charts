@@ -85,11 +85,11 @@ func TestJemallocContainerScope(t *testing.T) {
 		values         map[string]string
 		want           []string
 	}{
-		{"node sidecars", "daemonset", map[string]string{"datadog.processAgent.processCollection": "true", "datadog.processAgent.runInCoreAgent": "false", "datadog.securityAgent.compliance.enabled": "true", "datadog.otelCollector.enabled": "true"}, []string{"agent", "trace-agent", "system-probe"}},
+		{"node sidecars", "daemonset", map[string]string{"datadog.processAgent.processCollection": "true", "datadog.networkMonitoring.enabled": "true", "datadog.securityAgent.compliance.enabled": "true", "datadog.otelCollector.enabled": "true"}, []string{"agent", "trace-agent", "process-agent", "security-agent", "system-probe"}},
 		{"core only", "daemonset", map[string]string{"datadog.apm.socketEnabled": "false", "datadog.discovery.enabled": "false"}, []string{"agent"}},
 		{"runner", "agent-clusterchecks-deployment", nil, []string{"agent"}},
 		{"cluster agent", "cluster-agent-deployment", nil, nil},
-		{"windows", "daemonset", map[string]string{"targetSystem": "windows"}, nil},
+		{"windows", "daemonset", map[string]string{"targetSystem": "windows", "datadog.processAgent.processCollection": "true", "datadog.processAgent.runInCoreAgent": "false"}, nil},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			values := copyMap(tc.values)
@@ -102,6 +102,8 @@ func TestJemallocContainerScope(t *testing.T) {
 					continue
 				}
 				affected = append(affected, c.Name)
+				assert.Equal(t, jemallocDisabledPreload, allocatorEnv(c)["LD_PRELOAD"].Value, c.Name)
+				assert.NotContains(t, allocatorEnv(c), "MALLOC_CONF", c.Name)
 				var restored []corev1.EnvVar
 				for _, e := range c.Env {
 					if e.Name != "LD_PRELOAD" && e.Name != "MALLOC_CONF" {
@@ -119,15 +121,22 @@ func TestJemallocContainerScope(t *testing.T) {
 
 func TestJemallocOverrides(t *testing.T) {
 	json := map[string]string{
-		"datadog.envDict":                      `{"LD_PRELOAD":"/global.so","MALLOC_CONF":"narenas:4"}`,
-		"agents.containers.agent.env":          `[{"name":"EXTRA_LIB","value":"/core.so"},{"name":"LD_PRELOAD","value":"$(EXTRA_LIB)"}]`,
-		"agents.containers.traceAgent.envDict": `{"LD_PRELOAD":"","MALLOC_CONF":{"valueFrom":{"secretKeyRef":{"name":"allocator","key":"config"}}}}`,
-		"clusterChecksRunner.env":              `[{"name":"LD_PRELOAD","value":"/list.so"}]`,
-		"clusterChecksRunner.envDict":          `{"LD_PRELOAD":"/runner.so"}`,
+		"datadog.envDict":                         `{"LD_PRELOAD":"/global.so","MALLOC_CONF":"narenas:4"}`,
+		"agents.containers.agent.env":             `[{"name":"EXTRA_LIB","value":"/core.so"},{"name":"LD_PRELOAD","value":"$(EXTRA_LIB)"}]`,
+		"agents.containers.traceAgent.envDict":    `{"LD_PRELOAD":"","MALLOC_CONF":{"valueFrom":{"secretKeyRef":{"name":"allocator","key":"config"}}}}`,
+		"agents.containers.processAgent.env":      `[{"name":"LD_PRELOAD","value":"/process.so"}]`,
+		"agents.containers.securityAgent.envDict": `{"LD_PRELOAD":{"valueFrom":{"configMapKeyRef":{"name":"allocator","key":"preload"}}}}`,
+		"clusterChecksRunner.env":                 `[{"name":"LD_PRELOAD","value":"/list.so"}]`,
+		"clusterChecksRunner.envDict":             `{"LD_PRELOAD":"/runner.so"}`,
 	}
 	for _, template := range []string{"daemonset", "agent-clusterchecks-deployment"} {
 		t.Run(template, func(t *testing.T) {
-			values := map[string]string{"datadog.jemalloc.disable": "true"}
+			values := map[string]string{
+				"datadog.jemalloc.disable":                 "true",
+				"datadog.processAgent.processCollection":   "true",
+				"datadog.networkMonitoring.enabled":        "true",
+				"datadog.securityAgent.compliance.enabled": "true",
+			}
 			pod := jemallocPod(t, template, values, json)
 			for _, c := range pod.Containers {
 				env := allocatorEnv(c)
@@ -137,6 +146,13 @@ func TestJemallocOverrides(t *testing.T) {
 					assert.NotContains(t, env, "MALLOC_CONF", "runners do not inherit global overrides")
 				case c.Name == "agent":
 					assert.Equal(t, "$(EXTRA_LIB)", env["LD_PRELOAD"].Value)
+				case c.Name == "process-agent":
+					assert.Equal(t, "/process.so", env["LD_PRELOAD"].Value)
+					assert.Equal(t, "narenas:4", env["MALLOC_CONF"].Value)
+				case c.Name == "security-agent":
+					require.NotNil(t, env["LD_PRELOAD"].ValueFrom)
+					assert.Equal(t, "allocator", env["LD_PRELOAD"].ValueFrom.ConfigMapKeyRef.Name)
+					assert.Equal(t, "narenas:4", env["MALLOC_CONF"].Value)
 				case c.Name == "trace-agent":
 					assert.Empty(t, env["LD_PRELOAD"].Value)
 					require.NotNil(t, env["MALLOC_CONF"].ValueFrom)
@@ -147,7 +163,9 @@ func TestJemallocOverrides(t *testing.T) {
 				}
 			}
 			values["datadog.jemalloc.disable"] = "false"
-			assert.Equal(t, jemallocPod(t, template, nil, json), jemallocPod(t, template, values, json), "false preserves explicit overrides")
+			withFalse := jemallocPod(t, template, values, json)
+			delete(values, "datadog.jemalloc.disable")
+			assert.Equal(t, jemallocPod(t, template, values, json), withFalse, "false preserves explicit overrides")
 		})
 	}
 }

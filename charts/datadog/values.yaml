@@ -58,7 +58,7 @@ registryMigrationMode: "auto"
 
 datadog:
   jemalloc:
-    # datadog.jemalloc.disable -- Disable jemalloc for the Linux node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners by overriding LD_PRELOAD. Jemalloc is enabled by default in Agent 7.87.0+ images.
+    # datadog.jemalloc.disable -- Disable jemalloc for the Linux node core Agent, trace-agent, process-agent, security-agent, system-probe, and enabled Cluster Check Runners by overriding LD_PRELOAD. Jemalloc is enabled by default in Agent 7.87.0+ images.
     disable: false
 
   # datadog.apiKey -- Your Datadog API key

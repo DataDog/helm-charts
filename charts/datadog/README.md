@@ -868,7 +868,7 @@ helm install <RELEASE_NAME> \
 | datadog.hostVolumeMountPropagation | string | `"None"` | Allow to specify the `mountPropagation` value on all volumeMounts using HostPath |
 | datadog.ignoreAutoConfig | list | `[]` | List of integration to ignore auto_conf.yaml. |
 | datadog.instrumentationCrd.enabled | bool | `true` | Enable the DatadogInstrumentation CRD controller and reconciliation platform. Requires version 7.82.0 or later of both cluster and node agent. |
-| datadog.jemalloc.disable | bool | `false` | Disable jemalloc for the Linux node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners by overriding LD_PRELOAD. Jemalloc is enabled by default in Agent 7.87.0+ images. |
+| datadog.jemalloc.disable | bool | `false` | Disable jemalloc for the Linux node core Agent, trace-agent, process-agent, security-agent, system-probe, and enabled Cluster Check Runners by overriding LD_PRELOAD. Jemalloc is enabled by default in Agent 7.87.0+ images. |
 | datadog.kaiScheduler.enabled | bool | `false` | Enable KAI Scheduler PodGroup collection in the Cluster Agent, to tag pods with their KAI workload and queue (Requires Agent and Cluster Agent 7.86.0+) With datadog.gpuMonitoring.enabled, it also maps KAI fractional GPUs to the containers using them. |
 | datadog.kubeStateMetricsCore.annotationsAsTags | object | `{}` | Extra annotations to collect from resources and to turn into datadog tag. |
 | datadog.kubeStateMetricsCore.collectApiServicesMetrics | bool | `false` | Enable watching apiservices objects and collecting their corresponding metrics kubernetes_state.apiservice.* (Requires Cluster Agent 7.45.0+) |
