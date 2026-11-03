@@ -394,10 +394,10 @@ indexer:
       port: health
     timeoutSeconds: 5
 
-  # StatefulSet allows you to relax its ordering guarantees
-  #   - OrderedReady
-  #   - Parallel
-  podManagementPolicy: OrderedReady
+  # Create and scale indexers without waiting for another pod to become ready.
+  # Parallel also allows concurrent scale-down. Rolling updates are unchanged.
+  # This field is immutable; see the README before upgrading an existing StatefulSet.
+  podManagementPolicy: Parallel
 
   # Override args for starting container
   args: []
@@ -1143,6 +1143,7 @@ config:
   # cluster_id: my-cluster
   listen_address: 0.0.0.0
   gossip_listen_port: 7282
+  gossip_protocol_version: 1
   cloudprem_listen_port: 7283
   health:
     # Dedicated plaintext health check server used by health checks.

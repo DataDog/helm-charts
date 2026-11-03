@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.7
+
+* Update Docker image to `v0.1.36`.
+
+* Enable Chitchat digest compression by default (`config.gossip_protocol_version: 1`). **Upgrade action required for clusters running Pomsky older than v0.1.33:** keep `config.gossip_protocol_version: 0` while upgrading every node to v0.1.33 or newer, then set it to `1`. Older nodes cannot read V1 gossip messages.
+
+* **Upgrade action required:** default `indexer.podManagementPolicy` to `Parallel`, so an unready indexer does not block creation of other indexers during scale-up. Scale-down can also terminate indexers concurrently; rolling updates are unchanged. Existing `OrderedReady` StatefulSets require migration or an explicit `OrderedReady` override. See [Upgrading indexers to `Parallel`](README.md#upgrading-indexers-to-parallel).
+
 ## 0.5.6
 
 * Update Docker image to `v0.1.35`.
