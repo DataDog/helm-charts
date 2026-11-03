@@ -1001,12 +1001,12 @@ To complete the migration:
 
 {{- end }}
 
-{{- if or .Values.clusterAgent.privateActionRunner.enabled .Values.datadog.privateActionRunner.enabled }}
+{{- if or (eq (include "clusterAgent-privateActionRunner-enabled" .) "true") .Values.datadog.privateActionRunner.enabled }}
 
 ###################################################################################
 ####              INFO: Private Action Runner is enabled                       ####
 ###################################################################################
-{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+{{- if eq (include "clusterAgent-privateActionRunner-enabled" .) "true" }}
 
 Cluster Agent Private Action Runner:
 {{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}

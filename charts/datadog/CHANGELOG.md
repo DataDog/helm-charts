@@ -1,5 +1,11 @@
 # Datadog changelog
 
+## 3.265.0
+
+* Add `datadog.kubernetesActions.communication.remoteConfiguration.enabled` and `datadog.kubernetesActions.communication.privateActionRunner.enabled` to choose how the Cluster Agent receives Kubernetes actions. Both are enabled by default, so `datadog.kubernetesActions.enabled: true` alone uses both channels; disable `privateActionRunner` for Remote Configuration only. Enabling `privateActionRunner` enables the Cluster Agent Private Action Runner automatically.
+* Kubernetes Actions now requires Cluster Agent 7.84.0 or greater (previously 7.79.0); `datadog.kubernetesActions` is ignored on older versions. On Cluster Agent 7.86.0+, disabling `remoteConfiguration` turns off the Remote Configuration channel, and disabling `privateActionRunner` keeps Kubernetes actions out of the Private Action Runner.
+* Grant the Cluster Agent the Kubernetes Actions RBAC for rollback deployment (`replicasets`: get, list).
+
 ## 3.264.0
 
 * Add `datadog.configStream.enabled` to control whether the Trace Agent, Process Agent, Security Agent and System Probe take their configuration from the Agent. Unset follows the Agent version, enabled from 7.85.0 onwards; an explicit value overrides it. The settings the chart mirrors onto the Agent container are gated on the same value, so the chart and the Agent cannot disagree.
