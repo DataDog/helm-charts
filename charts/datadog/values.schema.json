@@ -14,10 +14,10 @@
         "jemalloc": {
           "type": "object",
           "properties": {
-            "enabled": {
+            "disable": {
               "type": "boolean",
               "default": false,
-              "description": "Enable jemalloc for the node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners using Linux Agent 7.84.0+ images."
+              "description": "Disable jemalloc for the Linux node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners by overriding LD_PRELOAD. Jemalloc is enabled by default in Agent 7.87.0+ images."
             }
           }
         },
