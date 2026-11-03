@@ -1,0 +1,1 @@
+const workerUp = () => fetch('http://127.0.0.1:8080/liveness', {signal: AbortSignal.timeout(2000)}).then(() => true, (error) => error?.cause?.code !== 'ECONNREFUSED'); const waitForWorkerExit = async (healthy) => { if (!(await healthy())) return; while (await workerUp()) await new Promise((resolve) => setTimeout(resolve, 2000)) };

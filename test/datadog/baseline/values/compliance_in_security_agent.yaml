@@ -1,0 +1,16 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  securityAgent:
+    compliance:
+      enabled: true
+      checkInterval: 10m
+      containerInclude: "kube_namespace:default"
+      containerExclude: "kube_namespace:kube-system"
+      xccdf:
+        enabled: true
+
+agents:
+  image:
+    # Above the floor, so the mirrored settings render.
+    tag: 7.85.0

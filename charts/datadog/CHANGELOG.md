@@ -1,10 +1,31 @@
 # Datadog changelog
 
-## 3.263.0
+## 3.265.0
 
 * Add `datadog.kubernetesActions.communication.remoteConfiguration.enabled` and `datadog.kubernetesActions.communication.privateActionRunner.enabled` to choose how the Cluster Agent receives Kubernetes actions. Both are enabled by default, so `datadog.kubernetesActions.enabled: true` alone uses both channels; disable `privateActionRunner` for Remote Configuration only. Enabling `privateActionRunner` enables the Cluster Agent Private Action Runner automatically.
 * Kubernetes Actions now requires Cluster Agent 7.84.0 or greater (previously 7.79.0); `datadog.kubernetesActions` is ignored on older versions. On Cluster Agent 7.86.0+, disabling `remoteConfiguration` turns off the Remote Configuration channel, and disabling `privateActionRunner` keeps Kubernetes actions out of the Private Action Runner.
 * Grant the Cluster Agent the Kubernetes Actions RBAC for rollback deployment (`replicasets`: get, list).
+
+## 3.264.0
+
+* Add `datadog.configStream.enabled` to control whether the Trace Agent, Process Agent, Security Agent and System Probe take their configuration from the Agent. Unset follows the Agent version, enabled from 7.85.0 onwards; an explicit value overrides it. The settings the chart mirrors onto the Agent container are gated on the same value, so the chart and the Agent cannot disagree.
+* Set the per-remote-agent log levels (`DD_SECURITY_AGENT_LOG_LEVEL`, `DD_PROCESS_CONFIG_LOG_LEVEL`, `DD_APM_LOG_LEVEL`, `DD_SYSTEM_PROBE_LOG_LEVEL`) on the Agent container when the corresponding `agents.containers.<name>.logLevel` is set. Under config streaming the remote agents take their log level from the Agent.
+* Mirror the settings that were rendered only on a remote agent's container -- five `DD_COMPLIANCE_CONFIG_*` and three `DD_RUNTIME_SECURITY_CONFIG_*` on the Security Agent, six `DD_NETWORK_PATH_*` on the Process Agent -- onto the Agent container, so config streaming carries them.
+* Exclude GKE Autopilot and GDC from the Agent container's `DD_COMPLIANCE_CONFIG_ENABLED` unless `datadog.securityAgent.compliance.runInSystemProbe` is set, matching the Security Agent's own gate. Without this, streaming would start compliance in the Security Agent on platforms where the chart disables it.
+* Set `DD_RUNTIME_SECURITY_CONFIG_ENABLED` and `DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE` on the Agent container, mirroring the existing compliance pair. Agent 7.85.0+ streams configuration from the Agent to the Security Agent and System Probe and discards their local environment, so without this the Security Agent received the default (`false`) for `runtime_security_config.enabled` and exited with all components deactivated, crash-looping the pod.
+
+## 3.263.2
+
+* Pass the pod name to the node Agent using the Kubernetes downward API.
+
+## 3.263.1
+
+* Fix CSPM host benchmarks run in system-probe (`datadog.securityAgent.compliance.runInSystemProbe`), which evaluated no rule on RPM-based nodes, ran their SCE checks against the system-probe container, and aborted on FIPS hosts.
+* Allow `chroot`, `fchdir`, `mlock` and `munlock` in the system-probe seccomp profile when host benchmarks run in system-probe.
+
+## 3.263.0
+
+* Leave `datadog.traceroute.enabled` unset by default and render `traceroute.enabled` in `system-probe.yaml` only when it is set. With Agent 7.84.0+, system-probe then enables traceroute automatically when Network Path dynamic tests are enabled, which lets Network Path basic dynamic tests run on hosts with `datadog.networkMonitoring.enabled`. Set `datadog.traceroute.enabled: false` to keep traceroute disabled.
 
 ## 3.262.0
 
