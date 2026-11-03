@@ -3,6 +3,7 @@
 ## 2.32.0-dev.4
 
 * Only pass `-datadogBYOCClusterEnabled` to the operator when `datadogBYOCCluster.enabled` is true, avoiding an args change on upgrade.
+* Remove duplicate `kueue.x-k8s.io` rule from the Operator ClusterRole.
 
 ## 2.32.0-dev.3
 
