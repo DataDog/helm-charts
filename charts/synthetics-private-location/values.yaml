@@ -210,7 +210,7 @@ multiContainer:
         memory: 128Mi
 
   networkPolicy:
-    # multiContainer.networkPolicy.create -- (bool) Create a pod-wide egress NetworkPolicy in multi-container mode. Set `false` to create none and leaves egress enforcement to the operator. Requires a CNI that enforces NetworkPolicies. Other policies can broaden access; ICMP filtering is CNI-dependent.
+    # multiContainer.networkPolicy.create -- (bool) Create a pod-wide egress NetworkPolicy in multi-container mode. Set `false` to create none and leave egress enforcement to the operator. Requires a CNI that enforces NetworkPolicies. Other policies can broaden access; ICMP filtering is CNI-dependent.
     create: true
     dns:
       # multiContainer.networkPolicy.dns.to -- Required when `create` is `true`. NetworkPolicy peers for DNS (TCP/UDP 53). Use namespace/pod selectors for cluster DNS or ipBlock CIDRs for NodeLocal/custom resolvers. There is no allow-all DNS exception.

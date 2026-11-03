@@ -130,6 +130,7 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set image.tag=1.75.0 \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
   --set 'multiContainer.networkPolicy.dns.to[0].namespaceSelector.matchLabels.kubernetes\.io/metadata\.name=openshift-dns' \
+  --set 'multiContainer.networkPolicy.dns.to[0].podSelector.matchLabels.dns\.operator\.openshift\.io/daemonset-dns=default' \
   --set 'multiContainer.networkPolicy.dns.ports[0].port=5353' \
   --set 'multiContainer.networkPolicy.dns.ports[0].protocol=UDP' \
   --set 'multiContainer.networkPolicy.dns.ports[1].port=5353' \
@@ -211,7 +212,7 @@ multiContainer:
 | multiContainer.networkPolicy.additionalEgress | list | `[]` | Additional standard NetworkPolicy egress rules, for example access to an upstream proxy. These exceptions take precedence over blocked ranges. |
 | multiContainer.networkPolicy.allowedIPRanges | object | `{"IPv4":[],"IPv6":[]}` | CIDRs that stay reachable even when inside a blocked range |
 | multiContainer.networkPolicy.blockedIPRanges | object | `{"IPv4":[],"IPv6":[]}` | Additional CIDRs to block, added to `defaultBlockedIPRanges` |
-| multiContainer.networkPolicy.create | bool | `true` | Create a pod-wide egress NetworkPolicy in multi-container mode. Set `false` to create none and leaves egress enforcement to the operator. Requires a CNI that enforces NetworkPolicies. Other policies can broaden access; ICMP filtering is CNI-dependent. |
+| multiContainer.networkPolicy.create | bool | `true` | Create a pod-wide egress NetworkPolicy in multi-container mode. Set `false` to create none and leave egress enforcement to the operator. Requires a CNI that enforces NetworkPolicies. Other policies can broaden access; ICMP filtering is CNI-dependent. |
 | multiContainer.networkPolicy.defaultBlockedIPRanges | object | `{"IPv4":["0.0.0.0/8","10.0.0.0/8","100.64.0.0/10","127.0.0.0/8","169.254.0.0/16","172.16.0.0/12","192.0.0.0/24","192.0.0.0/29","192.0.0.8/32","192.0.0.9/32","192.0.0.10/32","192.0.0.170/32","192.0.0.171/32","192.0.2.0/24","192.31.196.0/24","192.52.193.0/24","192.88.99.0/24","192.168.0.0/16","192.175.48.0/24","198.18.0.0/15","198.51.100.0/24","203.0.113.0/24","240.0.0.0/4","224.0.0.0/4","255.255.255.255/32"],"IPv6":["::1/128","::/128","64:ff9b::/96","64:ff9b:1::/48","100::/64","2001::/23","2001::/32","2001:1::1/128","2001:1::2/128","2001:2::/48","2001:3::/32","2001:4:112::/48","2001:5::/32","2001:10::/28","2001:20::/28","2001:db8::/32","2002::/16","2620:4f:8000::/48","fc00::/7","fe80::/10"]}` | IANA reserved ranges blocked when `enableDefaultBlockedIpRanges` is true. Same list as the worker, without `::ffff:0:0/96` (rejected in a NetworkPolicy, and covered by the IPv4 list). |
 | multiContainer.networkPolicy.dns.ports | list | `[{"port":53,"protocol":"UDP"},{"port":53,"protocol":"TCP"}]` | Ports allowed to the DNS peers. These match the DNS pod port, not the Service port. On OpenShift use 5353 (UDP and TCP). |
 | multiContainer.networkPolicy.dns.to | list | `[]` | Required when `create` is `true`. NetworkPolicy peers for DNS (TCP/UDP 53). Use namespace/pod selectors for cluster DNS or ipBlock CIDRs for NodeLocal/custom resolvers. There is no allow-all DNS exception. |
