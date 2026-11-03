@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.1.0
+
+* `multiContainer.networkPolicy.create` now defaults to `true`. Multi-container installs must set `multiContainer.networkPolicy.dns.to`, or set `create: false` to manage egress yourself.
+
 ## 1.0.1
 
 * Mount the worker config with mode `0440` in the single-container Deployment. The worker reads it through group 0, or `podSecurityContext.fsGroup` when set. With `supplementalGroupsPolicy: Strict`, set `podSecurityContext.fsGroup`.
