@@ -357,10 +357,10 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PROFILING_ENABLED
             value: {{ .Values.datadog.profiling.enabled | quote }}
           {{- end }}
-          {{- if .Values.clusterAgent.privateActionRunner.enabled }}
+          {{- if eq (include "clusterAgent-privateActionRunner-enabled" .) "true" }}
           {{- include "validate-private-action-runner-config" . }}
           - name: DD_PRIVATE_ACTION_RUNNER_ENABLED
-            value: {{ .Values.clusterAgent.privateActionRunner.enabled | quote }}
+            value: "true"
           {{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}
           - name: DD_PRIVATE_ACTION_RUNNER_SELF_ENROLL
             value: {{ .Values.clusterAgent.privateActionRunner.selfEnroll | quote }}
@@ -433,10 +433,22 @@ spec:
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
           {{- if .Values.datadog.kubernetesActions.enabled }}
-          {{- $dcaImageTag := .Values.clusterAgent.image.tag | toString }}
-          {{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.79.0-0" $dcaImageTag) }}
+          {{- include "validate-kubernetes-actions-config" . }}
+          {{- if eq (include "kubernetesActions-supported" .) "true" }}
           - name: DD_KUBEACTIONS_ENABLED
             value: "true"
+          {{- /* Only emit a channel setting when turning that channel off, and only to a Cluster Agent
+          that understands it, so older agents never log it as an unknown environment variable. */}}
+          {{- if eq (include "kubernetesActions-channel-toggles-supported" .) "true" }}
+          {{- if ne (include "kubernetesActions-rc-enabled" .) "true" }}
+          - name: DD_KUBEACTIONS_REMOTE_CONFIG_ENABLED
+            value: "false"
+          {{- end }}
+          {{- if ne (include "kubernetesActions-par-enabled" .) "true" }}
+          - name: DD_KUBEACTIONS_PRIVATE_ACTION_RUNNER_ENABLED
+            value: "false"
+          {{- end }}
+          {{- end }}
           {{- end }}
           {{- end }}
           - name: DD_KUBERNETES_USE_ENDPOINT_SLICES

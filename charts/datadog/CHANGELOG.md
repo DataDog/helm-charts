@@ -1,5 +1,20 @@
 # Datadog changelog
 
+## 3.266.1
+
+* Remove the experimental label from the `csi` value of `datadog.apm.instrumentation.injectionMode`. CSI injection is generally available.
+
+## 3.266.0
+
+* Grant the `kubernetes_state_core` check list/watch on `resource.k8s.io` `resourceclaims`, `resourceslices` and `devicetaintrules` when the Cluster Agent (or the Cluster Checks Runner, when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is set) is 7.85.0+, so users can enable Dynamic Resource Allocation metrics by adding these collectors to `kubernetes_state_core.yaml` in `clusterAgent.confd`. The chart does not add the collectors itself.
+* Mount the host `/var/run/cdi` directory read-only at `/host/var/run/cdi` in the Agent container when `datadog.gpuMonitoring.enabled` is set, so the Agent can attribute GPUs to pods that use DRA.
+
+## 3.265.0
+
+* Add `datadog.kubernetesActions.communication.remoteConfiguration.enabled` and `datadog.kubernetesActions.communication.privateActionRunner.enabled` to choose how the Cluster Agent receives Kubernetes actions. Both are enabled by default, so `datadog.kubernetesActions.enabled: true` alone uses both channels; disable `privateActionRunner` for Remote Configuration only. Enabling `privateActionRunner` enables the Cluster Agent Private Action Runner automatically.
+* Kubernetes Actions now requires Cluster Agent 7.84.0 or greater (previously 7.79.0); `datadog.kubernetesActions` is ignored on older versions. On Cluster Agent 7.86.0+, disabling `remoteConfiguration` turns off the Remote Configuration channel, and disabling `privateActionRunner` keeps Kubernetes actions out of the Private Action Runner.
+* Grant the Cluster Agent the Kubernetes Actions RBAC for rollback deployment (`replicasets`: get, list).
+
 ## 3.264.0
 
 * Add `datadog.configStream.enabled` to control whether the Trace Agent, Process Agent, Security Agent and System Probe take their configuration from the Agent. Unset follows the Agent version, enabled from 7.85.0 onwards; an explicit value overrides it. The settings the chart mirrors onto the Agent container are gated on the same value, so the chart and the Agent cannot disagree.
