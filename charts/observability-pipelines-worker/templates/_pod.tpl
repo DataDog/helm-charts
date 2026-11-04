@@ -75,6 +75,12 @@ containers:
       {{- end }}
       - name: DD_OP_GRACEFUL_SHUTDOWN_LIMIT_SECS
         value: {{ max 10 (sub (.Values.terminationGracePeriodSeconds | default 30 | int) 10) | quote }}
+      {{- if (.Values.eventRouting | default dict).enabled }}
+      - name: DD_OP_SOURCE_TRACE_ROUTER_ADDRESS
+        value: "0.0.0.0:{{ .Values.eventRouting.port }}"
+      - name: DD_OP_DESTINATION_TRACE_ROUTER_KUBERNETES_SERVICE_PORT_NAME
+        value: event-routing
+      {{- end }}
 {{- if .Values.env }}
 {{ toYaml .Values.env | indent 6 }}
 {{- end }}
@@ -87,6 +93,9 @@ containers:
 {{- end }}
 {{- if .Values.datadog.workerAPI.enabled }}
 {{ include "opw.api.containerPort" . | indent 6 }}
+{{- end }}
+{{- if (.Values.eventRouting | default dict).enabled }}
+{{ include "opw.eventRouting.containerPort" . | indent 6 }}
 {{- end }}
 {{- if .Values.livenessProbe }}
 {{- $liveness := deepCopy .Values.livenessProbe }}
