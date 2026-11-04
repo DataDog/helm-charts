@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.266.1
+
+* Remove the experimental label from the `csi` value of `datadog.apm.instrumentation.injectionMode`. CSI injection is generally available.
+
 ## 3.266.0
 
 * Grant the `kubernetes_state_core` check list/watch on `resource.k8s.io` `resourceclaims`, `resourceslices` and `devicetaintrules` when the Cluster Agent (or the Cluster Checks Runner, when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is set) is 7.85.0+, so users can enable Dynamic Resource Allocation metrics by adding these collectors to `kubernetes_state_core.yaml` in `clusterAgent.confd`. The chart does not add the collectors itself.
