@@ -209,28 +209,29 @@ run_helm_docs() {
 # RBAC / ClusterRole update
 # ============================================================================
 
-# Update clusterrole.yaml from upstream operator role.yaml.
+# Update a ClusterRole template from an upstream operator RBAC role.
+# Args: version, upstream path under config/rbac, template file name
 update_clusterrole() {
-    local new_version="$1"
-    local clusterrole="$ROOT_DIR/charts/datadog-operator/templates/clusterrole.yaml"
+    local new_version="$1" upstream_path="$2" template="$3"
+    local clusterrole="$ROOT_DIR/charts/datadog-operator/templates/${template}"
 
-    local upstream_url="https://raw.githubusercontent.com/DataDog/datadog-operator/v${new_version}/config/rbac/role.yaml"
+    local upstream_url="https://raw.githubusercontent.com/DataDog/datadog-operator/v${new_version}/config/rbac/${upstream_path}"
     local upstream_file
     upstream_file=$(mktemp)
 
     if ! curl --silent --show-error --fail --location -o "$upstream_file" "$upstream_url" 2>/dev/null; then
         rm -f "$upstream_file"
-        warn "Could not fetch upstream role.yaml for v${new_version}. Skipping clusterrole update."
-        warn "Check manually: https://github.com/DataDog/datadog-operator/blob/v${new_version}/config/rbac/role.yaml"
+        warn "Could not fetch upstream ${upstream_path} for v${new_version}. Skipping ${template} update."
+        warn "Check manually: https://github.com/DataDog/datadog-operator/blob/v${new_version}/config/rbac/${upstream_path}"
         return 1
     fi
 
     if python3 "$SCRIPT_DIR/update-clusterrole.py" "$upstream_file" "$clusterrole"; then
         rm -f "$upstream_file"
-        success "clusterrole.yaml updated from upstream v${new_version}"
+        success "${template} updated from upstream v${new_version}"
     else
         rm -f "$upstream_file"
-        warn "Failed to update clusterrole.yaml automatically"
+        warn "Failed to update ${template} automatically"
         return 1
     fi
 }
@@ -344,9 +345,10 @@ phase_operator() {
         warn "Continuing without updated baselines -- Inspect for unit test failures from version bump."
     fi
 
-    # Step 10: Update clusterrole.yaml from upstream RBAC
-    step "Updating clusterrole.yaml from upstream v${OPERATOR_VERSION}..."
-    update_clusterrole "$OPERATOR_VERSION"
+    # Step 10: Update ClusterRole templates from upstream RBAC
+    step "Updating ClusterRole templates from upstream v${OPERATOR_VERSION}..."
+    update_clusterrole "$OPERATOR_VERSION" role.yaml clusterrole.yaml
+    update_clusterrole "$OPERATOR_VERSION" byoc/role.yaml clusterrole_byoc.yaml
 
     success "=== Operator chart phase complete ==="
 }

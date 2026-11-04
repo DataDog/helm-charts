@@ -342,6 +342,18 @@ false
 {{- end -}}
 
 {{/*
+Return true if KAI Scheduler metadata collection should be enabled in the Cluster Agent.
+Requires datadog.kaiScheduler.enabled, a deployed Cluster Agent, and Cluster Agent 7.86.0 or newer.
+*/}}
+{{- define "should-enable-kai-scheduler" -}}
+{{- if and .Values.datadog.kaiScheduler.enabled (eq (include "should-deploy-cluster-agent" .) "true") (or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.86.0-0" (include "get-cluster-agent-version" .))) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the Kueue check should be configured. It is scheduled by the Cluster Agent as an
 endpoints check on the node Agents, so it requires cluster checks and Agent 7.82.0 or newer.
 */}}
@@ -1618,7 +1630,85 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (and .Values.clusterAgent.admissionController.enabled .Values.datadog.apm.instrumentation.onDemand) .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (and .Values.clusterAgent.admissionController.enabled .Values.datadog.apm.instrumentation.onDemand) (eq (include "clusterAgent-privateActionRunner-enabled" .) "true") (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether Kubernetes Actions should be delivered to the Cluster Agent through
+Remote Configuration (datadog.kubernetesActions.communication.remoteConfiguration.enabled).
+*/}}
+{{- define "kubernetesActions-rc-enabled" -}}
+{{- if and .Values.datadog.kubernetesActions.enabled (((.Values.datadog.kubernetesActions.communication).remoteConfiguration).enabled) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether the Cluster Agent supports the Kubernetes Actions feature (7.84.0 or greater).
+On older versions, datadog.kubernetesActions is ignored.
+*/}}
+{{- define "kubernetesActions-supported" -}}
+{{- $dcaImageTag := .Values.clusterAgent.image.tag | toString -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.84.0-0" $dcaImageTag) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether Kubernetes Actions should be delivered to the Cluster Agent through
+the Private Action Runner (datadog.kubernetesActions.communication.privateActionRunner.enabled).
+*/}}
+{{- define "kubernetesActions-par-enabled" -}}
+{{- if and .Values.datadog.kubernetesActions.enabled (((.Values.datadog.kubernetesActions.communication).privateActionRunner).enabled) (eq (include "kubernetesActions-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Validate Kubernetes Actions configuration
+*/}}
+{{- define "validate-kubernetes-actions-config" -}}
+{{- if .Values.datadog.kubernetesActions.enabled -}}
+{{- $rc := eq (include "kubernetesActions-rc-enabled" .) "true" -}}
+{{- if not (or $rc (((.Values.datadog.kubernetesActions.communication).privateActionRunner).enabled)) -}}
+{{- fail "Kubernetes Actions: at least one of datadog.kubernetesActions.communication.remoteConfiguration.enabled or datadog.kubernetesActions.communication.privateActionRunner.enabled must be true" }}
+{{- end -}}
+{{- if and (not $rc) (ne (include "kubernetesActions-channel-toggles-supported" .) "true") -}}
+{{- fail "Kubernetes Actions: datadog.kubernetesActions.communication.remoteConfiguration.enabled=false requires Cluster Agent 7.86.0 or greater" }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether the Cluster Agent understands the per-channel Kubernetes Actions settings
+(kubeactions.remote_config.enabled / kubeactions.private_action_runner.enabled), added in 7.86.0.
+*/}}
+{{- define "kubernetesActions-channel-toggles-supported" -}}
+{{- $dcaImageTag := .Values.clusterAgent.image.tag | toString -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.86.0-0" $dcaImageTag) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether the Cluster Agent Private Action Runner should be enabled, either
+explicitly (clusterAgent.privateActionRunner.enabled) or because Kubernetes Actions
+communicates through it (datadog.kubernetesActions.communication.privateActionRunner.enabled).
+*/}}
+{{- define "clusterAgent-privateActionRunner-enabled" -}}
+{{- if or .Values.clusterAgent.privateActionRunner.enabled (eq (include "kubernetesActions-par-enabled" .) "true") -}}
 true
 {{- else -}}
 false
@@ -1629,7 +1719,7 @@ false
 Validate Cluster Agent Private Action Runner configuration
 */}}
 {{- define "validate-private-action-runner-config" -}}
-{{- if .Values.clusterAgent.privateActionRunner.enabled -}}
+{{- if eq (include "clusterAgent-privateActionRunner-enabled" .) "true" -}}
 {{- if and .Values.clusterAgent.privateActionRunner.selfEnroll (not .Values.datadog.leaderElection) -}}
 {{- fail "Private Action Runner: selfEnroll requires leader election to be enabled. Please set datadog.leaderElection to true" }}
 {{- end -}}
@@ -2090,6 +2180,31 @@ Return true if KSM node pod collection is supported
 {{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
 {{- $ccrVersionOK := or (not .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners) .Values.clusterChecksRunner.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-checks-runner-version" .)) -}}
 {{- if and $agentVersionOK $dcaVersionOK $ccrVersionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the component running the kubernetes_state_core check supports the DRA
+(resource.k8s.io) collectors: the Cluster Checks Runner when
+datadog.kubeStateMetricsCore.useClusterCheckRunners is set, the Cluster Agent otherwise,
+7.85.0 or newer. Older versions fail the whole check on DRA collectors, so tags that are
+not versions fail closed unless doNotCheckTag is set.
+*/}}
+{{- define "ksm-dra-rbac-supported" -}}
+{{- $doNotCheckTag := .Values.clusterAgent.image.doNotCheckTag -}}
+{{- $version := include "get-cluster-agent-version" . -}}
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners -}}
+{{- $doNotCheckTag = .Values.clusterChecksRunner.image.doNotCheckTag -}}
+{{- $version = include "get-cluster-checks-runner-version" . -}}
+{{- end -}}
+{{- $versionOK := $doNotCheckTag -}}
+{{- if and (not $versionOK) (regexMatch "^v?[0-9]+(\\.[0-9]+){0,2}(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$" $version) -}}
+{{- $versionOK = semverCompare ">=7.85.0-0" $version -}}
+{{- end -}}
+{{- if $versionOK -}}
 true
 {{- else -}}
 false

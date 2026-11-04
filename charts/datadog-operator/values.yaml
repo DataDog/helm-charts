@@ -47,7 +47,7 @@ image:
   # image.repository -- Repository to use for Datadog Operator image
   repository: registry.datadoghq.com/operator
   # image.tag -- Define the Datadog Operator version to use
-  tag: 1.32.0-rc.1
+  tag: 1.32.0-rc.2
   # image.pullPolicy -- Define the pullPolicy for Datadog Operator image
   pullPolicy: IfNotPresent
   # image.doNotCheckTag -- Permit skipping operator image tag compatibility with the chart.
@@ -89,6 +89,9 @@ datadogAgent:
 datadogAgentInternal:
   # datadogAgentInternal.enabled -- Enables the Datadog Agent Internal controller
   enabled: true
+datadogBYOCCluster:
+  # datadogBYOCCluster.enabled -- Enables the DatadogBYOCCluster and DatadogObservabilityPipelinesWorker controllers. Requires the `datadogCRDs.crds.datadogBYOCClusters` and `datadogCRDs.crds.datadogObservabilityPipelinesWorkers` CRDs. Requires v1.32.0+
+  enabled: false
 datadogCSIDriver:
   # datadogCSIDriver.enabled -- Enables the Datadog CSI Driver controller
   enabled: true
@@ -194,6 +197,10 @@ datadogCRDs:
     datadogAgentInternals: true
     # datadogCRDs.crds.datadogInstrumentations -- Set to true to deploy the DatadogInstrumentations CRD
     datadogInstrumentations: true
+    # datadogCRDs.crds.datadogBYOCClusters -- Set to true to deploy the DatadogBYOCClusters CRD. Requires `datadogCRDs.crds.datadogObservabilityPipelinesWorkers`
+    datadogBYOCClusters: false
+    # datadogCRDs.crds.datadogObservabilityPipelinesWorkers -- Set to true to deploy the DatadogObservabilityPipelinesWorkers CRD
+    datadogObservabilityPipelinesWorkers: false
 
 # podAnnotations -- Allows setting additional annotations for Datadog Operator PODs
 podAnnotations: {}
