@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.267.0
+
+* Add `datadog.kaiScheduler.enabled` to enable KAI Scheduler PodGroup collection in the Cluster Agent, which tags pods with their KAI workload and queue, and grant the Cluster Agent `list` and `watch` on KAI PodGroups (requires Agent and Cluster Agent 7.86.0+). With `datadog.gpuMonitoring.enabled`, it also maps KAI fractional GPUs to the containers using them.
+
 ## 3.266.1
 
 * Remove the experimental label from the `csi` value of `datadog.apm.instrumentation.injectionMode`. CSI injection is generally available.
