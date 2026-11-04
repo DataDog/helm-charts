@@ -389,6 +389,9 @@
       readOnly: false
     - name: gpu-devices
       mountPath: /var/run/nvidia-container-devices/all
+    - name: host-var-run-cdi
+      mountPath: /host/var/run/cdi
+      readOnly: true
     {{- if .Values.providers.gke.cos }}
     - name: gke-nvidia-driver-lib64
       mountPath: /host/run/nvidia/driver/usr/lib/x86_64-linux-gnu # the agent automatically looks for the nvidia driver in this path, and it's also not likely to conflict with other libraries
