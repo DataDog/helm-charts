@@ -171,6 +171,12 @@ func TestNetworkPolicyCreatedByDefault(t *testing.T) {
 	assert.Contains(t, manifest, "kind: NetworkPolicy")
 }
 
+func TestNetworkPolicyNotCreatedWhenDisabled(t *testing.T) {
+	manifest, err := common.RenderChart(t, multiContainerCommand(nil))
+	require.NoError(t, err)
+	assert.NotContains(t, manifest, "kind: NetworkPolicy")
+}
+
 func renderPolicy(t *testing.T, overrides map[string]string) networkingv1.NetworkPolicy {
 	t.Helper()
 	return renderPolicyFor(t, "1.30.0", overrides)
