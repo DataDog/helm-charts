@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.268.0
+
+* Add `datadog.privateActionRunner.packetCapture.enabled` to run remote packet captures through the node Private Action Runner (requires Agent 7.86.0+, Linux only; ignored on older Agents or when `datadog.privateActionRunner.enabled` is false). It runs the System Probe with `packet_capture` enabled and the `SYS_ADMIN`, `SYS_RESOURCE`, `NET_ADMIN`, `NET_RAW` and `IPC_LOCK` capabilities, and shares with the runner, read-only, a socket that serves only packet capture, never the full System Probe socket. Captures see the node's traffic only with `agents.useHostNetwork: true`; otherwise they see only the Agent pod's network namespace. Floating tags such as `latest` or `7` resolve to the chart default Agent version (7.84.6), so the feature stays off unless `agents.image.tag` is 7.86.0+ or `agents.image.doNotCheckTag` is set; when pinning `agents.image.digest`, set `agents.image.doNotCheckTag: true`, since the tag, not the digest, decides the version. Add `com.datadoghq.remoteaction.pcap.runCapture` to `datadog.privateActionRunner.actionsAllowlist` to let workflows run captures; the chart does not add it.
+
 ## 3.267.0
 
 * Add `datadog.kaiScheduler.enabled` to enable KAI Scheduler PodGroup collection in the Cluster Agent, which tags pods with their KAI workload and queue, and grant the Cluster Agent `list` and `watch` on KAI PodGroups (requires Agent and Cluster Agent 7.86.0+). With `datadog.gpuMonitoring.enabled`, it also maps KAI fractional GPUs to the containers using them.
