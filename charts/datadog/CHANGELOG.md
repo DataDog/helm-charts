@@ -1,8 +1,17 @@
 # Datadog changelog
 
-## 3.266.0
+## 3.267.0
 
 * Add `datadog.kaiScheduler.enabled` to enable KAI Scheduler PodGroup collection in the Cluster Agent, which tags pods with their KAI workload and queue, and grant the Cluster Agent `list` and `watch` on KAI PodGroups (requires Agent and Cluster Agent 7.86.0+). With `datadog.gpuMonitoring.enabled`, it also maps KAI fractional GPUs to the containers using them.
+
+## 3.266.1
+
+* Remove the experimental label from the `csi` value of `datadog.apm.instrumentation.injectionMode`. CSI injection is generally available.
+
+## 3.266.0
+
+* Grant the `kubernetes_state_core` check list/watch on `resource.k8s.io` `resourceclaims`, `resourceslices` and `devicetaintrules` when the Cluster Agent (or the Cluster Checks Runner, when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is set) is 7.85.0+, so users can enable Dynamic Resource Allocation metrics by adding these collectors to `kubernetes_state_core.yaml` in `clusterAgent.confd`. The chart does not add the collectors itself.
+* Mount the host `/var/run/cdi` directory read-only at `/host/var/run/cdi` in the Agent container when `datadog.gpuMonitoring.enabled` is set, so the Agent can attribute GPUs to pods that use DRA.
 
 ## 3.265.0
 

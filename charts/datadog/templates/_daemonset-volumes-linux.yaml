@@ -22,6 +22,10 @@
 - name: pod-resources-socket
   hostPath:
     path: {{ .Values.datadog.kubelet.podResourcesSocketDir }}
+- name: host-var-run-cdi
+  hostPath:
+    path: /var/run/cdi
+    type: DirectoryOrCreate
 {{- if .Values.datadog.gpuMonitoring.configureCgroupPerms }}
 - name: host-systemd-transient
   hostPath:
