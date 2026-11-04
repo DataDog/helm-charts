@@ -2,7 +2,7 @@
 
 ## 1.1.0
 
-* `multiContainer.networkPolicy.create` now defaults to `true`. Multi-container installs must set `multiContainer.networkPolicy.dns.to`, or set `create: false` to manage egress yourself.
+* `multiContainer.networkPolicy.create` now defaults to `true`. Multi-container installs must set `multiContainer.networkPolicy.dns.to`, or set `create: false` to manage egress without the chart policy.
 
 ## 1.0.0
 
