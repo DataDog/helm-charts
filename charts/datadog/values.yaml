@@ -1054,9 +1054,7 @@ datadog:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
     # DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead.
     ## Note: host /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled.
-    ## Eligible process containers use /host/etc/passwd when the chart resolves an Agent version >= 7.86.0 (including 7.86.0+ prereleases).
-    ## Legacy GKE Autopilot mode, digest-pinned images, and agents.image.doNotCheckTag retain /etc/passwd.
-    ## GKE Autopilot WorkloadAllowlist mode requires the published v1.0.8 exemption.
+    ## Agent 7.86.0+ mounts it at /host/etc/passwd instead; see "Process passwd mounts" in the README.
     ## ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset
     enabled: true
 

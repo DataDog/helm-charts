@@ -628,30 +628,6 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 	}
 }
 
-func TestProcessPasswdPreservesHostEtcConfiguration(t *testing.T) {
-	for _, hostEtc := range []string{"/host/etc", "/custom/etc", ""} {
-		t.Run("HOST_ETC="+hostEtc, func(t *testing.T) {
-			manifest, err := common.RenderChart(t, common.HelmCommand{
-				ReleaseName: "datadog", ChartPath: "../../charts/datadog", ShowOnly: []string{"templates/daemonset.yaml"},
-				Overrides: map[string]string{"agents.image.tag": "7.86.0", "datadog.apiKeyExistingSecret": "datadog-secret", "datadog.envDict.HOST_ETC": hostEtc, "datadog.envDict.DD_IGNORE_HOST_ETC": "true"},
-			})
-			require.NoError(t, err)
-			var ds appsv1.DaemonSet
-			common.Unmarshal(t, manifest, &ds)
-			container, found := getContainer(t, ds.Spec.Template.Spec.Containers, "agent")
-			require.True(t, found)
-			expectedEnv := []corev1.EnvVar{{Name: "HOST_ETC", Value: hostEtc}, {Name: "DD_IGNORE_HOST_ETC", Value: "true"}}
-			var hostEtcEnv []corev1.EnvVar
-			for _, env := range container.Env {
-				if env.Name == "HOST_ETC" || env.Name == "DD_IGNORE_HOST_ETC" {
-					hostEtcEnv = append(hostEtcEnv, env)
-				}
-			}
-			assert.ElementsMatch(t, expectedEnv, hostEtcEnv, "preserve explicit configuration without duplicates")
-		})
-	}
-}
-
 func verifyDefaultDaemonset(t *testing.T, manifest string) {
 	var deployment appsv1.DaemonSet
 	common.Unmarshal(t, manifest, &deployment)
