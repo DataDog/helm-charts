@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.268.0
+
+* Replace `datadog.jemalloc.enabled` with `datadog.jemalloc.disable` (default `false`). Agent 7.87.0+ Linux images enable jemalloc by default. Set `datadog.jemalloc.disable: true` to override `LD_PRELOAD` with `/opt/lib/nosys.so` for the node core Agent, trace-agent, process-agent, security-agent, system-probe, and enabled Cluster Check Runners. Explicit environment overrides continue to take precedence. Remove the old `datadog.jemalloc.enabled` setting from your values. Disabling jemalloc is not supported on GKE Autopilot; the chart rejects `datadog.jemalloc.disable: true` on Autopilot.
+
 ## 3.267.1
 
 * Update `fips.image.tag` to `1.1.33` fixing CVEs and updating packages.

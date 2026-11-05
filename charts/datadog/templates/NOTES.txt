@@ -410,13 +410,13 @@ You are using datadog.orchestratorExplorer.enabled but you disabled the cluster 
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
 
-{{- if and .Values.providers.gke.autopilot .Values.datadog.jemalloc.enabled }}
+{{- if and .Values.providers.gke.autopilot .Values.datadog.jemalloc.disable }}
 
 #######################################################################################
-####   WARNING: jemalloc is not supported on GKE Autopilot                           ####
+####   WARNING: Disabling jemalloc is not supported on GKE Autopilot                 ####
 #######################################################################################
 
-{{- fail "jemalloc is not supported on GKE Autopilot. Set 'datadog.jemalloc.enabled' to 'false'." }}
+{{- fail "Disabling jemalloc via LD_PRELOAD is not supported on GKE Autopilot. Set 'datadog.jemalloc.disable' to 'false'." }}
 
 {{- end }}
 
