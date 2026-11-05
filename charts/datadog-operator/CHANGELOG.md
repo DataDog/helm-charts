@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.32.0-dev.6
+
+* Temporarily revert the `2.32.0-dev.1` to `2.32.0-dev.5` changes, returning to Operator 1.31.2, so `2.32.0` can be released ahead of Operator 1.32. They will be re-applied after `2.32.0` ([#3053](https://github.com/DataDog/helm-charts/pull/3053)).
+
 ## 2.32.0-dev.5
 
 * Only pass `-datadogBYOCClusterEnabled` to the operator when `datadogBYOCCluster.enabled` is true, avoiding an args change on upgrade.
