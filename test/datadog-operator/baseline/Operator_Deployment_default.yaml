@@ -70,7 +70,6 @@ spec:
             - "-datadogGenericResourceEnabled=false"
             - "-remoteConfigEnabled=false"
             - "-datadogCSIDriverEnabled=true"
-            - "-datadogBYOCClusterEnabled=false"
             - "-untaintControllerEnabled=false"
           ports:
             - name: metrics
