@@ -642,6 +642,14 @@ datadog:
     # datadog.privateActionRunner.apiKeyOnlyEnrollment -- Enroll using only the API key, without requiring an app key
     apiKeyOnlyEnrollment: false
 
+    packetCapture:
+      # datadog.privateActionRunner.packetCapture.enabled -- Enable remote packet capture through the node Private Action Runner. Requires `datadog.privateActionRunner.enabled` and Agent 7.86.0+, Linux only.
+      # Runs the System Probe and exposes to the runner a socket that serves only packet capture, never the full
+      # System Probe socket. Captures see the node's traffic only when agents.useHostNetwork is true; otherwise they
+      # see only the Agent pod's own network namespace. Add "com.datadoghq.remoteaction.pcap.runCapture" to
+      # datadog.privateActionRunner.actionsAllowlist to let workflows run captures; the chart does not add it.
+      enabled: false
+
   ## Enable logs agent and provide custom configs
   logs:
     # datadog.logs.enabled -- Enables this to activate Datadog Agent log collection

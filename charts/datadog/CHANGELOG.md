@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.268.1
+## 3.269.1
 
 * Disable config streaming by default to restore per-container Agent environment settings. Set `datadog.configStream.enabled: true` to opt in explicitly.
+
+## 3.269.0
+
+* Add `datadog.privateActionRunner.packetCapture.enabled` to run remote packet captures through the node Private Action Runner (requires Agent 7.86.0+, Linux only; ignored on older Agents or when `datadog.privateActionRunner.enabled` is false). It runs the System Probe with `packet_capture` enabled and the `SYS_ADMIN`, `SYS_RESOURCE`, `NET_ADMIN`, `NET_RAW` and `IPC_LOCK` capabilities, and shares with the runner, read-only, a socket that serves only packet capture, never the full System Probe socket. Captures see the node's traffic only with `agents.useHostNetwork: true`; otherwise they see only the Agent pod's network namespace. Floating tags such as `latest` or `7` resolve to the chart default Agent version (7.84.6), and tags that are not versions are not trusted, so the feature stays off unless `agents.image.tag` is 7.86.0+ or `agents.image.doNotCheckTag` is set; when pinning `agents.image.digest`, set `agents.image.doNotCheckTag: true`, since the tag, not the digest, decides the version. Add `com.datadoghq.remoteaction.pcap.runCapture` to `datadog.privateActionRunner.actionsAllowlist` to let workflows run captures; the chart does not add it.
 
 ## 3.268.0
 
