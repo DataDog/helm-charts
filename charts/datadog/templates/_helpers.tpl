@@ -2185,17 +2185,11 @@ Whether the Trace Agent, Process Agent, Security Agent and System Probe take the
 configuration from the Agent. Rendered as the consumer's own environment variable and used to
 gate the settings mirrored onto the Agent container, so the chart's answer and the Agent's
 behaviour are one value rather than two that have to agree.
-The version floor is the Agent release that ships the namespaced per-container keys: enabling
-streaming without them drops each container's DD_LOG_LEVEL without a replacement.
 */}}
 {{- define "configstream-enabled" -}}
 {{- include "configstream-env-conflict-check" . -}}
 {{- if kindIs "bool" .Values.datadog.configStream.enabled -}}
 {{ .Values.datadog.configStream.enabled }}
-{{- else if .Values.agents.image.doNotCheckTag -}}
-true
-{{- else if semverCompare ">=7.85.0-0" (include "get-agent-version" .) -}}
-true
 {{- else -}}
 false
 {{- end -}}
