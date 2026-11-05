@@ -1,8 +1,8 @@
 # Changelog
 
-## 2.32.0-dev.6
+## 2.32.0
 
-* Temporarily revert the `2.32.0-dev.1` to `2.32.0-dev.5` changes, returning to Operator 1.31.2, so `2.32.0` can be released ahead of Operator 1.32. They will be re-applied after `2.32.0` ([#3053](https://github.com/DataDog/helm-charts/pull/3053)).
+* feat(datadog-operator): enable Linux ADP default for the AP1 site (`ap1.datadoghq.com`) via `defaultDataPlaneEnabled.linux: "auto"`. Set to `true` to enable for all sites or `false` to disable ([#2879](https://github.com/DataDog/helm-charts/pull/2879)).
 
 ## 2.31.0
 
