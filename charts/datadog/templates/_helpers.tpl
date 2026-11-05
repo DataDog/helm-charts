@@ -847,11 +847,46 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (eq (include "resolved-discovery-enabled" .) "true") .Values.datadog.discovery.serviceMap.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) (eq (include "should-enable-sbom-enrichment-usage" .) "true") -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (eq (include "resolved-discovery-enabled" .) "true") .Values.datadog.discovery.serviceMap.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) (eq (include "should-enable-sbom-enrichment-usage" .) "true") (eq (include "should-enable-private-action-runner-packet-capture" .) "true") -}}
 true
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Directory and path of the socket on which system-probe serves only the packet_capture module to the
+node Private Action Runner.
+*/}}
+{{- define "private-action-runner-packet-capture-socket-dir" -}}
+/var/run/sysprobe-capture
+{{- end -}}
+
+{{- define "private-action-runner-packet-capture-socket-path" -}}
+{{ include "private-action-runner-packet-capture-socket-dir" . }}/capture.sock
+{{- end -}}
+
+{{/*
+Return true if the node Private Action Runner can run packet captures through system-probe.
+Requires datadog.privateActionRunner.enabled, Linux, and Agent 7.86.0 or newer: older Agents do
+not serve the capture socket. Only agents.image.doNotCheckTag bypasses the version check (which
+agents.image.digest users need, since the tag still decides the version). Otherwise the resolved
+tag must be a semantic version >= 7.86.0: floating tags such as `latest` or `7` resolve to the
+chart's default Agent version, and any other tag that is not a version keeps the feature off.
+GKE Autopilot and GDC are excluded: the Private Action Runner is not supported there.
+*/}}
+{{- define "should-enable-private-action-runner-packet-capture" -}}
+{{- $par := .Values.datadog.privateActionRunner -}}
+{{- $enabled := false -}}
+{{- if and $par.enabled ($par.packetCapture | default dict).enabled (eq .Values.targetSystem "linux") (not .Values.providers.gke.autopilot) (not .Values.providers.gke.gdc) -}}
+{{- $version := include "get-agent-version" . -}}
+{{- if .Values.agents.image.doNotCheckTag -}}
+{{- $enabled = true -}}
+{{- else if regexMatch "^v?[0-9]+(\\.[0-9]+){0,2}(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$" $version -}}
+{{- $enabled = semverCompare ">=7.86.0-0" $version -}}
+{{- end -}}
+{{- end -}}
+{{- $enabled -}}
 {{- end -}}
 
 {{/*
@@ -1491,7 +1526,7 @@ securityContext:
     {{ toYaml .securityContext.windowsOptions }}
   {{- end -}}
 {{- else }}
-{{- if or .securityContext .sysAdmin .mknod (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
+{{- if or .securityContext .sysAdmin .mknod .packetCapture (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
   {{- /* Define default values for the added capabilities and securityContext */ -}}
   {{- $addedCapabilities := list -}}
   {{- $securityContext := dict -}}
@@ -1508,6 +1543,13 @@ securityContext:
   {{- end -}}
   {{- if .kill -}}
     {{- $addedCapabilities = append $addedCapabilities "KILL" -}}
+  {{- end -}}
+  {{- if .packetCapture -}}
+    {{- range list "SYS_ADMIN" "SYS_RESOURCE" "NET_ADMIN" "NET_RAW" "IPC_LOCK" -}}
+      {{- if not (has . $addedCapabilities) -}}
+        {{- $addedCapabilities = append $addedCapabilities . -}}
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
   {{- /* Merge the added capabilities with the securityContext, only if we have something to add */ -}}
   {{- if $addedCapabilities -}}
