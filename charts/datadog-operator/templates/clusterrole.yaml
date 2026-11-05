@@ -658,6 +658,18 @@ rules:
   - list
   - watch
 {{- /* END AUTO-GENERATED RULES: hand-maintained rules go below */}}
+{{- /* Kueue: lets the operator grant the Agent read access to Kueue resources (#2976). */}}
+- apiGroups:
+  - kueue.x-k8s.io
+  resources:
+  - clusterqueues
+  - localqueues
+  - resourceflavors
+  - workloads
+  verbs:
+  - get
+  - list
+  - watch
 {{- if .Values.datadogAgentInternal.enabled }}
 - apiGroups:
   - datadoghq.com
