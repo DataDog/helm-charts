@@ -67,6 +67,27 @@ rules:
   - patch
   - update
 {{- end }}
+{{- if eq (include "should-enable-kai-scheduler" .) "true" }}
+- apiGroups:
+  - "scheduling.run.ai"
+  resources:
+  - podgroups
+  verbs:
+  - list
+  - watch
+{{- end }}
+{{- if eq (include "should-enable-kueue" .) "true" }}
+- apiGroups:
+  - "kueue.x-k8s.io"
+  resources:
+  - clusterqueues
+  - localqueues
+  - resourceflavors
+  - workloads
+  verbs:
+  - list
+  - watch
+{{- end }}
 {{- if .Values.datadog.collectEvents }}
 - apiGroups:
   - ""
@@ -214,8 +235,7 @@ rules:
   verbs: ["create"]
 {{- end }}
 {{- end }}
-{{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if .Values.datadog.securityAgent.compliance.enabled }}
+{{- if eq  (include "should-enable-compliance-feature" .) "true" }}
 - apiGroups:
   - ""
   resources:
@@ -248,7 +268,6 @@ rules:
   - networkpolicies
   verbs:
   - list
-{{- end }}
 {{- end }}
 {{- if and .Values.clusterAgent.podSecurity.podSecurityPolicy.create (.Capabilities.APIVersions.Has "policy/v1beta1/PodSecurityPolicy") }}
 - apiGroups:
@@ -412,7 +431,7 @@ subjects:
     name: {{ template "datadog.fullname" . }}-cluster-agent
     namespace: {{ .Release.Namespace }}
 {{- end }}
-{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+{{- if eq (include "clusterAgent-privateActionRunner-enabled" .) "true" }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: Role
@@ -444,7 +463,7 @@ subjects:
     name: {{ template "datadog.fullname" . }}-cluster-agent
     namespace: {{ .Release.Namespace }}
 {{- end }}
-{{- if and .Values.clusterAgent.privateActionRunner.enabled .Values.clusterAgent.privateActionRunner.k8sRemediationEnabled }}
+{{- if and (eq (include "clusterAgent-privateActionRunner-enabled" .) "true") .Values.clusterAgent.privateActionRunner.k8sRemediationEnabled }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole

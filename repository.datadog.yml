@@ -19,6 +19,7 @@ github_teams_restrictions:
   - injection-platform
   - containers-tee
   - asm-go
+  - sensitive-data-scanner
 github_users_restrictions:
   - cahillsf
   - clamoriniere

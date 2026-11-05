@@ -80,7 +80,7 @@ apm:
   # APM libraries from private registries. Falls back to image.pullSecrets when
   # empty, but legacy kubernetes.io/dockercfg Secrets are ignored for APM
   # authentication. Restart the CSI DaemonSet after rotating these Secrets.
-  # Not supported on GKE Autopilot.
+  # Not supported on legacy GKE Autopilot (< 1.32.1-gke.1729000).
   pullSecrets: []
   #   - name: "<REG_SECRET>"
 

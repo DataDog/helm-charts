@@ -298,6 +298,47 @@ func Test_networkPathCollectorFilters(t *testing.T) {
 	}
 }
 
+// Verifies that traceroute.enabled is left to the Agent default unless set explicitly.
+func Test_tracerouteEnabledSystemProbeConfig(t *testing.T) {
+	for _, test := range []struct {
+		name      string
+		value     string
+		expectKey bool
+		expected  bool
+	}{
+		{name: "unset leaves the Agent default"},
+		{name: "explicit true", value: "true", expectKey: true, expected: true},
+		{name: "explicit false", value: "false", expectKey: true, expected: false},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			overrides := map[string]string{
+				"datadog.apiKeyExistingSecret":      "datadog-secret",
+				"datadog.appKeyExistingSecret":      "datadog-secret",
+				"datadog.networkMonitoring.enabled": "true",
+			}
+			if test.value != "" {
+				overrides["datadog.traceroute.enabled"] = test.value
+			}
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/system-probe-configmap.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides:   overrides,
+			})
+			require.NoError(t, err)
+
+			config, found := extractSystemProbeConfig(t, manifest)
+			require.True(t, found, "expected system-probe config to render")
+			traceroute, found := nestedMap(config, "traceroute")
+			require.Equal(t, test.expectKey, found, "unexpected traceroute block presence")
+			if test.expectKey {
+				assert.Equal(t, test.expected, traceroute["enabled"])
+			}
+		})
+	}
+}
+
 func assertNetworkPathFilters(t *testing.T, container corev1.Container, expected []map[string]string) {
 	t.Helper()
 	env := getNetworkPathEnv(t, container, ddNetworkPathCollectorFilters)

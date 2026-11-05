@@ -12,7 +12,7 @@
 {{- $version = "6.55.1" -}}
 {{- end -}}
 {{- if and (eq $length 1) (or (eq $version "7") (eq $version "latest")) -}}
-{{- $version = "7.84.0" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -25,7 +25,7 @@
 {{- $version := .Values.clusterChecksRunner.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.84.0" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -37,7 +37,7 @@
 {{- $version := .Values.clusterAgent.image.tag | toString -}}
 {{- $length := len (split "." $version) -}}
 {{- if and (eq $length 1) (eq $version "latest") -}}
-{{- $version = "7.84.0" -}}
+{{- $version = "7.84.6" -}}
 {{- end -}}
 {{- $version -}}
 {{- end -}}
@@ -137,12 +137,13 @@ true
 {{- end -}}
 
 {{/*
-Return true if config sync must be enabled for CNM direct send. With direct send, system-probe
-submits network payloads itself, and it cannot resolve an ENC[...] api_key because it wires the
+Return true if config sync must be enabled because system-probe submits payloads itself. This
+covers CNM direct send, CWS direct send, and compliance running in system-probe. In all three cases
+system-probe needs a resolved api_key, and it cannot resolve an ENC[...] handle because it wires the
 no-op secrets component. Config sync is what hands it the value the core agent already resolved.
 */}}
 {{- define "should-enable-config-sync-for-direct-send" -}}
-{{- if and (eq (include "cnm-use-direct-send" .) "true") (or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled) -}}
+{{- if or (and (eq (include "cnm-use-direct-send" .) "true") (or .Values.datadog.networkMonitoring.enabled .Values.datadog.serviceMonitoring.enabled)) (and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.directSendFromSystemProbe) (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) -}}
 true
 {{- else -}}
 false
@@ -297,6 +298,83 @@ version 7.82.0 or newer; otherwise falls back to disabled.
 {{- $agentVersionOK := or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
 {{- $dcaVersionOK := or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
 {{- if and $agentVersionOK $dcaVersionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Cluster Agent version supports Kueue (7.82.0 or newer).
+*/}}
+{{- define "kueue-cluster-agent-version-supported" -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-cluster-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Agent version supports the Kueue check (7.82.0 or newer).
+*/}}
+{{- define "kueue-agent-version-supported" -}}
+{{- if or .Values.agents.image.doNotCheckTag (semverCompare ">=7.82.0-0" (include "get-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if Kueue metadata collection should be enabled in the Cluster Agent.
+Requires datadog.kueue.enabled, a deployed Cluster Agent, and Cluster Agent 7.82.0 or newer.
+*/}}
+{{- define "should-enable-kueue" -}}
+{{- if and .Values.datadog.kueue.enabled (eq (include "should-deploy-cluster-agent" .) "true") (eq (include "kueue-cluster-agent-version-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if KAI Scheduler metadata collection should be enabled in the Cluster Agent.
+Requires datadog.kaiScheduler.enabled, a deployed Cluster Agent, and Cluster Agent 7.86.0 or newer.
+*/}}
+{{- define "should-enable-kai-scheduler" -}}
+{{- if and .Values.datadog.kaiScheduler.enabled (eq (include "should-deploy-cluster-agent" .) "true") (or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.86.0-0" (include "get-cluster-agent-version" .))) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Kueue check should be configured. It is scheduled by the Cluster Agent as an
+endpoints check on the node Agents, so it requires cluster checks and Agent 7.82.0 or newer.
+*/}}
+{{- define "should-enable-kueue-check" -}}
+{{- if and (eq (include "should-enable-kueue" .) "true") .Values.datadog.clusterChecks.enabled (eq (include "kueue-agent-version-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED should be set on the Cluster Agent.
+Sharding is only dispatched when cluster checks runners are enabled, and the Cluster Agent
+must be 7.83.0 or newer: sharding only coexists safely with the cluster_aggregates_only
+collection mode as of https://github.com/DataDog/datadog-agent/pull/54126. On older Cluster
+Agents the env var is omitted so the Agent keeps its own default.
+*/}}
+{{- define "should-shard-ksm-config" -}}
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.83.0-0" (include "get-cluster-agent-version" .)) -}}
 true
 {{- else -}}
 false
@@ -859,6 +937,32 @@ false
 {{- end -}}
 
 {{/*
+Return true if the compliance features should be enabled in system-probe. Mirrors
+"should-enable-compliance" for the other execution path, so the two are mutually exclusive.
+*/}}
+{{- define "should-enable-compliance-in-system-probe" -}}
+{{- if and (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc )) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the compliance feature is enabled, whichever container runs the host checks.
+Settings that belong to the feature itself rather than to an execution path - the Cluster Agent
+Kubernetes checks and the custom benchmarks ConfigMap - must be gated on this instead of on
+"should-enable-security-agent", or they silently disappear when compliance moves to system-probe.
+*/}}
+{{- define "should-enable-compliance-feature" -}}
+{{- if and (not .Values.providers.gke.gdc) (eq .Values.targetSystem "linux") .Values.datadog.securityAgent.compliance.enabled -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the runtime security features should be enabled.
 */}}
 {{- define "should-enable-runtime-security" -}}
@@ -887,7 +991,7 @@ Return true if the hostPid features should be enabled for the Agent pod.
 {{- define "should-enable-host-pid" -}}
 {{- if eq .Values.targetSystem "windows" -}}
 false
-{{- else if and (not .Values.providers.gke.gdc) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
+{{- else if and (not .Values.providers.gke.gdc) (or (eq  (include "should-enable-compliance" .) "true") (eq (include "should-enable-compliance-in-system-probe" .) "true") (eq (include "should-enable-host-profiler" .) "true") .Values.datadog.dogstatsd.useHostPID .Values.datadog.useHostPID (eq (include "should-enable-sbom-enrichment-usage" .) "true")) -}}
 true
 {{- else -}}
 false
@@ -1256,7 +1360,7 @@ Return Kubelet volumeMount
 Return true if the Cluster Agent needs a confd configmap
 */}}
 {{- define "need-cluster-agent-confd" -}}
-{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled) (.Values.clusterAgent.advancedConfd) (.Values.datadog.helmCheck.enabled) (eq (include "should-enable-kueue-check" .) "true") (.Values.datadog.collectEvents) (.Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus) (eq (include "orchestratorExplorer-add-custom-orchestrator-explorer-config" .) "true")) -}}
 true
 {{- else -}}
 false
@@ -1321,6 +1425,27 @@ true
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Enable jemalloc only when requested and the component's Agent image is 7.84+.
+*/}}
+{{- define "should-enable-jemalloc" -}}
+{{- $image := .image | default .Values.agents.image -}}
+{{- $versionContext := dict "Values" (dict "agents" (dict "image" $image)) -}}
+{{- if and .Values.datadog.jemalloc.enabled (or $image.doNotCheckTag (semverCompare ">=7.84.0-0" (include "get-agent-version" $versionContext))) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/* Environment variables for the jemalloc allocator. */}}
+{{- define "jemalloc-env" -}}
+- name: LD_PRELOAD
+  value: "/opt/lib/nosys.so /opt/datadog-agent/embedded/lib/libjemalloc.so"
+- name: MALLOC_CONF
+  value: "background_thread:true,dirty_decay_ms:5000"
 {{- end -}}
 
 {{/*
@@ -1494,7 +1619,7 @@ false
 Returns whether Remote Configuration should be enabled in the agent
 */}}
 {{- define "datadog-remoteConfiguration-enabled" -}}
-{{- if and (.Values.remoteConfiguration.enabled) (or (.Values.datadog.remoteConfiguration.enabled) (.Values.datadog.privateActionRunner.enabled)) (not .Values.providers.gke.gdc) -}}
+{{- if and (.Values.remoteConfiguration.enabled) (or (.Values.datadog.remoteConfiguration.enabled) (.Values.datadog.privateActionRunner.enabled) .Values.datadog.dataSecurity.enabled) (not .Values.providers.gke.gdc) -}}
 true
 {{- else -}}
 false
@@ -1505,7 +1630,85 @@ false
 Returns whether Remote Configuration should be enabled in the cluster agent
 */}}
 {{- define "clusterAgent-remoteConfiguration-enabled" -}}
-{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (and .Values.clusterAgent.admissionController.enabled .Values.datadog.apm.instrumentation.onDemand) .Values.clusterAgent.privateActionRunner.enabled (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
+{{- if and .Values.remoteConfiguration.enabled (or .Values.clusterAgent.admissionController.remoteInstrumentation.enabled (and .Values.clusterAgent.admissionController.enabled .Values.datadog.apm.instrumentation.onDemand) (eq (include "clusterAgent-privateActionRunner-enabled" .) "true") (((.Values.datadog.autoscaling).workload).enabled) .Values.datadog.kubernetesActions.enabled) (not .Values.providers.gke.gdc ) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether Kubernetes Actions should be delivered to the Cluster Agent through
+Remote Configuration (datadog.kubernetesActions.communication.remoteConfiguration.enabled).
+*/}}
+{{- define "kubernetesActions-rc-enabled" -}}
+{{- if and .Values.datadog.kubernetesActions.enabled (((.Values.datadog.kubernetesActions.communication).remoteConfiguration).enabled) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether the Cluster Agent supports the Kubernetes Actions feature (7.84.0 or greater).
+On older versions, datadog.kubernetesActions is ignored.
+*/}}
+{{- define "kubernetesActions-supported" -}}
+{{- $dcaImageTag := .Values.clusterAgent.image.tag | toString -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.84.0-0" $dcaImageTag) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether Kubernetes Actions should be delivered to the Cluster Agent through
+the Private Action Runner (datadog.kubernetesActions.communication.privateActionRunner.enabled).
+*/}}
+{{- define "kubernetesActions-par-enabled" -}}
+{{- if and .Values.datadog.kubernetesActions.enabled (((.Values.datadog.kubernetesActions.communication).privateActionRunner).enabled) (eq (include "kubernetesActions-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Validate Kubernetes Actions configuration
+*/}}
+{{- define "validate-kubernetes-actions-config" -}}
+{{- if .Values.datadog.kubernetesActions.enabled -}}
+{{- $rc := eq (include "kubernetesActions-rc-enabled" .) "true" -}}
+{{- if not (or $rc (((.Values.datadog.kubernetesActions.communication).privateActionRunner).enabled)) -}}
+{{- fail "Kubernetes Actions: at least one of datadog.kubernetesActions.communication.remoteConfiguration.enabled or datadog.kubernetesActions.communication.privateActionRunner.enabled must be true" }}
+{{- end -}}
+{{- if and (not $rc) (ne (include "kubernetesActions-channel-toggles-supported" .) "true") -}}
+{{- fail "Kubernetes Actions: datadog.kubernetesActions.communication.remoteConfiguration.enabled=false requires Cluster Agent 7.86.0 or greater" }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether the Cluster Agent understands the per-channel Kubernetes Actions settings
+(kubeactions.remote_config.enabled / kubeactions.private_action_runner.enabled), added in 7.86.0.
+*/}}
+{{- define "kubernetesActions-channel-toggles-supported" -}}
+{{- $dcaImageTag := .Values.clusterAgent.image.tag | toString -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.86.0-0" $dcaImageTag) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns whether the Cluster Agent Private Action Runner should be enabled, either
+explicitly (clusterAgent.privateActionRunner.enabled) or because Kubernetes Actions
+communicates through it (datadog.kubernetesActions.communication.privateActionRunner.enabled).
+*/}}
+{{- define "clusterAgent-privateActionRunner-enabled" -}}
+{{- if or .Values.clusterAgent.privateActionRunner.enabled (eq (include "kubernetesActions-par-enabled" .) "true") -}}
 true
 {{- else -}}
 false
@@ -1516,7 +1719,7 @@ false
 Validate Cluster Agent Private Action Runner configuration
 */}}
 {{- define "validate-private-action-runner-config" -}}
-{{- if .Values.clusterAgent.privateActionRunner.enabled -}}
+{{- if eq (include "clusterAgent-privateActionRunner-enabled" .) "true" -}}
 {{- if and .Values.clusterAgent.privateActionRunner.selfEnroll (not .Values.datadog.leaderElection) -}}
 {{- fail "Private Action Runner: selfEnroll requires leader election to be enabled. Please set datadog.leaderElection to true" }}
 {{- end -}}
@@ -1949,6 +2152,27 @@ Examples (assuming no overrides):
 {{- end -}}
 
 {{/*
+Whether the Trace Agent, Process Agent, Security Agent and System Probe take their
+configuration from the Agent. Rendered as the consumer's own environment variable and used to
+gate the settings mirrored onto the Agent container, so the chart's answer and the Agent's
+behaviour are one value rather than two that have to agree.
+The version floor is the Agent release that ships the namespaced per-container keys: enabling
+streaming without them drops each container's DD_LOG_LEVEL without a replacement.
+*/}}
+{{- define "configstream-enabled" -}}
+{{- include "configstream-env-conflict-check" . -}}
+{{- if kindIs "bool" .Values.datadog.configStream.enabled -}}
+{{ .Values.datadog.configStream.enabled }}
+{{- else if .Values.agents.image.doNotCheckTag -}}
+true
+{{- else if semverCompare ">=7.85.0-0" (include "get-agent-version" .) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if KSM node pod collection is supported
 */}}
 {{- define "ksm-pod-collection-on-node-supported" -}}
@@ -1960,6 +2184,151 @@ true
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the component running the kubernetes_state_core check supports the DRA
+(resource.k8s.io) collectors: the Cluster Checks Runner when
+datadog.kubeStateMetricsCore.useClusterCheckRunners is set, the Cluster Agent otherwise,
+7.85.0 or newer. Older versions fail the whole check on DRA collectors, so tags that are
+not versions fail closed unless doNotCheckTag is set.
+*/}}
+{{- define "ksm-dra-rbac-supported" -}}
+{{- $doNotCheckTag := .Values.clusterAgent.image.doNotCheckTag -}}
+{{- $version := include "get-cluster-agent-version" . -}}
+{{- if .Values.datadog.kubeStateMetricsCore.useClusterCheckRunners -}}
+{{- $doNotCheckTag = .Values.clusterChecksRunner.image.doNotCheckTag -}}
+{{- $version = include "get-cluster-checks-runner-version" . -}}
+{{- end -}}
+{{- $versionOK := $doNotCheckTag -}}
+{{- if and (not $versionOK) (regexMatch "^v?[0-9]+(\\.[0-9]+){0,2}(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$" $version) -}}
+{{- $versionOK = semverCompare ">=7.85.0-0" $version -}}
+{{- end -}}
+{{- if $versionOK -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Fail if DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED is set through env or envDict. A
+container's own env renders after the chart's, so such a value would win and leave the
+rendered spec streaming while the mirrored settings stay ungated.
+*/}}
+{{- define "configstream-env-conflict-check" -}}
+{{- $var := "DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED" -}}
+{{- $lists := dict "datadog.env" .Values.datadog.env -}}
+{{- $dicts := dict "datadog.envDict" .Values.datadog.envDict -}}
+{{- range $key := list "agent" "traceAgent" "processAgent" "securityAgent" "systemProbe" -}}
+{{- $container := index $.Values.agents.containers $key -}}
+{{- $_ := set $lists (printf "agents.containers.%s.env" $key) $container.env -}}
+{{- $_ := set $dicts (printf "agents.containers.%s.envDict" $key) $container.envDict -}}
+{{- end -}}
+{{- range $path, $entries := $lists -}}
+{{- range $entries -}}
+{{- if eq (default "" .name) $var -}}
+{{- fail (printf "%s sets %s. Use datadog.configStream.enabled instead, so the mirrored Agent settings stay in step with it." $path $var) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- range $path, $entries := $dicts -}}
+{{- if hasKey (default dict $entries) $var -}}
+{{- fail (printf "%s sets %s. Use datadog.configStream.enabled instead, so the mirrored Agent settings stay in step with it." $path $var) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+The consumer switch, rendered on every container that reads it and on the Agent container, so a
+streamed snapshot reports the value each container actually started with.
+*/}}
+{{- define "configstream-consumer-env" -}}
+- name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
+  value: {{ include "configstream-enabled" . | quote }}
+{{- end -}}
+
+{{/*
+Per-remote-agent log levels, set on the Agent container so the config stream carries them.
+*/}}
+{{- define "remote-agent-log-level-env" -}}
+{{- if eq (include "configstream-enabled" .) "true" }}
+{{- if .Values.agents.containers.securityAgent.logLevel }}
+- name: DD_SECURITY_AGENT_LOG_LEVEL
+  value: {{ .Values.agents.containers.securityAgent.logLevel | quote }}
+{{- end }}
+{{- if .Values.agents.containers.processAgent.logLevel }}
+- name: DD_PROCESS_CONFIG_LOG_LEVEL
+  value: {{ .Values.agents.containers.processAgent.logLevel | quote }}
+{{- end }}
+{{- if .Values.agents.containers.traceAgent.logLevel }}
+- name: DD_APM_LOG_LEVEL
+  value: {{ .Values.agents.containers.traceAgent.logLevel | quote }}
+{{- end }}
+{{- if .Values.agents.containers.systemProbe.logLevel }}
+- name: DD_SYSTEM_PROBE_LOG_LEVEL
+  value: {{ .Values.agents.containers.systemProbe.logLevel | quote }}
+{{- end }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Settings the chart renders only on a remote agent's container, mirrored onto the Agent
+container so config streaming carries them: the remote agents drop their own environment
+and take their configuration from the Agent. Values stay raw and the guards match the
+remote containers' verbatim, so nothing here changes what a remote agent computes.
+*/}}
+{{- define "remote-agent-hoisted-env" -}}
+{{- if eq (include "configstream-enabled" .) "true" }}
+{{- if eq (include "should-enable-compliance" .) "true" }}
+- name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+  value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
+- name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+- name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
+  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+{{- if .Values.datadog.securityAgent.compliance.containerInclude }}
+- name: DD_COMPLIANCE_CONFIG_CONTAINER_INCLUDE
+  value: {{ .Values.datadog.securityAgent.compliance.containerInclude | quote }}
+{{- end }}
+{{- if .Values.datadog.securityAgent.compliance.containerExclude }}
+- name: DD_COMPLIANCE_CONFIG_CONTAINER_EXCLUDE
+  value: {{ .Values.datadog.securityAgent.compliance.containerExclude | quote }}
+{{- end }}
+{{- end }}
+{{- if eq (include "should-enable-security-agent-cws-integration" .) "true" }}
+- name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
+  value: "/etc/datadog-agent/runtime-security.d"
+- name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
+  value: /var/run/sysprobe/runtime-security.sock
+- name: DD_RUNTIME_SECURITY_CONFIG_USE_SECRUNTIME_TRACK
+  value: {{ .Values.datadog.securityAgent.runtime.useSecruntimeTrack | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.connectionsMonitoring.enabled }}
+- name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
+  value: {{ .Values.datadog.networkPath.connectionsMonitoring.enabled | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.workers }}
+- name: DD_NETWORK_PATH_COLLECTOR_WORKERS
+  value: {{ .Values.datadog.networkPath.collector.workers | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestTTL }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_TTL
+  value: {{ .Values.datadog.networkPath.collector.pathtestTTL | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestInterval }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_INTERVAL
+  value: {{ .Values.datadog.networkPath.collector.pathtestInterval | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestContextsLimit }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_CONTEXTS_LIMIT
+  value: {{ .Values.datadog.networkPath.collector.pathtestContextsLimit | quote }}
+{{- end }}
+{{- if .Values.datadog.networkPath.collector.pathtestMaxPerMinute }}
+- name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_MAX_PER_MINUTE
+  value: {{ .Values.datadog.networkPath.collector.pathtestMaxPerMinute | quote }}
+{{- end }}
+{{- end }}
 {{- end -}}
 
 {{/*

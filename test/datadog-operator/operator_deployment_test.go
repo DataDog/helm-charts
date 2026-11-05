@@ -340,6 +340,38 @@ func Test_operator_chart(t *testing.T) {
 				assert.Equal(t, "true", eventsEnabled.Value)
 			},
 		},
+		{
+			name: "datadogBYOCCluster disabled by default renders no BYOC RBAC",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				assert.NotContains(t, manifest, "datadog-operator-byoc")
+				assert.NotContains(t, manifest, "-datadogBYOCClusterEnabled")
+			},
+		},
+		{
+			name: "datadogBYOCCluster enabled sets flag and renders BYOC RBAC",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"datadogBYOCCluster.enabled": "true",
+				},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				assert.Contains(t, manifest, "-datadogBYOCClusterEnabled=true")
+				assert.Contains(t, manifest, "name: datadog-operator-byoc")
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -506,6 +538,59 @@ func Test_operator_csi_driver_rbac(t *testing.T) {
 				"unexpected presence of write verbs on csidrivers")
 		})
 	}
+}
+
+func Test_operator_extended_daemonset_rbac(t *testing.T) {
+	tests := []struct {
+		name      string
+		overrides map[string]string
+		wantEDS   bool
+	}{
+		{
+			name:      "supportExtendedDaemonset disabled -- no EDS rules",
+			overrides: map[string]string{"supportExtendedDaemonset": "false", "image.tag": "1.30.0"},
+			wantEDS:   false,
+		},
+		{
+			name:      "supportExtendedDaemonset enabled on Operator 1.30.0 -- EDS rules present",
+			overrides: map[string]string{"supportExtendedDaemonset": "true", "image.tag": "1.30.0"},
+			wantEDS:   true,
+		},
+		{
+			name:      "supportExtendedDaemonset enabled on Operator 1.31.0 -- no EDS rules",
+			overrides: map[string]string{"supportExtendedDaemonset": "true", "image.tag": "1.31.0"},
+			wantEDS:   false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/clusterrole.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   tt.overrides,
+			})
+			assert.Nil(t, err, "couldn't render template")
+
+			var clusterRole rbacv1.ClusterRole
+			common.Unmarshal(t, manifest, &clusterRole)
+			assert.Equal(t, tt.wantEDS, hasDatadogRule(clusterRole.Rules, "extendeddaemonsets", "create", "delete", "get", "list", "patch", "update", "watch"),
+				"unexpected presence of extendeddaemonsets rule")
+			assert.Equal(t, tt.wantEDS, hasDatadogRule(clusterRole.Rules, "extendeddaemonsetreplicasets", "delete", "get", "list", "watch"),
+				"unexpected presence of extendeddaemonsetreplicasets rule")
+		})
+	}
+}
+
+func hasDatadogRule(rules []rbacv1.PolicyRule, resource string, verbs ...string) bool {
+	for _, rule := range rules {
+		if containsString(rule.APIGroups, "datadoghq.com") && containsString(rule.Resources, resource) && grantsAll(rule.Verbs, verbs) {
+			return true
+		}
+	}
+	return false
 }
 
 // coversClusterAgentCSIDriversGrant reports whether the rules cover the

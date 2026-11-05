@@ -1,5 +1,25 @@
 # Changelog
 
+## 2.25.0
+
+* Official image `2.25.0`
+
+## 2.24.1
+
+* Official image `2.24.1`
+
+## 2.24.0
+
+* Official image `2.24.0`
+
+## 2.23.2
+
+* Official image `2.23.2`
+
+## 2.23.1
+
+* Official image `2.23.1`
+
 ## 2.23.0
 
 * Official image `2.23.0`

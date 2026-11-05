@@ -102,11 +102,11 @@ func Test_baseline_manifests(t *testing.T) {
 		{
 			// New GKE Autopilot (>= 1.32.1-gke.1729000) exposes the
 			// WorkloadAllowlist / AllowlistSynchronizer CRDs. The chart installs
-			// the v1.1.0 and v1.1.1 allowlists (via
-			// gke_autopilot_allowlist_synchronizer.yaml). The v1.1.1 allowlist
-			// covers the `registry.k8s.io` CSI registrar image. The DaemonSet must
-			// carry the matching `cloud.google.com/matching-allowlist` label
-			// pointing at v1.1.1.
+			// the v1.1.0, v1.1.1 and v1.1.2 allowlists (via
+			// gke_autopilot_allowlist_synchronizer.yaml). The v1.1.2 allowlist
+			// covers the `registry.k8s.io` CSI registrar image and APM registry
+			// authentication. The DaemonSet must carry the matching
+			// `cloud.google.com/matching-allowlist` label pointing at v1.1.2.
 			name: "CSI Driver on GKE Autopilot (WorkloadAllowlist)",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-csi-driver",
@@ -126,7 +126,7 @@ func Test_baseline_manifests(t *testing.T) {
 		{
 			// Keep the currently available WorkloadAllowlist version until the new
 			// version is confirmed available in all GKE node versions, while also
-			// syncing the new version needed for the registry.k8s.io registrar image.
+			// syncing the new version needed for APM registry authentication.
 			name: "CSI Driver GKE Autopilot AllowlistSynchronizer",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-csi-driver",
@@ -177,9 +177,14 @@ func findCSIDriverEnvVar(env []corev1.EnvVar, name string) (corev1.EnvVar, bool)
 }
 
 func Test_csi_driver_registryAllowList_envVar_only_when_explicitly_configured(t *testing.T) {
+	allowList := map[string]string{
+		"global.apmRegistryAllowList[0]": "public.ecr.aws/datadog",
+		"global.apmRegistryAllowList[1]": "gcr.io/datadoghq",
+	}
 	tests := []struct {
 		name        string
 		overrides   map[string]string
+		extraArgs   []string
 		wantPresent bool
 		wantValue   string
 	}{
@@ -189,10 +194,27 @@ func Test_csi_driver_registryAllowList_envVar_only_when_explicitly_configured(t 
 			wantPresent: false,
 		},
 		{
-			name: "explicit allow list - env var is set",
-			overrides: map[string]string{
-				"global.apmRegistryAllowList[0]": "public.ecr.aws/datadog",
-				"global.apmRegistryAllowList[1]": "gcr.io/datadoghq",
+			name:        "explicit allow list - env var is set",
+			overrides:   allowList,
+			wantPresent: true,
+			wantValue:   "public.ecr.aws/datadog,gcr.io/datadoghq",
+		},
+		{
+			name:      "legacy GKE Autopilot - env var is not set",
+			overrides: allowList,
+			extraArgs: []string{
+				"--api-versions=allowlistedv2workloads.auto.gke.io/v1/AllowlistedV2Workload",
+				"--kube-version=1.31.0-gke.0",
+			},
+			wantPresent: false,
+		},
+		{
+			name:      "GKE Autopilot with WorkloadAllowlist - env var is set",
+			overrides: allowList,
+			extraArgs: []string{
+				"--api-versions=auto.gke.io/v1/AllowlistSynchronizer",
+				"--api-versions=auto.gke.io/v1/WorkloadAllowlist",
+				"--kube-version=1.32.1-gke.1729000",
 			},
 			wantPresent: true,
 			wantValue:   "public.ecr.aws/datadog,gcr.io/datadoghq",
@@ -207,6 +229,7 @@ func Test_csi_driver_registryAllowList_envVar_only_when_explicitly_configured(t 
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog-csi-driver/values.yaml"},
 				Overrides:   tt.overrides,
+				ExtraArgs:   tt.extraArgs,
 			})
 			require.NoError(t, err, "failed to render chart")
 
@@ -280,7 +303,7 @@ func Test_csi_driver_registryAuth_envVar(t *testing.T) {
 				"--api-versions=auto.gke.io/v1/WorkloadAllowlist",
 				"--kube-version=1.32.1-gke.1729000",
 			},
-			wantPresent: false,
+			wantPresent: true,
 		},
 	}
 

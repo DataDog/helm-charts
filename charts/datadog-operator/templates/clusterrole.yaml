@@ -6,6 +6,7 @@ metadata:
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
 rules:
+{{- /* BEGIN AUTO-GENERATED RULES: regenerated from upstream config/rbac/role.yaml by scripts/update-clusterrole.py */}}
 - nonResourceURLs:
   - /metrics
   - /metrics/slis
@@ -446,6 +447,17 @@ rules:
   - list
   - watch
 - apiGroups:
+  - kueue.x-k8s.io
+  resources:
+  - clusterqueues
+  - localqueues
+  - resourceflavors
+  - workloads
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - kustomize.toolkit.fluxcd.io
   resources:
   - kustomizations
@@ -645,6 +657,7 @@ rules:
   verbs:
   - list
   - watch
+{{- /* END AUTO-GENERATED RULES: hand-maintained rules go below */}}
 {{- if .Values.datadogAgentInternal.enabled }}
 - apiGroups:
   - datadoghq.com
@@ -809,6 +822,29 @@ rules:
   - csidrivers
   verbs:
   - get
+{{- end }}
+{{- if and (eq (toString .Values.supportExtendedDaemonset) "true") (semverCompare "<1.31.0-0" (include "check-image-tag" .)) }}
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - extendeddaemonsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - extendeddaemonsetreplicasets
+  verbs:
+  - delete
+  - get
+  - list
+  - watch
 {{- end }}
 {{- if .Values.clusterRole.allowReadAllResources }}
 - apiGroups:

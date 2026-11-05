@@ -6,7 +6,7 @@ metadata:
   name: datadog-csi-driver-node-server
   namespace: datadog-agent
   labels:
-    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.1.1"
+    cloud.google.com/matching-allowlist: "datadog-datadog-csi-driver-daemonset-exemption-v1.1.2"
 spec:
   updateStrategy:
     rollingUpdate:
@@ -64,6 +64,8 @@ spec:
             # no updated exemption is published for it in that mode.
             - name: DD_APM_ENABLED
               value: "true"
+            # Registry authentication variables are skipped when APM is disabled
+            # because the credentials are not used.
         - name: csi-node-driver-registrar
           image: "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.0.1"
           imagePullPolicy: IfNotPresent

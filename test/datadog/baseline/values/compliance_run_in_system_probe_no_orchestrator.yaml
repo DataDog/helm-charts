@@ -1,0 +1,9 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  orchestratorExplorer:
+    enabled: false
+  securityAgent:
+    compliance:
+      enabled: true
+      runInSystemProbe: true
