@@ -17,7 +17,7 @@
             "disable": {
               "type": "boolean",
               "default": false,
-              "description": "Disable jemalloc for the Linux node core Agent, trace-agent, process-agent, security-agent, system-probe, and enabled Cluster Check Runners by overriding LD_PRELOAD. Jemalloc is enabled by default in Agent 7.87.0+ images."
+              "description": "Disable jemalloc for the Linux node core Agent, trace-agent, process-agent, security-agent, system-probe, and enabled Cluster Check Runners by overriding LD_PRELOAD. Jemalloc is enabled by default in Agent 7.87.0+ images. Not supported on GKE Autopilot."
             }
           }
         },

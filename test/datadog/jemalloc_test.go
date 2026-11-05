@@ -172,23 +172,36 @@ func TestJemallocOverrides(t *testing.T) {
 
 func TestJemallocGKE(t *testing.T) {
 	for _, tc := range []struct {
-		name, provider, forceRender string
+		name, provider, forceRender, disable string
+		wantError                            bool
 	}{
-		{"legacy Autopilot", "providers.gke.autopilot", "false"},
-		{"WorkloadAllowlist Autopilot", "providers.gke.autopilot", "true"},
-		{"GDC", "providers.gke.gdc", "false"},
+		{"legacy Autopilot disable", "providers.gke.autopilot", "false", "true", true},
+		{"WorkloadAllowlist Autopilot disable", "providers.gke.autopilot", "true", "true", true},
+		{"legacy Autopilot default", "providers.gke.autopilot", "false", "", false},
+		{"WorkloadAllowlist Autopilot default", "providers.gke.autopilot", "true", "", false},
+		{"legacy Autopilot false", "providers.gke.autopilot", "false", "false", false},
+		{"WorkloadAllowlist Autopilot false", "providers.gke.autopilot", "true", "false", false},
+		{"GDC", "providers.gke.gdc", "false", "true", false},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
+			values := map[string]string{
+				"datadog.apiKeyExistingSecret":      "datadog-secret",
+				"agents.image.tag":                  "7.87.0",
+				tc.provider:                         "true",
+				"datadog.envDict.HELM_FORCE_RENDER": tc.forceRender,
+			}
+			if tc.disable != "" {
+				values["datadog.jemalloc.disable"] = tc.disable
+			}
 			manifest, err := common.RenderChart(t, common.HelmCommand{
 				ReleaseName: "datadog", ChartPath: "../../charts/datadog", ShowOnly: []string{"templates/daemonset.yaml"},
-				Overrides: map[string]string{
-					"datadog.apiKeyExistingSecret":      "datadog-secret",
-					"agents.image.tag":                  "7.87.0",
-					tc.provider:                         "true",
-					"datadog.jemalloc.disable":          "true",
-					"datadog.envDict.HELM_FORCE_RENDER": tc.forceRender,
-				},
+				Overrides: values,
 			})
+			if tc.wantError {
+				require.ErrorContains(t, err, "Disabling jemalloc via LD_PRELOAD is not supported on GKE Autopilot")
+				assert.ErrorContains(t, err, "Set 'datadog.jemalloc.disable' to 'false'")
+				return
+			}
 			require.NoError(t, err)
 			var ds appsv1.DaemonSet
 			common.Unmarshal(t, manifest, &ds)
@@ -196,8 +209,12 @@ func TestJemallocGKE(t *testing.T) {
 			for _, c := range ds.Spec.Template.Spec.Containers {
 				if c.Name == "agent" || c.Name == "trace-agent" || c.Name == "system-probe" {
 					env := allocatorEnv(c)
-					assert.Equal(t, jemallocDisabledPreload, env["LD_PRELOAD"].Value, c.Name)
-					assert.NotContains(t, env, "MALLOC_CONF", c.Name)
+					if tc.disable == "true" {
+						assert.Equal(t, jemallocDisabledPreload, env["LD_PRELOAD"].Value, c.Name)
+						assert.NotContains(t, env, "MALLOC_CONF", c.Name)
+					} else {
+						assert.Empty(t, env, c.Name)
+					}
 				}
 			}
 			if tc.forceRender == "true" {
