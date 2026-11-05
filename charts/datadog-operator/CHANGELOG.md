@@ -8,23 +8,6 @@
 
 * Temporarily revert the `2.32.0-dev.1` to `2.32.0-dev.5` changes, returning to Operator 1.31.2, so `2.32.0` can be released ahead of Operator 1.32. They will be re-applied after `2.32.0` ([#3053](https://github.com/DataDog/helm-charts/pull/3053)).
 
-## 2.32.0-dev.5
-
-* Only pass `-datadogBYOCClusterEnabled` to the operator when `datadogBYOCCluster.enabled` is true, avoiding an args change on upgrade.
-* Remove duplicate `kueue.x-k8s.io` rule from the Operator ClusterRole.
-
-## 2.32.0-dev.3
-
-* Update Datadog Operator chart for 1.32.0-rc.2.
-
-## 2.32.0-dev.2
-
-* [datadog-operator] Add opt-in DatadogBYOCCluster controller and RBAC ([#3030](https://github.com/DataDog/helm-charts/pull/3030)).
-
-## 2.32.0-dev.1
-
-* Update Datadog Operator chart for 1.32.0-rc.1.
-
 ## 2.31.0
 
 * Update Datadog Operator chart for 1.31.2.
