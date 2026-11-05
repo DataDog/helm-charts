@@ -1,6 +1,4 @@
 datadog:
-  configStream:
-    enabled: true
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
   # Runtime security, compliance and network monitoring bring up the Security Agent, System Probe
