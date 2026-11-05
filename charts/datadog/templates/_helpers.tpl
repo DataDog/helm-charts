@@ -1976,6 +1976,39 @@ false
 {{- end -}}
 
 {{/*
+  Returns the process passwd mount path: /host/etc/passwd for Agent 7.86.0+, otherwise /etc/passwd.
+*/}}
+{{- define "process-passwd-mount-path" -}}
+{{- if .Values.agents.image.doNotCheckTag -}}
+{{- /* The tag is not a version, so keep the mount every Agent supports. */ -}}
+/etc/passwd
+{{- else if .Values.agents.image.digest -}}
+{{- /* A digest does not identify the Agent version. */ -}}
+/etc/passwd
+{{- else if and .Values.providers.gke.autopilot (ne (include "gke-autopilot-workloadallowlists-enabled" .) "true") -}}
+{{- /* Legacy Autopilot admission (AllowlistedV2Workload) only allows /etc/passwd. */ -}}
+/etc/passwd
+{{- else if semverCompare ">=7.86.0-0" (include "get-agent-version" .) -}}
+{{- /* -0 includes 7.86.0+ prereleases (RC/devel), matching the chart's other Agent feature guards. */ -}}
+/host/etc/passwd
+{{- else -}}
+/etc/passwd
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns the volume name for the process passwd mount. GKE Warden matches volumeMounts by name,
+  so the relocated mount needs its own volume rather than a second passwd mount path.
+*/}}
+{{- define "process-passwd-volume-name" -}}
+{{- if eq (include "process-passwd-mount-path" .) "/host/etc/passwd" -}}
+host-passwd
+{{- else -}}
+passwd
+{{- end -}}
+{{- end -}}
+
+{{/*
   Returns true if the host file /etc/group should be mounted, else return false.
 */}}
 {{- define "should-add-host-path-for-etc-group" -}}
