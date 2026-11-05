@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.267.1
+
+* Update `fips.image.tag` to `1.1.33` fixing CVEs and updating packages.
+
 ## 3.267.0
 
 * Add `datadog.kaiScheduler.enabled` to enable KAI Scheduler PodGroup collection in the Cluster Agent, which tags pods with their KAI workload and queue, and grant the Cluster Agent `list` and `watch` on KAI PodGroups (requires Agent and Cluster Agent 7.86.0+). With `datadog.gpuMonitoring.enabled`, it also maps KAI fractional GPUs to the containers using them.
