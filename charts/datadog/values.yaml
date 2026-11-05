@@ -609,8 +609,8 @@ datadog:
 
     ## Those containers then drop their own environment and take their configuration from the Agent,
     ## so any DD_* variable meant for them must be set on the Agent container.
-    ## Unset follows the Agent version: enabled from 7.85.0 onwards.
-    enabled:  # nil
+    ## Disabled by default. Set to true to enable config streaming explicitly.
+    enabled: false
 
   privateActionRunner:
     # datadog.privateActionRunner.enabled -- Enable the Private Action Runner on the node agent to execute workflow actions

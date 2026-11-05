@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.268.0](https://img.shields.io/badge/Version-3.268.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.268.1](https://img.shields.io/badge/Version-3.268.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -810,7 +810,7 @@ helm install <RELEASE_NAME> \
 | datadog.clusterTagger.collectKubernetesTags | bool | `false` | Enables Kubernetes resources tags collection. |
 | datadog.collectEvents | bool | `true` | Enables this to start event collection from the kubernetes API |
 | datadog.confd | object | `{}` | Provide additional check configurations (static and Autodiscovery) |
-| datadog.configStream.enabled | string | `nil` | Stream configuration from the Agent to the Trace Agent, Process Agent, Security Agent and System Probe |
+| datadog.configStream.enabled | bool | `false` | Stream configuration from the Agent to the Trace Agent, Process Agent, Security Agent and System Probe |
 | datadog.containerExclude | string | `nil` | Exclude containers from Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeLogs | string | `nil` | Exclude logs from Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeMetrics | string | `nil` | Exclude metrics from Agent Autodiscovery, as a space-separated list |

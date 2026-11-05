@@ -1,4 +1,6 @@
 datadog:
+  configStream:
+    enabled: true
   apiKeyExistingSecret: datadog-secret
   appKeyExistingSecret: datadog-secret
   networkMonitoring:
@@ -15,5 +17,4 @@ datadog:
 
 agents:
   image:
-    # Above the floor, so the mirrored settings render.
     tag: 7.85.0
