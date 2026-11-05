@@ -1927,7 +1927,10 @@ false
 {{- end }}
 {{- if or .Values.datadog.systemProbe.osReleasePath .Values.datadog.osReleasePath .Values.datadog.sbom.host.enabled -}}
 {{- if .Values.providers.gke.autopilot -}}
-{{- if and (eq (include "should-enable-system-probe" . ) "true" ) (eq (include "gke-autopilot-workloadallowlists-enabled" . ) "true") -}}
+{{- /* The relocated passwd creates /host/etc, so the Agent sets HOST_ETC=/host/etc and needs os-release there too. */ -}}
+{{- $relocatedPasswd := and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (eq (include "process-passwd-mount-path" .) "/host/etc/passwd") -}}
+{{- $needsHostEtc := or (eq (include "should-enable-system-probe" . ) "true" ) $relocatedPasswd -}}
+{{- if and $needsHostEtc (eq (include "gke-autopilot-workloadallowlists-enabled" . ) "true") -}}
 true
 {{- else -}}
 false

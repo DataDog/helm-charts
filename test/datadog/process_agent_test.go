@@ -849,3 +849,77 @@ func getEnvVarMap(envVars []corev1.EnvVar) map[string]string {
 	}
 	return envVarMap
 }
+
+// The relocated passwd creates /host/etc, so the Agent sets HOST_ETC=/host/etc. On Autopilot
+// os-release is otherwise only mounted with system-probe, so it must follow the relocated passwd.
+func TestProcessPasswdAddsOSReleaseOnAutopilot(t *testing.T) {
+	tests := []struct {
+		name              string
+		tag               string
+		overrides         map[string]string
+		expectedOSRelease bool
+	}{
+		{
+			name:              "relocated passwd without system-probe",
+			tag:               "7.86.0",
+			expectedOSRelease: true,
+		},
+		{
+			name:              "legacy passwd without system-probe",
+			tag:               "7.85.0",
+			expectedOSRelease: false,
+		},
+		{
+			name:              "passwd mount disabled",
+			tag:               "7.86.0",
+			overrides:         map[string]string{"datadog.disablePasswdMount": "true"},
+			expectedOSRelease: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			overrides := map[string]string{
+				"agents.image.tag":                       tt.tag,
+				"datadog.apiKeyExistingSecret":           "datadog-secret",
+				"datadog.processAgent.processCollection": "true",
+				"datadog.discovery.enabled":              "false",
+				"providers.gke.autopilot":                "true",
+				"datadog.envDict.HELM_FORCE_RENDER":      "true",
+			}
+			for key, value := range tt.overrides {
+				overrides[key] = value
+			}
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Overrides:   overrides,
+			})
+			require.NoError(t, err)
+			var ds appsv1.DaemonSet
+			common.Unmarshal(t, manifest, &ds)
+
+			container, found := getContainer(t, ds.Spec.Template.Spec.Containers, "agent")
+			require.True(t, found)
+			_, hasSystemProbe := getContainer(t, ds.Spec.Template.Spec.Containers, "system-probe")
+			require.False(t, hasSystemProbe, "case must not rely on system-probe's os-release mount")
+
+			hasMount := false
+			for _, mount := range container.VolumeMounts {
+				if mount.Name == "os-release-file" {
+					hasMount = true
+					assert.Equal(t, "/host/etc/os-release", mount.MountPath)
+					assert.True(t, mount.ReadOnly)
+				}
+			}
+			hasVolume := false
+			for _, volume := range ds.Spec.Template.Spec.Volumes {
+				if volume.Name == "os-release-file" {
+					hasVolume = true
+				}
+			}
+			assert.Equal(t, tt.expectedOSRelease, hasMount, "os-release mount")
+			assert.Equal(t, tt.expectedOSRelease, hasVolume, "os-release volume")
+		})
+	}
+}
