@@ -1293,6 +1293,9 @@ datadog:
     connectionsMonitoring:
       # datadog.networkPath.connectionsMonitoring.enabled -- Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled.
       enabled: false
+    remoteConfig:
+      # datadog.networkPath.remoteConfig.enabled -- Enable creating Network Path tests from the Datadog UI (Preview). Datadog delivers the tests to the Agent through Remote Configuration. Requires `remoteConfiguration.enabled`, the `traceroute` system-probe module (`datadog.traceroute.enabled`), and a stable Datadog Agent 7.83.2 or newer. For a verified compatible prerelease or custom image, set `agents.image.doNotCheckTag=true`.
+      enabled: false
     collector:
       # datadog.networkPath.collector.filters -- Custom ordered filters for dynamic Network Path tests. Each filter can include or exclude destinations using `match_domain` (wildcard by default, or regex with `match_domain_strategy: regex`) or `match_ip` (IP or CIDR). The last matching filter takes precedence. Requires a stable Datadog Agent 7.83.2 or newer. For a verified compatible prerelease or custom image, set `agents.image.doNotCheckTag=true`.
       filters: []

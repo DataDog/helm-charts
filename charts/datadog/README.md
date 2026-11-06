@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.269.1](https://img.shields.io/badge/Version-3.269.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.270.0](https://img.shields.io/badge/Version-3.270.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -935,6 +935,7 @@ helm install <RELEASE_NAME> \
 | datadog.networkPath.collector.pathtestTTL | string | `nil` | Override TTL in minutes for pathtests |
 | datadog.networkPath.collector.workers | string | `nil` | Override the number of workers |
 | datadog.networkPath.connectionsMonitoring.enabled | bool | `false` | Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled. |
+| datadog.networkPath.remoteConfig.enabled | bool | `false` | Enable creating Network Path tests from the Datadog UI (Preview). Datadog delivers the tests to the Agent through Remote Configuration. Requires `remoteConfiguration.enabled`, the `traceroute` system-probe module (`datadog.traceroute.enabled`), and a stable Datadog Agent 7.83.2 or newer. For a verified compatible prerelease or custom image, set `agents.image.doNotCheckTag=true`. |
 | datadog.networkPolicy.cilium.dnsSelector | object | kube-dns in namespace kube-system | Cilium selector of the DNS server entity |
 | datadog.networkPolicy.create | bool | `false` | If true, create NetworkPolicy for all the components |
 | datadog.networkPolicy.flavor | string | `"kubernetes"` | Flavor of the network policy to use. Can be: * kubernetes for networking.k8s.io/v1/NetworkPolicy * cilium     for cilium.io/v2/CiliumNetworkPolicy |
