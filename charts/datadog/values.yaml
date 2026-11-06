@@ -1421,6 +1421,15 @@ datadog:
         # access tracking, and sets `hostPID: true` on the agent pod. Requires Agent 7.79.0+.
         enabled: false
 
+        # datadog.sbom.enrichment.usage.enrichmentInterval -- Minimum time between two accesses to the same package
+        # for the access to trigger a new forwarding of the enriched SBOM. Accepts a Go duration string (e.g. `30m`).
+        # Leave empty to use the Agent default.
+        enrichmentInterval: ""
+
+        # datadog.sbom.enrichment.usage.forwardInterval -- Interval at which enriched SBOMs are forwarded, at most once per
+        # container. Accepts a Go duration string (e.g. `1m`). Leave empty to use the Agent default.
+        forwardInterval: ""
+
   # Data Security configuration
   dataSecurity:
     # datadog.dataSecurity.enabled -- Enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer.

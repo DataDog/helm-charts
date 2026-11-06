@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.270.0
+
+* Add `datadog.sbom.enrichment.usage.enrichmentInterval` and `datadog.sbom.enrichment.usage.forwardInterval` to override how often SBOMs enriched with runtime usage information are updated and forwarded. When set, they are passed to the `system-probe` container as `DD_RUNTIME_SECURITY_CONFIG_SBOM_ENRICHMENT_INTERVAL` and `DD_RUNTIME_SECURITY_CONFIG_SBOM_FORWARD_INTERVAL` if `datadog.sbom.enrichment.usage.enabled` is `true`. Both are empty by default, so the Agent defaults apply.
+
 ## 3.269.1
 
 * Disable config streaming by default to restore per-container Agent environment settings. Set `datadog.configStream.enabled: true` to opt in explicitly.
