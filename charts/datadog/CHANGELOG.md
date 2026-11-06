@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.270.0
+
+* Add `datadog.networkPath.remoteConfig.enabled` to let the Agent receive Network Path tests created in the Datadog UI (Preview) through Remote Configuration. It sets `DD_NETWORK_PATH_REMOTE_CONFIG_ENABLED` on the Agent, Process Agent and System Probe containers. Requires a stable Datadog Agent 7.83.2 or newer.
+
 ## 3.269.1
 
 * Disable config streaming by default to restore per-container Agent environment settings. Set `datadog.configStream.enabled: true` to opt in explicitly.
