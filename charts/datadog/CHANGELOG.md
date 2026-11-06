@@ -2,7 +2,7 @@
 
 ## 3.270.0
 
-* Add `datadog.sbom.enrichment.usage.enrichmentInterval` (default `30m`) and `datadog.sbom.enrichment.usage.forwardInterval` (default `1m`), set on the `system-probe` container as `DD_RUNTIME_SECURITY_CONFIG_SBOM_ENRICHMENT_INTERVAL` and `DD_RUNTIME_SECURITY_CONFIG_SBOM_FORWARD_INTERVAL` when `datadog.sbom.enrichment.usage.enabled` is `true`. These defaults reduce how often SBOMs enriched with runtime usage information are updated and forwarded. Set either value to an empty string to use the Agent default.
+* Add `datadog.sbom.enrichment.usage.enrichmentInterval` and `datadog.sbom.enrichment.usage.forwardInterval` to override how often SBOMs enriched with runtime usage information are updated and forwarded. When set, they are passed to the `system-probe` container as `DD_RUNTIME_SECURITY_CONFIG_SBOM_ENRICHMENT_INTERVAL` and `DD_RUNTIME_SECURITY_CONFIG_SBOM_FORWARD_INTERVAL` if `datadog.sbom.enrichment.usage.enabled` is `true`. Both are empty by default, so the Agent defaults apply.
 
 ## 3.269.1
 

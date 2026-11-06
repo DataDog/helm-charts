@@ -1422,13 +1422,13 @@ datadog:
         enabled: false
 
         # datadog.sbom.enrichment.usage.enrichmentInterval -- Minimum time between two accesses to the same package
-        # for the access to trigger a new forwarding of the enriched SBOM. Accepts a Go duration string. Set to an
-        # empty string to use the Agent default.
-        enrichmentInterval: 30m
+        # for the access to trigger a new forwarding of the enriched SBOM. Accepts a Go duration string (e.g. `30m`).
+        # Leave empty to use the Agent default.
+        enrichmentInterval: ""
 
         # datadog.sbom.enrichment.usage.forwardInterval -- Interval at which enriched SBOMs are forwarded, at most once per
-        # container. Accepts a Go duration string. Set to an empty string to use the Agent default.
-        forwardInterval: 1m
+        # container. Accepts a Go duration string (e.g. `1m`). Leave empty to use the Agent default.
+        forwardInterval: ""
 
   # Data Security configuration
   dataSecurity:
