@@ -5,7 +5,7 @@ agents:
 clusterAgent:
   enabled: false
 datadog:
-  apiKey: "f0000000000000000000000000000000"
+  apiKey: "00000000000000000000000000000000"
   site: "datadog.eu"
   dd_url: "api.datadog.eu"
   clusterName: "my-cluster"

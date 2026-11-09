@@ -1,8 +1,8 @@
 targetSystem: "linux"
 fullnameOverride: "my-gw"
 datadog:
-  apiKey: "f0000000000000000000000000000000"
-  appKey: "f000000000000000000000000000000000000000"
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
   kubelet:
     tlsVerify: false
   env:
@@ -74,7 +74,7 @@ otelAgentGateway:
     exporters:
       datadog:
         api:
-          key: "f0000000000000000000000000000000"
+          key: "00000000000000000000000000000000"
     service:
       pipelines:
         traces:

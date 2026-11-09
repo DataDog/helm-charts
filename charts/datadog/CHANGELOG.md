@@ -2,7 +2,7 @@
 
 ## 3.269.2
 
-* Fix the `agent-otel-collector-logs-values.yaml` CI values file so its `filelog` receivers set `include`, which newer OTel Agent versions require ([#3057](https://github.com/DataDog/helm-charts/pull/3057)).
+* Fix OTel CI values files: set `include` on the `filelog` receivers in `agent-otel-collector-logs-values.yaml`, which newer OTel Agent versions require, and use the all-zeros fake API key, which the Agent skips validating, so the Agent becomes ready during `install-chart` ([#3057](https://github.com/DataDog/helm-charts/pull/3057)).
 
 ## 3.269.1
 
