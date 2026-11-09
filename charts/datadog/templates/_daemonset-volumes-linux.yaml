@@ -9,6 +9,10 @@
 - name: private-action-runner-run
   emptyDir: {}
 {{- end }}
+{{- if eq (include "should-enable-private-action-runner-packet-capture" .) "true" }}
+- name: sysprobe-capture-socket-dir
+  emptyDir: {}
+{{- end }}
 {{- if or
   .Values.datadog.confd
   .Values.datadog.autoconf
