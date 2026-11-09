@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.269.2
+
+* Fix the `agent-otel-collector-logs-values.yaml` CI values file so its `filelog` receivers set `include`, which newer OTel Agent versions require ([#3057](https://github.com/DataDog/helm-charts/pull/3057)).
+
 ## 3.269.1
 
 * Disable config streaming by default to restore per-container Agent environment settings. Set `datadog.configStream.enabled: true` to opt in explicitly.
