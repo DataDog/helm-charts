@@ -1,7 +1,9 @@
 targetSystem: "linux"
 datadog:
-  apiKey: "00000000000000000000000000000000"
-  appKey: "0000000000000000000000000000000000000000"
+  # Keep a non-numeric key: the collector reads it through ${env:DD_API_KEY} and would
+  # parse an all-digits key as an int, failing to load the datadog exporter config.
+  apiKey: "f0000000000000000000000000000000"
+  appKey: "f000000000000000000000000000000000000000"
   kubelet:
     tlsVerify: false
   env:

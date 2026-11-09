@@ -5,7 +5,9 @@ agents:
 clusterAgent:
   enabled: false
 datadog:
-  apiKey: "00000000000000000000000000000000"
+  # Keep a non-numeric key: the collector reads it through ${env:DD_API_KEY} and would
+  # parse an all-digits key as an int, failing to load the datadog exporter config.
+  apiKey: "f0000000000000000000000000000000"
   site: "datadog.eu"
   dd_url: "api.datadog.eu"
   clusterName: "my-cluster"
