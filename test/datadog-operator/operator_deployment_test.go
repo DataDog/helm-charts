@@ -146,6 +146,22 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
+			name: "defaultDataPlaneEnabled linux env override is not duplicated",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"site":         "ap1.datadoghq.com",
+					"env[0].name":  "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED",
+					"env[0].value": "false",
+				},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("false"),
+			skipTest:   SkipTest,
+		},
+		{
 			name: "Rendering all does not fail",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
@@ -483,10 +499,13 @@ func verifyDefaultDataPlaneLinuxEnabled(expected string) func(t *testing.T, mani
 		var deployment appsv1.Deployment
 		common.Unmarshal(t, manifest, &deployment)
 		operatorContainer := deployment.Spec.Template.Spec.Containers[0]
-		env := FindEnvVarByName(operatorContainer.Env, "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED")
-		if assert.NotNil(t, env) {
-			assert.Equal(t, expected, env.Value)
+		var values []string
+		for _, env := range operatorContainer.Env {
+			if env.Name == "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED" {
+				values = append(values, env.Value)
+			}
 		}
+		assert.Equal(t, []string{expected}, values)
 	}
 }
 
