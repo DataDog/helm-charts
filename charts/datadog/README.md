@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.268.0](https://img.shields.io/badge/Version-3.268.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.269.1](https://img.shields.io/badge/Version-3.269.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -810,7 +810,7 @@ helm install <RELEASE_NAME> \
 | datadog.clusterTagger.collectKubernetesTags | bool | `false` | Enables Kubernetes resources tags collection. |
 | datadog.collectEvents | bool | `true` | Enables this to start event collection from the kubernetes API |
 | datadog.confd | object | `{}` | Provide additional check configurations (static and Autodiscovery) |
-| datadog.configStream.enabled | string | `nil` | Stream configuration from the Agent to the Trace Agent, Process Agent, Security Agent and System Probe |
+| datadog.configStream.enabled | bool | `false` | Stream configuration from the Agent to the Trace Agent, Process Agent, Security Agent and System Probe |
 | datadog.containerExclude | string | `nil` | Exclude containers from Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeLogs | string | `nil` | Exclude logs from Agent Autodiscovery, as a space-separated list |
 | datadog.containerExcludeMetrics | string | `nil` | Exclude metrics from Agent Autodiscovery, as a space-separated list |
@@ -977,6 +977,7 @@ helm install <RELEASE_NAME> \
 | datadog.privateActionRunner.apiKeyOnlyEnrollment | bool | `false` | Enroll using only the API key, without requiring an app key |
 | datadog.privateActionRunner.enabled | bool | `false` | Enable the Private Action Runner on the node agent to execute workflow actions |
 | datadog.privateActionRunner.identityFromExistingSecret | string | `nil` | Use existing Secret which stores the Private Action Runner URN and private key # The secret should contain 'urn' and 'private_key' keys # If set, this parameter takes precedence over "urn" and "privateKey" |
+| datadog.privateActionRunner.packetCapture.enabled | bool | `false` | Enable remote packet capture through the node Private Action Runner. Requires `datadog.privateActionRunner.enabled` and Agent 7.86.0+, Linux only. Runs the System Probe and exposes to the runner a socket that serves only packet capture, never the full System Probe socket. Captures see the node's traffic only when agents.useHostNetwork is true; otherwise they see only the Agent pod's own network namespace. Add "com.datadoghq.remoteaction.pcap.runCapture" to datadog.privateActionRunner.actionsAllowlist to let workflows run captures; the chart does not add it. |
 | datadog.privateActionRunner.privateKey | string | `nil` | Private key for the Private Action Runner (required if selfEnroll is false) # This key is used to authenticate the runner with Datadog |
 | datadog.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a local file. Requires leader election to be enabled. |
 | datadog.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |

@@ -2086,7 +2086,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
-              value: "true"
+              value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
@@ -2099,14 +2099,6 @@ spec:
               value: "true"
             - name: DD_LOG_LEVEL
               value: info
-            - name: DD_SECURITY_AGENT_LOG_LEVEL
-              value: debug
-            - name: DD_PROCESS_CONFIG_LOG_LEVEL
-              value: warn
-            - name: DD_APM_LOG_LEVEL
-              value: trace
-            - name: DD_SYSTEM_PROBE_LOG_LEVEL
-              value: error
             - name: DD_DOGSTATSD_PORT
               value: "8125"
             - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
@@ -2173,12 +2165,6 @@ spec:
               value: "true"
             - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
               value: "false"
-            - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR
-              value: /etc/datadog-agent/runtime-security.d
-            - name: DD_RUNTIME_SECURITY_CONFIG_SOCKET
-              value: /var/run/sysprobe/runtime-security.sock
-            - name: DD_RUNTIME_SECURITY_CONFIG_USE_SECRUNTIME_TRACK
-              value: "true"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
@@ -2312,7 +2298,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
-              value: "true"
+              value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -2428,7 +2414,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
-              value: "true"
+              value: "false"
             - name: DD_LOG_LEVEL
               value: error
             - name: HOST_ROOT
@@ -2582,7 +2568,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
-              value: "true"
+              value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
