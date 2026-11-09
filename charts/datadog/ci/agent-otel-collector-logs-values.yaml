@@ -18,7 +18,11 @@ datadog:
             grpc:
               endpoint: "localhost:5317"
         filelog:
+          include:
+            - /var/log/pods/*/*/*.log
         filelog/datadog:
+          include:
+            - /var/log/pods/*/*/*.log
       exporters:
         datadog:
           api:
