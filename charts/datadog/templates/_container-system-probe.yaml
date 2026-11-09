@@ -72,6 +72,10 @@
     - name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
       value: {{ .Values.datadog.networkPath.connectionsMonitoring.enabled | quote }}
     {{- end }}
+    {{- if .Values.datadog.networkPath.remoteConfig.enabled }}
+    - name: DD_NETWORK_PATH_REMOTE_CONFIG_ENABLED
+      value: {{ .Values.datadog.networkPath.remoteConfig.enabled | quote }}
+    {{- end }}
     {{- if .Values.datadog.networkPath.collector.filters }}
     - name: DD_NETWORK_PATH_COLLECTOR_FILTERS
       value: {{ .Values.datadog.networkPath.collector.filters | toJson | quote }}

@@ -35,6 +35,14 @@
         "networkPath": {
           "type": "object",
           "properties": {
+            "remoteConfig": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                }
+              }
+            },
             "collector": {
               "type": "object",
               "properties": {

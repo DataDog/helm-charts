@@ -502,6 +502,7 @@ datadog.networkPath.collector.pathtestMaxPerMinute: ""
 datadog.networkPath.collector.pathtestTTL: ""
 datadog.networkPath.collector.workers: ""
 datadog.networkPath.connectionsMonitoring.enabled: ""
+datadog.networkPath.remoteConfig.enabled: ""
 datadog.networkPolicy.cilium.dnsSelector.toEndpoints: ""
 datadog.networkPolicy.create: spec.global.networkPolicy.create
 datadog.networkPolicy.flavor: spec.global.networkPolicy.flavor

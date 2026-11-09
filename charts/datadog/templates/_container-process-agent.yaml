@@ -71,6 +71,10 @@
     - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_MAX_PER_MINUTE
       value: {{ .Values.datadog.networkPath.collector.pathtestMaxPerMinute | quote }}
     {{- end }}
+    {{- if .Values.datadog.networkPath.remoteConfig.enabled }}
+    - name: DD_NETWORK_PATH_REMOTE_CONFIG_ENABLED
+      value: {{ .Values.datadog.networkPath.remoteConfig.enabled | quote }}
+    {{- end }}
     {{- if .Values.datadog.networkPath.collector.filters }}
     - name: DD_NETWORK_PATH_COLLECTOR_FILTERS
       value: {{ .Values.datadog.networkPath.collector.filters | toJson | quote }}
