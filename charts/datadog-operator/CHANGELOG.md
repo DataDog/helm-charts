@@ -11,7 +11,7 @@ Re-applies the `2.32.0-dev.*` changes that were reverted to release `2.32.0` on 
 
 ## 2.32.0
 
-* feat(datadog-operator): enable Linux ADP default for the AP1 site (`ap1.datadoghq.com`) via `defaultDataPlaneEnabled.linux: "auto"`. Set to `true` to enable for all sites or `false` to disable ([#2879](https://github.com/DataDog/helm-charts/pull/2879)).
+* feat(datadog-operator): enable Linux ADP default for the AP1 and AP2 sites (`ap1.datadoghq.com`, `ap2.datadoghq.com`) via `defaultDataPlaneEnabled.linux: "auto"`. Set to `true` to enable for all sites or `false` to disable ([#2879](https://github.com/DataDog/helm-charts/pull/2879)).
 
 ## 2.31.0
 

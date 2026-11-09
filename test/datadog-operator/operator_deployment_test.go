@@ -73,7 +73,36 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "defaultDataPlaneEnabled linux auto on non-AP1 site renders false",
+			name: "defaultDataPlaneEnabled linux auto on AP2 renders true",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"site": "ap2.datadoghq.com",
+				},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("true"),
+			skipTest:   SkipTest,
+		},
+		{
+			name: "defaultDataPlaneEnabled linux false renders false on AP2",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"site":                          "ap2.datadoghq.com",
+					"defaultDataPlaneEnabled.linux": "false",
+				},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("false"),
+			skipTest:   SkipTest,
+		},
+		{
+			name: "defaultDataPlaneEnabled linux auto on non-AP1/AP2 site renders false",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",

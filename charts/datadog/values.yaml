@@ -609,8 +609,8 @@ datadog:
 
     ## Those containers then drop their own environment and take their configuration from the Agent,
     ## so any DD_* variable meant for them must be set on the Agent container.
-    ## Unset follows the Agent version: enabled from 7.85.0 onwards.
-    enabled:  # nil
+    ## Disabled by default. Set to true to enable config streaming explicitly.
+    enabled: false
 
   privateActionRunner:
     # datadog.privateActionRunner.enabled -- Enable the Private Action Runner on the node agent to execute workflow actions
@@ -641,6 +641,14 @@ datadog:
 
     # datadog.privateActionRunner.apiKeyOnlyEnrollment -- Enroll using only the API key, without requiring an app key
     apiKeyOnlyEnrollment: false
+
+    packetCapture:
+      # datadog.privateActionRunner.packetCapture.enabled -- Enable remote packet capture through the node Private Action Runner. Requires `datadog.privateActionRunner.enabled` and Agent 7.86.0+, Linux only.
+      # Runs the System Probe and exposes to the runner a socket that serves only packet capture, never the full
+      # System Probe socket. Captures see the node's traffic only when agents.useHostNetwork is true; otherwise they
+      # see only the Agent pod's own network namespace. Add "com.datadoghq.remoteaction.pcap.runCapture" to
+      # datadog.privateActionRunner.actionsAllowlist to let workflows run captures; the chart does not add it.
+      enabled: false
 
   ## Enable logs agent and provide custom configs
   logs:

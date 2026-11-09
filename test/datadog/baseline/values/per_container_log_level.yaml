@@ -9,7 +9,6 @@ datadog:
 
 agents:
   image:
-    # Above the floor, so the mirrored per-agent log levels render.
     tag: 7.85.0
 
   containers:
