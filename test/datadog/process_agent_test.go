@@ -439,6 +439,7 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			overrides:      map[string]string{"datadog.networkMonitoring.enabled": "true"},
 			expectedMounts: map[string][]string{"agent": {host}, "process-agent": {host}},
 		},
+		// GKE Autopilot keeps /etc/passwd until a published WorkloadAllowlist permits /host/etc/passwd.
 		{
 			name:           "autopilot legacy",
 			tag:            "7.86.0",
@@ -452,15 +453,13 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 				"providers.gke.autopilot":           "true",
 				"datadog.envDict.HELM_FORCE_RENDER": "true",
 			},
-			expectedMounts: expectedCoreHost,
+			expectedMounts: expectedCoreLegacy,
 		},
 		{
-			name: "autopilot workload allowlist old Agent",
-			tag:  "7.85.0",
-			overrides: map[string]string{
-				"providers.gke.autopilot":           "true",
-				"datadog.envDict.HELM_FORCE_RENDER": "true",
-			},
+			name:           "autopilot workload allowlist detected",
+			tag:            "7.86.0",
+			overrides:      map[string]string{"providers.gke.autopilot": "true"},
+			extraArgs:      append([]string{"--kube-version", "v1.33.0"}, gkeCRDArgs...),
 			expectedMounts: expectedCoreLegacy,
 		},
 		{
@@ -471,42 +470,6 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			expectedMounts: map[string][]string{"process-agent": {legacy}},
 		},
 		{
-			name:           "autopilot workload allowlist detected",
-			tag:            "7.86.0",
-			overrides:      map[string]string{"providers.gke.autopilot": "true"},
-			extraArgs:      append([]string{"--kube-version", "v1.33.0"}, gkeCRDArgs...),
-			expectedMounts: expectedCoreHost,
-		},
-		// Helm --kube-version strips GKE build suffixes, so use distinct patch versions.
-		{
-			name:           "autopilot workload allowlist supported GKE patch",
-			tag:            "7.86.0",
-			overrides:      map[string]string{"providers.gke.autopilot": "true"},
-			extraArgs:      append([]string{"--kube-version", "v1.32.1"}, gkeCRDArgs...),
-			expectedMounts: expectedCoreHost,
-		},
-		{
-			name:           "autopilot before workload allowlist minimum GKE patch",
-			tag:            "7.86.0",
-			overrides:      map[string]string{"providers.gke.autopilot": "true"},
-			extraArgs:      append([]string{"--kube-version", "v1.32.0"}, gkeCRDArgs...),
-			expectedMounts: expectedCoreLegacy,
-		},
-		{
-			name:           "autopilot missing WorkloadAllowlist CRD",
-			tag:            "7.86.0",
-			overrides:      map[string]string{"providers.gke.autopilot": "true"},
-			extraArgs:      []string{"--kube-version", "v1.33.0", "--api-versions", "auto.gke.io/v1/AllowlistSynchronizer"},
-			expectedMounts: expectedCoreLegacy,
-		},
-		{
-			name:           "autopilot missing AllowlistSynchronizer CRD",
-			tag:            "7.86.0",
-			overrides:      map[string]string{"providers.gke.autopilot": "true"},
-			extraArgs:      []string{"--kube-version", "v1.33.0", "--api-versions", "auto.gke.io/v1/WorkloadAllowlist"},
-			expectedMounts: expectedCoreLegacy,
-		},
-		{
 			name: "autopilot core and network process sidecar",
 			tag:  "7.86.0",
 			overrides: map[string]string{
@@ -514,7 +477,7 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 				"datadog.envDict.HELM_FORCE_RENDER": "true",
 				"datadog.networkMonitoring.enabled": "true",
 			},
-			expectedMounts: map[string][]string{"agent": {host}, "process-agent": {host}},
+			expectedMounts: map[string][]string{"agent": {legacy}, "process-agent": {legacy}},
 		},
 		// CWS remains unsupported on Autopilot; force rendering only to check the unchanged security mount.
 		{
@@ -526,7 +489,7 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 				"datadog.securityAgent.runtime.enabled":                   "true",
 				"datadog.securityAgent.runtime.directSendFromSystemProbe": "true",
 			},
-			expectedMounts: map[string][]string{"agent": {host}, "system-probe": {legacy}},
+			expectedMounts: map[string][]string{"agent": {legacy}, "system-probe": {legacy}},
 		},
 		{
 			name:           "GDC exclusion",
@@ -848,78 +811,4 @@ func getEnvVarMap(envVars []corev1.EnvVar) map[string]string {
 		envVarMap[envVar.Name] = envVar.Value
 	}
 	return envVarMap
-}
-
-// The relocated passwd creates /host/etc, so the Agent sets HOST_ETC=/host/etc. On Autopilot
-// os-release is otherwise only mounted with system-probe, so it must follow the relocated passwd.
-func TestProcessPasswdAddsOSReleaseOnAutopilot(t *testing.T) {
-	tests := []struct {
-		name              string
-		tag               string
-		overrides         map[string]string
-		expectedOSRelease bool
-	}{
-		{
-			name:              "relocated passwd without system-probe",
-			tag:               "7.86.0",
-			expectedOSRelease: true,
-		},
-		{
-			name:              "legacy passwd without system-probe",
-			tag:               "7.85.0",
-			expectedOSRelease: false,
-		},
-		{
-			name:              "passwd mount disabled",
-			tag:               "7.86.0",
-			overrides:         map[string]string{"datadog.disablePasswdMount": "true"},
-			expectedOSRelease: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			overrides := map[string]string{
-				"agents.image.tag":                       tt.tag,
-				"datadog.apiKeyExistingSecret":           "datadog-secret",
-				"datadog.processAgent.processCollection": "true",
-				"datadog.discovery.enabled":              "false",
-				"providers.gke.autopilot":                "true",
-				"datadog.envDict.HELM_FORCE_RENDER":      "true",
-			}
-			for key, value := range tt.overrides {
-				overrides[key] = value
-			}
-			manifest, err := common.RenderChart(t, common.HelmCommand{
-				ReleaseName: "datadog",
-				ChartPath:   "../../charts/datadog",
-				ShowOnly:    []string{"templates/daemonset.yaml"},
-				Overrides:   overrides,
-			})
-			require.NoError(t, err)
-			var ds appsv1.DaemonSet
-			common.Unmarshal(t, manifest, &ds)
-
-			container, found := getContainer(t, ds.Spec.Template.Spec.Containers, "agent")
-			require.True(t, found)
-			_, hasSystemProbe := getContainer(t, ds.Spec.Template.Spec.Containers, "system-probe")
-			require.False(t, hasSystemProbe, "case must not rely on system-probe's os-release mount")
-
-			hasMount := false
-			for _, mount := range container.VolumeMounts {
-				if mount.Name == "os-release-file" {
-					hasMount = true
-					assert.Equal(t, "/host/etc/os-release", mount.MountPath)
-					assert.True(t, mount.ReadOnly)
-				}
-			}
-			hasVolume := false
-			for _, volume := range ds.Spec.Template.Spec.Volumes {
-				if volume.Name == "os-release-file" {
-					hasVolume = true
-				}
-			}
-			assert.Equal(t, tt.expectedOSRelease, hasMount, "os-release mount")
-			assert.Equal(t, tt.expectedOSRelease, hasVolume, "os-release volume")
-		})
-	}
 }

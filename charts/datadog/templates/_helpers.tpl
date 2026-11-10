@@ -1929,9 +1929,6 @@ false
 {{- if .Values.providers.gke.autopilot -}}
 {{- if and (eq (include "should-enable-system-probe" . ) "true" ) (eq (include "gke-autopilot-workloadallowlists-enabled" . ) "true") -}}
 true
-{{- else if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (eq (include "process-passwd-mount-path" .) "/host/etc/passwd") -}}
-{{- /* Mounting /host/etc/passwd makes the Agent read all host files from /host/etc (HOST_ETC), so os-release must be there too. Only happens in WorkloadAllowlist mode. */ -}}
-true
 {{- else -}}
 false
 {{- end -}}
@@ -1988,8 +1985,8 @@ false
 {{- else if .Values.agents.image.digest -}}
 {{- /* A digest does not identify the Agent version. */ -}}
 /etc/passwd
-{{- else if and .Values.providers.gke.autopilot (ne (include "gke-autopilot-workloadallowlists-enabled" .) "true") -}}
-{{- /* Legacy Autopilot admission (AllowlistedV2Workload) only allows /etc/passwd. */ -}}
+{{- else if .Values.providers.gke.autopilot -}}
+{{- /* GKE Autopilot keeps /etc/passwd until a published WorkloadAllowlist permits /host/etc/passwd. */ -}}
 /etc/passwd
 {{- else if semverCompare ">=7.86.0-0" (include "get-agent-version" .) -}}
 {{- /* -0 includes 7.86.0+ prereleases (RC/devel), matching the chart's other Agent feature guards. */ -}}

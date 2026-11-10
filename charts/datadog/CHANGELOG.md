@@ -2,7 +2,7 @@
 
 ## 3.267.1
 
-* Mount host passwd read-only at `/host/etc/passwd` from a dedicated `host-passwd` volume in eligible process containers for Agent >= 7.86.0, including 7.86.0+ prereleases. Older or unknown images, digest-pinned images, `agents.image.doNotCheckTag`, and legacy GKE Autopilot admission keep `/etc/passwd`, and security mounts are unchanged. GKE Autopilot in WorkloadAllowlist mode requires allowlist v1.0.8, which is added to the AllowlistSynchronizer. On GKE Autopilot without system-probe, host `/etc/os-release` is also mounted with the relocated passwd, because the Agent then reads host files from `/host/etc`. Gohai username lookup remains a known limitation; see the README's process passwd mounts section.
+* Mount host passwd read-only at `/host/etc/passwd` from a dedicated `host-passwd` volume in eligible process containers for Agent >= 7.86.0, including 7.86.0+ prereleases. Older or unknown images, digest-pinned images, `agents.image.doNotCheckTag`, and GKE Autopilot keep `/etc/passwd`, and security mounts are unchanged. Autopilot support follows once a WorkloadAllowlist permitting `/host/etc/passwd` is published. Gohai username lookup remains a known limitation; see the README's process passwd mounts section.
 
 ## 3.267.0
 
