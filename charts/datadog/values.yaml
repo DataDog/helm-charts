@@ -650,6 +650,11 @@ datadog:
       # datadog.privateActionRunner.actionsAllowlist to let workflows run captures; the chart does not add it.
       enabled: false
 
+    # datadog.privateActionRunner.splitEnabled -- Run the Private Action Runner on-demand in supported Agent configurations
+    ## Only takes effect on non-FIPS Agents 7.84.0 and newer. Unsupported Agents fall back to the monolithic PAR.
+    # @ignored
+    splitEnabled: true
+
   ## Enable logs agent and provide custom configs
   logs:
     # datadog.logs.enabled -- Enables this to activate Datadog Agent log collection
