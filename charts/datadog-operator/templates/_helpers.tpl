@@ -178,3 +178,18 @@ Check operator image tag version.
 {{ "1.32.0-rc.2" }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Return "true" or "false" for DD_DEFAULT_DATA_PLANE_LINUX_ENABLED.
+"auto" was the 2.32.0 default; keep accepting it as an alias for true.
+*/}}
+{{- define "default-data-plane-linux-enabled" -}}
+{{- $mode := toString .Values.defaultDataPlaneEnabled.linux -}}
+{{- if eq $mode "auto" -}}
+true
+{{- else if or (eq $mode "true") (eq $mode "false") -}}
+{{- $mode -}}
+{{- else -}}
+{{- fail (printf "defaultDataPlaneEnabled.linux must be true or false; got %q" $mode) -}}
+{{- end -}}
+{{- end -}}
