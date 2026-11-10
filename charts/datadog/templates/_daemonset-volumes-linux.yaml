@@ -191,6 +191,7 @@
     path: /etc/passwd
   name: passwd
 {{- if eq (include "process-passwd-volume-name" .) "host-passwd" }}
+{{- /* Separate volume because GKE Autopilot matches allowlisted mounts by name (see process-passwd-volume-name). */}}
 - hostPath:
     path: /etc/passwd
   name: host-passwd

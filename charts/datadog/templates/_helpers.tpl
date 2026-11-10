@@ -2036,8 +2036,9 @@ false
 {{- end -}}
 
 {{/*
-  Returns the volume name for the process passwd mount. GKE Warden matches volumeMounts by name,
-  so the relocated mount needs its own volume rather than a second passwd mount path.
+  Returns the volume name for the process passwd mount. Kubernetes allows mounting one volume at two
+  paths, but GKE Autopilot's Warden matches allowlisted volumeMounts by name, so /host/etc/passwd needs
+  its own host-passwd volume. Other clusters use the same name so each name always maps to one path.
 */}}
 {{- define "process-passwd-volume-name" -}}
 {{- if eq (include "process-passwd-mount-path" .) "/host/etc/passwd" -}}
