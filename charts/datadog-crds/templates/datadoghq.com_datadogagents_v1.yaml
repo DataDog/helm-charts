@@ -393,6 +393,11 @@ spec:
                           type: object
                         registry:
                           type: string
+                        registryAllowList:
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
                         serviceName:
                           type: string
                         validation:
@@ -455,6 +460,8 @@ spec:
                               additionalProperties:
                                 type: string
                               type: object
+                            onDemand:
+                              type: boolean
                             targets:
                               items:
                                 properties:
@@ -976,6 +983,11 @@ spec:
                             type: object
                           type: array
                           x-kubernetes-list-type: atomic
+                        collectionMode:
+                          enum:
+                            - poll
+                            - watch
+                          type: string
                         unbundleEvents:
                           type: boolean
                       type: object
@@ -1043,6 +1055,22 @@ spec:
                         valuesAsTags:
                           additionalProperties:
                             type: string
+                          type: object
+                      type: object
+                    hostProfiler:
+                      properties:
+                        enabled:
+                          type: boolean
+                        runAsRoot:
+                          type: boolean
+                        seLinuxType:
+                          type: string
+                        seccomp:
+                          properties:
+                            enabled:
+                              type: boolean
+                            loggingEnabled:
+                              type: boolean
                           type: object
                       type: object
                     kubeStateMetricsCore:
@@ -1203,11 +1231,75 @@ spec:
                             - default
                             - node_kubelet
                           type: string
+                        shardingEnabled:
+                          type: boolean
                       type: object
                     kubernetesActions:
                       properties:
+                        communication:
+                          properties:
+                            privateActionRunner:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
+                            remoteConfiguration:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
+                          type: object
                         enabled:
                           type: boolean
+                      type: object
+                    kueue:
+                      properties:
+                        collectWorkloadEvents:
+                          type: boolean
+                        conf:
+                          properties:
+                            configData:
+                              type: string
+                            configMap:
+                              properties:
+                                items:
+                                  items:
+                                    properties:
+                                      key:
+                                        type: string
+                                      mode:
+                                        format: int32
+                                        type: integer
+                                      path:
+                                        type: string
+                                      user:
+                                        format: int64
+                                        type: integer
+                                    required:
+                                      - key
+                                      - path
+                                    type: object
+                                  type: array
+                                  x-kubernetes-list-map-keys:
+                                    - key
+                                  x-kubernetes-list-type: map
+                                name:
+                                  type: string
+                              type: object
+                          type: object
+                        enabled:
+                          type: boolean
+                        metricsService:
+                          properties:
+                            name:
+                              maxLength: 63
+                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                              type: string
+                            namespace:
+                              maxLength: 63
+                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                              type: string
+                          type: object
                       type: object
                     liveContainerCollection:
                       properties:
@@ -1617,6 +1709,25 @@ spec:
                           type: boolean
                         enabled:
                           type: boolean
+                        image:
+                          properties:
+                            name:
+                              type: string
+                            pullPolicy:
+                              type: string
+                            pullSecrets:
+                              items:
+                                properties:
+                                  name:
+                                    default: ""
+                                    type: string
+                                type: object
+                                x-kubernetes-map-type: atomic
+                              type: array
+                              x-kubernetes-list-type: atomic
+                            tag:
+                              type: string
+                          type: object
                         nodeAffinity:
                           properties:
                             preferredDuringSchedulingIgnoredDuringExecution:
@@ -4712,8 +4823,30 @@ spec:
                   x-kubernetes-list-map-keys:
                     - type
                   x-kubernetes-list-type: map
+                currentRevision:
+                  type: string
+                currentRevisionObservedAnnotationsHash:
+                  pattern: ^[a-f0-9]{64}$
+                  type: string
+                currentRevisionObservedGeneration:
+                  format: int64
+                  minimum: 0
+                  type: integer
                 experiment:
                   properties:
+                    checkpoint:
+                      properties:
+                        expectedSpecHash:
+                          pattern: ^[a-f0-9]{64}$
+                          type: string
+                        rollbackTargetRevision:
+                          maxLength: 253
+                          minLength: 1
+                          type: string
+                      required:
+                        - expectedSpecHash
+                        - rollbackTargetRevision
+                      type: object
                     id:
                       type: string
                     phase:
@@ -4729,6 +4862,12 @@ spec:
                       format: date-time
                       type: string
                     terminationReason:
+                      enum:
+                        - stopped
+                        - timed_out
+                        - manual_spec_change
+                        - baseline_missing
+                        - baseline_not_found
                       type: string
                   type: object
                 otelAgentGateway:
@@ -5099,6 +5238,11 @@ spec:
                               type: object
                             registry:
                               type: string
+                            registryAllowList:
+                              items:
+                                type: string
+                              type: array
+                              x-kubernetes-list-type: set
                             serviceName:
                               type: string
                             validation:
@@ -5161,6 +5305,8 @@ spec:
                                   additionalProperties:
                                     type: string
                                   type: object
+                                onDemand:
+                                  type: boolean
                                 targets:
                                   items:
                                     properties:
@@ -5682,6 +5828,11 @@ spec:
                                 type: object
                               type: array
                               x-kubernetes-list-type: atomic
+                            collectionMode:
+                              enum:
+                                - poll
+                                - watch
+                              type: string
                             unbundleEvents:
                               type: boolean
                           type: object
@@ -5749,6 +5900,22 @@ spec:
                             valuesAsTags:
                               additionalProperties:
                                 type: string
+                              type: object
+                          type: object
+                        hostProfiler:
+                          properties:
+                            enabled:
+                              type: boolean
+                            runAsRoot:
+                              type: boolean
+                            seLinuxType:
+                              type: string
+                            seccomp:
+                              properties:
+                                enabled:
+                                  type: boolean
+                                loggingEnabled:
+                                  type: boolean
                               type: object
                           type: object
                         kubeStateMetricsCore:
@@ -5909,11 +6076,75 @@ spec:
                                 - default
                                 - node_kubelet
                               type: string
+                            shardingEnabled:
+                              type: boolean
                           type: object
                         kubernetesActions:
                           properties:
+                            communication:
+                              properties:
+                                privateActionRunner:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
+                                remoteConfiguration:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
+                              type: object
                             enabled:
                               type: boolean
+                          type: object
+                        kueue:
+                          properties:
+                            collectWorkloadEvents:
+                              type: boolean
+                            conf:
+                              properties:
+                                configData:
+                                  type: string
+                                configMap:
+                                  properties:
+                                    items:
+                                      items:
+                                        properties:
+                                          key:
+                                            type: string
+                                          mode:
+                                            format: int32
+                                            type: integer
+                                          path:
+                                            type: string
+                                          user:
+                                            format: int64
+                                            type: integer
+                                        required:
+                                          - key
+                                          - path
+                                        type: object
+                                      type: array
+                                      x-kubernetes-list-map-keys:
+                                        - key
+                                      x-kubernetes-list-type: map
+                                    name:
+                                      type: string
+                                  type: object
+                              type: object
+                            enabled:
+                              type: boolean
+                            metricsService:
+                              properties:
+                                name:
+                                  maxLength: 63
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                  type: string
+                                namespace:
+                                  maxLength: 63
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                  type: string
+                              type: object
                           type: object
                         liveContainerCollection:
                           properties:

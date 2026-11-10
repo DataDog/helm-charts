@@ -1,5 +1,38 @@
 # Changelog
 
+## 2.33.0-dev.1
+
+Re-applies the `2.32.0-dev.*` changes that were reverted to release `2.32.0` on Operator 1.31.2:
+
+* Update Datadog Operator chart for 1.32.0-rc.2.
+* Only pass `-datadogBYOCClusterEnabled` to the operator when `datadogBYOCCluster.enabled` is true, avoiding an args change on upgrade.
+* Remove duplicate `kueue.x-k8s.io` rule from the Operator ClusterRole.
+* [datadog-operator] Add opt-in DatadogBYOCCluster controller and RBAC ([#3030](https://github.com/DataDog/helm-charts/pull/3030)).
+
+## 2.32.0
+
+* feat(datadog-operator): enable Linux ADP default for the AP1 and AP2 sites (`ap1.datadoghq.com`, `ap2.datadoghq.com`) via `defaultDataPlaneEnabled.linux: "auto"`. Set to `true` to enable for all sites or `false` to disable ([#2879](https://github.com/DataDog/helm-charts/pull/2879)).
+
+## 2.32.0-dev.6
+
+* Temporarily revert the `2.32.0-dev.1` to `2.32.0-dev.5` changes, returning to Operator 1.31.2, so `2.32.0` can be released ahead of Operator 1.32. They will be re-applied after `2.32.0` ([#3053](https://github.com/DataDog/helm-charts/pull/3053)).
+
+## 2.31.0
+
+* Update Datadog Operator chart for 1.31.2.
+
+## 2.31.0-dev.2
+
+* Update Datadog Operator chart for 1.31.2-rc.2.
+
+## 2.31.0-dev.1
+
+* Update Datadog Operator chart for 1.31.2-rc.1.
+
+## 2.30.0
+
+* Update Datadog Operator chart for 1.31.1.
+
 ## 2.29.0
 
 * [datadog-operator] Add Kueue RBAC to the Operator ClusterRole ([#2976](https://github.com/DataDog/helm-charts/pull/2976)).

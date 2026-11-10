@@ -57,6 +57,10 @@ registry:  # gcr.io/datadoghq
 registryMigrationMode: "auto"
 
 datadog:
+  jemalloc:
+    # datadog.jemalloc.disable -- Disable jemalloc for the Linux node core Agent, trace-agent, process-agent, security-agent, system-probe, and enabled Cluster Check Runners by overriding LD_PRELOAD. Jemalloc is enabled by default in Agent 7.87.0+ images. Not supported on GKE Autopilot.
+    disable: false
+
   # datadog.apiKey -- Your Datadog API key
 
   ## ref: https://app.datadoghq.com/account/settings#agent/kubernetes
@@ -175,9 +179,25 @@ datadog:
     create: false
 
   kubeStateMetricsCore:
-    # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+)
+    # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+). To collect Dynamic Resource Allocation (DRA) metrics, override `kubernetes_state_core.yaml` in `clusterAgent.confd` with the default collectors plus `resourceclaims`, `resourceslices` and `devicetaintrules` (Requires Cluster Agent 7.85.0+, or Cluster Checks Runner 7.85.0+ with useClusterCheckRunners; older versions fail the whole check on clusters serving the DRA API). With useClusterCheckRunners, the override must also set `cluster_check: true` and, on each instance, `skip_leader_election: true`. The chart adds the resource.k8s.io RBAC for 7.85.0+.
 
     ## ref: https://docs.datadoghq.com/integrations/kubernetes_state_core
+    ## To enable DRA collection, copy the generated kubernetes_state_core.yaml.default from the
+    ## <release>-cluster-agent-confd ConfigMap into clusterAgent.confd as kubernetes_state_core.yaml
+    ## and append the DRA collectors (Kubernetes 1.34+; devicetaintrules needs the DeviceTaintRule API,
+    ## stable in Kubernetes 1.37, earlier behind a feature gate):
+    ##   clusterAgent:
+    ##     confd:
+    ##       kubernetes_state_core.yaml: |-
+    ##         # cluster_check: true          # required with useClusterCheckRunners
+    ##         init_config:
+    ##         instances:
+    ##           - collectors:
+    ##             # ... default collectors ...
+    ##             - resourceclaims
+    ##             - resourceslices
+    ##             - devicetaintrules
+    ##             # skip_leader_election: true # required with useClusterCheckRunners
     enabled: true
 
     rbac:
@@ -586,6 +606,14 @@ datadog:
     # DEPRECATED: Consider using remoteConfiguration.enabled instead
     enabled: true
 
+  configStream:
+    # datadog.configStream.enabled -- Stream configuration from the Agent to the Trace Agent, Process Agent, Security Agent and System Probe
+
+    ## Those containers then drop their own environment and take their configuration from the Agent,
+    ## so any DD_* variable meant for them must be set on the Agent container.
+    ## Disabled by default. Set to true to enable config streaming explicitly.
+    enabled: false
+
   privateActionRunner:
     # datadog.privateActionRunner.enabled -- Enable the Private Action Runner on the node agent to execute workflow actions
     enabled: false
@@ -615,6 +643,14 @@ datadog:
 
     # datadog.privateActionRunner.apiKeyOnlyEnrollment -- Enroll using only the API key, without requiring an app key
     apiKeyOnlyEnrollment: false
+
+    packetCapture:
+      # datadog.privateActionRunner.packetCapture.enabled -- Enable remote packet capture through the node Private Action Runner. Requires `datadog.privateActionRunner.enabled` and Agent 7.86.0+, Linux only.
+      # Runs the System Probe and exposes to the runner a socket that serves only packet capture, never the full
+      # System Probe socket. Captures see the node's traffic only when agents.useHostNetwork is true; otherwise they
+      # see only the Agent pod's own network namespace. Add "com.datadoghq.remoteaction.pcap.runCapture" to
+      # datadog.privateActionRunner.actionsAllowlist to let workflows run captures; the chart does not add it.
+      enabled: false
 
   ## Enable logs agent and provide custom configs
   logs:
@@ -738,7 +774,7 @@ datadog:
         enabled: true
 
       # datadog.apm.instrumentation.injectionMode -- The injection mode to use for libraries injection.
-      # Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver), "image_volume" (experimental, requires Cluster Agent 7.77.0+)
+      # Valid values are: "auto", "init_container", "csi" (requires Cluster Agent 7.76.0+ and Datadog CSI Driver), "image_volume" (experimental, requires Cluster Agent 7.77.0+)
       # Empty by default so the Cluster Agent can apply its own defaults.
       injectionMode: ""
 
@@ -1185,8 +1221,24 @@ datadog:
   kubernetesActions:
     # datadog.kubernetesActions.enabled -- Set this to true to enable the Kubernetes Actions feature on the Cluster Agent.
     # This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog
-    # Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.79.0 or greater.
+    # Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.84.0 or greater.
     enabled: false
+
+    ## Channels the Cluster Agent uses to receive Kubernetes actions from Datadog. At least one must be true;
+    ## both can be enabled at the same time.
+    communication:
+      remoteConfiguration:
+        # datadog.kubernetesActions.communication.remoteConfiguration.enabled -- Receive Kubernetes actions through Remote Configuration.
+        # Setting this to false requires Cluster Agent version 7.86.0 or greater.
+        enabled: true
+
+      privateActionRunner:
+        # datadog.kubernetesActions.communication.privateActionRunner.enabled -- Receive Kubernetes actions through the Cluster Agent
+        # Private Action Runner. When true, the Cluster Agent Private Action Runner is enabled automatically using the
+        # clusterAgent.privateActionRunner settings (self-enrollment by default, which requires datadog.leaderElection). When false on
+        # Cluster Agent 7.86.0 or greater, Kubernetes actions are not allowed in the Private Action Runner even if it is enabled for
+        # other workflows.
+        enabled: true
 
     helmActions:
       # datadog.kubernetesActions.helmActions.enabled -- Set this to true to enable Helm actions as part of the
@@ -1209,6 +1261,27 @@ datadog:
     # This requires datadog.HelmCheck.enabled to be set to true
     valuesAsTags: {}
       #   <HELM_VALUE>: <LABEL_NAME>
+
+  kaiScheduler:
+    # datadog.kaiScheduler.enabled -- Enable KAI Scheduler PodGroup collection in the Cluster Agent, to tag pods with their KAI workload and queue (Requires Agent and Cluster Agent 7.86.0+)
+    # With datadog.gpuMonitoring.enabled, it also maps KAI fractional GPUs to the containers using them.
+    enabled: false
+
+  kueue:
+    # datadog.kueue.enabled -- Enable Kueue metadata collection in the Cluster Agent and the Kueue check (Requires Agent and Cluster Agent 7.82.0+. Kueue with more than one replica requires Agent 7.86.0+)
+    # The Kueue check runs as an endpoints check against each Kueue controller pod, so it requires
+    # datadog.clusterChecks.enabled and a node Agent scheduled on the Kueue controller nodes.
+    enabled: false
+
+    # datadog.kueue.collectWorkloadEvents -- Collect Kueue Workload lifecycle events. Grants the node Agent read access to Kueue Workloads
+    collectWorkloadEvents: true
+
+    metricsService:
+      # datadog.kueue.metricsService.name -- Name of the Service exposing the Kueue controller metrics
+      name: kueue-controller-manager-metrics-service
+
+      # datadog.kueue.metricsService.namespace -- Namespace of the Service exposing the Kueue controller metrics
+      namespace: kueue-system
 
   networkMonitoring:
     # datadog.networkMonitoring.enabled -- Enable Cloud Network Monitoring
@@ -1268,8 +1341,8 @@ datadog:
         enabled:
 
   traceroute:
-    # datadog.traceroute.enabled -- (bool) Enable traceroutes in system-probe for Network Path
-    enabled: false
+    # datadog.traceroute.enabled -- (bool) Enable traceroutes in system-probe for Network Path. Empty values use the default setting in the datadog agent: Agent 7.84.0+ enables traceroute automatically when Network Path dynamic tests are enabled.
+    enabled:
 
   discovery:
     # datadog.discovery.enabled -- (bool) Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`.
@@ -1349,6 +1422,11 @@ datadog:
         # Requires the system-probe container (auto-enabled when set to true) for eBPF-based file
         # access tracking, and sets `hostPID: true` on the agent pod. Requires Agent 7.79.0+.
         enabled: false
+
+  # Data Security configuration
+  dataSecurity:
+    # datadog.dataSecurity.enabled -- Enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer.
+    enabled: false
 
   ## Enable security agent and provide custom configs
   securityAgent:
@@ -1615,7 +1693,7 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 7.84.3
+    tag: 7.84.6
 
     # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2196,7 +2274,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.31
+    tag: 1.1.33
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
@@ -2240,7 +2318,7 @@ agents:
 
     # agents.image.tag -- Define the Agent version to use
     # Set a pinned version here. Do not append build variants: put `full` or `jmx` in `agents.image.tagSuffix`, and enable FIPS with `useFIPSAgent`. To stay on the latest stable Agent, leave this unset and upgrade the chart periodically.
-    tag: 7.84.3
+    tag: 7.84.6
 
     # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -2381,6 +2459,7 @@ agents:
 
       # agents.containers.agent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # With config streaming enabled this also sets the default for remote Agent containers that do not set their own logLevel, because the core Agent's log level is the streamed global.
       logLevel:  # INFO
 
       # agents.containers.agent.resources -- Resource requests and limits for the agent container.
@@ -2482,6 +2561,7 @@ agents:
 
       # agents.containers.processAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # Under config streaming the Agent container carries this as DD_PROCESS_CONFIG_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.processAgent.resources -- Resource requests and limits for the process-agent container
@@ -2603,7 +2683,8 @@ agents:
       envDict: {}
       #   <ENV_VAR_NAME>: <ENV_VAR_VALUE>
 
-      # agents.containers.traceAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off
+      # agents.containers.traceAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
+      # Under config streaming the Agent container carries this as DD_APM_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.traceAgent.resources -- Resource requests and limits for the trace-agent container
@@ -2646,6 +2727,7 @@ agents:
 
       # agents.containers.systemProbe.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # Under config streaming the Agent container carries this as DD_SYSTEM_PROBE_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.systemProbe.resources -- Resource requests and limits for the system-probe container
@@ -2686,6 +2768,7 @@ agents:
 
       # agents.containers.securityAgent.logLevel -- Set logging verbosity, valid log levels are: trace, debug, info, warn, error, critical, and off.
       # If not set, fall back to the value of datadog.logLevel.
+      # Under config streaming the Agent container carries this as DD_SECURITY_AGENT_LOG_LEVEL.
       logLevel:  # INFO
 
       # agents.containers.securityAgent.resources -- Resource requests and limits for the security-agent container
@@ -2936,7 +3019,7 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.84.3
+    tag: 7.84.6
 
     # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
     digest: ""
@@ -3187,7 +3270,7 @@ clusterChecksRunner:
 operator:
   image:
     # operator.image.tag -- Define the Datadog Operator version to use
-    tag: 1.31.0
+    tag: 1.31.2
 
   datadogAgent:
     # operator.datadogAgent.enabled -- Enables Datadog Agent controller

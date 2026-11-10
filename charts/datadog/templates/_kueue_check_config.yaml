@@ -1,0 +1,28 @@
+{{- define "kueue-config" -}}
+{{- /*
+The Cluster Agent turns the kube_endpoints template into one endpoints check per Kueue controller
+pod, dispatched to the node Agent on that pod's node. Every replica has to be scraped: in HA
+setups, counters and histograms are only exported by the leader. Kueue serves metrics over HTTPS
+with a self-signed certificate and authorizes the caller's token against the /metrics URL.
+*/ -}}
+kueue.yaml: |-
+  advanced_ad_identifiers:
+    - kube_endpoints:
+        name: {{ .Values.datadog.kueue.metricsService.name | quote }}
+        namespace: {{ .Values.datadog.kueue.metricsService.namespace | quote }}
+  cluster_check: true
+  init_config:
+  instances:
+    - openmetrics_endpoint: https://%%host%%:%%port%%/metrics
+      tls_verify: false
+      auth_token:
+        reader:
+          type: file
+          path: /var/run/secrets/kubernetes.io/serviceaccount/token
+        writer:
+          type: header
+          name: Authorization
+          value: Bearer <TOKEN>
+          placeholder: <TOKEN>
+      collect_workload_events: {{ .Values.datadog.kueue.collectWorkloadEvents }}
+{{- end -}}

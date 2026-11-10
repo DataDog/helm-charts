@@ -74,7 +74,13 @@
 {{- end }}
 {{- end }}
   env:
+    - name: DD_POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    {{- include "jemalloc-disable-env" . | nindent 4 }}
     {{- include "containers-common-env" . | nindent 4 }}
+    {{- include "configstream-consumer-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
     {{- if and .Values.datadog.privateActionRunner.enabled .Values.datadog.privateActionRunner.splitEnabled }}
@@ -94,6 +100,7 @@
     - name: DD_LOG_LEVEL
       value: {{ .Values.agents.containers.agent.logLevel | default .Values.datadog.logLevel | quote }}
     {{- end }}
+    {{- include "remote-agent-log-level-env" . | nindent 4 }}
     {{- if eq (include "should-enable-data-plane" .) "true" }}
     - name: DD_REMOTE_AGENT_REGISTRY_ENABLED
       value: "true"
@@ -213,10 +220,20 @@
       value: {{ (include "should-enable-k8s-resource-monitoring" .) | quote }}
     - name: DD_EXPVAR_PORT
       value: {{ .Values.datadog.expvarPort | quote }}
+    {{- /* The Security Agent's own gate excludes GKE Autopilot and GDC; streaming makes the
+           Agent's value win, so exclude them here too. runInSystemProbe is exempt: the System
+           Probe's gate is the raw value, and it still runs compliance on those platforms. */}}
     - name: DD_COMPLIANCE_CONFIG_ENABLED
-      value: {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
+      value: {{ and .Values.datadog.securityAgent.compliance.enabled (or .Values.datadog.securityAgent.compliance.runInSystemProbe (not (or .Values.providers.gke.autopilot .Values.providers.gke.gdc))) | quote }}
     - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
       value: {{ .Values.datadog.securityAgent.compliance.runInSystemProbe | quote }}
+    {{- /* Raw pair, like compliance above: streamed to the Security Agent and System Probe,
+           which derive different behaviour from it, so pre-composing here would break one. */}}
+    - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
+      value: {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
+    - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
+      value: {{ .Values.datadog.securityAgent.runtime.directSendFromSystemProbe | quote }}
+    {{- include "remote-agent-hoisted-env" . | nindent 4 }}
     - name: DD_CONTAINER_IMAGE_ENABLED
       value: {{ include "should-enable-container-image-collection" . | quote }}
     {{- if or (eq (include "should-enable-sbom-host-fs-collection" .) "true") (eq (include "should-enable-sbom-container-image-collection" .) "true") (eq (include "should-enable-sbom-enrichment-usage" .) "true") }}
@@ -264,6 +281,12 @@
       value: "true"
     {{- end }}
     {{- end }}
+    {{- if .Values.datadog.dataSecurity.enabled }}
+    - name: DD_DATA_SECURITY_ENABLED
+      value: "true"
+    - name: DD_SHARED_LIBRARY_CHECK_ENABLED
+      value: "true"
+    {{- end }}
     - name: DD_KUBELET_CORE_CHECK_ENABLED
       value: {{ .Values.datadog.kubelet.coreCheckEnabled | quote | default "true" }}
     {{- if eq (include "should-enable-otel-agent" .) "true" }}
@@ -286,6 +309,10 @@
       value: "true"
     - name: DD_GPU_ENABLED
       value: "true"
+    {{- if .Values.datadog.kaiScheduler.enabled }}
+    - name: DD_GPU_KAI_SCHEDULER_ENABLED
+      value: "true"
+    {{- end }}
     {{- if .Values.datadog.gpuMonitoring.privilegedMode }}
     # Keep the core GPU check in sync with system-probe. When eBPF probes are disabled, the core check must know
     # about it, otherwise it polls system-probe's disabled GPU module and hits 503s, producing recurring refresh
@@ -364,6 +391,9 @@
       readOnly: false
     - name: gpu-devices
       mountPath: /var/run/nvidia-container-devices/all
+    - name: host-var-run-cdi
+      mountPath: /host/var/run/cdi
+      readOnly: true
     {{- if .Values.providers.gke.cos }}
     - name: gke-nvidia-driver-lib64
       mountPath: /host/run/nvidia/driver/usr/lib/x86_64-linux-gnu # the agent automatically looks for the nvidia driver in this path, and it's also not likely to conflict with other libraries

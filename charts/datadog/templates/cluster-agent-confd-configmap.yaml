@@ -18,6 +18,9 @@ data:
 {{- if .Values.datadog.helmCheck.enabled -}}
 {{ include "helmCheck-config" . | nindent 2 }}
 {{- end -}}
+{{- if eq (include "should-enable-kueue-check" .) "true" -}}
+{{ include "kueue-config" . | nindent 2 }}
+{{- end -}}
 {{ include "kubernetes_apiserver-config" . | nindent 2 }}
 {{- if .Values.datadog.orchestratorExplorer.enabled -}}
 {{ include "orchestratorExplorer-config" . | nindent 2 }}

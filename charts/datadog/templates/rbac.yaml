@@ -160,6 +160,15 @@ rules:
   - ksh/metrics
   verbs:
   - get
+{{- if and (eq (include "should-enable-kueue-check" .) "true") .Values.datadog.kueue.collectWorkloadEvents }}
+- apiGroups:  # Kueue check Workload lifecycle events
+  - "kueue.x-k8s.io"
+  resources:
+  - workloads
+  verbs:
+  - get
+  - list
+{{- end }}
 {{- if .Values.datadog.operator.migration.enabled }}
 - apiGroups:
     - datadoghq.com

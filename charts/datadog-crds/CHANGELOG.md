@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.26.0-dev.2
+
+* [datadog-crds] Add DatadogBYOCCluster and DatadogObservabilityPipelinesWorker CRDs ([#3029](https://github.com/DataDog/helm-charts/pull/3029)).
+
+## 2.26.0-dev.1
+
+* Update CRDs from Datadog Operator v1.32.0-rc.1 release candidate tag.
+
 ## 2.25.0
 
 * Update CRDs from Datadog Operator v1.31.0.

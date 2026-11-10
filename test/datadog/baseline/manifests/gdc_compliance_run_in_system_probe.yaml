@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.0
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -149,7 +149,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.0
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -787,6 +787,17 @@ rules:
     resources:
       - ingressroutes
     verbs:
+      - list
+      - watch
+  - apiGroups:
+      - kueue.x-k8s.io
+    resources:
+      - clusterqueues
+      - localqueues
+      - resourceflavors
+      - workloads
+    verbs:
+      - get
       - list
       - watch
   - apiGroups:
@@ -1791,6 +1802,10 @@ spec:
             - agent
             - run
           env:
+            - name: DD_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -1831,6 +1846,12 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-gdc
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
+              value: "false"
+            - name: DD_AGENT_IPC_PORT
+              value: "5009"
+            - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
+              value: "60"
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_DOGSTATSD_PORT
@@ -1872,6 +1893,10 @@ spec:
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
               value: "true"
+            - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
+              value: "false"
+            - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
+              value: "false"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
@@ -1882,7 +1907,7 @@ spec:
               value: "false"
             - name: DD_ORCHESTRATOR_EXPLORER_KUBELET_CONFIG_CHECK_ENABLED
               value: "true"
-          image: gcr.io/datadoghq/agent:7.84.3
+          image: gcr.io/datadoghq/agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -1950,7 +1975,7 @@ spec:
           command:
             - bash
             - -c
-          image: gcr.io/datadoghq/agent:7.84.3
+          image: gcr.io/datadoghq/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-volume
           resources: {}
@@ -2004,7 +2029,7 @@ spec:
               value: "false"
             - name: DD_PROVIDER_KIND
               value: gke-gdc
-          image: gcr.io/datadoghq/agent:7.84.3
+          image: gcr.io/datadoghq/agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-config
           resources: {}
@@ -2050,7 +2075,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.0
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2109,7 +2134,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: registry.datadoghq.com/operator:1.31.0
+          image: registry.datadoghq.com/operator:1.31.2
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2317,7 +2342,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: gcr.io/datadoghq/cluster-agent:7.84.3
+          image: gcr.io/datadoghq/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2389,8 +2414,8 @@ spec:
             - /opt
           command:
             - cp
-            - -r
-          image: gcr.io/datadoghq/cluster-agent:7.84.3
+            - -rf
+          image: gcr.io/datadoghq/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

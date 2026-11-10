@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.0
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -149,7 +149,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.0
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -787,6 +787,17 @@ rules:
     resources:
       - ingressroutes
     verbs:
+      - list
+      - watch
+  - apiGroups:
+      - kueue.x-k8s.io
+    resources:
+      - clusterqueues
+      - localqueues
+      - resourceflavors
+      - workloads
+    verbs:
+      - get
       - list
       - watch
   - apiGroups:
@@ -1784,6 +1795,10 @@ spec:
             - agent
             - run
           env:
+            - name: DD_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -1810,6 +1825,8 @@ spec:
             - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
+              value: "false"
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
               value: "false"
@@ -1890,6 +1907,10 @@ spec:
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "false"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
+              value: "false"
+            - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
+              value: "false"
+            - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
               value: "false"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
@@ -2010,6 +2031,8 @@ spec:
             - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
               value: "true"
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
+              value: "false"
+            - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
               value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
@@ -2317,7 +2340,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.0
+    app.kubernetes.io/version: 1.31.2
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2376,7 +2399,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: registry.datadoghq.com/operator:1.31.0
+          image: registry.datadoghq.com/operator:1.31.2
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:
@@ -2576,7 +2599,7 @@ spec:
                 configMapKeyRef:
                   key: install_type
                   name: datadog-kpi-telemetry-configmap
-          image: registry.datadoghq.com/cluster-agent:7.84.3
+          image: registry.datadoghq.com/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 6
@@ -2648,8 +2671,8 @@ spec:
             - /opt
           command:
             - cp
-            - -r
-          image: registry.datadoghq.com/cluster-agent:7.84.3
+            - -rf
+          image: registry.datadoghq.com/cluster-agent:7.84.6
           imagePullPolicy: IfNotPresent
           name: init-volume
           volumeMounts:

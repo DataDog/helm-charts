@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-Update the datadog-operator clusterrole.yaml from upstream operator role.yaml.
+Update a datadog-operator ClusterRole template from an upstream operator role.
 
 Downloads the upstream config/rbac/role.yaml, filters out resources that are
 handled by conditional blocks in the helm chart, adds template directives,
-and reconstructs clusterrole.yaml preserving the header and conditional blocks.
+and replaces the lines between the BEGIN and END AUTO-GENERATED RULES markers
+of clusterrole.yaml. Everything outside the markers (the ClusterRole header,
+hand-maintained rules and conditional blocks) is preserved verbatim.
 
 Usage:
     python3 update-clusterrole.py <upstream_role_yaml> <clusterrole_yaml>
@@ -49,16 +51,9 @@ CONDITIONAL_RESOURCES = {
 }
 
 
-HEADER = """\
-{{- if .Values.rbac.create -}}
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: {{ include "datadog-operator.fullname" . }}
-  labels:
-{{ include "datadog-operator.labels" . | indent 4 }}
-rules:
-"""
+# Only the lines between the lines containing these markers are regenerated.
+BEGIN_MARKER = "BEGIN AUTO-GENERATED RULES"
+END_MARKER = "END AUTO-GENERATED RULES"
 
 
 def quote_val(v):
@@ -139,16 +134,25 @@ def add_template_directives(lines):
     return result
 
 
-def extract_conditional_blocks(clusterrole_file):
-    """Extract the conditional blocks from the current clusterrole.yaml."""
+def find_marker(lines, marker, clusterrole_file):
+    """Return the index of the only line containing marker."""
+    found = [i for i, line in enumerate(lines) if marker in line]
+    if len(found) != 1:
+        sys.exit(f"error: expected one '{marker}' marker in {clusterrole_file}, found {len(found)}")
+    return found[0]
+
+
+def split_template(clusterrole_file):
+    """Return the lines through the BEGIN marker and the lines from the END marker onward."""
     with open(clusterrole_file) as f:
         lines = f.readlines()
 
-    # Find where conditional blocks start: first {{- if .Values. after the rules header
-    for i, line in enumerate(lines):
-        if "{{- if .Values." in line and i > 7:
-            return "".join(lines[i:])
-    return ""
+    begin = find_marker(lines, BEGIN_MARKER, clusterrole_file)
+    end = find_marker(lines, END_MARKER, clusterrole_file)
+    if end < begin:
+        sys.exit(f"error: '{END_MARKER}' comes before '{BEGIN_MARKER}' in {clusterrole_file}")
+
+    return "".join(lines[:begin + 1]), "".join(lines[end:])
 
 
 def main():
@@ -170,13 +174,13 @@ def main():
 
     main_lines = add_template_directives(main_lines)
 
-    conditional_blocks = extract_conditional_blocks(clusterrole_file)
+    preserved_head, preserved_tail = split_template(clusterrole_file)
 
     with open(clusterrole_file, "w") as f:
-        f.write(HEADER)
+        f.write(preserved_head)
         f.write("\n".join(main_lines))
         f.write("\n")
-        f.write(conditional_blocks)
+        f.write(preserved_tail)
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ metadata:
   labels:
 {{ include "datadog-operator.labels" . | indent 4 }}
 rules:
+{{- /* BEGIN AUTO-GENERATED RULES: regenerated from upstream config/rbac/role.yaml by scripts/update-clusterrole.py */}}
 - nonResourceURLs:
   - /metrics
   - /metrics/slis
@@ -656,6 +657,7 @@ rules:
   verbs:
   - list
   - watch
+{{- /* END AUTO-GENERATED RULES: hand-maintained rules go below */}}
 {{- if .Values.datadogAgentInternal.enabled }}
 - apiGroups:
   - datadoghq.com

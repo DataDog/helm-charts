@@ -1,8 +1,109 @@
 # Datadog changelog
 
-## 3.258.0
+## 3.270.0
 
 * Add `datadog.kubernetesEvents.eventCollectionMode` to configure the `event_collection_mode` of the `kubernetes_apiserver` check (`poll` or `watch`). Requires Cluster Agent 7.81.1+.
+
+## 3.269.1
+
+* Disable config streaming by default to restore per-container Agent environment settings. Set `datadog.configStream.enabled: true` to opt in explicitly.
+
+## 3.269.0
+
+* Add `datadog.privateActionRunner.packetCapture.enabled` to run remote packet captures through the node Private Action Runner (requires Agent 7.86.0+, Linux only; ignored on older Agents or when `datadog.privateActionRunner.enabled` is false). It runs the System Probe with `packet_capture` enabled and the `SYS_ADMIN`, `SYS_RESOURCE`, `NET_ADMIN`, `NET_RAW` and `IPC_LOCK` capabilities, and shares with the runner, read-only, a socket that serves only packet capture, never the full System Probe socket. Captures see the node's traffic only with `agents.useHostNetwork: true`; otherwise they see only the Agent pod's network namespace. Floating tags such as `latest` or `7` resolve to the chart default Agent version (7.84.6), and tags that are not versions are not trusted, so the feature stays off unless `agents.image.tag` is 7.86.0+ or `agents.image.doNotCheckTag` is set; when pinning `agents.image.digest`, set `agents.image.doNotCheckTag: true`, since the tag, not the digest, decides the version. Add `com.datadoghq.remoteaction.pcap.runCapture` to `datadog.privateActionRunner.actionsAllowlist` to let workflows run captures; the chart does not add it.
+
+## 3.268.0
+
+* Replace `datadog.jemalloc.enabled` with `datadog.jemalloc.disable` (default `false`). Agent 7.87.0+ Linux images enable jemalloc by default. Set `datadog.jemalloc.disable: true` to override `LD_PRELOAD` with `/opt/lib/nosys.so` for the node core Agent, trace-agent, process-agent, security-agent, system-probe, and enabled Cluster Check Runners. Explicit environment overrides continue to take precedence. Remove the old `datadog.jemalloc.enabled` setting from your values. Disabling jemalloc is not supported on GKE Autopilot; the chart rejects `datadog.jemalloc.disable: true` on Autopilot.
+
+## 3.267.1
+
+* Update `fips.image.tag` to `1.1.33` fixing CVEs and updating packages.
+
+## 3.267.0
+
+* Add `datadog.kaiScheduler.enabled` to enable KAI Scheduler PodGroup collection in the Cluster Agent, which tags pods with their KAI workload and queue, and grant the Cluster Agent `list` and `watch` on KAI PodGroups (requires Agent and Cluster Agent 7.86.0+). With `datadog.gpuMonitoring.enabled`, it also maps KAI fractional GPUs to the containers using them.
+
+## 3.266.1
+
+* Remove the experimental label from the `csi` value of `datadog.apm.instrumentation.injectionMode`. CSI injection is generally available.
+
+## 3.266.0
+
+* Grant the `kubernetes_state_core` check list/watch on `resource.k8s.io` `resourceclaims`, `resourceslices` and `devicetaintrules` when the Cluster Agent (or the Cluster Checks Runner, when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is set) is 7.85.0+, so users can enable Dynamic Resource Allocation metrics by adding these collectors to `kubernetes_state_core.yaml` in `clusterAgent.confd`. The chart does not add the collectors itself.
+* Mount the host `/var/run/cdi` directory read-only at `/host/var/run/cdi` in the Agent container when `datadog.gpuMonitoring.enabled` is set, so the Agent can attribute GPUs to pods that use DRA.
+
+## 3.265.0
+
+* Add `datadog.kubernetesActions.communication.remoteConfiguration.enabled` and `datadog.kubernetesActions.communication.privateActionRunner.enabled` to choose how the Cluster Agent receives Kubernetes actions. Both are enabled by default, so `datadog.kubernetesActions.enabled: true` alone uses both channels; disable `privateActionRunner` for Remote Configuration only. Enabling `privateActionRunner` enables the Cluster Agent Private Action Runner automatically.
+* Kubernetes Actions now requires Cluster Agent 7.84.0 or greater (previously 7.79.0); `datadog.kubernetesActions` is ignored on older versions. On Cluster Agent 7.86.0+, disabling `remoteConfiguration` turns off the Remote Configuration channel, and disabling `privateActionRunner` keeps Kubernetes actions out of the Private Action Runner.
+* Grant the Cluster Agent the Kubernetes Actions RBAC for rollback deployment (`replicasets`: get, list).
+
+## 3.264.0
+
+* Add `datadog.configStream.enabled` to control whether the Trace Agent, Process Agent, Security Agent and System Probe take their configuration from the Agent. Unset follows the Agent version, enabled from 7.85.0 onwards; an explicit value overrides it. The settings the chart mirrors onto the Agent container are gated on the same value, so the chart and the Agent cannot disagree.
+* Set the per-remote-agent log levels (`DD_SECURITY_AGENT_LOG_LEVEL`, `DD_PROCESS_CONFIG_LOG_LEVEL`, `DD_APM_LOG_LEVEL`, `DD_SYSTEM_PROBE_LOG_LEVEL`) on the Agent container when the corresponding `agents.containers.<name>.logLevel` is set. Under config streaming the remote agents take their log level from the Agent.
+* Mirror the settings that were rendered only on a remote agent's container -- five `DD_COMPLIANCE_CONFIG_*` and three `DD_RUNTIME_SECURITY_CONFIG_*` on the Security Agent, six `DD_NETWORK_PATH_*` on the Process Agent -- onto the Agent container, so config streaming carries them.
+* Exclude GKE Autopilot and GDC from the Agent container's `DD_COMPLIANCE_CONFIG_ENABLED` unless `datadog.securityAgent.compliance.runInSystemProbe` is set, matching the Security Agent's own gate. Without this, streaming would start compliance in the Security Agent on platforms where the chart disables it.
+* Set `DD_RUNTIME_SECURITY_CONFIG_ENABLED` and `DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE` on the Agent container, mirroring the existing compliance pair. Agent 7.85.0+ streams configuration from the Agent to the Security Agent and System Probe and discards their local environment, so without this the Security Agent received the default (`false`) for `runtime_security_config.enabled` and exited with all components deactivated, crash-looping the pod.
+
+## 3.263.2
+
+* Pass the pod name to the node Agent using the Kubernetes downward API.
+
+## 3.263.1
+
+* Fix CSPM host benchmarks run in system-probe (`datadog.securityAgent.compliance.runInSystemProbe`), which evaluated no rule on RPM-based nodes, ran their SCE checks against the system-probe container, and aborted on FIPS hosts.
+* Allow `chroot`, `fchdir`, `mlock` and `munlock` in the system-probe seccomp profile when host benchmarks run in system-probe.
+
+## 3.263.0
+
+* Leave `datadog.traceroute.enabled` unset by default and render `traceroute.enabled` in `system-probe.yaml` only when it is set. With Agent 7.84.0+, system-probe then enables traceroute automatically when Network Path dynamic tests are enabled, which lets Network Path basic dynamic tests run on hosts with `datadog.networkMonitoring.enabled`. Set `datadog.traceroute.enabled: false` to keep traceroute disabled.
+
+## 3.262.0
+
+* Add `datadog.dataSecurity.enabled` (default `false`) to enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer. Enabling it also enables Remote Configuration on the node Agent when `remoteConfiguration.enabled` is true.
+
+## 3.261.1
+
+* Bump default Agent, Cluster Agent, and Cluster Checks Runner to 7.84.6 ([#2994](https://github.com/DataDog/helm-charts/pull/2994)).
+* Bump Datadog Operator chart dependency to 2.31.0 and Operator image tag to 1.31.2.
+
+## 3.261.0
+
+* Add a `tracefs` (`/sys/kernel/tracing`) volume and `system-probe` mount when `providers.talos.enabled` is set.
+* Fix NPM, USM, OOM kill, TCP queue length, and CWS failing to load their eBPF probes on Talos.
+
+## 3.260.1
+
+* Update `fips.image.tag` to `1.1.32` fixing CVEs and updating packages.
+
+## 3.260.0
+
+* Add `datadog.kueue.enabled` to enable Kueue metadata collection in the Cluster Agent and the Kueue check (requires Agent and Cluster Agent 7.82.0+). The check runs as an endpoints check against each Kueue controller pod and requires `datadog.clusterChecks.enabled`. Use `datadog.kueue.metricsService` to point it at a non-default Kueue metrics Service, and `datadog.kueue.collectWorkloadEvents` to disable Workload lifecycle events and the node Agent read access to Kueue Workloads.
+
+## 3.259.1
+
+* Fix OTel Agent Gateway pod failing to start when `agents.useConfigMap` is enabled: add the missing `datadog-yaml` volume and mount the config directory read-write so the `datadog.yaml` subPath mount can be created ([#2980](https://github.com/DataDog/helm-charts/pull/2980)).
+
+## 3.259.0
+
+* Add opt-in `datadog.jemalloc.enabled` for the Linux node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners, with explicit environment overrides taking precedence.
+
+## 3.258.1
+
+* Extend config sync (`DD_AGENT_IPC_PORT` / `DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL`) to CWS direct send and compliance running in `system-probe`, alongside the CNM direct send case it already covered. `system-probe` submits these payloads itself and cannot resolve an `ENC[...]` secret handle, so without config sync a secret-backed `datadog.apiKey` would prevent it from shipping CWS events or compliance findings.
+* Carry the CWS and CSPM configuration onto the `system-probe` execution path. The `runtimepoliciesdir` and `complianceconfigdir` ConfigMap volumes, the compliance host mounts (`hostroot`, `cgroups`, `passwd`, `group`), `HOST_ROOT`, `hostPID`, and the `DD_COMPLIANCE_CONFIG_CHECK_INTERVAL` / `XCCDF_ENABLED` / `HOST_BENCHMARKS_ENABLED` / `CONTAINER_INCLUDE` / `CONTAINER_EXCLUDE` settings were all gated on the `security-agent` container existing, so they were dropped once CWS and CSPM moved into `system-probe`. With a custom `datadog.securityAgent.runtime.policies.configMap` this rendered a DaemonSet mounting an undeclared volume, which the API server rejects on apply.
+* Stop gating the Cluster Agent's compliance settings on the `security-agent` container. `DD_COMPLIANCE_CONFIG_ENABLED`, `DD_COMPLIANCE_CONFIG_CHECK_INTERVAL`, and the custom benchmarks ConfigMap mount are part of the CSPM feature, not of a node execution path, and were silently lost when `datadog.securityAgent.compliance.runInSystemProbe` was enabled - disabling the Kubernetes-level compliance checks.
+
+## 3.258.0
+
+* Bump Datadog Operator chart dependency to 2.30.0.
+* Bump Operator image tag to 1.31.1.
+
+## 3.257.2
+
+* Use `cp -rf` in the Cluster Agent `init-volume` init container so it can run again in the same pod, e.g. after an in-place node reboot, without failing on read-only files such as `private-action-runner/script-config.yaml`.
 
 ## 3.257.1
 

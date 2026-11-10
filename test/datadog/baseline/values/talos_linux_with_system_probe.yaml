@@ -23,6 +23,7 @@ datadog:
     enabled: true
   systemProbe:
     enableOOMKill: true
+    enableTCPQueueLength: true
   ignoreAutoConfig:
     - etcd
     - kube_scheduler

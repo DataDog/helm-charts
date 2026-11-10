@@ -62,6 +62,55 @@ func Test_gdcConfigs(t *testing.T) {
 			},
 			errorContains: "Private Action Runner is not supported on GKE Autopilot / GDC environments",
 		},
+		{
+			// Packet capture requested without the runner: nothing is added for it.
+			name: "packet capture without private action runner",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"agents.image.tag":                                  "7.86.0",
+					"datadog.apiKeyExistingSecret":                      "datadog-secret",
+					"providers.gke.gdc":                                 "true",
+					"datadog.privateActionRunner.packetCapture.enabled": "true",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				verifyDaemonsetGDCConstraints(t, manifest)
+				assertNoPacketCaptureOnProvider(t, manifest, common.HelmCommand{
+					ReleaseName: "datadog",
+					ChartPath:   "../../charts/datadog",
+					ShowOnly:    []string{"templates/daemonset.yaml"},
+					Values:      []string{"../../charts/datadog/values.yaml"},
+					Overrides: map[string]string{
+						"agents.image.tag":                                  "7.86.0",
+						"datadog.apiKeyExistingSecret":                      "datadog-secret",
+						"providers.gke.gdc":                                 "true",
+						"datadog.privateActionRunner.packetCapture.enabled": "true",
+					},
+				})
+			},
+		},
+		{
+			name: "packet capture with private action runner rejected",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"agents.image.tag":                                  "7.86.0",
+					"datadog.apiKeyExistingSecret":                      "datadog-secret",
+					"providers.gke.gdc":                                 "true",
+					"datadog.privateActionRunner.enabled":               "true",
+					"datadog.privateActionRunner.selfEnroll":            "true",
+					"datadog.privateActionRunner.packetCapture.enabled": "true",
+				},
+			},
+			errorContains: "Private Action Runner is not supported on GKE Autopilot / GDC environments",
+		},
 	}
 
 	for _, tt := range tests {
