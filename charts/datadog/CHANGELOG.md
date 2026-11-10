@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.269.2
+
+* Fix OTel CI values files: set `include` on the `filelog` receivers in `agent-otel-collector-logs-values.yaml`, which newer OTel Agent versions require, and use the all-zeros fake API key, which the Agent skips validating, where the collector config sets its own `api.key`. Pin Helm 3 in the `install-chart` CI job ([#3057](https://github.com/DataDog/helm-charts/pull/3057)).
+
 ## 3.269.1
 
 * Disable config streaming by default to restore per-container Agent environment settings. Set `datadog.configStream.enabled: true` to opt in explicitly.
