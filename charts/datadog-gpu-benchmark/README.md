@@ -16,10 +16,9 @@ This chart prepares that namespace:
 | Role and RoleBinding | Lets the Cluster Agent's ServiceAccount create, read and delete Jobs, read their pods and logs, and read the pod overrides, in this namespace only |
 | ServiceAccount `datadog-gpu-benchmark-run` | Runs benchmark pods, with no role and no token |
 | ConfigMap `datadog-gpu-benchmark-pod` | Placement, labels and image mirror for benchmark pods (`podOverrides`) |
-| ResourceQuota and LimitRange | Cap what runs may use |
-| NetworkPolicy | No ingress; egress only to DNS and the endpoints you list |
 | ValidatingAdmissionPolicy (Kubernetes 1.30+) | Admits only benchmark pods of the expected shape: Datadog's image pinned by digest, one container, the expected environment and volumes, no host access, no ServiceAccount token |
-| PriorityClass (optional) | A low priority that never preempts other pods |
+
+Optional guardrails, off by default: a NetworkPolicy (`networkPolicy.enabled`), a ResourceQuota (`resourceQuota.enabled`), a LimitRange (`limitRange.enabled`) and a low PriorityClass that never preempts other pods (`priorityClass.create`).
 
 ## Prerequisites
 
@@ -39,7 +38,6 @@ This chart prepares that namespace:
   ```
 
 - CPU capacity for the runs: benchmark pods need no GPU.
-- A CNI that enforces NetworkPolicy, for `networkPolicy.enabled`.
 - Kubernetes 1.30+ for the admission policy. On older clusters, enforce the same rules with Kyverno or Gatekeeper.
 
 ## Installation
@@ -54,10 +52,13 @@ helm install datadog-gpu-benchmark datadog/datadog-gpu-benchmark \
 
 The Cluster Agent's ServiceAccount is `<release>-cluster-agent` when you install the Agent with the `datadog` chart, and `<DatadogAgent name>-cluster-agent` with the Datadog Operator: `kubectl get serviceaccounts -A | grep cluster-agent` lists it.
 
-Then let benchmark pods reach the endpoints you benchmark, for example a vLLM service in the `inference` namespace:
+## Network policy
+
+To restrict benchmark pods' network, turn on the NetworkPolicy and list the endpoints you benchmark (it needs a CNI that enforces NetworkPolicy), for example a vLLM service in the `inference` namespace:
 
 ```yaml
 networkPolicy:
+  enabled: true
   egress:
     - to:
         - namespaceSelector:
@@ -99,7 +100,7 @@ If your cluster can't pull from Datadog's public registries, mirror the image an
 | admissionPolicy.imageRepositories | list | `["registry.datadoghq.com/gpu-benchmark","docker.io/datadog/gpu-benchmark","public.ecr.aws/datadog/gpu-benchmark","gcr.io/datadoghq/gpu-benchmark","eu.gcr.io/datadoghq/gpu-benchmark","asia.gcr.io/datadoghq/gpu-benchmark","datadoghq.azurecr.io/gpu-benchmark"]` | Image repositories benchmark pods may use. `podOverrides.imageRepository` is added automatically. |
 | clusterAgent.serviceAccount.name | string | `""` | Name of the Cluster Agent's ServiceAccount, whose Private Action Runner creates the benchmark Jobs. Required. With the `datadog` Helm chart it is `<release>-cluster-agent`; with the Datadog Operator, `<DatadogAgent name>-cluster-agent`. |
 | clusterAgent.serviceAccount.namespace | string | `""` | Namespace of the Cluster Agent's ServiceAccount. Required. |
-| limitRange.enabled | bool | `true` | Cap the size of one benchmark container. |
+| limitRange.enabled | bool | `false` | Cap the size of one benchmark container. |
 | limitRange.max | object | `{"cpu":"16","memory":"32Gi"}` | The most one container may request or use. |
 | limitRange.max.cpu | string | `"16"` |  |
 | limitRange.max.memory | string | `"32Gi"` |  |
@@ -114,7 +115,7 @@ If your cluster can't pull from Datadog's public registries, mirror the image an
 | networkPolicy.dns.podSelector | object | `{"k8s-app":"kube-dns"}` | Pods of the cluster DNS. |
 | networkPolicy.dns.podSelector.k8s-app | string | `"kube-dns"` |  |
 | networkPolicy.egress | list | `[]` | Egress rules (NetworkPolicyEgressRule) to the inference endpoints you benchmark, for example a namespace selector and port. Until you set them, benchmark pods only reach DNS, and runs fail to connect. |
-| networkPolicy.enabled | bool | `true` | Restrict benchmark pods' network: no ingress, egress only to DNS and to `networkPolicy.egress`. Needs a CNI that enforces NetworkPolicy. |
+| networkPolicy.enabled | bool | `false` | Restrict benchmark pods' network: no ingress, egress only to DNS and to `networkPolicy.egress`. Needs a CNI that enforces NetworkPolicy. When on, list your inference endpoints in `networkPolicy.egress`, or runs can't reach them. |
 | podOverrides.affinity | object | `{}` | Affinity for benchmark pods. |
 | podOverrides.annotations | object | `{}` | Annotations added to benchmark pods. `ad.datadoghq.com/logs_exclude` is set by Datadog. |
 | podOverrides.imagePullSecrets | list | `[]` | Secrets of the benchmark namespace the kubelet pulls the image with, e.g. `[{name: my-registry}]`. |
@@ -128,7 +129,7 @@ If your cluster can't pull from Datadog's public registries, mirror the image an
 | priorityClass.name | string | `"datadog-gpu-benchmark-low"` | Name of the PriorityClass. |
 | priorityClass.value | int | `-100` | Priority of benchmark pods. Below 0, they are scheduled after your default-priority workloads. |
 | rbac.create | bool | `true` | Create the Role and RoleBinding that let the Cluster Agent's ServiceAccount manage benchmark Jobs in the benchmark namespace, and nothing outside it. |
-| resourceQuota.enabled | bool | `true` | Cap what benchmark runs may use in the namespace. The default allows two concurrent runs of the largest size. |
+| resourceQuota.enabled | bool | `false` | Cap what benchmark runs may use in the namespace. The default `hard` allows two concurrent runs of the largest size. |
 | resourceQuota.hard | object | `{"pods":"2","count/jobs.batch":"10","requests.cpu":"32","limits.cpu":"32","requests.memory":"64Gi","limits.memory":"64Gi"}` | The quota's limits. |
 | resourceQuota.hard."count/jobs.batch" | string | `"10"` |  |
 | resourceQuota.hard."limits.cpu" | string | `"32"` |  |

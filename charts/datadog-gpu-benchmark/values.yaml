@@ -45,6 +45,9 @@ podOverrides:
   # podOverrides.imagePullSecrets -- Secrets of the benchmark namespace the kubelet pulls the image with, e.g. `[{name: my-registry}]`.
   imagePullSecrets: []
 
+# Optional guardrails, off by default: most clusters already set their own quotas and network
+# policies. Turn on the ones you want.
+
 priorityClass:
   # priorityClass.create -- Create a low PriorityClass for benchmark pods, which never preempts other pods.
   create: false
@@ -54,8 +57,8 @@ priorityClass:
   value: -100
 
 resourceQuota:
-  # resourceQuota.enabled -- Cap what benchmark runs may use in the namespace. The default allows two concurrent runs of the largest size.
-  enabled: true
+  # resourceQuota.enabled -- Cap what benchmark runs may use in the namespace. The default `hard` allows two concurrent runs of the largest size.
+  enabled: false
   # resourceQuota.hard -- The quota's limits.
   hard:
     pods: "2"
@@ -67,15 +70,15 @@ resourceQuota:
 
 limitRange:
   # limitRange.enabled -- Cap the size of one benchmark container.
-  enabled: true
+  enabled: false
   # limitRange.max -- The most one container may request or use.
   max:
     cpu: "16"
     memory: 32Gi
 
 networkPolicy:
-  # networkPolicy.enabled -- Restrict benchmark pods' network: no ingress, egress only to DNS and to `networkPolicy.egress`. Needs a CNI that enforces NetworkPolicy.
-  enabled: true
+  # networkPolicy.enabled -- Restrict benchmark pods' network: no ingress, egress only to DNS and to `networkPolicy.egress`. Needs a CNI that enforces NetworkPolicy. When on, list your inference endpoints in `networkPolicy.egress`, or runs can't reach them.
+  enabled: false
   # networkPolicy.egress -- Egress rules (NetworkPolicyEgressRule) to the inference endpoints you benchmark, for example a namespace selector and port. Until you set them, benchmark pods only reach DNS, and runs fail to connect.
   egress: []
   # networkPolicy.dns -- Allow DNS to kube-dns or CoreDNS.

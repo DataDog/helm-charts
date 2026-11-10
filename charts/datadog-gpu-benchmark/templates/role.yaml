@@ -1,7 +1,8 @@
 {{- if .Values.rbac.create }}
-# What the Cluster Agent's Private Action Runner needs to run benchmarks, in the benchmark
-# namespace only: create, read and delete the run's Job, read its pod and logs, and read the
-# pod overrides.
+# What the Cluster Agent's Private Action Runner needs for Datadog's benchmark actions, in the
+# benchmark namespace only: kubernetes.batch.createJob, getJob, deleteJob; kubernetes.core.listPod
+# (finds the run's pod), getPodLogs (progress and results) and getConfigMap, for the pod overrides
+# only.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -19,9 +20,6 @@ rules:
   - apiGroups: [""]
     resources: ["pods/log"]
     verbs: ["get"]
-  - apiGroups: [""]
-    resources: ["events"]
-    verbs: ["list"]
   - apiGroups: [""]
     resources: ["configmaps"]
     resourceNames: [{{ include "gpu-benchmark.podOverridesConfigMap" . | quote }}]

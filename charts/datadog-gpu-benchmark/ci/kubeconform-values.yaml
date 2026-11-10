@@ -15,9 +15,15 @@ podOverrides:
   imageRepository: 123456789012.dkr.ecr.us-east-1.amazonaws.com/datadog/gpu-benchmark
   imagePullSecrets:
     - name: ecr-pull
+# The optional guardrails are on here, so CI renders and validates them.
 priorityClass:
   create: true
+resourceQuota:
+  enabled: true
+limitRange:
+  enabled: true
 networkPolicy:
+  enabled: true
   egress:
     - to:
         - namespaceSelector:
