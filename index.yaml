@@ -37477,6 +37477,30 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/datadog-csi-driver-0.1.0/datadog-csi-driver-0.1.0.tgz
     version: 0.1.0
+  datadog-gpu-benchmark:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2026-11-10T18:24:22.755476296Z"
+    description: Prepares a namespace where Datadog GPU Monitoring runs inference
+      benchmarks, through the Cluster Agent's Private Action Runner
+    digest: dd5741e1ff04896aa751f4f8fefd42ccac6598e4e643dcd5b6bbb9d11e172911
+    home: https://www.datadoghq.com
+    icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+    keywords:
+    - gpu
+    - inference
+    - benchmark
+    - aiperf
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog-gpu-benchmark
+    sources:
+    - https://github.com/DataDog/helm-charts/tree/main/charts/datadog-gpu-benchmark
+    type: application
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-gpu-benchmark-0.1.0/datadog-gpu-benchmark-0.1.0.tgz
+    version: 0.1.0
   datadog-operator:
   - apiVersion: v2
     appVersion: 1.32.0-rc.2
@@ -49651,4 +49675,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2026-11-10T17:33:58.479627537Z"
+generated: "2026-11-10T18:24:22.75676509Z"
