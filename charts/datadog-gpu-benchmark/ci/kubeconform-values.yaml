@@ -1,0 +1,32 @@
+clusterAgent:
+  serviceAccount:
+    name: datadog-agent-cluster-agent
+    namespace: datadog-operator
+podOverrides:
+  labels:
+    team: inference
+  nodeSelector:
+    node-pool: cpu
+  tolerations:
+    - key: dedicated
+      operator: Equal
+      value: benchmarks
+      effect: NoSchedule
+  imageRepository: 123456789012.dkr.ecr.us-east-1.amazonaws.com/datadog/gpu-benchmark
+  imagePullSecrets:
+    - name: ecr-pull
+priorityClass:
+  create: true
+networkPolicy:
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: inference
+      ports:
+        - protocol: TCP
+          port: 8000
+admissionPolicy:
+  allowInlineScript: false
+  extraEnv:
+    - OPENAI_API_KEY

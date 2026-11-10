@@ -1,0 +1,14 @@
+{{- if .Values.limitRange.enabled }}
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: {{ include "gpu-benchmark.fullname" . }}
+  namespace: {{ include "gpu-benchmark.namespace" . }}
+  labels:
+    {{- include "gpu-benchmark.labels" . | nindent 4 }}
+spec:
+  limits:
+    - type: Container
+      max:
+        {{- toYaml .Values.limitRange.max | nindent 8 }}
+{{- end }}

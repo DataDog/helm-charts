@@ -1,0 +1,30 @@
+The {{ include "gpu-benchmark.namespace" . }} namespace is ready for Datadog GPU Monitoring benchmarks.
+
+{{- if .Values.rbac.create }}
+
+The Cluster Agent's ServiceAccount {{ .Values.clusterAgent.serviceAccount.namespace }}/{{ .Values.clusterAgent.serviceAccount.name }} may now create benchmark Jobs in it.
+Its Private Action Runner must be enabled, with the benchmark actions allowed
+(clusterAgent.privateActionRunner in the datadog chart):
+  com.datadoghq.kubernetes.batch.createJob, getJob, deleteJob
+  com.datadoghq.kubernetes.core.listPod, getPodLogs, getConfigMap
+{{- end }}
+
+{{- if and .Values.networkPolicy.enabled (not .Values.networkPolicy.egress) }}
+
+WARNING: networkPolicy.egress is empty. Benchmark pods can only reach DNS, so runs cannot
+connect to your inference endpoints. List them in networkPolicy.egress, or set
+networkPolicy.enabled=false.
+{{- end }}
+
+{{- if .Values.admissionPolicy.enabled }}
+{{- if eq (include "gpu-benchmark.admissionPolicySupported" .) "true" }}
+
+The admission policy only admits benchmark pods that use Datadog's image, pinned by digest.
+{{- else }}
+
+WARNING: this cluster has no admissionregistration.k8s.io/v1 ValidatingAdmissionPolicy
+(Kubernetes 1.30+), so no admission policy was created. Anyone with the Cluster Agent's
+credentials could run other images in {{ include "gpu-benchmark.namespace" . }}. Add an
+equivalent Kyverno or Gatekeeper policy: see the chart's README.
+{{- end }}
+{{- end }}

@@ -1,0 +1,21 @@
+{{- include "gpu-benchmark.validate" . -}}
+{{- if .Values.namespace.create }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "gpu-benchmark.namespace" . }}
+  labels:
+    {{- include "gpu-benchmark.labels" . | nindent 4 }}
+    # Benchmark pods run non-root, with no capabilities and a read-only root filesystem.
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/audit: restricted
+    {{- with .Values.namespace.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.namespace.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

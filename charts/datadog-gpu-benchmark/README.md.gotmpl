@@ -1,0 +1,92 @@
+# Datadog GPU Benchmark
+
+{{ template "chart.versionBadge" . }}{{ template "chart.appVersionBadge" . }}
+
+## Overview
+
+[Datadog GPU Monitoring](https://docs.datadoghq.com/gpu_monitoring/) can benchmark your inference endpoints from inside your cluster: it measures time to first token, time per output token and throughput under load, next to your GPU and inference server metrics.
+
+Each benchmark run is one Kubernetes Job, which Datadog creates in the `datadog-gpu-benchmark` namespace through the [Private Action Runner](https://docs.datadoghq.com/actions/private_actions/) of your Cluster Agent, and deletes when the run ends. The Job runs Datadog's benchmark image (based on [NVIDIA AIPerf](https://github.com/ai-dynamo/aiperf)) and reports through its logs: it never calls the Kubernetes API, and Datadog never reads anything else in your cluster.
+
+This chart prepares that namespace:
+
+| Resource | Purpose |
+| --- | --- |
+| Namespace `datadog-gpu-benchmark` | Pod Security `restricted` |
+| Role and RoleBinding | Lets the Cluster Agent's ServiceAccount create, read and delete Jobs, read their pods and logs, and read the pod overrides, in this namespace only |
+| ServiceAccount `datadog-gpu-benchmark-run` | Runs benchmark pods, with no role and no token |
+| ConfigMap `datadog-gpu-benchmark-pod` | Placement, labels and image mirror for benchmark pods (`podOverrides`) |
+| ResourceQuota and LimitRange | Cap what runs may use |
+| NetworkPolicy | No ingress; egress only to DNS and the endpoints you list |
+| ValidatingAdmissionPolicy (Kubernetes 1.30+) | Admits only benchmark pods of the expected shape: Datadog's image pinned by digest, one container, the expected environment and volumes, no host access, no ServiceAccount token |
+| PriorityClass (optional) | A low priority that never preempts other pods |
+
+## Prerequisites
+
+- The Datadog Cluster Agent 7.84+ with its Private Action Runner enabled, and the benchmark actions allowed. With the `datadog` chart:
+
+  ```yaml
+  clusterAgent:
+    privateActionRunner:
+      enabled: true
+      actionsAllowlist:
+        - com.datadoghq.kubernetes.batch.createJob
+        - com.datadoghq.kubernetes.batch.getJob
+        - com.datadoghq.kubernetes.batch.deleteJob
+        - com.datadoghq.kubernetes.core.listPod
+        - com.datadoghq.kubernetes.core.getPodLogs
+        - com.datadoghq.kubernetes.core.getConfigMap
+  ```
+
+- CPU capacity for the runs: benchmark pods need no GPU.
+- A CNI that enforces NetworkPolicy, for `networkPolicy.enabled`.
+- Kubernetes 1.30+ for the admission policy. On older clusters, enforce the same rules with Kyverno or Gatekeeper.
+
+## Installation
+
+```bash
+helm repo add datadog https://helm.datadoghq.com
+helm repo update
+helm install datadog-gpu-benchmark datadog/datadog-gpu-benchmark \
+  --set clusterAgent.serviceAccount.name=<cluster agent ServiceAccount> \
+  --set clusterAgent.serviceAccount.namespace=<cluster agent namespace>
+```
+
+The Cluster Agent's ServiceAccount is `<release>-cluster-agent` when you install the Agent with the `datadog` chart, and `<DatadogAgent name>-cluster-agent` with the Datadog Operator: `kubectl get serviceaccounts -A | grep cluster-agent` lists it.
+
+Then let benchmark pods reach the endpoints you benchmark, for example a vLLM service in the `inference` namespace:
+
+```yaml
+networkPolicy:
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: inference
+      ports:
+        - protocol: TCP
+          port: 8000
+```
+
+## Placement
+
+Keep benchmark pods off your GPU nodes and away from inference workloads with `podOverrides`, for example on a tainted CPU node pool:
+
+```yaml
+podOverrides:
+  nodeSelector:
+    node-pool: cpu
+  tolerations:
+    - key: dedicated
+      operator: Equal
+      value: benchmarks
+      effect: NoSchedule
+priorityClass:
+  create: true
+```
+
+## Image mirror
+
+If your cluster can't pull from Datadog's public registries, mirror the image and set `podOverrides.imageRepository` (and `podOverrides.imagePullSecrets` if needed). Datadog keeps the image digest, so the mirror must hold that exact image. The admission policy allows the mirror automatically.
+
+{{ template "chart.valuesSection" . }}

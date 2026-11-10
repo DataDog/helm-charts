@@ -1,0 +1,13 @@
+{{- if .Values.priorityClass.create }}
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: {{ .Values.priorityClass.name }}
+  labels:
+    {{- include "gpu-benchmark.labels" . | nindent 4 }}
+value: {{ .Values.priorityClass.value }}
+globalDefault: false
+# Benchmark pods wait for capacity; they never evict other pods.
+preemptionPolicy: Never
+description: Datadog GPU Monitoring benchmark runs. Never preempts other pods.
+{{- end }}
