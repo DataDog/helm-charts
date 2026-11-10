@@ -847,11 +847,46 @@ Return the image for the otel-agent in gateway based on `.Values` (passed as .)
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (eq (include "resolved-discovery-enabled" .) "true") .Values.datadog.discovery.serviceMap.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) (eq (include "should-enable-sbom-enrichment-usage" .) "true") -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled .Values.datadog.traceroute.enabled (eq (include "resolved-discovery-enabled" .) "true") .Values.datadog.discovery.serviceMap.enabled (and .Values.datadog.gpuMonitoring.enabled .Values.datadog.gpuMonitoring.privilegedMode) .Values.datadog.dynamicInstrumentationGo.enabled (and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.runInSystemProbe) (eq (include "should-enable-sbom-enrichment-usage" .) "true") (eq (include "should-enable-private-action-runner-packet-capture" .) "true") -}}
 true
 {{- else -}}
 false
 {{- end -}}
+{{- end -}}
+
+{{/*
+Directory and path of the socket on which system-probe serves only the packet_capture module to the
+node Private Action Runner.
+*/}}
+{{- define "private-action-runner-packet-capture-socket-dir" -}}
+/var/run/sysprobe-capture
+{{- end -}}
+
+{{- define "private-action-runner-packet-capture-socket-path" -}}
+{{ include "private-action-runner-packet-capture-socket-dir" . }}/capture.sock
+{{- end -}}
+
+{{/*
+Return true if the node Private Action Runner can run packet captures through system-probe.
+Requires datadog.privateActionRunner.enabled, Linux, and Agent 7.86.0 or newer: older Agents do
+not serve the capture socket. Only agents.image.doNotCheckTag bypasses the version check (which
+agents.image.digest users need, since the tag still decides the version). Otherwise the resolved
+tag must be a semantic version >= 7.86.0: floating tags such as `latest` or `7` resolve to the
+chart's default Agent version, and any other tag that is not a version keeps the feature off.
+GKE Autopilot and GDC are excluded: the Private Action Runner is not supported there.
+*/}}
+{{- define "should-enable-private-action-runner-packet-capture" -}}
+{{- $par := .Values.datadog.privateActionRunner -}}
+{{- $enabled := false -}}
+{{- if and $par.enabled ($par.packetCapture | default dict).enabled (eq .Values.targetSystem "linux") (not .Values.providers.gke.autopilot) (not .Values.providers.gke.gdc) -}}
+{{- $version := include "get-agent-version" . -}}
+{{- if .Values.agents.image.doNotCheckTag -}}
+{{- $enabled = true -}}
+{{- else if regexMatch "^v?[0-9]+(\\.[0-9]+){0,2}(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$" $version -}}
+{{- $enabled = semverCompare ">=7.86.0-0" $version -}}
+{{- end -}}
+{{- end -}}
+{{- $enabled -}}
 {{- end -}}
 
 {{/*
@@ -1427,25 +1462,12 @@ false
 {{- end -}}
 {{- end -}}
 
-{{/*
-Enable jemalloc only when requested and the component's Agent image is 7.84+.
-*/}}
-{{- define "should-enable-jemalloc" -}}
-{{- $image := .image | default .Values.agents.image -}}
-{{- $versionContext := dict "Values" (dict "agents" (dict "image" $image)) -}}
-{{- if and .Values.datadog.jemalloc.enabled (or $image.doNotCheckTag (semverCompare ">=7.84.0-0" (include "get-agent-version" $versionContext))) -}}
-true
-{{- else -}}
-false
-{{- end -}}
-{{- end -}}
-
-{{/* Environment variables for the jemalloc allocator. */}}
-{{- define "jemalloc-env" -}}
+{{/* Disable the image's jemalloc preload while preserving the syscall compatibility wrapper. */}}
+{{- define "jemalloc-disable-env" -}}
+{{- if and .Values.datadog.jemalloc.disable (eq .Values.targetSystem "linux") -}}
 - name: LD_PRELOAD
-  value: "/opt/lib/nosys.so /opt/datadog-agent/embedded/lib/libjemalloc.so"
-- name: MALLOC_CONF
-  value: "background_thread:true,dirty_decay_ms:5000"
+  value: "/opt/lib/nosys.so"
+{{- end -}}
 {{- end -}}
 
 {{/*
@@ -1504,7 +1526,7 @@ securityContext:
     {{ toYaml .securityContext.windowsOptions }}
   {{- end -}}
 {{- else }}
-{{- if or .securityContext .sysAdmin .mknod (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
+{{- if or .securityContext .sysAdmin .mknod .packetCapture (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
   {{- /* Define default values for the added capabilities and securityContext */ -}}
   {{- $addedCapabilities := list -}}
   {{- $securityContext := dict -}}
@@ -1521,6 +1543,13 @@ securityContext:
   {{- end -}}
   {{- if .kill -}}
     {{- $addedCapabilities = append $addedCapabilities "KILL" -}}
+  {{- end -}}
+  {{- if .packetCapture -}}
+    {{- range list "SYS_ADMIN" "SYS_RESOURCE" "NET_ADMIN" "NET_RAW" "IPC_LOCK" -}}
+      {{- if not (has . $addedCapabilities) -}}
+        {{- $addedCapabilities = append $addedCapabilities . -}}
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
   {{- /* Merge the added capabilities with the securityContext, only if we have something to add */ -}}
   {{- if $addedCapabilities -}}
@@ -1732,18 +1761,28 @@ Validate Cluster Agent Private Action Runner configuration
 {{- end -}}
 
 {{/*
+Whether the Node Agent Private Action Runner runs in split mode, where the Core Agent manages
+the runner process. datadog.privateActionRunner.splitEnabled requests it; the chart falls back
+to the standalone runner where split mode cannot run: FIPS, which split mode does not support,
+and Agents older than 7.84.0 (agents.image.doNotCheckTag skips the version check).
+*/}}
+{{- define "node-par-split-enabled" -}}
+{{- if and .Values.datadog.privateActionRunner.enabled
+           (eq .Values.targetSystem "linux")
+           .Values.datadog.privateActionRunner.splitEnabled
+           (not (or .Values.useFIPSAgent .Values.fips.enabled))
+           (or .Values.agents.image.doNotCheckTag (semverCompare ">=7.84.0-0" (include "get-agent-version" .))) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Validate Node Agent Private Action Runner configuration
 */}}
 {{- define "validate-node-private-action-runner-config" -}}
 {{- if .Values.datadog.privateActionRunner.enabled -}}
-{{- if .Values.datadog.privateActionRunner.splitEnabled -}}
-{{- if or .Values.useFIPSAgent .Values.fips.enabled -}}
-{{- fail "Node Agent Private Action Runner split mode does not support FIPS." -}}
-{{- end -}}
-{{- if and (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.84.0-0" (include "get-agent-version" .)) -}}
-{{- fail "Node Agent Private Action Runner split mode requires Datadog Agent 7.84.0 or newer." -}}
-{{- end -}}
-{{- end -}}
 {{- if not .Values.datadog.privateActionRunner.selfEnroll -}}
 {{- if and (not .Values.datadog.privateActionRunner.identityFromExistingSecret) (or (not .Values.datadog.privateActionRunner.urn) (not .Values.datadog.privateActionRunner.privateKey)) -}}
 {{- fail "Node Agent Private Action Runner: when selfEnroll is disabled, you must provide either datadog.privateActionRunner.identityFromExistingSecret or both datadog.privateActionRunner.urn and datadog.privateActionRunner.privateKey" }}
@@ -2189,17 +2228,11 @@ Whether the Trace Agent, Process Agent, Security Agent and System Probe take the
 configuration from the Agent. Rendered as the consumer's own environment variable and used to
 gate the settings mirrored onto the Agent container, so the chart's answer and the Agent's
 behaviour are one value rather than two that have to agree.
-The version floor is the Agent release that ships the namespaced per-container keys: enabling
-streaming without them drops each container's DD_LOG_LEVEL without a replacement.
 */}}
 {{- define "configstream-enabled" -}}
 {{- include "configstream-env-conflict-check" . -}}
 {{- if kindIs "bool" .Values.datadog.configStream.enabled -}}
 {{ .Values.datadog.configStream.enabled }}
-{{- else if .Values.agents.image.doNotCheckTag -}}
-true
-{{- else if semverCompare ">=7.85.0-0" (include "get-agent-version" .) -}}
-true
 {{- else -}}
 false
 {{- end -}}

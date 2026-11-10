@@ -2085,7 +2085,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
-              value: "true"
+              value: "false"
             - name: DD_PROCESS_CONFIG_PROCESS_COLLECTION_ENABLED
               value: "false"
             - name: DD_PROCESS_CONFIG_CONTAINER_COLLECTION_ENABLED
@@ -2168,18 +2168,6 @@ spec:
               value: "false"
             - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
               value: "false"
-            - name: DD_NETWORK_PATH_CONNECTIONS_MONITORING_ENABLED
-              value: "true"
-            - name: DD_NETWORK_PATH_COLLECTOR_WORKERS
-              value: "8"
-            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_TTL
-              value: 20m
-            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_INTERVAL
-              value: 3m
-            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_CONTEXTS_LIMIT
-              value: "5000"
-            - name: DD_NETWORK_PATH_COLLECTOR_PATHTEST_MAX_PER_MINUTE
-              value: "200"
             - name: DD_CONTAINER_IMAGE_ENABLED
               value: "true"
             - name: DD_KUBELET_CORE_CHECK_ENABLED
@@ -2317,7 +2305,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
-              value: "true"
+              value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -2432,7 +2420,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
-              value: "true"
+              value: "false"
             - name: DD_CLUSTER_AGENT_ENABLED
               value: "true"
             - name: DD_CLUSTER_AGENT_KUBERNETES_SERVICE_NAME
@@ -2553,7 +2541,7 @@ spec:
             - name: DD_OTLP_CONFIG_LOGS_ENABLED
               value: "false"
             - name: DD_REMOTE_AGENT_CONFIGSTREAM_CONSUMER_ENABLED
-              value: "true"
+              value: "false"
             - name: DD_LOG_LEVEL
               value: INFO
             - name: DD_DOGSTATSD_PORT

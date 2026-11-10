@@ -5,8 +5,12 @@
   emptyDir: {}
 - name: s6-run
   emptyDir: {}
-{{- if and .Values.datadog.privateActionRunner.enabled .Values.datadog.privateActionRunner.splitEnabled }}
+{{- if eq (include "node-par-split-enabled" .) "true" }}
 - name: private-action-runner-run
+  emptyDir: {}
+{{- end }}
+{{- if eq (include "should-enable-private-action-runner-packet-capture" .) "true" }}
+- name: sysprobe-capture-socket-dir
   emptyDir: {}
 {{- end }}
 {{- if or
