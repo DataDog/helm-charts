@@ -2,6 +2,7 @@ package datadog
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -274,4 +275,45 @@ func (s *k8sSuite) verifyHTTPCheck(c *assert.CollectT) {
 			assert.Greater(c, points.Value, float64(0))
 		}
 	}
+}
+
+// assertProcessHostPasswd checks a running Agent pod that uses the relocated passwd mount.
+func (s *k8sSuite) assertProcessHostPasswd(c *assert.CollectT, namespace string, pod corev1.Pod) {
+	mounts := map[string]string{}
+	for _, container := range pod.Spec.Containers {
+		if container.Name != "agent" {
+			continue
+		}
+		for _, mount := range container.VolumeMounts {
+			mounts[mount.MountPath] = mount.Name
+		}
+	}
+	assert.Equal(c, "host-passwd", mounts["/host/etc/passwd"], "host passwd mount")
+	assert.NotContains(c, mounts, "/etc/passwd", "host passwd must not hide the image's /etc/passwd")
+	assert.Equal(c, "os-release-file", mounts["/host/etc/os-release"], "host os-release mount")
+
+	client := s.Env().KubernetesCluster.KubernetesClient
+	// The image's own users must stay visible; host files are under /host/etc.
+	stdout, _, err := client.PodExec(namespace, pod.Name, "agent", []string{
+		"sh", "-c", "test -s /host/etc/passwd && test -s /host/etc/os-release && getent passwd dd-agent",
+	})
+	if !assert.NoError(c, err) {
+		return
+	}
+	assert.Contains(c, stdout, "dd-agent:")
+
+	// The Agent reads host os-release from HOST_ETC=/host/etc, so host metadata must still have a platform.
+	stdout, _, err = client.PodExec(namespace, pod.Name, "agent", []string{"env", "DD_LOG_LEVEL=off", "agent", "status", "-j"})
+	if !assert.NoError(c, err) {
+		return
+	}
+	var status struct {
+		HostInfo struct {
+			Platform string `json:"platform"`
+		} `json:"hostinfo"`
+	}
+	if !assert.NoError(c, json.Unmarshal([]byte(stdout), &status)) {
+		return
+	}
+	assert.NotEmpty(c, status.HostInfo.Platform, "host platform from /host/etc/os-release")
 }
