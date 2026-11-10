@@ -3,7 +3,7 @@
 - name: private-action-runner
   image: "{{ include "image-path" (dict "root" .Values "image" .Values.agents.image) }}"
   imagePullPolicy: {{ .Values.agents.image.pullPolicy }}
-  {{- if .Values.datadog.privateActionRunner.splitEnabled }}
+  {{- if eq (include "node-par-split-enabled" .) "true" }}
   command: ["/opt/entrypoints/privateactionrunner"]
   {{- else }}
   command: ["/opt/datadog-agent/embedded/bin/privateactionrunner", "run", "-c={{ template "datadog.confPath" . }}", "-E=/etc/privateactionrunner/privateactionrunner.yaml"]
@@ -49,7 +49,7 @@
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
-    {{- if .Values.datadog.privateActionRunner.splitEnabled }}
+    {{- if eq (include "node-par-split-enabled" .) "true" }}
     - name: DD_PRIVATE_ACTION_RUNNER_SPLIT_ENABLED
       value: "true"
     - name: DD_PRIVATE_ACTION_RUNNER_EXTRA_CONFIG_PATH
@@ -78,7 +78,7 @@
     - name: {{ template "datadog.fullname" . }}-privateactionrunner-config
       mountPath: /etc/privateactionrunner
       readOnly: true
-    {{- if .Values.datadog.privateActionRunner.splitEnabled }}
+    {{- if eq (include "node-par-split-enabled" .) "true" }}
     - name: private-action-runner-run
       mountPath: /opt/datadog-agent/run
       readOnly: false
@@ -119,7 +119,7 @@
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}
 {{- end }}
-{{- if .Values.datadog.privateActionRunner.splitEnabled }}
+{{- if eq (include "node-par-split-enabled" .) "true" }}
   readinessProbe:
     exec:
       command: ["/par-probe.sh"]
