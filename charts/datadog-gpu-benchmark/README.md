@@ -18,7 +18,7 @@ This chart gives the Cluster Agent what it needs in that namespace:
 
 ## Prerequisites
 
-- The Datadog Cluster Agent 7.84+ with its Private Action Runner enabled, and the benchmark actions allowed. With the `datadog` chart:
+- The Datadog Cluster Agent 7.85+ (the first release with the `getPodLogs` action) with its Private Action Runner enabled, and the benchmark actions allowed. With the `datadog` chart:
 
   ```yaml
   clusterAgent:
