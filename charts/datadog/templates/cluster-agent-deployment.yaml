@@ -172,6 +172,7 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          {{- include "health-platform-env" . | nindent 10 }}
           - name: DD_CLUSTER_AGENT_SERVICE_ACCOUNT_NAME
             valueFrom:
               fieldRef:

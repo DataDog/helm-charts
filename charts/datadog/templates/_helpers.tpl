@@ -1471,6 +1471,16 @@ false
 {{- end -}}
 
 {{/*
+Agent Health Platform switch (health_platform.enabled), set on every container that runs
+Autodiscovery: the core Agent, the Cluster Agent and the Cluster Check Runners. Rendered before
+the user's env, so an explicit DD_HEALTH_PLATFORM_ENABLED there still takes precedence.
+*/}}
+{{- define "health-platform-env" -}}
+- name: DD_HEALTH_PLATFORM_ENABLED
+  value: {{ .Values.datadog.healthPlatform.enabled | quote }}
+{{- end -}}
+
+{{/*
 Returns env vars correctly quoted and valueFrom respected
 */}}
 {{- define "additional-env-entries" -}}

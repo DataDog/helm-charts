@@ -2089,6 +2089,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: DD_HEALTH_PLATFORM_ENABLED
+              value: "false"
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -2842,6 +2844,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: DD_HEALTH_PLATFORM_ENABLED
+              value: "false"
             - name: DD_CLUSTER_AGENT_SERVICE_ACCOUNT_NAME
               valueFrom:
                 fieldRef:

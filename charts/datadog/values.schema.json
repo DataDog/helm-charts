@@ -21,6 +21,16 @@
             }
           }
         },
+        "healthPlatform": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable the Agent Health Platform (DD_HEALTH_PLATFORM_ENABLED) on the node Agent, Cluster Agent and Cluster Check Runners. Disabled by default as a temporary mitigation for an Autodiscovery stall."
+            }
+          }
+        },
         "instrumentationCrd": {
           "type": "object",
           "properties": {

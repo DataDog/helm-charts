@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.270.0
+
+* Add `datadog.healthPlatform.enabled` (default `false`), rendered as `DD_HEALTH_PLATFORM_ENABLED` on the node Agent, Cluster Agent and Cluster Check Runners. This turns the Agent Health Platform off by default as a temporary mitigation: Agents 7.79.0+ report Autodiscovery annotation issues to it synchronously, which can stall Autodiscovery long enough that short-lived pods never get their checks or log sources scheduled. Set `datadog.healthPlatform.enabled: true` to opt back in once the Agent reports these issues asynchronously. An explicit `DD_HEALTH_PLATFORM_ENABLED` in a container's `env` still takes precedence. The setting exists since Agent 7.74.0 and is ignored by older Agents.
+
 ## 3.269.2
 
 * Fix OTel CI values files: set `include` on the `filelog` receivers in `agent-otel-collector-logs-values.yaml`, which newer OTel Agent versions require, and use the all-zeros fake API key, which the Agent skips validating, where the collector config sets its own `api.key`. Pin Helm 3 in the `install-chart` CI job ([#3057](https://github.com/DataDog/helm-charts/pull/3057)).

@@ -1840,6 +1840,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: DD_HEALTH_PLATFORM_ENABLED
+              value: "false"
             - name: DD_API_KEY
               valueFrom:
                 secretKeyRef:
@@ -2342,6 +2344,8 @@ spec:
                   fieldPath: spec.nodeName
             - name: DD_PROVIDER_KIND
               value: gke-autopilot
+            - name: DD_HEALTH_PLATFORM_ENABLED
+              value: "false"
           image: gcr.io/datadoghq/agent:7.84.6
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -2510,6 +2514,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: DD_HEALTH_PLATFORM_ENABLED
+              value: "false"
             - name: DD_CLUSTER_AGENT_SERVICE_ACCOUNT_NAME
               valueFrom:
                 fieldRef:

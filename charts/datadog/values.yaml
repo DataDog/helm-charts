@@ -61,6 +61,10 @@ datadog:
     # datadog.jemalloc.disable -- Disable jemalloc for the Linux node core Agent, trace-agent, process-agent, security-agent, system-probe, and enabled Cluster Check Runners by overriding LD_PRELOAD. Jemalloc is enabled by default in Agent 7.87.0+ images. Not supported on GKE Autopilot.
     disable: false
 
+  healthPlatform:
+    # datadog.healthPlatform.enabled -- Enable the Agent Health Platform (`DD_HEALTH_PLATFORM_ENABLED`) on the node Agent, Cluster Agent and Cluster Check Runners. Disabled by default as a temporary mitigation: Agents 7.79.0+ report Autodiscovery annotation issues to it synchronously, which can stall Autodiscovery long enough that short-lived pods never get their checks or log sources scheduled. Set to `true` to opt back in. Harmless on Agents older than 7.74.0, which ignore it.
+    enabled: false
+
   # datadog.apiKey -- Your Datadog API key
 
   ## ref: https://app.datadoghq.com/account/settings#agent/kubernetes
