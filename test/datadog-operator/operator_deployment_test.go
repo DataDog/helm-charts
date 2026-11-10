@@ -47,7 +47,7 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "defaultDataPlaneEnabled linux auto without site renders false",
+			name: "defaultDataPlaneEnabled linux auto without site renders true",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
@@ -55,7 +55,7 @@ func Test_operator_chart(t *testing.T) {
 				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides:   map[string]string{},
 			},
-			assertions: verifyDefaultDataPlaneLinuxEnabled("false"),
+			assertions: verifyDefaultDataPlaneLinuxEnabled("true"),
 			skipTest:   SkipTest,
 		},
 		{
@@ -102,7 +102,7 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
-			name: "defaultDataPlaneEnabled linux auto on non-AP1/AP2 site renders false",
+			name: "defaultDataPlaneEnabled linux auto on EU site renders true",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
 				ChartPath:   "../../charts/datadog-operator",
@@ -110,6 +110,21 @@ func Test_operator_chart(t *testing.T) {
 				Values:      []string{"../../charts/datadog-operator/values.yaml"},
 				Overrides: map[string]string{
 					"site": "datadoghq.eu",
+				},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("true"),
+			skipTest:   SkipTest,
+		},
+		{
+			name: "defaultDataPlaneEnabled linux false renders false on EU site",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"site":                          "datadoghq.eu",
+					"defaultDataPlaneEnabled.linux": "false",
 				},
 			},
 			assertions: verifyDefaultDataPlaneLinuxEnabled("false"),
