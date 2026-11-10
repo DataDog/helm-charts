@@ -2,7 +2,7 @@
 
 ## 2.33.0-dev.2
 
-* feat(datadog-operator): enable Linux ADP default for all sites. `defaultDataPlaneEnabled.linux: "auto"` (the default) now enables Agent Data Plane by default regardless of `site`, rather than only for AP1 and AP2. Set to `false` to opt out.
+* feat(datadog-operator): enable Linux ADP default for all sites. `defaultDataPlaneEnabled.linux` now defaults to `true`, enabling Agent Data Plane by default regardless of `site` rather than only for AP1 and AP2. Set to `false` to opt out. `"auto"` is still accepted and treated as `true`.
 
 ## 2.33.0-dev.1
 

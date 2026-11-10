@@ -132,7 +132,14 @@ spec:
             - name: DD_URL
               value: {{ default .Values.dd_url (include "get-endpoint-config-data-key" (list . "dd-url")) }}
             {{- end }}
-            {{- $defaultDataPlaneLinuxEnabled := include "default-data-plane-linux-enabled" . }}
+            {{- $defaultDataPlaneLinuxEnabled := toString .Values.defaultDataPlaneEnabled.linux }}
+            {{- /* "auto" was the 2.32.0 default; keep accepting it as an alias for true. */}}
+            {{- if eq $defaultDataPlaneLinuxEnabled "auto" }}
+            {{- $defaultDataPlaneLinuxEnabled = "true" }}
+            {{- end }}
+            {{- if not (has $defaultDataPlaneLinuxEnabled (list "true" "false")) }}
+            {{- fail (printf "defaultDataPlaneEnabled.linux must be true or false; got %q" (toString .Values.defaultDataPlaneEnabled.linux)) }}
+            {{- end }}
             {{- $envSetsDefaultDataPlaneLinux := false }}
             {{- range .Values.env }}
             {{- if eq .name "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED" }}
