@@ -1,7 +1,6 @@
 clusterAgent:
-  serviceAccount:
-    name: datadog-agent-cluster-agent
-    namespace: datadog-operator
+  namespace: datadog
+  serviceAccount: datadog-cluster-agent
 podOverrides:
   labels:
     team: inference
@@ -12,27 +11,7 @@ podOverrides:
       operator: Equal
       value: benchmarks
       effect: NoSchedule
+  priorityClassName: low
   imageRepository: 123456789012.dkr.ecr.us-east-1.amazonaws.com/datadog/gpu-benchmark
   imagePullSecrets:
     - name: ecr-pull
-# The optional guardrails are on here, so CI renders and validates them.
-priorityClass:
-  create: true
-resourceQuota:
-  enabled: true
-limitRange:
-  enabled: true
-networkPolicy:
-  enabled: true
-  egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: inference
-      ports:
-        - protocol: TCP
-          port: 8000
-admissionPolicy:
-  allowInlineScript: false
-  extraEnv:
-    - OPENAI_API_KEY

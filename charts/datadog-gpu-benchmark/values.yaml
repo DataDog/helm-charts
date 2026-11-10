@@ -1,34 +1,28 @@
 # Default values for datadog-gpu-benchmark.
 #
-# Datadog creates one Kubernetes Job per benchmark run in the benchmark namespace, through the
-# Private Action Runner of your Cluster Agent. This chart prepares that namespace: who may create
-# the Jobs, what the Jobs may contain, how much they may use and what they may reach.
+# Install the chart in the datadog-gpu-benchmark namespace, the one Datadog always creates
+# benchmark Jobs in:
+#   helm install datadog-gpu-benchmark datadog/datadog-gpu-benchmark \
+#     --namespace datadog-gpu-benchmark --create-namespace ...
 
+# The Cluster Agent whose Private Action Runner calls the Kubernetes API for Datadog. The runner
+# must also allowlist kubernetes.batch.createJob, getJob, deleteJob and kubernetes.core.listPod,
+# getPodLogs, getConfigMap.
 clusterAgent:
-  serviceAccount:
-    # clusterAgent.serviceAccount.name -- (string) Name of the Cluster Agent's ServiceAccount, whose Private Action Runner creates the benchmark Jobs. Required. With the `datadog` Helm chart it is `<release>-cluster-agent`; with the Datadog Operator, `<DatadogAgent name>-cluster-agent`.
-    name: ""
-    # clusterAgent.serviceAccount.namespace -- (string) Namespace of the Cluster Agent's ServiceAccount. Required.
-    namespace: ""
+  # clusterAgent.namespace -- (string) Namespace of the Cluster Agent. Required.
+  namespace: ""
+  # clusterAgent.serviceAccount -- (string) Name of the Cluster Agent's ServiceAccount. Required. With the `datadog` Helm chart it is `<release>-cluster-agent`; with the Datadog Operator, `<DatadogAgent name>-cluster-agent`.
+  serviceAccount: ""
 
-namespace:
-  # namespace.create -- Create the benchmark namespace, with Pod Security `restricted` labels. Set to false if you create it yourself; it must then carry the same labels.
-  create: true
-  # namespace.name -- The benchmark namespace. Datadog creates the Jobs in this namespace, so it cannot be changed.
-  name: datadog-gpu-benchmark
-  # namespace.labels -- Extra labels for the namespace.
-  labels: {}
-  # namespace.annotations -- Extra annotations for the namespace.
-  annotations: {}
-
-rbac:
-  # rbac.create -- Create the Role and RoleBinding that let the Cluster Agent's ServiceAccount manage benchmark Jobs in the benchmark namespace, and nothing outside it.
-  create: true
-
+# How the benchmark pods are placed and labelled in this cluster. Rendered into the
+# datadog-gpu-benchmark-pod ConfigMap, which Datadog reads before each run and merges into the
+# Job's pod template. Only these keys are accepted; anything else in the pod (container,
+# command, environment, volumes, ServiceAccount, security context, resources) is set by
+# Datadog, and the image only changes registry (imageRepository), never content.
 podOverrides:
   # podOverrides.labels -- Labels added to benchmark pods. `app.kubernetes.io/managed-by`, `gpu-benchmark/org` and `gpu-benchmark/run` are set by Datadog.
   labels: {}
-  # podOverrides.annotations -- Annotations added to benchmark pods. `ad.datadoghq.com/logs_exclude` is set by Datadog.
+  # podOverrides.annotations -- Annotations added to benchmark pods.
   annotations: {}
   # podOverrides.nodeSelector -- Node selector for benchmark pods. Benchmark pods only need CPU: keep them off GPU nodes.
   nodeSelector: {}
@@ -36,74 +30,11 @@ podOverrides:
   tolerations: []
   # podOverrides.affinity -- Affinity for benchmark pods.
   affinity: {}
-  # podOverrides.priorityClassName -- PriorityClass for benchmark pods. Defaults to the chart's PriorityClass when `priorityClass.create` is true.
+  # podOverrides.priorityClassName -- PriorityClass for benchmark pods.
   priorityClassName: ""
   # podOverrides.topologySpreadConstraints -- Topology spread constraints for benchmark pods.
   topologySpreadConstraints: []
-  # podOverrides.imageRepository -- Repository of a mirror of Datadog's benchmark image, without a tag or digest, e.g. `123456789012.dkr.ecr.us-east-1.amazonaws.com/datadog/gpu-benchmark`. Datadog keeps the image digest, so the mirror must hold that exact image. Also allowed by the admission policy.
+  # podOverrides.imageRepository -- Repository of a mirror of Datadog's benchmark image, without a tag or digest, e.g. `123456789012.dkr.ecr.us-east-1.amazonaws.com/datadog/gpu-benchmark`. Datadog keeps the image digest, so the mirror must hold that exact image.
   imageRepository: ""
   # podOverrides.imagePullSecrets -- Secrets of the benchmark namespace the kubelet pulls the image with, e.g. `[{name: my-registry}]`.
   imagePullSecrets: []
-
-# Optional guardrails, off by default: most clusters already set their own quotas and network
-# policies. Turn on the ones you want.
-
-priorityClass:
-  # priorityClass.create -- Create a low PriorityClass for benchmark pods, which never preempts other pods.
-  create: false
-  # priorityClass.name -- Name of the PriorityClass.
-  name: datadog-gpu-benchmark-low
-  # priorityClass.value -- Priority of benchmark pods. Below 0, they are scheduled after your default-priority workloads.
-  value: -100
-
-resourceQuota:
-  # resourceQuota.enabled -- Cap what benchmark runs may use in the namespace. The default `hard` allows two concurrent runs of the largest size.
-  enabled: false
-  # resourceQuota.hard -- The quota's limits.
-  hard:
-    pods: "2"
-    count/jobs.batch: "10"
-    requests.cpu: "32"
-    limits.cpu: "32"
-    requests.memory: 64Gi
-    limits.memory: 64Gi
-
-limitRange:
-  # limitRange.enabled -- Cap the size of one benchmark container.
-  enabled: false
-  # limitRange.max -- The most one container may request or use.
-  max:
-    cpu: "16"
-    memory: 32Gi
-
-networkPolicy:
-  # networkPolicy.enabled -- Restrict benchmark pods' network: no ingress, egress only to DNS and to `networkPolicy.egress`. Needs a CNI that enforces NetworkPolicy. When on, list your inference endpoints in `networkPolicy.egress`, or runs can't reach them.
-  enabled: false
-  # networkPolicy.egress -- Egress rules (NetworkPolicyEgressRule) to the inference endpoints you benchmark, for example a namespace selector and port. Until you set them, benchmark pods only reach DNS, and runs fail to connect.
-  egress: []
-  # networkPolicy.dns -- Allow DNS to kube-dns or CoreDNS.
-  dns:
-    enabled: true
-    # networkPolicy.dns.namespaceSelector -- Namespace of the cluster DNS.
-    namespaceSelector:
-      kubernetes.io/metadata.name: kube-system
-    # networkPolicy.dns.podSelector -- Pods of the cluster DNS.
-    podSelector:
-      k8s-app: kube-dns
-
-admissionPolicy:
-  # admissionPolicy.enabled -- Create a ValidatingAdmissionPolicy that only admits benchmark Jobs and pods of the expected shape: Datadog's image, one container, the expected environment variables and volumes, no host access, no ServiceAccount token. Rendered only on Kubernetes 1.30+ (`admissionregistration.k8s.io/v1`); on older clusters, use an equivalent Kyverno or Gatekeeper policy.
-  enabled: true
-  # admissionPolicy.imageRepositories -- Image repositories benchmark pods may use. `podOverrides.imageRepository` is added automatically.
-  imageRepositories:
-    - registry.datadoghq.com/gpu-benchmark
-    - docker.io/datadog/gpu-benchmark
-    - public.ecr.aws/datadog/gpu-benchmark
-    - gcr.io/datadoghq/gpu-benchmark
-    - eu.gcr.io/datadoghq/gpu-benchmark
-    - asia.gcr.io/datadoghq/gpu-benchmark
-    - datadoghq.azurecr.io/gpu-benchmark
-  # admissionPolicy.allowInlineScript -- Allow the benchmark container's `python -c <script>` command. Datadog runs the benchmark this way until the image has its own entrypoint; set to false then.
-  allowInlineScript: true
-  # admissionPolicy.extraEnv -- Extra environment variable names benchmark containers may set.
-  extraEnv: []

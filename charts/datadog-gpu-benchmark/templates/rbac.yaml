@@ -1,0 +1,71 @@
+{{- include "gpu-benchmark.validate" . -}}
+# Identity of the benchmark pods. No role and no token: the pod never calls
+# the Kubernetes API.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: datadog-gpu-benchmark-run
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gpu-benchmark.labels" . | nindent 4 }}
+automountServiceAccountToken: false
+---
+# What the Cluster Agent's runner needs for Datadog's benchmark actions, in this
+# namespace only: kubernetes.batch.createJob, getJob, deleteJob, and
+# kubernetes.core.listPod (finds the run's pod by its gpu-benchmark/run label),
+# getPodLogs (the pod's logs carry the run's progress and results) and
+# getConfigMap, for the pod overrides only (templates/pod-overrides.yaml).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cluster-agent-gpu-benchmark
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gpu-benchmark.labels" . | nindent 4 }}
+rules:
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - create
+      - get
+      - list
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods/log
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    resourceNames:
+      - datadog-gpu-benchmark-pod
+    verbs:
+      - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cluster-agent-gpu-benchmark
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gpu-benchmark.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cluster-agent-gpu-benchmark
+subjects:
+  - kind: ServiceAccount
+    name: {{ .Values.clusterAgent.serviceAccount }}
+    namespace: {{ .Values.clusterAgent.namespace }}

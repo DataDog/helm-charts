@@ -6,52 +6,11 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "namespace": {
+          "type": "string"
+        },
         "serviceAccount": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "namespace": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    },
-    "namespace": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "create": {
-          "type": "boolean"
-        },
-        "name": {
-          "type": "string",
-          "const": "datadog-gpu-benchmark",
-          "description": "Datadog creates the benchmark Jobs in this namespace."
-        },
-        "labels": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "annotations": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "rbac": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "create": {
-          "type": "boolean"
+          "type": "string"
         }
       }
     },
@@ -88,15 +47,6 @@
           "type": "object",
           "additionalProperties": {
             "type": "string"
-          },
-          "not": {
-            "anyOf": [
-              {
-                "required": [
-                  "ad.datadoghq.com/logs_exclude"
-                ]
-              }
-            ]
           }
         },
         "nodeSelector": {
@@ -124,9 +74,7 @@
           }
         },
         "imageRepository": {
-          "type": "string",
-          "pattern": "^$|^[^@:]+(:[0-9]+)?(/[^@:]+)+$",
-          "description": "A repository, without tag or digest."
+          "type": "string"
         },
         "imagePullSecrets": {
           "type": "array",
@@ -141,121 +89,6 @@
                 "type": "string"
               }
             }
-          }
-        }
-      }
-    },
-    "priorityClass": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "create": {
-          "type": "boolean"
-        },
-        "name": {
-          "type": "string"
-        },
-        "value": {
-          "type": "integer",
-          "maximum": 1000000000
-        }
-      }
-    },
-    "resourceQuota": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "enabled": {
-          "type": "boolean"
-        },
-        "hard": {
-          "type": "object",
-          "additionalProperties": {
-            "type": [
-              "string",
-              "integer"
-            ]
-          }
-        }
-      }
-    },
-    "limitRange": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "enabled": {
-          "type": "boolean"
-        },
-        "max": {
-          "type": "object",
-          "additionalProperties": {
-            "type": [
-              "string",
-              "integer"
-            ]
-          }
-        }
-      }
-    },
-    "networkPolicy": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "enabled": {
-          "type": "boolean"
-        },
-        "egress": {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        "dns": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "enabled": {
-              "type": "boolean"
-            },
-            "namespaceSelector": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            },
-            "podSelector": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    },
-    "admissionPolicy": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "enabled": {
-          "type": "boolean"
-        },
-        "imageRepositories": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string",
-            "pattern": "^[^@:]+(:[0-9]+)?(/[^@:]+)+$"
-          }
-        },
-        "allowInlineScript": {
-          "type": "boolean"
-        },
-        "extraEnv": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
           }
         }
       }
