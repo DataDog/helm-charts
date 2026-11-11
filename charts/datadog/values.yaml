@@ -1119,7 +1119,7 @@ datadog:
     # datadog.systemProbe.seccompRoot -- Specify the seccomp profile root directory
     seccompRoot: /var/lib/kubelet/seccomp
 
-    # datadog.systemProbe.bpfDebug -- Enable logging for kernel debug
+    # datadog.systemProbe.bpfDebug -- DEPRECATED. Enable logging for kernel debug
     bpfDebug: false
 
     # datadog.systemProbe.apparmor -- Specify a apparmor profile for system-probe

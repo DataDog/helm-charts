@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.270.1
+
+* Deprecate `datadog.systemProbe.bpfDebug`. This setting would not work correctly with released datadog-agent images.
+
 ## 3.270.0
 
 * `datadog.privateActionRunner.splitEnabled` now defaults to `true` on Agent 7.84.0+. Set `splitEnabled: false` to opt back into the monolithic runner.
