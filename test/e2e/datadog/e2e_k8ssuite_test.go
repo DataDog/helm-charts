@@ -124,6 +124,10 @@ func (s *k8sSuite) testGenericK8s() {
 	s.testGenericK8sProcessPasswdMounts(true)
 }
 
+// processHostPasswdAgentTag is an Agent image that mounts host passwd at /host/etc/passwd (7.86.0+).
+// TODO: switch to 7.86.0 once it is released.
+const processHostPasswdAgentTag = "7.86.0-rc.6"
+
 // testGenericK8sProcessPasswdMounts is a regression check on the default install's passwd
 // mounts. It checks the spec only, so it holds for any Agent version and needs no exec.
 func (s *k8sSuite) testGenericK8sProcessPasswdMounts(allowHostEtcPasswd bool) {

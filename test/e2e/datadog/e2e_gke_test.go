@@ -109,10 +109,6 @@ func (v *gkeSuite) TestGenericK8s() {
 	v.testGenericK8s()
 }
 
-// processHostPasswdAgentTag is an Agent image that mounts host passwd at /host/etc/passwd (7.86.0+).
-// TODO: switch to 7.86.0 once it is released.
-const processHostPasswdAgentTag = "7.86.0-rc.6"
-
 // TestProcessHostPasswd checks that Agent 7.86.0+ mounts host passwd at /host/etc/passwd,
 // keeping the image's own users such as dd-agent visible. It changes the Helm values for
 // the rest of the suite, so its name keeps it last in the alphabetical test order.
