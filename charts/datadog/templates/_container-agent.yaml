@@ -9,6 +9,9 @@
   {{- if and .Values.agents.containers.agent.command (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
   {{- fail "agents.containers.agent.command override is not supported on GKE Autopilot or GDC. The Datadog WorkloadAllowlist requires the agent container command to be exactly [\"agent\", \"run\"]." }}
   {{- end }}
+  {{- if and (eq (include "should-enable-amd-gpu-monitoring" .) "true") (or .Values.providers.gke.autopilot .Values.providers.gke.gdc) }}
+  {{- fail "datadog.gpuMonitoring.amd.enabled is not supported on GKE Autopilot or GDC." }}
+  {{- end }}
   {{- if .Values.agents.containers.agent.command }}
   command:
 {{ toYaml .Values.agents.containers.agent.command | indent 4 }}
@@ -309,6 +312,13 @@
       value: "true"
     - name: DD_GPU_ENABLED
       value: "true"
+    {{- if eq (include "should-enable-amd-gpu-monitoring" .) "true" }}
+    - name: DD_GPU_AMD_ENABLED
+      value: "true"
+    # the AMD container runtime grants access to /dev/kfd and /dev/dri based on this env var
+    - name: AMD_VISIBLE_DEVICES
+      value: all
+    {{- end }}
     {{- if .Values.datadog.kaiScheduler.enabled }}
     - name: DD_GPU_KAI_SCHEDULER_ENABLED
       value: "true"

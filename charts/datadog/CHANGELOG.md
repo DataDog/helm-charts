@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.271.0
+
+* Add `datadog.gpuMonitoring.amd.enabled` to monitor AMD GPUs with `datadog.gpuMonitoring.enabled` (requires Agent 7.86.0+). It sets `DD_GPU_AMD_ENABLED=true` and `AMD_VISIBLE_DEVICES=all` on the core agent and does not change the RuntimeClass: set `datadog.gpuMonitoring.runtimeClassName: amd` on AMD nodes. Rendering fails on older Agent versions unless `agents.image.doNotCheckTag` is set. Clusters mixing NVIDIA and AMD GPU nodes, GKE Autopilot and GDC are not supported.
+
 ## 3.270.1
 
 * Deprecate `datadog.systemProbe.bpfDebug`. This setting would not work correctly with released datadog-agent images.

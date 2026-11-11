@@ -159,7 +159,17 @@ false
 {{- if and .Values.datadog.networkPath.collector.filters (not (semverCompare ">=7.83.2" $version)) -}}
 {{- fail "datadog.networkPath.collector.filters requires a stable Datadog Agent 7.83.2 or newer. Set agents.image.tag to an explicit stable version 7.83.2 or newer. For a verified compatible prerelease or custom image, set agents.image.doNotCheckTag=true." -}}
 {{- end -}}
+{{- if and (eq (include "should-enable-amd-gpu-monitoring" .) "true") (not (semverCompare ">=7.86.0-0" $version)) -}}
+{{- fail "datadog.gpuMonitoring.amd.enabled requires Datadog Agent 7.86.0 or newer. Set agents.image.tag to 7.86.0 or newer. For a verified compatible custom image, set agents.image.doNotCheckTag=true." -}}
 {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if AMD GPU monitoring is enabled. It requires datadog.gpuMonitoring.enabled.
+*/}}
+{{- define "should-enable-amd-gpu-monitoring" -}}
+{{- and .Values.datadog.gpuMonitoring.enabled (dig "amd" "enabled" false .Values.datadog.gpuMonitoring) -}}
 {{- end -}}
 
 {{- define "check-dca-version" -}}

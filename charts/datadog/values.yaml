@@ -1376,8 +1376,12 @@ datadog:
     # opt back in; expect it to be removed in a future release.
     enableEbpfProbes: false
 
-    # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class.
+    # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class. Set to `amd` for AMD GPUs.
     runtimeClassName: "nvidia"
+
+    amd:
+      # datadog.gpuMonitoring.amd.enabled -- Monitor AMD GPUs (requires Agent 7.86.0+ and `datadog.gpuMonitoring.enabled`; set `datadog.gpuMonitoring.runtimeClassName: amd` on AMD nodes; not supported on GKE Autopilot or GDC; one release serves one GPU vendor)
+      enabled: false
 
   # Software Bill of Materials configuration
   sbom:
