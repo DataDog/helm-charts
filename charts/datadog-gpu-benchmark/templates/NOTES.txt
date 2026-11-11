@@ -1,0 +1,13 @@
+{{- if ne .Release.Namespace (include "gpu-benchmark.namespace" .) }}
+WARNING: this release is in the {{ .Release.Namespace }} namespace, but Datadog creates benchmark
+Jobs in {{ include "gpu-benchmark.namespace" . }}: runs will fail. Reinstall with
+  --namespace {{ include "gpu-benchmark.namespace" . }} --create-namespace
+
+{{ end -}}
+The {{ .Release.Namespace }} namespace is ready for Datadog GPU Monitoring benchmarks.
+
+The Cluster Agent's ServiceAccount {{ .Values.clusterAgent.namespace }}/{{ .Values.clusterAgent.serviceAccount }} may now create benchmark Jobs in it.
+Its Private Action Runner must be enabled (Cluster Agent 7.85+), with the benchmark actions
+allowed (clusterAgent.privateActionRunner in the datadog chart):
+  com.datadoghq.kubernetes.batch.createJob, getJob, deleteJob
+  com.datadoghq.kubernetes.core.listPod, getPodLogs, getConfigMap

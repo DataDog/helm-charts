@@ -1,5 +1,42 @@
 # Datadog changelog
 
+## 3.270.0
+
+* `datadog.privateActionRunner.splitEnabled` now defaults to `true` on Agent 7.84.0+. Set `splitEnabled: false` to opt back into the monolithic runner.
+
+## 3.269.2
+
+* Fix OTel CI values files: set `include` on the `filelog` receivers in `agent-otel-collector-logs-values.yaml`, which newer OTel Agent versions require, and use the all-zeros fake API key, which the Agent skips validating, where the collector config sets its own `api.key`. Pin Helm 3 in the `install-chart` CI job ([#3057](https://github.com/DataDog/helm-charts/pull/3057)).
+
+## 3.269.1
+
+* Disable config streaming by default to restore per-container Agent environment settings. Set `datadog.configStream.enabled: true` to opt in explicitly.
+
+## 3.269.0
+
+* Add `datadog.privateActionRunner.packetCapture.enabled` to run remote packet captures through the node Private Action Runner (requires Agent 7.86.0+, Linux only; ignored on older Agents or when `datadog.privateActionRunner.enabled` is false). It runs the System Probe with `packet_capture` enabled and the `SYS_ADMIN`, `SYS_RESOURCE`, `NET_ADMIN`, `NET_RAW` and `IPC_LOCK` capabilities, and shares with the runner, read-only, a socket that serves only packet capture, never the full System Probe socket. Captures see the node's traffic only with `agents.useHostNetwork: true`; otherwise they see only the Agent pod's network namespace. Floating tags such as `latest` or `7` resolve to the chart default Agent version (7.84.6), and tags that are not versions are not trusted, so the feature stays off unless `agents.image.tag` is 7.86.0+ or `agents.image.doNotCheckTag` is set; when pinning `agents.image.digest`, set `agents.image.doNotCheckTag: true`, since the tag, not the digest, decides the version. Add `com.datadoghq.remoteaction.pcap.runCapture` to `datadog.privateActionRunner.actionsAllowlist` to let workflows run captures; the chart does not add it.
+
+## 3.268.0
+
+* Replace `datadog.jemalloc.enabled` with `datadog.jemalloc.disable` (default `false`). Agent 7.87.0+ Linux images enable jemalloc by default. Set `datadog.jemalloc.disable: true` to override `LD_PRELOAD` with `/opt/lib/nosys.so` for the node core Agent, trace-agent, process-agent, security-agent, system-probe, and enabled Cluster Check Runners. Explicit environment overrides continue to take precedence. Remove the old `datadog.jemalloc.enabled` setting from your values. Disabling jemalloc is not supported on GKE Autopilot; the chart rejects `datadog.jemalloc.disable: true` on Autopilot.
+
+## 3.267.1
+
+* Update `fips.image.tag` to `1.1.33` fixing CVEs and updating packages.
+
+## 3.267.0
+
+* Add `datadog.kaiScheduler.enabled` to enable KAI Scheduler PodGroup collection in the Cluster Agent, which tags pods with their KAI workload and queue, and grant the Cluster Agent `list` and `watch` on KAI PodGroups (requires Agent and Cluster Agent 7.86.0+). With `datadog.gpuMonitoring.enabled`, it also maps KAI fractional GPUs to the containers using them.
+
+## 3.266.1
+
+* Remove the experimental label from the `csi` value of `datadog.apm.instrumentation.injectionMode`. CSI injection is generally available.
+
+## 3.266.0
+
+* Grant the `kubernetes_state_core` check list/watch on `resource.k8s.io` `resourceclaims`, `resourceslices` and `devicetaintrules` when the Cluster Agent (or the Cluster Checks Runner, when `datadog.kubeStateMetricsCore.useClusterCheckRunners` is set) is 7.85.0+, so users can enable Dynamic Resource Allocation metrics by adding these collectors to `kubernetes_state_core.yaml` in `clusterAgent.confd`. The chart does not add the collectors itself.
+* Mount the host `/var/run/cdi` directory read-only at `/host/var/run/cdi` in the Agent container when `datadog.gpuMonitoring.enabled` is set, so the Agent can attribute GPUs to pods that use DRA.
+
 ## 3.265.0
 
 * Add `datadog.kubernetesActions.communication.remoteConfiguration.enabled` and `datadog.kubernetesActions.communication.privateActionRunner.enabled` to choose how the Cluster Agent receives Kubernetes actions. Both are enabled by default, so `datadog.kubernetesActions.enabled: true` alone uses both channels; disable `privateActionRunner` for Remote Configuration only. Enabling `privateActionRunner` enables the Cluster Agent Private Action Runner automatically.

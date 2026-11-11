@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.32.0-dev.5](https://img.shields.io/badge/Version-2.32.0--dev.5-informational?style=flat-square) ![AppVersion: 1.32.0-rc.2](https://img.shields.io/badge/AppVersion-1.32.0--rc.2-informational?style=flat-square)
+![Version: 2.33.0-dev.1](https://img.shields.io/badge/Version-2.33.0--dev.1-informational?style=flat-square) ![AppVersion: 1.32.0-rc.2](https://img.shields.io/badge/AppVersion-1.32.0--rc.2-informational?style=flat-square)
 
 ## Values
 
@@ -39,6 +39,7 @@
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
+| defaultDataPlaneEnabled.linux | string | `"auto"` | Enables Agent Data Plane by default for Linux Operator-managed workloads using Agent 7.84 or later when `spec.features.dataPlane.enabled` is absent. Set to `"auto"` to enable only for sites where the default is rolled out (currently AP1 and AP2, `ap1.datadoghq.com` and `ap2.datadoghq.com`), or `true`/`false` to enable/disable for all sites. An explicit `spec.features.dataPlane.enabled` setting overrides this value. Windows is not affected and is handled separately. |
 | deployment.annotations | object | `{}` | Allows setting additional annotations for the deployment resource |
 | dnsConfig | object | `{}` | Specify DNS configuration options for Datadog Operator PODs |
 | env | list | `[]` | Define any environment variables to be passed to the operator. |

@@ -1,6 +1,6 @@
 # CloudPrem
 
-![Version: 0.5.6](https://img.shields.io/badge/Version-0.5.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.35](https://img.shields.io/badge/AppVersion-v0.1.35-informational?style=flat-square)
+![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.36](https://img.shields.io/badge/AppVersion-v0.1.36-informational?style=flat-square)
 
 ## Using the Datadog Helm repository
 
@@ -196,6 +196,31 @@ helm upgrade --install <release name> datadog/cloudprem \
   -n <namespace name> \
   -f datadog-values.yaml
 ```
+
+### Upgrading indexers to `Parallel`
+
+Indexer StatefulSets now default to `Parallel`, so an unready indexer no longer blocks creation of other indexers during scale-up. Scale-down can also terminate indexers concurrently; rolling-update ordering is unchanged.
+
+Kubernetes does not allow changing `podManagementPolicy` on an existing StatefulSet. To upgrade without migrating, keep this explicit override:
+
+```yaml
+indexer:
+  podManagementPolicy: OrderedReady
+```
+
+To migrate an existing indexer StatefulSet:
+
+1. Pause any automation that applies Helm changes.
+2. Delete **only the indexer StatefulSet**, preserving its pods and PVCs:
+   ```bash
+   kubectl delete statefulset <indexer-statefulset-name> -n <namespace> --cascade=orphan
+   ```
+3. Set `indexer.podManagementPolicy: Parallel` in your release values (or remove the `OrderedReady` override), then apply the changes using `helm upgrade` or your usual deployment process.
+4. Resume the automation.
+
+Do not delete pods or PVCs or use `helm upgrade --force`. The upgrade may restart pods if it changes their template.
+
+After migration, rolling back to an older chart requires keeping `indexer.podManagementPolicy: Parallel`; switching back to `OrderedReady` requires recreating the StatefulSet again.
 
 ### Uninstalling the Helm chart
 To uninstall the deployment:

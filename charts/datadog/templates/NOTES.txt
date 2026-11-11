@@ -239,6 +239,49 @@ APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
 
+{{- if and .Values.datadog.kaiScheduler.enabled (ne (include "should-enable-kai-scheduler" .) "true") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+`datadog.kaiScheduler.enabled` is set, but KAI Scheduler metadata collection is disabled because:
+{{- if ne (include "should-deploy-cluster-agent" .) "true" }}
+* The Cluster Agent is not deployed by this chart (`clusterAgent.enabled` is false or `existingClusterAgent.join` is set).
+{{- else }}
+* The Cluster Agent version ({{ include "get-cluster-agent-version" . }}) is older than 7.86.0.
+{{- end }}
+
+{{- end }}
+
+{{- if and (.Values.datadog.privateActionRunner.packetCapture | default dict).enabled (ne (include "should-enable-private-action-runner-packet-capture" .) "true") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+`datadog.privateActionRunner.packetCapture.enabled` is set, but packet capture is disabled because:
+{{- if not .Values.datadog.privateActionRunner.enabled }}
+* The node Private Action Runner is not enabled (`datadog.privateActionRunner.enabled` is false).
+{{- else }}
+* `agents.image.tag` is {{ .Values.agents.image.tag | toString | quote }}, which resolves to Agent {{ include "get-agent-version" . }}; packet capture needs 7.86.0 or later.
+  If you pin `agents.image.digest`, set `agents.image.doNotCheckTag: true`: the tag, not the digest, decides the version.
+{{- end }}
+
+{{- end }}
+
+{{- if and (eq (include "should-enable-private-action-runner-packet-capture" .) "true") (not .Values.agents.useHostNetwork) }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+Private Action Runner packet capture is enabled, but `agents.useHostNetwork` is false.
+Captures run in the Agent pod's own network namespace, so they see only the Agent pod's
+traffic, not the node's. Set `agents.useHostNetwork: true` to capture node traffic.
+
+{{- end }}
+
 {{- if and .Values.datadog.kueue.enabled (ne (include "should-enable-kueue-check" .) "true") }}
 
 #################################################################
@@ -395,13 +438,13 @@ You are using datadog.orchestratorExplorer.enabled but you disabled the cluster 
 To enable it please set clusterAgent.enabled to 'true'.
 {{- end }}
 
-{{- if and .Values.providers.gke.autopilot .Values.datadog.jemalloc.enabled }}
+{{- if and .Values.providers.gke.autopilot .Values.datadog.jemalloc.disable }}
 
 #######################################################################################
-####   WARNING: jemalloc is not supported on GKE Autopilot                           ####
+####   WARNING: Disabling jemalloc is not supported on GKE Autopilot                 ####
 #######################################################################################
 
-{{- fail "jemalloc is not supported on GKE Autopilot. Set 'datadog.jemalloc.enabled' to 'false'." }}
+{{- fail "Disabling jemalloc via LD_PRELOAD is not supported on GKE Autopilot. Set 'datadog.jemalloc.disable' to 'false'." }}
 
 {{- end }}
 

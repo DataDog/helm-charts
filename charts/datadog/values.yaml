@@ -58,8 +58,8 @@ registryMigrationMode: "auto"
 
 datadog:
   jemalloc:
-    # datadog.jemalloc.enabled -- Enable jemalloc for the node core Agent, trace-agent, system-probe, and enabled Cluster Check Runners (Linux Agent 7.84.0+).
-    enabled: false
+    # datadog.jemalloc.disable -- Disable jemalloc for the Linux node core Agent, trace-agent, process-agent, security-agent, system-probe, and enabled Cluster Check Runners by overriding LD_PRELOAD. Jemalloc is enabled by default in Agent 7.87.0+ images. Not supported on GKE Autopilot.
+    disable: false
 
   # datadog.apiKey -- Your Datadog API key
 
@@ -179,9 +179,25 @@ datadog:
     create: false
 
   kubeStateMetricsCore:
-    # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+)
+    # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+). To collect Dynamic Resource Allocation (DRA) metrics, override `kubernetes_state_core.yaml` in `clusterAgent.confd` with the default collectors plus `resourceclaims`, `resourceslices` and `devicetaintrules` (Requires Cluster Agent 7.85.0+, or Cluster Checks Runner 7.85.0+ with useClusterCheckRunners; older versions fail the whole check on clusters serving the DRA API). With useClusterCheckRunners, the override must also set `cluster_check: true` and, on each instance, `skip_leader_election: true`. The chart adds the resource.k8s.io RBAC for 7.85.0+.
 
     ## ref: https://docs.datadoghq.com/integrations/kubernetes_state_core
+    ## To enable DRA collection, copy the generated kubernetes_state_core.yaml.default from the
+    ## <release>-cluster-agent-confd ConfigMap into clusterAgent.confd as kubernetes_state_core.yaml
+    ## and append the DRA collectors (Kubernetes 1.34+; devicetaintrules needs the DeviceTaintRule API,
+    ## stable in Kubernetes 1.37, earlier behind a feature gate):
+    ##   clusterAgent:
+    ##     confd:
+    ##       kubernetes_state_core.yaml: |-
+    ##         # cluster_check: true          # required with useClusterCheckRunners
+    ##         init_config:
+    ##         instances:
+    ##           - collectors:
+    ##             # ... default collectors ...
+    ##             - resourceclaims
+    ##             - resourceslices
+    ##             - devicetaintrules
+    ##             # skip_leader_election: true # required with useClusterCheckRunners
     enabled: true
 
     rbac:
@@ -593,8 +609,8 @@ datadog:
 
     ## Those containers then drop their own environment and take their configuration from the Agent,
     ## so any DD_* variable meant for them must be set on the Agent container.
-    ## Unset follows the Agent version: enabled from 7.85.0 onwards.
-    enabled:  # nil
+    ## Disabled by default. Set to true to enable config streaming explicitly.
+    enabled: false
 
   privateActionRunner:
     # datadog.privateActionRunner.enabled -- Enable the Private Action Runner on the node agent to execute workflow actions
@@ -625,6 +641,19 @@ datadog:
 
     # datadog.privateActionRunner.apiKeyOnlyEnrollment -- Enroll using only the API key, without requiring an app key
     apiKeyOnlyEnrollment: false
+
+    packetCapture:
+      # datadog.privateActionRunner.packetCapture.enabled -- Enable remote packet capture through the node Private Action Runner. Requires `datadog.privateActionRunner.enabled` and Agent 7.86.0+, Linux only.
+      # Runs the System Probe and exposes to the runner a socket that serves only packet capture, never the full
+      # System Probe socket. Captures see the node's traffic only when agents.useHostNetwork is true; otherwise they
+      # see only the Agent pod's own network namespace. Add "com.datadoghq.remoteaction.pcap.runCapture" to
+      # datadog.privateActionRunner.actionsAllowlist to let workflows run captures; the chart does not add it.
+      enabled: false
+
+    # datadog.privateActionRunner.splitEnabled -- Run the Private Action Runner on-demand in supported Agent configurations
+    ## Only takes effect on non-FIPS Agents 7.84.0 and newer. Unsupported Agents fall back to the monolithic PAR.
+    # @ignored
+    splitEnabled: true
 
   ## Enable logs agent and provide custom configs
   logs:
@@ -748,7 +777,7 @@ datadog:
         enabled: true
 
       # datadog.apm.instrumentation.injectionMode -- The injection mode to use for libraries injection.
-      # Valid values are: "auto", "init_container", "csi" (experimental, requires Cluster Agent 7.76.0+ and Datadog CSI Driver), "image_volume" (experimental, requires Cluster Agent 7.77.0+)
+      # Valid values are: "auto", "init_container", "csi" (requires Cluster Agent 7.76.0+ and Datadog CSI Driver), "image_volume" (experimental, requires Cluster Agent 7.77.0+)
       # Empty by default so the Cluster Agent can apply its own defaults.
       injectionMode: ""
 
@@ -1235,6 +1264,11 @@ datadog:
     # This requires datadog.HelmCheck.enabled to be set to true
     valuesAsTags: {}
       #   <HELM_VALUE>: <LABEL_NAME>
+
+  kaiScheduler:
+    # datadog.kaiScheduler.enabled -- Enable KAI Scheduler PodGroup collection in the Cluster Agent, to tag pods with their KAI workload and queue (Requires Agent and Cluster Agent 7.86.0+)
+    # With datadog.gpuMonitoring.enabled, it also maps KAI fractional GPUs to the containers using them.
+    enabled: false
 
   kueue:
     # datadog.kueue.enabled -- Enable Kueue metadata collection in the Cluster Agent and the Kueue check (Requires Agent and Cluster Agent 7.82.0+. Kueue with more than one replica requires Agent 7.86.0+)
@@ -2243,7 +2277,7 @@ fips:
     name: fips-proxy
 
     # fips.image.tag -- Define the FIPS sidecar container version to use.
-    tag: 1.1.32
+    tag: 1.1.33
 
     # fips.image.pullPolicy -- Datadog the FIPS sidecar image pull policy
     pullPolicy: IfNotPresent
