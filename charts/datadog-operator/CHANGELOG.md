@@ -2,6 +2,8 @@
 
 ## 2.33.0-dev.1
 
+* Grant the Operator `list` and `watch` on `resource.k8s.io` `resourceclaims`, `resourceslices` and `devicetaintrules`, so it can grant them to the Cluster Agent or Cluster Checks Runner for the `kubernetes_state_core` DRA collectors (Operator 1.33.0+). Without them, the `DatadogAgent` fails to reconcile with `attempting to grant RBAC permissions not currently held`.
+
 Re-applies the `2.32.0-dev.*` changes that were reverted to release `2.32.0` on Operator 1.31.2:
 
 * Update Datadog Operator chart for 1.32.0-rc.2.

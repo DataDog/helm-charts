@@ -604,6 +604,15 @@ rules:
   - update
   - watch
 - apiGroups:
+  - resource.k8s.io
+  resources:
+  - devicetaintrules
+  - resourceclaims
+  - resourceslices
+  verbs:
+  - list
+  - watch
+- apiGroups:
   - security.openshift.io
   resourceNames:
   - restricted
