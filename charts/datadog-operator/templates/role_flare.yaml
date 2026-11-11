@@ -1,0 +1,18 @@
+{{- if .Values.rbac.create -}}
+# Lets the Operator read its own logs for remote flares requested from Fleet Automation.
+# Logs are only read in the Operator namespace.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "datadog-operator.fullname" . }}-flare
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "datadog-operator.labels" . | indent 4 }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods/log
+  verbs:
+  - get
+{{- end -}}
