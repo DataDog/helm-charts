@@ -433,16 +433,26 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			overrides:      map[string]string{"datadog.networkMonitoring.enabled": "true"},
 			expectedMounts: map[string][]string{"agent": {host}, "process-agent": {host}},
 		},
-		// GKE Autopilot keeps /etc/passwd until a published WorkloadAllowlist permits /host/etc/passwd.
+		// Legacy Autopilot admission (AllowlistedV2Workload) only allows /etc/passwd.
 		{
 			name:           "autopilot legacy",
 			tag:            "7.86.0",
 			overrides:      map[string]string{"providers.gke.autopilot": "true"},
 			expectedMounts: expectedCoreLegacy,
 		},
+		// WorkloadAllowlist v1.0.8 allows host-passwd at /host/etc/passwd.
 		{
 			name: "autopilot workload allowlist forced render",
 			tag:  "7.86.0",
+			overrides: map[string]string{
+				"providers.gke.autopilot":           "true",
+				"datadog.envDict.HELM_FORCE_RENDER": "true",
+			},
+			expectedMounts: expectedCoreHost,
+		},
+		{
+			name: "autopilot workload allowlist old version",
+			tag:  "7.85.0",
 			overrides: map[string]string{
 				"providers.gke.autopilot":           "true",
 				"datadog.envDict.HELM_FORCE_RENDER": "true",
@@ -454,7 +464,17 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			tag:            "7.86.0",
 			overrides:      map[string]string{"providers.gke.autopilot": "true"},
 			extraArgs:      append([]string{"--kube-version", "v1.33.0"}, gkeCRDArgs...),
-			expectedMounts: expectedCoreLegacy,
+			expectedMounts: expectedCoreHost,
+		},
+		{
+			name: "autopilot workload allowlist without system-probe",
+			tag:  "7.86.0",
+			overrides: map[string]string{
+				"providers.gke.autopilot":           "true",
+				"datadog.envDict.HELM_FORCE_RENDER": "true",
+				"datadog.discovery.enabled":         "false",
+			},
+			expectedMounts: expectedCoreHost,
 		},
 		{
 			name:           "autopilot workload allowlist old separate process agent",
@@ -471,7 +491,7 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 				"datadog.envDict.HELM_FORCE_RENDER": "true",
 				"datadog.networkMonitoring.enabled": "true",
 			},
-			expectedMounts: map[string][]string{"agent": {legacy}, "process-agent": {legacy}},
+			expectedMounts: map[string][]string{"agent": {host}, "process-agent": {host}},
 		},
 		// CWS remains unsupported on Autopilot; force rendering only to check the unchanged security mount.
 		{
@@ -483,7 +503,7 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 				"datadog.securityAgent.runtime.enabled":                   "true",
 				"datadog.securityAgent.runtime.directSendFromSystemProbe": "true",
 			},
-			expectedMounts: map[string][]string{"agent": {legacy}, "system-probe": {legacy}},
+			expectedMounts: map[string][]string{"agent": {host}, "system-probe": {legacy}},
 		},
 		{
 			name:           "GDC exclusion",
@@ -580,23 +600,41 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 					volumes[volume.Name] = volume.HostPath.Path
 				}
 			}
+			autopilot := tt.overrides["providers.gke.autopilot"] == "true"
 			// Keep every path so duplicate mounts fail the comparison too.
 			actualMounts := map[string][]string{}
+			mountedVolumes := map[string]bool{}
 			for _, container := range ds.Spec.Template.Spec.Containers {
+				mountPaths := map[string]bool{}
 				for _, mount := range container.VolumeMounts {
+					mountedVolumes[mount.Name] = true
+					mountPaths[mount.MountPath] = true
 					switch mount.Name {
-					case "passwd":
+					case "passwd", "host-passwd":
 						require.True(t, mount.ReadOnly)
+						// Other clusters reuse passwd at either path; GKE Warden matches allowlisted
+						// volumeMounts by name, so Autopilot uses host-passwd for /host/etc/passwd.
+						expectedName := "passwd"
+						if autopilot && mount.MountPath == host {
+							expectedName = "host-passwd"
+						}
+						assert.Equal(t, expectedName, mount.Name, "%s mounts %s", container.Name, mount.MountPath)
 						assert.Equal(t, legacy, volumes[mount.Name], "%s volume must use host /etc/passwd", mount.Name)
 						actualMounts[container.Name] = append(actualMounts[container.Name], mount.MountPath)
 					case "group":
 						assert.Equal(t, "/etc/group", mount.MountPath)
 					}
 				}
+				// The Agent reads host files from /host/etc once it exists, so os-release must be there too.
+				if mountPaths[host] {
+					assert.True(t, mountPaths["/host/etc/os-release"], "%s mounts %s without /host/etc/os-release", container.Name, host)
+				}
 			}
 			assert.Equal(t, tt.expectedMounts, actualMounts)
-			// Both paths share the passwd volume; host-passwd is only for GKE Autopilot's allowlist.
-			assert.NotContains(t, volumes, "host-passwd")
+			if _, ok := volumes["host-passwd"]; ok {
+				assert.True(t, autopilot, "host-passwd volume is only for GKE Autopilot")
+				assert.True(t, mountedVolumes["host-passwd"], "host-passwd volume is not mounted by any container")
+			}
 		})
 	}
 }

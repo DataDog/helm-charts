@@ -1968,6 +1968,9 @@ false
 {{- if .Values.providers.gke.autopilot -}}
 {{- if and (eq (include "should-enable-system-probe" . ) "true" ) (eq (include "gke-autopilot-workloadallowlists-enabled" . ) "true") -}}
 true
+{{- else if and (eq (include "should-add-host-path-for-etc-passwd" .) "true") (eq (include "process-passwd-mount-path" .) "/host/etc/passwd") -}}
+{{- /* Mounting /host/etc/passwd makes the Agent read all host files from /host/etc (HOST_ETC), so os-release must be there too. Only happens in WorkloadAllowlist mode. */ -}}
+true
 {{- else -}}
 false
 {{- end -}}
@@ -2016,8 +2019,6 @@ false
 
 {{/*
   Returns the process passwd mount path: /host/etc/passwd for Agent 7.86.0+, otherwise /etc/passwd.
-  Both paths use the passwd volume. GKE Autopilot will need a separate host-passwd volume for
-  /host/etc/passwd because Warden matches allowlisted volumeMounts by name.
 */}}
 {{- define "process-passwd-mount-path" -}}
 {{- if .Values.agents.image.doNotCheckTag -}}
@@ -2026,14 +2027,27 @@ false
 {{- else if .Values.agents.image.digest -}}
 {{- /* A digest does not identify the Agent version. */ -}}
 /etc/passwd
-{{- else if .Values.providers.gke.autopilot -}}
-{{- /* GKE Autopilot keeps /etc/passwd until a published WorkloadAllowlist permits /host/etc/passwd. */ -}}
+{{- else if and .Values.providers.gke.autopilot (ne (include "gke-autopilot-workloadallowlists-enabled" .) "true") -}}
+{{- /* Legacy Autopilot admission (AllowlistedV2Workload) only allows /etc/passwd. */ -}}
 /etc/passwd
 {{- else if semverCompare ">=7.86.0-0" (include "get-agent-version" .) -}}
 {{- /* -0 includes 7.86.0+ prereleases (RC/devel), matching the chart's other Agent feature guards. */ -}}
 /host/etc/passwd
 {{- else -}}
 /etc/passwd
+{{- end -}}
+{{- end -}}
+
+{{/*
+  Returns the volume name for the process passwd mount. Other clusters mount the passwd volume at
+  either path, but GKE Autopilot's Warden matches allowlisted volumeMounts by name, so
+  /host/etc/passwd needs its own host-passwd volume there (WorkloadAllowlist v1.0.8+).
+*/}}
+{{- define "process-passwd-volume-name" -}}
+{{- if and .Values.providers.gke.autopilot (eq (include "process-passwd-mount-path" .) "/host/etc/passwd") -}}
+host-passwd
+{{- else -}}
+passwd
 {{- end -}}
 {{- end -}}
 

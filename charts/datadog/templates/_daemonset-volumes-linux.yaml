@@ -190,6 +190,12 @@
 - hostPath:
     path: /etc/passwd
   name: passwd
+{{- if and (eq (include "process-passwd-volume-name" .) "host-passwd") (eq (include "process-checks-enabled" .) "true") }}
+{{- /* Only process containers mount host-passwd, and only on GKE Autopilot (see process-passwd-volume-name). */}}
+- hostPath:
+    path: /etc/passwd
+  name: host-passwd
+{{- end }}
 {{- end }}
 {{- if or (and (eq (include "should-enable-system-probe" .) "true") (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.serviceMonitoring.enabled .Values.datadog.gpuMonitoring.enabled)) (and (eq (include "should-enable-security-agent" .) "true") .Values.datadog.securityAgent.compliance.enabled) (eq (include "should-enable-compliance-in-system-probe" .) "true") }}
 - hostPath:

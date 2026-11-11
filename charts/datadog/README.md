@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.270.1](https://img.shields.io/badge/Version-3.270.1-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.270.2](https://img.shields.io/badge/Version-3.270.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -328,7 +328,7 @@ helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 
 #### Process passwd mounts
 
-For Agent 7.86.0 and later (including prereleases), process containers mount the host's `/etc/passwd` read-only at `/host/etc/passwd` (still from the `passwd` volume), so the image's own accounts such as `dd-agent` stay visible in `/etc/passwd`. Older or unknown versions, digest-pinned images, `agents.image.doNotCheckTag=true`, and GKE Autopilot keep `/etc/passwd`; Autopilot needs a published WorkloadAllowlist that permits the new mount. Security-agent and system-probe mounts are unchanged.
+For Agent 7.86.0 and later (including prereleases), process containers mount the host's `/etc/passwd` read-only at `/host/etc/passwd` (still from the `passwd` volume), so the image's own accounts such as `dd-agent` stay visible in `/etc/passwd`. Older or unknown versions, digest-pinned images, and `agents.image.doNotCheckTag=true` keep `/etc/passwd`. On GKE Autopilot in WorkloadAllowlist mode, the mount comes from a separate `host-passwd` volume (WorkloadAllowlist v1.0.8) because GKE matches allowlisted mounts by name; legacy AllowlistedV2Workload clusters keep `/etc/passwd`. Security-agent and system-probe mounts are unchanged.
 
 **Known limitation:** Gohai metadata is not covered by the [process resolver change](https://github.com/DataDog/datadog-agent/pull/55789) and can report image-local usernames or numeric UIDs instead of host usernames.
 
@@ -988,7 +988,7 @@ helm install <RELEASE_NAME> \
 | datadog.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a local file. Requires leader election to be enabled. |
 | datadog.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |
 | datadog.processAgent.containerCollection | bool | `true` | Set this to true to enable container collection # ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm |
-| datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: host /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # Agent 7.86.0+ mounts it at /host/etc/passwd instead (except for digest-pinned images, `agents.image.doNotCheckTag`, and GKE Autopilot for now while the allowlist change is pending); see "Process passwd mounts" in the README. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
+| datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: host /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # Agent 7.86.0+ mounts it at /host/etc/passwd instead (except for digest-pinned images and `agents.image.doNotCheckTag`; on GKE Autopilot it uses a `host-passwd` volume); see "Process passwd mounts" in the README. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
 | datadog.processAgent.processCollection | bool | `false` | Set this to true to enable process collection |
 | datadog.processAgent.processDiscovery | bool | `true` | Enables or disables autodiscovery of integrations |
 | datadog.processAgent.runInCoreAgent | bool | `true` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This requires Agent 7.60.0+ and Linux. # DEPRECATED: This behavior will be enabled by default for installations that meet the requirements. # For Agent 7.78.0+, this setting is ignored — process checks always run in the core agent on Linux. |
