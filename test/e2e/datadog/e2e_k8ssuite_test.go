@@ -111,7 +111,7 @@ func (s *k8sSuite) testGenericK8sAutopilot() {
 	s.testGenericK8sAutodiscovery()
 	s.testGenericK8sLogs()
 	s.testGenericK8sKSMCore()
-	// TODO: pass true once Google publishes allowlist v1.0.8, which permits /host/etc/passwd.
+	// TODO: allow /host/etc/passwd (from a host-passwd volume) once Google publishes allowlist v1.0.8.
 	s.testGenericK8sProcessPasswdMounts(false)
 }
 
