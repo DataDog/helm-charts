@@ -111,6 +111,8 @@ func (s *k8sSuite) testGenericK8sAutopilot() {
 	s.testGenericK8sAutodiscovery()
 	s.testGenericK8sLogs()
 	s.testGenericK8sKSMCore()
+	// TODO: allow the relocated mount once a published WorkloadAllowlist permits /host/etc/passwd.
+	s.testGenericK8sProcessPasswdMounts(false)
 }
 
 func (s *k8sSuite) testGenericK8s() {
@@ -119,6 +121,51 @@ func (s *k8sSuite) testGenericK8s() {
 	s.testGenericK8sLogs()
 	s.testGenericK8sKSMCore()
 	s.testGenericK8sKSMCoreCCR()
+	s.testGenericK8sProcessPasswdMounts(true)
+}
+
+// testGenericK8sProcessPasswdMounts is a regression check on the default install's passwd
+// mounts. It checks the spec only, so it holds for any Agent version and needs no exec.
+func (s *k8sSuite) testGenericK8sProcessPasswdMounts(allowRelocated bool) {
+	s.Run("Process passwd mounts are consistent", func() {
+		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
+			res, err := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
+			if !assert.NoError(c, err) {
+				return
+			}
+			agent, ok := assertRunningPod(c, res.Items, "Agent", isLinuxNodeAgentPod)
+			if !ok {
+				return
+			}
+			assertProcessPasswdMounts(c, agent, allowRelocated)
+		}, 5*time.Minute, 15*time.Second, "could not validate process passwd mounts in time")
+	})
+}
+
+// assertProcessPasswdMounts checks that each passwd volume name maps to one path
+// (passwd at /etc/passwd, host-passwd at /host/etc/passwd), that a container never
+// mounts both, and that the relocated mount brings host os-release with it.
+func assertProcessPasswdMounts(c *assert.CollectT, pod corev1.Pod, allowRelocated bool) {
+	for _, container := range pod.Spec.Containers {
+		if container.Name != "agent" && container.Name != "process-agent" {
+			continue
+		}
+		mounts := map[string]string{}
+		for _, mount := range container.VolumeMounts {
+			mounts[mount.MountPath] = mount.Name
+		}
+		legacy, hasLegacy := mounts["/etc/passwd"]
+		relocated, hasRelocated := mounts["/host/etc/passwd"]
+		assert.False(c, hasLegacy && hasRelocated, "%s mounts host passwd at both paths", container.Name)
+		if hasLegacy {
+			assert.Equal(c, "passwd", legacy, "%s volume at /etc/passwd", container.Name)
+		}
+		if hasRelocated {
+			assert.True(c, allowRelocated, "%s must keep /etc/passwd", container.Name)
+			assert.Equal(c, "host-passwd", relocated, "%s volume at /host/etc/passwd", container.Name)
+			assert.Equal(c, "os-release-file", mounts["/host/etc/os-release"], "%s host os-release mount", container.Name)
+		}
+	}
 }
 
 func (s *k8sSuite) testGenericK8sKubeletCheck() {

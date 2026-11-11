@@ -126,6 +126,8 @@ func (v *gkeSuite) TestProcessHostPasswd() {
 agents:
   image:
     tag: %s
+    # The e2e framework sets doNotCheckTag, which keeps /etc/passwd.
+    doNotCheckTag: false
 datadog:
   kubelet:
     useApiServer: true
