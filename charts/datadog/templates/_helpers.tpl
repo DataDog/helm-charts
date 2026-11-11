@@ -2016,6 +2016,8 @@ false
 
 {{/*
   Returns the process passwd mount path: /host/etc/passwd for Agent 7.86.0+, otherwise /etc/passwd.
+  Both paths use the passwd volume. GKE Autopilot will need a separate host-passwd volume for
+  /host/etc/passwd because Warden matches allowlisted volumeMounts by name.
 */}}
 {{- define "process-passwd-mount-path" -}}
 {{- if .Values.agents.image.doNotCheckTag -}}
@@ -2032,19 +2034,6 @@ false
 /host/etc/passwd
 {{- else -}}
 /etc/passwd
-{{- end -}}
-{{- end -}}
-
-{{/*
-  Returns the volume name for the process passwd mount. Kubernetes allows mounting one volume at two
-  paths, but GKE Autopilot's Warden matches allowlisted volumeMounts by name, so /host/etc/passwd needs
-  its own host-passwd volume. Other clusters use the same name so each name always maps to one path.
-*/}}
-{{- define "process-passwd-volume-name" -}}
-{{- if eq (include "process-passwd-mount-path" .) "/host/etc/passwd" -}}
-host-passwd
-{{- else -}}
-passwd
 {{- end -}}
 {{- end -}}
 

@@ -582,19 +582,11 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			}
 			// Keep every path so duplicate mounts fail the comparison too.
 			actualMounts := map[string][]string{}
-			mountedVolumes := map[string]bool{}
 			for _, container := range ds.Spec.Template.Spec.Containers {
 				for _, mount := range container.VolumeMounts {
-					mountedVolumes[mount.Name] = true
 					switch mount.Name {
-					case "passwd", "host-passwd":
+					case "passwd":
 						require.True(t, mount.ReadOnly)
-						// GKE Warden matches volumeMounts by name, so each path keeps a distinct volume name.
-						expectedName := "passwd"
-						if mount.MountPath == host {
-							expectedName = "host-passwd"
-						}
-						assert.Equal(t, expectedName, mount.Name, "%s mounts %s", container.Name, mount.MountPath)
 						assert.Equal(t, legacy, volumes[mount.Name], "%s volume must use host /etc/passwd", mount.Name)
 						actualMounts[container.Name] = append(actualMounts[container.Name], mount.MountPath)
 					case "group":
@@ -603,10 +595,8 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 				}
 			}
 			assert.Equal(t, tt.expectedMounts, actualMounts)
-			// host-passwd only exists for process containers, so it must never be left unmounted.
-			if _, ok := volumes["host-passwd"]; ok {
-				assert.True(t, mountedVolumes["host-passwd"], "host-passwd volume is not mounted by any container")
-			}
+			// Both paths share the passwd volume; host-passwd is only for GKE Autopilot's allowlist.
+			assert.NotContains(t, volumes, "host-passwd")
 		})
 	}
 }
@@ -818,7 +808,7 @@ func assertFalseCommonProcessEnvs(t *testing.T, envs map[string]string) {
 
 func getPasswdMount(t *testing.T, volumeMounts []corev1.VolumeMount) bool {
 	for _, vm := range volumeMounts {
-		if vm.Name == "passwd" || vm.Name == "host-passwd" {
+		if vm.Name == "passwd" {
 			return true
 		}
 	}

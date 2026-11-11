@@ -142,9 +142,9 @@ func (s *k8sSuite) testGenericK8sProcessPasswdMounts(allowHostEtcPasswd bool) {
 	})
 }
 
-// assertProcessPasswdMounts checks that each passwd volume name maps to one path
-// (passwd at /etc/passwd, host-passwd at /host/etc/passwd), that a container never
-// mounts both, and that the relocated mount brings host os-release with it.
+// assertProcessPasswdMounts checks that process containers mount the passwd volume at
+// /etc/passwd or /host/etc/passwd but never both, and that the relocated mount brings
+// host os-release with it.
 func assertProcessPasswdMounts(c *assert.CollectT, pod corev1.Pod, allowHostEtcPasswd bool) {
 	for _, container := range pod.Spec.Containers {
 		if container.Name != "agent" && container.Name != "process-agent" {
@@ -162,7 +162,7 @@ func assertProcessPasswdMounts(c *assert.CollectT, pod corev1.Pod, allowHostEtcP
 		}
 		if hasRelocated {
 			assert.True(c, allowHostEtcPasswd, "%s must keep /etc/passwd", container.Name)
-			assert.Equal(c, "host-passwd", relocated, "%s volume at /host/etc/passwd", container.Name)
+			assert.Equal(c, "passwd", relocated, "%s volume at /host/etc/passwd", container.Name)
 			assert.Equal(c, "os-release-file", mounts["/host/etc/os-release"], "%s host os-release mount", container.Name)
 		}
 	}
@@ -335,7 +335,7 @@ func (s *k8sSuite) assertProcessHostPasswd(c *assert.CollectT, namespace string,
 			mounts[mount.MountPath] = mount.Name
 		}
 	}
-	assert.Equal(c, "host-passwd", mounts["/host/etc/passwd"], "host passwd mount")
+	assert.Equal(c, "passwd", mounts["/host/etc/passwd"], "host passwd mount")
 	assert.NotContains(c, mounts, "/etc/passwd", "host passwd must not hide the image's /etc/passwd")
 	assert.Equal(c, "os-release-file", mounts["/host/etc/os-release"], "host os-release mount")
 
