@@ -405,13 +405,7 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			expectedMounts: expectedCoreLegacy,
 		},
 		{
-			name:           "skip check is not capability",
-			tag:            "local-build",
-			overrides:      map[string]string{"agents.image.doNotCheckTag": "true"},
-			expectedMounts: expectedCoreLegacy,
-		},
-		{
-			name:           "skip check still checks known tag",
+			name:           "doNotCheckTag keeps legacy for old version",
 			tag:            "7.85.0",
 			overrides:      map[string]string{"agents.image.doNotCheckTag": "true"},
 			expectedMounts: expectedCoreLegacy,
@@ -547,15 +541,35 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			},
 			expectedMounts: expectedNone,
 		},
+		{
+			name: "no process checks with CWS",
+			tag:  "7.86.0",
+			overrides: map[string]string{
+				"datadog.processAgent.processCollection":                 "false",
+				"datadog.processAgent.processDiscovery":                  "false",
+				"datadog.processAgent.containerCollection":               "false",
+				"datadog.apm.instrumentation.language_detection.enabled": "false",
+				"datadog.securityAgent.runtime.enabled":                  "true",
+			},
+			expectedMounts: map[string][]string{"system-probe": {legacy}},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			overrides := map[string]string{"agents.image.tag": tt.tag, "datadog.apiKeyExistingSecret": "datadog-secret", "datadog.processAgent.processCollection": "true"}
+			overrides := map[string]string{
+				"agents.image.tag":                       tt.tag,
+				"datadog.apiKeyExistingSecret":           "datadog-secret",
+				"datadog.processAgent.processCollection": "true",
+			}
 			for key, value := range tt.overrides {
 				overrides[key] = value
 			}
 			manifest, err := common.RenderChart(t, common.HelmCommand{
-				ReleaseName: "datadog", ChartPath: "../../charts/datadog", ShowOnly: []string{"templates/daemonset.yaml"}, Overrides: overrides, ExtraArgs: tt.extraArgs,
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Overrides:   overrides,
+				ExtraArgs:   tt.extraArgs,
 			})
 			require.NoError(t, err)
 			var ds appsv1.DaemonSet
@@ -568,8 +582,10 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			}
 			// Keep every path so duplicate mounts fail the comparison too.
 			actualMounts := map[string][]string{}
+			mountedVolumes := map[string]bool{}
 			for _, container := range ds.Spec.Template.Spec.Containers {
 				for _, mount := range container.VolumeMounts {
+					mountedVolumes[mount.Name] = true
 					switch mount.Name {
 					case "passwd", "host-passwd":
 						require.True(t, mount.ReadOnly)
@@ -587,6 +603,10 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 				}
 			}
 			assert.Equal(t, tt.expectedMounts, actualMounts)
+			// host-passwd only exists for process containers, so it must never be left unmounted.
+			if _, ok := volumes["host-passwd"]; ok {
+				assert.True(t, mountedVolumes["host-passwd"], "host-passwd volume is not mounted by any container")
+			}
 		})
 	}
 }
