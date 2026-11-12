@@ -441,7 +441,6 @@ datadog.envDict: ""
 datadog.envFrom: spec.override.nodeAgent.envFrom
 datadog.excludePauseContainer: ""
 datadog.expvarPort: ""
-datadog.gpuMonitoring.amd.enabled: ""
 datadog.gpuMonitoring.configureCgroupPerms: ""
 datadog.gpuMonitoring.enabled: ""
 datadog.gpuMonitoring.privilegedMode: ""

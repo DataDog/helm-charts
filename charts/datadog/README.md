@@ -848,10 +848,9 @@ helm install <RELEASE_NAME> \
 | datadog.envFrom | list | `[]` | Set environment variables for all Agents directly from configMaps and/or secrets |
 | datadog.excludePauseContainer | bool | `true` | Exclude pause containers from Agent Autodiscovery. |
 | datadog.expvarPort | int | `6000` | Specify the port to expose pprof and expvar to not interfere with the agent metrics port from the cluster-agent, which defaults to 5000 |
-| datadog.gpuMonitoring.amd.enabled | bool | `false` | Monitor AMD GPUs (requires Agent 7.86.0+ and `datadog.gpuMonitoring.enabled`; set `datadog.gpuMonitoring.runtimeClassName: amd` on AMD nodes; not supported on GKE Autopilot or GDC; one release serves one GPU vendor) |
 | datadog.gpuMonitoring.configureCgroupPerms | bool | `false` | Configure cgroup permissions for GPU monitoring |
 | datadog.gpuMonitoring.enableEbpfProbes | bool | `false` | DEPRECATED. Enable the GPU monitoring eBPF probes in system-probe The eBPF probes are deprecated and disabled by default, even when `datadog.gpuMonitoring.privilegedMode` is enabled. This option only applies in privileged mode and exists so that users who still rely on the probes can opt back in; expect it to be removed in a future release. |
-| datadog.gpuMonitoring.enabled | bool | `false` | Enable GPU monitoring core check |
+| datadog.gpuMonitoring.enabled | bool | `false` | Enable GPU monitoring core check. With Agent 7.86.0+, it also enables the AMD GPU check (not on GKE Autopilot or GDC); to turn only that off, set `DD_GPU_AMD_ENABLED=false` in `datadog.env`. |
 | datadog.gpuMonitoring.privilegedMode | bool | `false` | Enable advanced GPU metrics and monitoring via system-probe Note: system-probe component of the agent runs with elevated privileges |
 | datadog.gpuMonitoring.runtimeClassName | string | `"nvidia"` | Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class. Set to `amd` for AMD GPUs. |
 | datadog.helmCheck.collectEvents | bool | `false` | Set this to true to enable event collection in the Helm Check (Requires Agent 7.36.0+ and Cluster Agent 1.20.0+) This requires datadog.HelmCheck.enabled to be set to true |

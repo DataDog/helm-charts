@@ -159,17 +159,43 @@ false
 {{- if and .Values.datadog.networkPath.collector.filters (not (semverCompare ">=7.83.2" $version)) -}}
 {{- fail "datadog.networkPath.collector.filters requires a stable Datadog Agent 7.83.2 or newer. Set agents.image.tag to an explicit stable version 7.83.2 or newer. For a verified compatible prerelease or custom image, set agents.image.doNotCheckTag=true." -}}
 {{- end -}}
-{{- if and (eq (include "should-enable-amd-gpu-monitoring" .) "true") (not (semverCompare ">=7.86.0-0" $version)) -}}
-{{- fail "datadog.gpuMonitoring.amd.enabled requires Datadog Agent 7.86.0 or newer. Set agents.image.tag to 7.86.0 or newer. For a verified compatible custom image, set agents.image.doNotCheckTag=true." -}}
-{{- end -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
-Return true if AMD GPU monitoring is enabled. It requires datadog.gpuMonitoring.enabled.
+Return true if the AMD GPU check must be enabled. GPU monitoring enables it on Agent 7.86.0+, like
+NVIDIA: its env vars are harmless on NVIDIA nodes. agents.image.doNotCheckTag enables it, and any
+other tag that is not a version keeps it off. GKE Autopilot and GDC are excluded: they have no AMD GPUs.
 */}}
 {{- define "should-enable-amd-gpu-monitoring" -}}
-{{- and .Values.datadog.gpuMonitoring.enabled (dig "amd" "enabled" false .Values.datadog.gpuMonitoring) -}}
+{{- $enabled := false -}}
+{{- if and .Values.datadog.gpuMonitoring.enabled (not .Values.providers.gke.autopilot) (not .Values.providers.gke.gdc) -}}
+{{- $version := include "get-agent-version" . -}}
+{{- if .Values.agents.image.doNotCheckTag -}}
+{{- $enabled = true -}}
+{{- else if regexMatch "^v?[0-9]+(\\.[0-9]+){0,2}(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$" $version -}}
+{{- $enabled = semverCompare ">=7.86.0-0" $version -}}
+{{- end -}}
+{{- end -}}
+{{- $enabled -}}
+{{- end -}}
+
+{{/*
+Return true if the user sets the env var .name on the core agent container through datadog.env,
+datadog.envDict, agents.containers.agent.env or agents.containers.agent.envDict.
+*/}}
+{{- define "agent-container-sets-env" -}}
+{{- $values := .root.Values -}}
+{{- $found := false -}}
+{{- range (concat (default list $values.datadog.env) (default list $values.agents.containers.agent.env)) -}}
+{{- if eq (default "" .name) $.name -}}
+{{- $found = true -}}
+{{- end -}}
+{{- end -}}
+{{- if or (hasKey (default dict $values.datadog.envDict) .name) (hasKey (default dict $values.agents.containers.agent.envDict) .name) -}}
+{{- $found = true -}}
+{{- end -}}
+{{- $found -}}
 {{- end -}}
 
 {{- define "check-dca-version" -}}
