@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.33.0-dev.2
+
+* Add RBAC for the Operator remote flare: a namespaced `Role`/`RoleBinding` granting `get` on `pods/log` in the release namespace, and `get`/`list` on `extendeddaemonsets` in the ClusterRole ([DataDog/datadog-operator#3757](https://github.com/DataDog/datadog-operator/pull/3757)).
+
 ## 2.33.0-dev.1
 
 Re-applies the `2.32.0-dev.*` changes that were reverted to release `2.32.0` on Operator 1.31.2:
