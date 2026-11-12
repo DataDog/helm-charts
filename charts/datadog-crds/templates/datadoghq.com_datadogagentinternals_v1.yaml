@@ -1248,55 +1248,6 @@ spec:
                         enabled:
                           type: boolean
                       type: object
-                    kueue:
-                      properties:
-                        collectWorkloadEvents:
-                          type: boolean
-                        conf:
-                          properties:
-                            configData:
-                              type: string
-                            configMap:
-                              properties:
-                                items:
-                                  items:
-                                    properties:
-                                      key:
-                                        type: string
-                                      mode:
-                                        format: int32
-                                        type: integer
-                                      path:
-                                        type: string
-                                      user:
-                                        format: int64
-                                        type: integer
-                                    required:
-                                      - key
-                                      - path
-                                    type: object
-                                  type: array
-                                  x-kubernetes-list-map-keys:
-                                    - key
-                                  x-kubernetes-list-type: map
-                                name:
-                                  type: string
-                              type: object
-                          type: object
-                        enabled:
-                          type: boolean
-                        metricsService:
-                          properties:
-                            name:
-                              maxLength: 63
-                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-                              type: string
-                            namespace:
-                              maxLength: 63
-                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-                              type: string
-                          type: object
-                      type: object
                     liveContainerCollection:
                       properties:
                         enabled:
@@ -6005,55 +5956,6 @@ spec:
                               type: object
                             enabled:
                               type: boolean
-                          type: object
-                        kueue:
-                          properties:
-                            collectWorkloadEvents:
-                              type: boolean
-                            conf:
-                              properties:
-                                configData:
-                                  type: string
-                                configMap:
-                                  properties:
-                                    items:
-                                      items:
-                                        properties:
-                                          key:
-                                            type: string
-                                          mode:
-                                            format: int32
-                                            type: integer
-                                          path:
-                                            type: string
-                                          user:
-                                            format: int64
-                                            type: integer
-                                        required:
-                                          - key
-                                          - path
-                                        type: object
-                                      type: array
-                                      x-kubernetes-list-map-keys:
-                                        - key
-                                      x-kubernetes-list-type: map
-                                    name:
-                                      type: string
-                                  type: object
-                              type: object
-                            enabled:
-                              type: boolean
-                            metricsService:
-                              properties:
-                                name:
-                                  maxLength: 63
-                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-                                  type: string
-                                namespace:
-                                  maxLength: 63
-                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-                                  type: string
-                              type: object
                           type: object
                         liveContainerCollection:
                           properties:
