@@ -49,6 +49,9 @@ data:
         - {{ . }}
         {{- end }}
       {{- end }}
+      {{- if not (eq $.Values.datadog.networkMonitoring.connectionRollupEnabled nil) }}
+      enable_connection_rollup: {{ $.Values.datadog.networkMonitoring.connectionRollupEnabled }}
+      {{- end }}
       direct_send: {{ include "cnm-use-direct-send" . }}
     service_monitoring_config:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}

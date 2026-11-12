@@ -926,6 +926,7 @@ helm install <RELEASE_NAME> \
 | datadog.logs.enabled | bool | `false` | Enables this to activate Datadog Agent log collection |
 | datadog.namespaceAnnotationsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Annotations to Datadog Tags |
 | datadog.namespaceLabelsAsTags | object | `{}` | Provide a mapping of Kubernetes Namespace Labels to Datadog Tags |
+| datadog.networkMonitoring.connectionRollupEnabled | bool | `nil` | Aggregate connections by rolling up ephemeral ports into a single connection, reducing cardinality (Requires Agent 7.54.0+). Empty values use the default setting in the datadog agent. |
 | datadog.networkMonitoring.dnsMonitoringPorts | list | `[53]` (set by agent) | List of ports to monitor for DNS traffic |
 | datadog.networkMonitoring.enabled | bool | `false` | Enable Cloud Network Monitoring |
 | datadog.networkPath.collector.filters | list | `[]` | Custom ordered filters for dynamic Network Path tests. Each filter can include or exclude destinations using `match_domain` (wildcard by default, or regex with `match_domain_strategy: regex`) or `match_ip` (IP or CIDR). The last matching filter takes precedence. Requires a stable Datadog Agent 7.83.2 or newer. For a verified compatible prerelease or custom image, set `agents.image.doNotCheckTag=true`. |
