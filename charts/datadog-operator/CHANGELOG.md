@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.33.0-dev.2
+
+* Update Datadog Operator chart for 1.32.0-rc.3.
+
 ## 2.33.0-dev.1
 
 Re-applies the `2.32.0-dev.*` changes that were reverted to release `2.32.0` on Operator 1.31.2:
