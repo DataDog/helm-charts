@@ -1,0 +1,35 @@
+{{- $allowed := list "labels" "annotations" "nodeSelector" "tolerations" "affinity" "priorityClassName" "topologySpreadConstraints" "imageRepository" "imagePullSecrets" }}
+{{- range $key, $_ := .Values.podOverrides }}
+{{- if not (has $key $allowed) }}
+{{- fail (printf "podOverrides.%s is not supported: use one of %s" $key (join ", " $allowed)) }}
+{{- end }}
+{{- end }}
+{{- range $key, $_ := .Values.podOverrides.labels }}
+{{- if has $key (list "app.kubernetes.io/managed-by" "gpu-benchmark/org" "gpu-benchmark/run") }}
+{{- fail (printf "podOverrides.labels.%s is set by Datadog" $key) }}
+{{- end }}
+{{- end }}
+{{- $repository := .Values.podOverrides.imageRepository | default "" }}
+{{- if or (contains "@" $repository) (regexMatch ":[^/]*$" $repository) }}
+{{- fail "podOverrides.imageRepository must be a repository without a tag or digest: Datadog pins the digest" }}
+{{- end }}
+{{- /* Older Datadog backends reject keys they don't know, even empty: leave out the unset image keys. */}}
+{{- $overrides := .Values.podOverrides }}
+{{- if not $repository }}
+{{- $overrides = omit $overrides "imageRepository" }}
+{{- end }}
+{{- if not $overrides.imagePullSecrets }}
+{{- $overrides = omit $overrides "imagePullSecrets" }}
+{{- end }}
+# Placement and metadata of the benchmark pods in this cluster, read by Datadog
+# (kubernetes.core.getConfigMap) before each run and merged into the Job's pod
+# template. Set podOverrides in your values.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: datadog-gpu-benchmark-pod
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gpu-benchmark.labels" . | nindent 4 }}
+data:
+  overrides.json: {{ $overrides | toJson | quote }}

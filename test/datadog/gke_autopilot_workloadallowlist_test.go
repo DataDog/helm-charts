@@ -97,13 +97,12 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				ShowOnly:    []string{"templates/daemonset.yaml"},
 				Values:      []string{"../../charts/datadog/values.yaml"},
 				Overrides: map[string]string{
-					"agents.image.tag":                         "7.84.0",
-					"datadog.envDict.HELM_FORCE_RENDER":        "true",
-					"datadog.apiKeyExistingSecret":             "datadog-secret",
-					"providers.gke.autopilot":                  "true",
-					"datadog.privateActionRunner.enabled":      "true",
-					"datadog.privateActionRunner.splitEnabled": "true",
-					"datadog.privateActionRunner.selfEnroll":   "true",
+					"agents.image.tag":                       "7.84.0",
+					"datadog.envDict.HELM_FORCE_RENDER":      "true",
+					"datadog.apiKeyExistingSecret":           "datadog-secret",
+					"providers.gke.autopilot":                "true",
+					"datadog.privateActionRunner.enabled":    "true",
+					"datadog.privateActionRunner.selfEnroll": "true",
 				},
 			},
 			errorContains: "Private Action Runner is not supported on GKE Autopilot / GDC environments",
@@ -157,6 +156,58 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				requireContainerNames(t, ds, "agent", "process-agent", "system-probe")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
 			},
+		},
+		{
+			// Packet capture requested without the runner: nothing is added for it.
+			name: "packet capture without private action runner",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"agents.image.tag":                                  "7.86.0",
+					"datadog.envDict.HELM_FORCE_RENDER":                 "true",
+					"datadog.apiKeyExistingSecret":                      "datadog-secret",
+					"providers.gke.autopilot":                           "true",
+					"datadog.privateActionRunner.packetCapture.enabled": "true",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
+				assertNoPacketCaptureOnProvider(t, manifest, common.HelmCommand{
+					ReleaseName: "datadog",
+					ChartPath:   "../../charts/datadog",
+					ShowOnly:    []string{"templates/daemonset.yaml"},
+					Values:      []string{"../../charts/datadog/values.yaml"},
+					Overrides: map[string]string{
+						"agents.image.tag":                                  "7.86.0",
+						"datadog.envDict.HELM_FORCE_RENDER":                 "true",
+						"datadog.apiKeyExistingSecret":                      "datadog-secret",
+						"providers.gke.autopilot":                           "true",
+						"datadog.privateActionRunner.packetCapture.enabled": "true",
+					},
+				})
+			},
+		},
+		{
+			name: "packet capture with private action runner rejected",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"agents.image.tag":                                  "7.86.0",
+					"datadog.envDict.HELM_FORCE_RENDER":                 "true",
+					"datadog.apiKeyExistingSecret":                      "datadog-secret",
+					"providers.gke.autopilot":                           "true",
+					"datadog.privateActionRunner.enabled":               "true",
+					"datadog.privateActionRunner.selfEnroll":            "true",
+					"datadog.privateActionRunner.packetCapture.enabled": "true",
+				},
+			},
+			errorContains: "Private Action Runner is not supported on GKE Autopilot / GDC environments",
 		},
 	}
 

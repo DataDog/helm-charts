@@ -26,7 +26,6 @@ data:
       debug_port:  {{ $.Values.datadog.systemProbe.debugPort }}
       sysprobe_socket: /var/run/sysprobe/sysprobe.sock
       enable_conntrack: {{ $.Values.datadog.systemProbe.enableConntrack }}
-      bpf_debug: {{ $.Values.datadog.systemProbe.bpfDebug }}
       enable_tcp_queue_length: {{ $.Values.datadog.systemProbe.enableTCPQueueLength }}
       enable_oom_kill: {{ $.Values.datadog.systemProbe.enableOOMKill }}
       collect_dns_stats: {{ $.Values.datadog.systemProbe.collectDNSStats }}
@@ -76,8 +75,15 @@ data:
         native:
           enabled: {{ $.Values.datadog.serviceMonitoring.tls.native.enabled }}
         {{- end }}
+    {{- if not (eq .Values.datadog.traceroute.enabled nil) }}
     traceroute:
       enabled: {{ $.Values.datadog.traceroute.enabled }}
+    {{- end }}
+    {{- if eq (include "should-enable-private-action-runner-packet-capture" .) "true" }}
+    packet_capture:
+      enabled: true
+      socket: {{ include "private-action-runner-packet-capture-socket-path" . }}
+    {{- end }}
     {{- if eq (include "should-render-discovery-config" .) "true" }}
     discovery:
       enabled: {{ include "resolved-discovery-enabled" . }}
@@ -387,6 +393,21 @@ data:
           "includes": {},
           "excludes": {}
         },
+        {{- if and (eq (include "should-enable-compliance-in-system-probe" .) "true") (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) }}
+        {
+          "names": [
+            "chroot",
+            "fchdir",
+            "mlock",
+            "munlock"
+          ],
+          "action": "SCMP_ACT_ALLOW",
+          "args": null,
+          "comment": "allow host benchmarks to enter the host root and lock libgcrypt secure memory",
+          "includes": {},
+          "excludes": {}
+        },
+        {{- end }}
         {
           "names": [
             "kill"
