@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.3.0
+
+* Set `automountServiceAccountToken: false` on the single-container Deployment, matching the multi-container Deployment. The worker reads its config from a mounted Secret and never calls the Kubernetes API, so it does not need a ServiceAccount token. Dropping the token means a compromise of the worker container cannot use it to reach the Kubernetes API.
+
 ## 1.2.2
 
 * Multi-container: `traceroute-server` listens on `127.0.0.1:3765` instead of every interface, so only containers in the pod can reach it. Its liveness and readiness probes run `wget` in the container, because an HTTP probe to the pod IP cannot reach loopback. The worker calls it on `http://127.0.0.1:3765`.

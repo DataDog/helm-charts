@@ -40,6 +40,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       serviceAccountName: {{ include "synthetics-private-location.serviceAccountName" . }}
+      automountServiceAccountToken: false
       hostAliases:
         {{- .Values.hostAliases | toYaml | nindent 8 }}
       containers:
