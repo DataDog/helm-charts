@@ -2553,6 +2553,8 @@ spec:
               value: "0"
             - name: DD_AGENT_IPC_PORT
               value: "0"
+            - name: DD_AGENT_IPC_USE_SOCKET
+              value: "false"
             - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
               value: "0"
             - name: DD_LOG_LEVEL
