@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.271.0
+
+* Add `datadog.networkMonitoring.connectionRollupEnabled` to render `network_config.enable_connection_rollup` in the system-probe ConfigMap, which aggregates short-lived connections that differ only by their ephemeral (client-side) port into a single rolled-up connection, reducing Cloud Network Monitoring cardinality (requires Agent 7.54.0+). Empty by default, so the Agent's own default applies and rendered manifests are unchanged unless the value is set.
+
 ## 3.270.1
 
 * Deprecate `datadog.systemProbe.bpfDebug`. This setting would not work correctly with released datadog-agent images.
