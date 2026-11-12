@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.270.2](https://img.shields.io/badge/Version-3.270.2-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.270.3](https://img.shields.io/badge/Version-3.270.3-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -1052,7 +1052,7 @@ helm install <RELEASE_NAME> \
 | datadog.serviceMonitoring.tls.nodejs.enabled | bool | `nil` | Enable TLS monitoring for Node.js services (Requires Agent 7.54.0+). Empty values use the default setting in the datadog agent. |
 | datadog.site | string | `nil` | The site of the Datadog intake to send Agent data to. (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | datadog.systemProbe.apparmor | string | `"unconfined"` | Specify a apparmor profile for system-probe |
-| datadog.systemProbe.bpfDebug | bool | `false` | Enable logging for kernel debug |
+| datadog.systemProbe.bpfDebug | bool | `false` | DEPRECATED. Enable logging for kernel debug |
 | datadog.systemProbe.btfPath | string | `""` | Specify the path to a BTF file for your kernel |
 | datadog.systemProbe.collectDNSStats | bool | `true` | Enable DNS stat collection |
 | datadog.systemProbe.conntrackInitTimeout | string | `"10s"` | the time to wait for conntrack to initialize before failing |
@@ -1210,7 +1210,6 @@ Some options above are not working/not available on Windows, here is the list of
 | `datadog.systemProbe.seccompRoot`        | System probe is not available for Windows        |
 | `datadog.systemProbe.debugPort`          | System probe is not available for Windows        |
 | `datadog.systemProbe.enableConntrack`    | System probe is not available for Windows        |
-| `datadog.systemProbe.bpfDebug`           | System probe is not available for Windows        |
 | `datadog.systemProbe.apparmor`           | System probe is not available for Windows        |
 | `agents.useHostNetwork`                  | Host network not supported by Windows Containers |
 
