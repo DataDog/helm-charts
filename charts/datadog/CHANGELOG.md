@@ -1,8 +1,12 @@
 # Datadog changelog
 
-## 3.270.1
+## 3.270.2
 
 * Mount the host's `/etc/passwd` read-only at `/host/etc/passwd` in eligible process containers for Agent >= 7.86.0, including 7.86.0+ prereleases. Older or unknown images, digest-pinned images, `agents.image.doNotCheckTag`, and GKE Autopilot keep `/etc/passwd`, and security mounts are unchanged. Autopilot support follows once a WorkloadAllowlist permitting `/host/etc/passwd` is published. Gohai username lookup remains a known limitation; see the README's process passwd mounts section.
+
+## 3.270.1
+
+* Deprecate `datadog.systemProbe.bpfDebug`. This setting would not work correctly with released datadog-agent images.
 
 ## 3.270.0
 
