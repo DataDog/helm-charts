@@ -1761,18 +1761,28 @@ Validate Cluster Agent Private Action Runner configuration
 {{- end -}}
 
 {{/*
+Whether the Node Agent Private Action Runner runs in split mode, where the Core Agent manages
+the runner process. datadog.privateActionRunner.splitEnabled requests it; the chart falls back
+to the standalone runner where split mode cannot run: FIPS, which split mode does not support,
+and Agents older than 7.84.0 (agents.image.doNotCheckTag skips the version check).
+*/}}
+{{- define "node-par-split-enabled" -}}
+{{- if and .Values.datadog.privateActionRunner.enabled
+           (eq .Values.targetSystem "linux")
+           .Values.datadog.privateActionRunner.splitEnabled
+           (not (or .Values.useFIPSAgent .Values.fips.enabled))
+           (or .Values.agents.image.doNotCheckTag (semverCompare ">=7.84.0-0" (include "get-agent-version" .))) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Validate Node Agent Private Action Runner configuration
 */}}
 {{- define "validate-node-private-action-runner-config" -}}
 {{- if .Values.datadog.privateActionRunner.enabled -}}
-{{- if .Values.datadog.privateActionRunner.splitEnabled -}}
-{{- if or .Values.useFIPSAgent .Values.fips.enabled -}}
-{{- fail "Node Agent Private Action Runner split mode does not support FIPS." -}}
-{{- end -}}
-{{- if and (not .Values.agents.image.doNotCheckTag) (semverCompare "<7.84.0-0" (include "get-agent-version" .)) -}}
-{{- fail "Node Agent Private Action Runner split mode requires Datadog Agent 7.84.0 or newer." -}}
-{{- end -}}
-{{- end -}}
 {{- if not .Values.datadog.privateActionRunner.selfEnroll -}}
 {{- if and (not .Values.datadog.privateActionRunner.identityFromExistingSecret) (or (not .Values.datadog.privateActionRunner.urn) (not .Values.datadog.privateActionRunner.privateKey)) -}}
 {{- fail "Node Agent Private Action Runner: when selfEnroll is disabled, you must provide either datadog.privateActionRunner.identityFromExistingSecret or both datadog.privateActionRunner.urn and datadog.privateActionRunner.privateKey" }}

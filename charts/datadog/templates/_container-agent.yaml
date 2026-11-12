@@ -83,7 +83,7 @@
     {{- include "configstream-consumer-env" . | nindent 4 }}
     {{- include "fips-envvar" . | nindent 4 }}
     {{- include "processes-common-envs" . | nindent 4 }}
-    {{- if and .Values.datadog.privateActionRunner.enabled .Values.datadog.privateActionRunner.splitEnabled }}
+    {{- if eq (include "node-par-split-enabled" .) "true" }}
     - name: DD_PRIVATE_ACTION_RUNNER_ENABLED
       value: "true"
     - name: DD_PRIVATE_ACTION_RUNNER_SPLIT_ENABLED
