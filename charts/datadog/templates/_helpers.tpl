@@ -2152,9 +2152,10 @@ true
 
 {{/*
   Returns true if Helm->DDA migration is supported.
+  Any digest suffix ("@sha256:...") on the operator image tag is ignored for the version check.
 */}}
 {{- define "migration-supported" }}
-{{- if and .Values.datadog.operator.enabled ( include "datadogagents-crd-ready" . ) (or (.Values.operator.image.doNotCheckTag) ( semverCompare ">=1.22.0" .Values.operator.image.tag )) }}
+{{- if and .Values.datadog.operator.enabled ( include "datadogagents-crd-ready" . ) (or (.Values.operator.image.doNotCheckTag) ( semverCompare ">=1.22.0" (first (splitList "@" .Values.operator.image.tag)) )) }}
 true
 {{- end }}
 {{- end }}
