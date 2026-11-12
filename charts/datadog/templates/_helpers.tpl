@@ -163,13 +163,13 @@ false
 {{- end -}}
 
 {{/*
-Return true if the AMD GPU check must be enabled. GPU monitoring enables it on Agent 7.86.0+, like
-NVIDIA: its env vars are harmless on NVIDIA nodes. agents.image.doNotCheckTag enables it, and any
-other tag that is not a version keeps it off. GKE Autopilot and GDC are excluded: they have no AMD GPUs.
+Return true if the AMD GPU check must be enabled: GPU monitoring with the amd runtime class on Agent
+7.86.0+. agents.image.doNotCheckTag enables it, and any other tag that is not a version keeps it off.
+GKE Autopilot and GDC are excluded: they have no AMD GPUs.
 */}}
 {{- define "should-enable-amd-gpu-monitoring" -}}
 {{- $enabled := false -}}
-{{- if and .Values.datadog.gpuMonitoring.enabled (not .Values.providers.gke.autopilot) (not .Values.providers.gke.gdc) -}}
+{{- if and .Values.datadog.gpuMonitoring.enabled (eq (toString .Values.datadog.gpuMonitoring.runtimeClassName) "amd") (not .Values.providers.gke.autopilot) (not .Values.providers.gke.gdc) -}}
 {{- $version := include "get-agent-version" . -}}
 {{- if .Values.agents.image.doNotCheckTag -}}
 {{- $enabled = true -}}
