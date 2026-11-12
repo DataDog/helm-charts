@@ -1,0 +1,13 @@
+agents:
+  localService:
+    trafficDistribution: PreferSameNode
+datadog:
+  apiKey: "00000000000000000000000000000000"
+  appKey: "0000000000000000000000000000000000000000"
+  kubelet:
+    tlsVerify: false
+  otlp:
+    receiver:
+      protocols:
+        grpc:
+          enabled: true
