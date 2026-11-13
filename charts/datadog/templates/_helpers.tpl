@@ -2015,6 +2015,29 @@ false
 {{- end -}}
 
 {{/*
+  Returns the process passwd mount path: /host/etc/passwd for Agent 7.86.0+, otherwise /etc/passwd.
+  Both paths use the passwd volume. GKE Autopilot will need a separate host-passwd volume for
+  /host/etc/passwd because Warden matches allowlisted volumeMounts by name.
+*/}}
+{{- define "process-passwd-mount-path" -}}
+{{- if .Values.agents.image.doNotCheckTag -}}
+{{- /* The tag is not a version, so keep the mount every Agent supports. */ -}}
+/etc/passwd
+{{- else if .Values.agents.image.digest -}}
+{{- /* A digest does not identify the Agent version. */ -}}
+/etc/passwd
+{{- else if .Values.providers.gke.autopilot -}}
+{{- /* GKE Autopilot keeps /etc/passwd until a published WorkloadAllowlist permits /host/etc/passwd. */ -}}
+/etc/passwd
+{{- else if semverCompare ">=7.86.0-0" (include "get-agent-version" .) -}}
+{{- /* -0 includes 7.86.0+ prereleases (RC/devel), matching the chart's other Agent feature guards. */ -}}
+/host/etc/passwd
+{{- else -}}
+/etc/passwd
+{{- end -}}
+{{- end -}}
+
+{{/*
   Returns true if the host file /etc/group should be mounted, else return false.
 */}}
 {{- define "should-add-host-path-for-etc-group" -}}

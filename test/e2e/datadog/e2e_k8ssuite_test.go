@@ -2,6 +2,7 @@ package datadog
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -110,6 +111,8 @@ func (s *k8sSuite) testGenericK8sAutopilot() {
 	s.testGenericK8sAutodiscovery()
 	s.testGenericK8sLogs()
 	s.testGenericK8sKSMCore()
+	// TODO: allow /host/etc/passwd (from a host-passwd volume) once Google publishes allowlist v1.0.8.
+	s.testGenericK8sProcessPasswdMounts(false)
 }
 
 func (s *k8sSuite) testGenericK8s() {
@@ -118,6 +121,55 @@ func (s *k8sSuite) testGenericK8s() {
 	s.testGenericK8sLogs()
 	s.testGenericK8sKSMCore()
 	s.testGenericK8sKSMCoreCCR()
+	s.testGenericK8sProcessPasswdMounts(true)
+}
+
+// processHostPasswdAgentTag is an Agent image that mounts host passwd at /host/etc/passwd (7.86.0+).
+// TODO: switch to 7.86.0 once it is released.
+const processHostPasswdAgentTag = "7.86.0-rc.6"
+
+// testGenericK8sProcessPasswdMounts is a regression check on the default install's passwd
+// mounts. It checks the spec only, so it holds for any Agent version and needs no exec.
+func (s *k8sSuite) testGenericK8sProcessPasswdMounts(allowHostEtcPasswd bool) {
+	s.Run("Process passwd mounts are consistent", func() {
+		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
+			res, err := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
+			if !assert.NoError(c, err) {
+				return
+			}
+			agent, ok := assertRunningPod(c, res.Items, "Agent", isLinuxNodeAgentPod)
+			if !ok {
+				return
+			}
+			assertProcessPasswdMounts(c, agent, allowHostEtcPasswd)
+		}, 5*time.Minute, 15*time.Second, "could not validate process passwd mounts in time")
+	})
+}
+
+// assertProcessPasswdMounts checks that process containers mount the passwd volume at
+// /etc/passwd or /host/etc/passwd but never both, and that the relocated mount brings
+// host os-release with it.
+func assertProcessPasswdMounts(c *assert.CollectT, pod corev1.Pod, allowHostEtcPasswd bool) {
+	for _, container := range pod.Spec.Containers {
+		if container.Name != "agent" && container.Name != "process-agent" {
+			continue
+		}
+		mounts := map[string]string{}
+		for _, mount := range container.VolumeMounts {
+			mounts[mount.MountPath] = mount.Name
+		}
+		legacy, hasLegacy := mounts["/etc/passwd"]
+		relocated, hasRelocated := mounts["/host/etc/passwd"]
+		assert.False(c, hasLegacy && hasRelocated, "%s mounts host passwd at both paths", container.Name)
+		if hasLegacy {
+			assert.Equal(c, "passwd", legacy, "%s volume at /etc/passwd", container.Name)
+		}
+		if hasRelocated {
+			assert.True(c, allowHostEtcPasswd, "%s must keep /etc/passwd", container.Name)
+			assert.Equal(c, "passwd", relocated, "%s volume at /host/etc/passwd", container.Name)
+			assert.Equal(c, "os-release-file", mounts["/host/etc/os-release"], "%s host os-release mount", container.Name)
+		}
+	}
 }
 
 func (s *k8sSuite) testGenericK8sKubeletCheck() {
@@ -274,4 +326,45 @@ func (s *k8sSuite) verifyHTTPCheck(c *assert.CollectT) {
 			assert.Greater(c, points.Value, float64(0))
 		}
 	}
+}
+
+// assertProcessHostPasswd checks a running Agent pod that uses the relocated passwd mount.
+func (s *k8sSuite) assertProcessHostPasswd(c *assert.CollectT, namespace string, pod corev1.Pod) {
+	mounts := map[string]string{}
+	for _, container := range pod.Spec.Containers {
+		if container.Name != "agent" {
+			continue
+		}
+		for _, mount := range container.VolumeMounts {
+			mounts[mount.MountPath] = mount.Name
+		}
+	}
+	assert.Equal(c, "passwd", mounts["/host/etc/passwd"], "host passwd mount")
+	assert.NotContains(c, mounts, "/etc/passwd", "host passwd must not hide the image's /etc/passwd")
+	assert.Equal(c, "os-release-file", mounts["/host/etc/os-release"], "host os-release mount")
+
+	client := s.Env().KubernetesCluster.KubernetesClient
+	// The image's own users must stay visible; host files are under /host/etc.
+	stdout, _, err := client.PodExec(namespace, pod.Name, "agent", []string{
+		"sh", "-c", "test -s /host/etc/passwd && test -s /host/etc/os-release && getent passwd dd-agent",
+	})
+	if !assert.NoError(c, err) {
+		return
+	}
+	assert.Contains(c, stdout, "dd-agent:")
+
+	// The Agent reads host os-release from HOST_ETC=/host/etc, so host metadata must still have a platform.
+	stdout, _, err = client.PodExec(namespace, pod.Name, "agent", []string{"env", "DD_LOG_LEVEL=off", "agent", "status", "-j"})
+	if !assert.NoError(c, err) {
+		return
+	}
+	var status struct {
+		HostInfo struct {
+			Platform string `json:"platform"`
+		} `json:"hostinfo"`
+	}
+	if !assert.NoError(c, json.Unmarshal([]byte(stdout), &status)) {
+		return
+	}
+	assert.NotEmpty(c, status.HostInfo.Platform, "host platform from /host/etc/os-release")
 }

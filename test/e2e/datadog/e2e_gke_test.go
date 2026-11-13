@@ -4,6 +4,7 @@ package datadog
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -106,4 +107,46 @@ func (v *gkeSuite) TestGKE() {
 
 func (v *gkeSuite) TestGenericK8s() {
 	v.testGenericK8s()
+}
+
+// TestProcessHostPasswd checks that Agent 7.86.0+ mounts host passwd at /host/etc/passwd,
+// keeping the image's own users such as dd-agent visible. It changes the Helm values for
+// the rest of the suite, so its name keeps it last in the alphabetical test order.
+func (v *gkeSuite) TestProcessHostPasswd() {
+	v.UpdateEnv(gcpkubernetes.GKEProvisioner(
+		gcpkubernetes.WithExtraConfigParams(v.DefaultConfig),
+		gcpkubernetes.WithAgentOptions(
+			kubernetesagentparams.WithHelmRepoURL(""),
+			kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+			kubernetesagentparams.WithHelmValues(fmt.Sprintf(`
+agents:
+  image:
+    tag: %s
+    # The e2e framework sets doNotCheckTag, which keeps /etc/passwd.
+    doNotCheckTag: false
+datadog:
+  kubelet:
+    useApiServer: true
+    tlsVerify: false
+  processAgent:
+    processCollection: true
+providers:
+  gke:
+    cos: true
+clusterChecksRunner:
+  enabled: false
+`, processHostPasswdAgentTag)),
+		)))
+
+	v.EventuallyWithTf(func(c *assert.CollectT) {
+		res, err := v.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
+		if !assert.NoError(c, err) {
+			return
+		}
+		agent, ok := assertRunningPod(c, res.Items, "Agent", isLinuxNodeAgentPod)
+		if !ok {
+			return
+		}
+		v.assertProcessHostPasswd(c, "datadog", agent)
+	}, 10*time.Minute, 15*time.Second, "could not validate the /host/etc/passwd mount in time")
 }

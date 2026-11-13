@@ -4,6 +4,7 @@ package datadog
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -74,4 +75,57 @@ func (s *gkeAutopilotSuite) TestGKEAutopilot() {
 
 func (s *gkeAutopilotSuite) TestGenericK8sAutopilot() {
 	s.testGenericK8sAutopilot()
+}
+
+// TestProcessHostPasswd guards GKE Autopilot until a published WorkloadAllowlist permits
+// /host/etc/passwd: with Agent 7.86.0+ the pod must still be admitted with host passwd at
+// /etc/passwd. Exec is not allowed on Autopilot, so it checks the pod spec only. It changes
+// the Helm values for the rest of the suite, so its name keeps it last in the alphabetical
+// test order.
+func (s *gkeAutopilotSuite) TestProcessHostPasswd() {
+	s.UpdateEnv(gcpkubernetes.GKEProvisioner(
+		gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
+		gcpkubernetes.WithExtraConfigParams(s.DefaultConfig),
+		gcpkubernetes.WithAgentOptions(
+			kubernetesagentparams.WithGKEAutopilot(),
+			kubernetesagentparams.WithHelmRepoURL(""),
+			kubernetesagentparams.WithHelmChartPath(datadogChartPath()),
+			kubernetesagentparams.WithHelmValues(fmt.Sprintf(`
+agents:
+  image:
+    tag: %s
+    # The e2e framework sets doNotCheckTag, which keeps /etc/passwd.
+    doNotCheckTag: false
+datadog:
+  kubelet:
+    useApiServer: true
+    tlsVerify: false
+  processAgent:
+    processCollection: true
+clusterChecksRunner:
+  enabled: false
+`, processHostPasswdAgentTag)),
+		)))
+
+	s.EventuallyWithTf(func(c *assert.CollectT) {
+		res, err := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
+		if !assert.NoError(c, err) {
+			return
+		}
+		agent, ok := assertRunningPod(c, res.Items, "Agent", isLinuxNodeAgentPod)
+		if !ok {
+			return
+		}
+		mounts := map[string]string{}
+		for _, container := range agent.Spec.Containers {
+			if container.Name != "agent" {
+				continue
+			}
+			for _, mount := range container.VolumeMounts {
+				mounts[mount.MountPath] = mount.Name
+			}
+		}
+		assert.Equal(c, "passwd", mounts["/etc/passwd"], "host passwd mount")
+		assertProcessPasswdMounts(c, agent, false)
+	}, 10*time.Minute, 15*time.Second, "could not validate the /etc/passwd mount on GKE Autopilot in time")
 }
