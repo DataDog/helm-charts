@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.271.0
+
+* Add `datadog.kubernetesEvents.eventCollectionMode` to configure the `event_collection_mode` of the `kubernetes_apiserver` check (`poll` or `watch`). Requires Cluster Agent 7.81.1+.
+
 ## 3.270.1
 
 * Deprecate `datadog.systemProbe.bpfDebug`. This setting would not work correctly with released datadog-agent images.
