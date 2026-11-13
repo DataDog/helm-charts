@@ -1927,7 +1927,7 @@ spec:
             - name: DD_COMPLIANCE_CONFIG_ENABLED
               value: "false"
             - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
-              value: "false"
+              value: "true"
             - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
               value: "false"
             - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE

@@ -228,11 +228,13 @@
     - name: DD_COMPLIANCE_CONFIG_RUN_IN_SYSTEM_PROBE
       value: {{ .Values.datadog.securityAgent.compliance.runInSystemProbe | quote }}
     {{- /* Raw pair, like compliance above: streamed to the Security Agent and System Probe,
-           which derive different behaviour from it, so pre-composing here would break one. */}}
+           which derive different behaviour from it, so pre-composing here would break one.
+           Direct send only matters when CWS is enabled; report false otherwise so the core
+           Agent config matches what the Datadog Operator renders for the same values. */}}
     - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
       value: {{ .Values.datadog.securityAgent.runtime.enabled | quote }}
     - name: DD_RUNTIME_SECURITY_CONFIG_DIRECT_SEND_FROM_SYSTEM_PROBE
-      value: {{ .Values.datadog.securityAgent.runtime.directSendFromSystemProbe | quote }}
+      value: {{ and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.directSendFromSystemProbe | quote }}
     {{- include "remote-agent-hoisted-env" . | nindent 4 }}
     - name: DD_CONTAINER_IMAGE_ENABLED
       value: {{ include "should-enable-container-image-collection" . | quote }}

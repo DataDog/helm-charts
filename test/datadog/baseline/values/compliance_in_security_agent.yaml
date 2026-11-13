@@ -4,6 +4,8 @@ datadog:
   securityAgent:
     compliance:
       enabled: true
+      # Pinned to cover the security-agent path.
+      runInSystemProbe: false
       checkInterval: 10m
       containerInclude: "kube_namespace:default"
       containerExclude: "kube_namespace:kube-system"
