@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 1.1.0
+
+* Set `automountServiceAccountToken: false` on the single-container Deployment, matching the multi-container Deployment. The worker reads its config from a mounted Secret and never calls the Kubernetes API, so it does not need a ServiceAccount token. Dropping the token means a compromise of the worker container cannot use it to reach the Kubernetes API.
+
 ## 1.0.0
 
 * Add opt-in `multiContainer.enabled` to run the worker, `deno-executor`, `browser-pool` and `traceroute-server` as separate containers in one pod. No container uses `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Every container sets `readOnlyRootFilesystem`, `runAsNonRoot`, drops all capabilities (`traceroute-server` keeps `NET_RAW`) and uses the `RuntimeDefault` seccomp profile. Requires a private location image version >= 1.75.0. Nothing changes when `multiContainer.enabled` is `false`.
