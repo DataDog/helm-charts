@@ -1,6 +1,6 @@
 # Datadog Operator
 
-![Version: 2.32.0-dev.1](https://img.shields.io/badge/Version-2.32.0--dev.1-informational?style=flat-square) ![AppVersion: 1.32.0-rc.1](https://img.shields.io/badge/AppVersion-1.32.0--rc.1-informational?style=flat-square)
+![Version: 2.33.0-dev.3](https://img.shields.io/badge/Version-2.33.0--dev.3-informational?style=flat-square) ![AppVersion: 1.32.0-rc.4](https://img.shields.io/badge/AppVersion-1.32.0--rc.4-informational?style=flat-square)
 
 ## Values
 
@@ -18,15 +18,18 @@
 | datadogAgent.enabled | bool | `true` | Enables Datadog Agent controller |
 | datadogAgentInternal.enabled | bool | `true` | Enables the Datadog Agent Internal controller |
 | datadogAgentProfile.enabled | bool | `false` | If true, enables DatadogAgentProfile controller (beta). Requires v1.5.0+ |
+| datadogBYOCCluster.enabled | bool | `false` | Enables the DatadogBYOCCluster and DatadogObservabilityPipelinesWorker controllers. Requires the `datadogCRDs.crds.datadogBYOCClusters` and `datadogCRDs.crds.datadogObservabilityPipelinesWorkers` CRDs. Requires v1.32.0+ |
 | datadogCRDs.crds.datadogAgentInternals | bool | `true` | Set to true to deploy the DatadogAgentInternals CRD |
 | datadogCRDs.crds.datadogAgentProfiles | bool | `false` | Set to true to deploy the DatadogAgentProfile CRD |
 | datadogCRDs.crds.datadogAgents | bool | `true` | Set to true to deploy the DatadogAgents CRD |
+| datadogCRDs.crds.datadogBYOCClusters | bool | `false` | Set to true to deploy the DatadogBYOCClusters CRD. Requires `datadogCRDs.crds.datadogObservabilityPipelinesWorkers` |
 | datadogCRDs.crds.datadogCSIDrivers | bool | `true` | Set to true to deploy the DatadogCSIDriver CRD |
 | datadogCRDs.crds.datadogDashboards | bool | `false` | Set to true to deploy the DatadogDashboard CRD |
 | datadogCRDs.crds.datadogGenericResources | bool | `false` | Set to true to deploy the DatadogGenericResource CRD |
 | datadogCRDs.crds.datadogInstrumentations | bool | `true` | Set to true to deploy the DatadogInstrumentations CRD |
 | datadogCRDs.crds.datadogMetrics | bool | `true` | Set to true to deploy the DatadogMetrics CRD |
 | datadogCRDs.crds.datadogMonitors | bool | `true` | Set to true to deploy the DatadogMonitors CRD |
+| datadogCRDs.crds.datadogObservabilityPipelinesWorkers | bool | `false` | Set to true to deploy the DatadogObservabilityPipelinesWorkers CRD |
 | datadogCRDs.crds.datadogPodAutoscalerClusterProfiles | bool | `true` | Set to true to deploy the DatadogPodAutoscalerClusterProfiles CRD |
 | datadogCRDs.crds.datadogPodAutoscalers | bool | `true` | Set to true to deploy the DatadogPodAutoscalers CRD |
 | datadogCRDs.crds.datadogSLOs | bool | `false` | Set to true to deploy the DatadogSLO CRD |
@@ -36,6 +39,7 @@
 | datadogMonitor.enabled | bool | `false` | Enables the Datadog Monitor controller |
 | datadogSLO.enabled | bool | `false` | Enables the Datadog SLO controller |
 | dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
+| defaultDataPlaneEnabled.linux | string | `"auto"` | Enables Agent Data Plane by default for Linux Operator-managed workloads using Agent 7.84 or later when `spec.features.dataPlane.enabled` is absent. Set to `"auto"` to enable only for sites where the default is rolled out (currently AP1 and AP2, `ap1.datadoghq.com` and `ap2.datadoghq.com`), or `true`/`false` to enable/disable for all sites. An explicit `spec.features.dataPlane.enabled` setting overrides this value. Windows is not affected and is handled separately. |
 | deployment.annotations | object | `{}` | Allows setting additional annotations for the deployment resource |
 | dnsConfig | object | `{}` | Specify DNS configuration options for Datadog Operator PODs |
 | env | list | `[]` | Define any environment variables to be passed to the operator. |
@@ -43,7 +47,7 @@
 | image.doNotCheckTag | bool | `false` | Permit skipping operator image tag compatibility with the chart. |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Operator image |
 | image.repository | string | `"registry.datadoghq.com/operator"` | Repository to use for Datadog Operator image |
-| image.tag | string | `"1.32.0-rc.1"` | Define the Datadog Operator version to use |
+| image.tag | string | `"1.32.0-rc.4"` | Define the Datadog Operator version to use |
 | imagePullSecrets | list | `[]` | Datadog Operator repository pullSecret (ex: specify docker registry credentials) |
 | installCRDs | bool | `true` | Set to true to deploy the Datadog's CRDs |
 | introspection.enabled | bool | `false` | If true, enables introspection feature (beta). Requires v1.4.0+ |

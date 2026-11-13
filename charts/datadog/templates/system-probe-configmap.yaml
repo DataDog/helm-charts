@@ -26,7 +26,6 @@ data:
       debug_port:  {{ $.Values.datadog.systemProbe.debugPort }}
       sysprobe_socket: /var/run/sysprobe/sysprobe.sock
       enable_conntrack: {{ $.Values.datadog.systemProbe.enableConntrack }}
-      bpf_debug: {{ $.Values.datadog.systemProbe.bpfDebug }}
       enable_tcp_queue_length: {{ $.Values.datadog.systemProbe.enableTCPQueueLength }}
       enable_oom_kill: {{ $.Values.datadog.systemProbe.enableOOMKill }}
       collect_dns_stats: {{ $.Values.datadog.systemProbe.collectDNSStats }}
@@ -79,6 +78,11 @@ data:
     {{- if not (eq .Values.datadog.traceroute.enabled nil) }}
     traceroute:
       enabled: {{ $.Values.datadog.traceroute.enabled }}
+    {{- end }}
+    {{- if eq (include "should-enable-private-action-runner-packet-capture" .) "true" }}
+    packet_capture:
+      enabled: true
+      socket: {{ include "private-action-runner-packet-capture-socket-path" . }}
     {{- end }}
     {{- if eq (include "should-render-discovery-config" .) "true" }}
     discovery:

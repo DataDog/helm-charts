@@ -1,0 +1,24 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  apm:
+    portEnabled: true
+  securityAgent:
+    runtime:
+      enabled: true
+
+agents:
+  image:
+    tag: 7.85.0
+
+  containers:
+    agent:
+      logLevel: info
+    securityAgent:
+      logLevel: debug
+    processAgent:
+      logLevel: warn
+    traceAgent:
+      logLevel: trace
+    systemProbe:
+      logLevel: error

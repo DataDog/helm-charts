@@ -1,0 +1,40 @@
+# Default values for datadog-gpu-benchmark.
+#
+# Install the chart in the datadog-gpu-benchmark namespace, the one Datadog always creates
+# benchmark Jobs in:
+#   helm install datadog-gpu-benchmark datadog/datadog-gpu-benchmark \
+#     --namespace datadog-gpu-benchmark --create-namespace ...
+
+# The Cluster Agent whose Private Action Runner calls the Kubernetes API for Datadog. The runner
+# must also allowlist kubernetes.batch.createJob, getJob, deleteJob and kubernetes.core.listPod,
+# getPodLogs, getConfigMap.
+clusterAgent:
+  # clusterAgent.namespace -- (string) Namespace of the Cluster Agent. Required.
+  namespace: ""
+  # clusterAgent.serviceAccount -- (string) Name of the Cluster Agent's ServiceAccount. Required. With the `datadog` Helm chart it is `<release>-cluster-agent`; with the Datadog Operator, `<DatadogAgent name>-cluster-agent`.
+  serviceAccount: ""
+
+# How the benchmark pods are placed and labelled in this cluster. Rendered into the
+# datadog-gpu-benchmark-pod ConfigMap, which Datadog reads before each run and merges into the
+# Job's pod template. Only these keys are accepted; anything else in the pod (container,
+# command, environment, volumes, ServiceAccount, security context, resources) is set by
+# Datadog, and the image only changes registry (imageRepository), never content.
+podOverrides:
+  # podOverrides.labels -- Labels added to benchmark pods. `app.kubernetes.io/managed-by`, `gpu-benchmark/org` and `gpu-benchmark/run` are set by Datadog.
+  labels: {}
+  # podOverrides.annotations -- Annotations added to benchmark pods.
+  annotations: {}
+  # podOverrides.nodeSelector -- Node selector for benchmark pods. Benchmark pods only need CPU: keep them off GPU nodes.
+  nodeSelector: {}
+  # podOverrides.tolerations -- Tolerations for benchmark pods, for example to run on a tainted CPU node pool.
+  tolerations: []
+  # podOverrides.affinity -- Affinity for benchmark pods.
+  affinity: {}
+  # podOverrides.priorityClassName -- PriorityClass for benchmark pods.
+  priorityClassName: ""
+  # podOverrides.topologySpreadConstraints -- Topology spread constraints for benchmark pods.
+  topologySpreadConstraints: []
+  # podOverrides.imageRepository -- Repository of a mirror of Datadog's benchmark image, without a tag or digest, e.g. `123456789012.dkr.ecr.us-east-1.amazonaws.com/datadog/gpu-benchmark`. Datadog keeps the image digest, so the mirror must hold that exact image.
+  imageRepository: ""
+  # podOverrides.imagePullSecrets -- Secrets of the benchmark namespace the kubelet pulls the image with, e.g. `[{name: my-registry}]`.
+  imagePullSecrets: []
