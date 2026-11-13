@@ -179,12 +179,12 @@ func Test_gpuMonitoringAMD(t *testing.T) {
 		},
 		{
 			// The RuntimeClass default follows amd.enabled, not the version gate.
-			name: "chart default Agent version skips the AMD env vars and sets no runtime class",
+			name: "chart default Agent version ignores amd.enabled and keeps the nvidia default",
 			overrides: map[string]string{
 				"datadog.gpuMonitoring.enabled":     "true",
 				"datadog.gpuMonitoring.amd.enabled": "true",
 			},
-			expectRuntimeClass: "",
+			expectRuntimeClass: "nvidia",
 		},
 		{
 			name: "GPU monitoring disabled renders nothing",
@@ -238,7 +238,12 @@ func Test_gpuMonitoringAMDVersionGate(t *testing.T) {
 				"agents.image.doNotCheckTag":        strconv.FormatBool(tt.doNotCheckTag),
 			})
 			require.NoError(t, err, "below the version gate the AMD env vars are skipped, not an error")
-			assert.Nil(t, daemonset.Spec.Template.Spec.RuntimeClassName, "the RuntimeClass default follows amd.enabled, not the version gate")
+			if tt.expectAMD {
+				assert.Nil(t, daemonset.Spec.Template.Spec.RuntimeClassName, "AMD enabled and unset: no RuntimeClass")
+			} else {
+				require.NotNil(t, daemonset.Spec.Template.Spec.RuntimeClassName, "below the gate amd.enabled is ignored")
+				assert.Equal(t, "nvidia", *daemonset.Spec.Template.Spec.RuntimeClassName)
+			}
 
 			agentContainer, hasAgent := getContainer(t, daemonset.Spec.Template.Spec.Containers, "agent")
 			require.True(t, hasAgent, "expected the core agent container to be rendered")

@@ -239,8 +239,8 @@ APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
 
-{{- /* Unset resolves to "" with amd.enabled (off Autopilot/GDC), so "nvidia" here was set explicitly. */}}
-{{- if and .Values.datadog.gpuMonitoring.enabled (dig "amd" "enabled" false .Values.datadog.gpuMonitoring) (not .Values.providers.gke.autopilot) (not .Values.providers.gke.gdc) (eq (include "gpu-monitoring-runtime-class-name" .) "nvidia") }}
+{{- /* Unset resolves to "" when the AMD check is enabled, so "nvidia" here was set explicitly. */}}
+{{- if and (eq (include "should-enable-amd-gpu-monitoring" .) "true") (eq (include "gpu-monitoring-runtime-class-name" .) "nvidia") }}
 
 #################################################################
 ####               WARNING: Configuration notice             ####
@@ -251,7 +251,7 @@ Set `datadog.gpuMonitoring.runtimeClassName` to the cluster's AMD RuntimeClass, 
 
 {{- end }}
 
-{{- if and .Values.datadog.gpuMonitoring.enabled (dig "amd" "enabled" false .Values.datadog.gpuMonitoring) (not .Values.providers.gke.autopilot) (not .Values.providers.gke.gdc) (kindIs "invalid" .Values.datadog.gpuMonitoring.runtimeClassName) }}
+{{- if and (eq (include "should-enable-amd-gpu-monitoring" .) "true") (kindIs "invalid" .Values.datadog.gpuMonitoring.runtimeClassName) }}
 
 #################################################################
 ####               WARNING: Configuration notice             ####
