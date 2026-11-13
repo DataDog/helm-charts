@@ -41,7 +41,8 @@ spec:
 {{ toYaml .Values.persistence.annotations | nindent 8 }}
         {{- end }}
     spec:
-      accessModes: {{ .Values.persistence.accessModes }}
+      accessModes:
+        {{- toYaml .Values.persistence.accessModes | nindent 8 }}
       storageClassName: {{ .Values.persistence.storageClassName }}
       resources:
         requests:
