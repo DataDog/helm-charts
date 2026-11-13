@@ -77,11 +77,10 @@ func (s *gkeAutopilotSuite) TestGenericK8sAutopilot() {
 	s.testGenericK8sAutopilot()
 }
 
-// TestProcessHostPasswd guards GKE Autopilot until a published WorkloadAllowlist permits
-// /host/etc/passwd: with Agent 7.86.0+ the pod must still be admitted with host passwd at
-// /etc/passwd. Exec is not allowed on Autopilot, so it checks the pod spec only. It changes
-// the Helm values for the rest of the suite, so its name keeps it last in the alphabetical
-// test order.
+// TestProcessHostPasswd checks that Agent 7.86.0+ on GKE Autopilot is admitted with host passwd
+// mounted at /host/etc/passwd from the host-passwd volume (WorkloadAllowlist v1.0.8). Exec is
+// not allowed on Autopilot, so it checks the pod spec only. It changes the Helm values for the
+// rest of the suite, so its name keeps it last in the alphabetical test order.
 func (s *gkeAutopilotSuite) TestProcessHostPasswd() {
 	s.UpdateEnv(gcpkubernetes.GKEProvisioner(
 		gcpkubernetes.WithGKEOptions(gke.WithAutopilot()),
@@ -125,7 +124,7 @@ clusterChecksRunner:
 				mounts[mount.MountPath] = mount.Name
 			}
 		}
-		assert.Equal(c, "passwd", mounts["/etc/passwd"], "host passwd mount")
-		assertProcessPasswdMounts(c, agent, false)
-	}, 10*time.Minute, 15*time.Second, "could not validate the /etc/passwd mount on GKE Autopilot in time")
+		assert.Equal(c, "host-passwd", mounts["/host/etc/passwd"], "host passwd mount")
+		assertProcessPasswdMounts(c, agent, "host-passwd")
+	}, 10*time.Minute, 15*time.Second, "could not validate the /host/etc/passwd mount on GKE Autopilot in time")
 }
