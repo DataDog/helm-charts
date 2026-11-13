@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.271.0
+
+* [PROF-16651][Host-Profiler] align runasroot setting with operator ([#3074](https://github.com/DataDog/helm-charts/pull/3074)).
+
 ## 3.270.1
 
 * Deprecate `datadog.systemProbe.bpfDebug`. This setting would not work correctly with released datadog-agent images.
