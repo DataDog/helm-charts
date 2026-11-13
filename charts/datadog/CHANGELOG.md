@@ -2,7 +2,7 @@
 
 ## 3.271.0
 
-* With Agent 7.86.0+, setting `datadog.gpuMonitoring.runtimeClassName: amd` with `datadog.gpuMonitoring.enabled` enables the AMD GPU check (`DD_GPU_AMD_ENABLED`, `AMD_VISIBLE_DEVICES`).
+* Add `datadog.gpuMonitoring.amd.enabled` (default false) to enable the AMD GPU check on Agent 7.86.0+ (`DD_GPU_AMD_ENABLED`, `AMD_VISIBLE_DEVICES`); the RuntimeClass is not changed. No change on upgrade: the setting is opt-in.
 
 ## 3.270.1
 

@@ -99,9 +99,31 @@ func Test_gpuMonitoringAMD(t *testing.T) {
 		expectRuntimeClass string
 	}{
 		{
-			name: "amd runtime class on Agent 7.86.0 sets the AMD env vars",
+			name: "amd.enabled on Agent 7.86.0 sets the AMD env vars and keeps the nvidia default",
+			overrides: map[string]string{
+				"datadog.gpuMonitoring.enabled":     "true",
+				"datadog.gpuMonitoring.amd.enabled": "true",
+				"agents.image.tag":                  "7.86.0",
+			},
+			expectAMD:          true,
+			expectRuntimeClass: "nvidia",
+		},
+		{
+			name: "amd.enabled with an empty runtime class sets the AMD env vars and no runtime class",
 			overrides: map[string]string{
 				"datadog.gpuMonitoring.enabled":          "true",
+				"datadog.gpuMonitoring.amd.enabled":      "true",
+				"datadog.gpuMonitoring.runtimeClassName": "",
+				"agents.image.tag":                       "7.86.0",
+			},
+			expectAMD:          true,
+			expectRuntimeClass: "",
+		},
+		{
+			name: "amd.enabled with the amd runtime class sets the AMD env vars and keeps it",
+			overrides: map[string]string{
+				"datadog.gpuMonitoring.enabled":          "true",
+				"datadog.gpuMonitoring.amd.enabled":      "true",
 				"datadog.gpuMonitoring.runtimeClassName": "amd",
 				"agents.image.tag":                       "7.86.0",
 			},
@@ -109,7 +131,26 @@ func Test_gpuMonitoringAMD(t *testing.T) {
 			expectRuntimeClass: "amd",
 		},
 		{
-			name: "default nvidia runtime class on Agent 7.86.0 skips the AMD env vars",
+			name: "amd runtime class without amd.enabled skips the AMD env vars",
+			overrides: map[string]string{
+				"datadog.gpuMonitoring.enabled":          "true",
+				"datadog.gpuMonitoring.runtimeClassName": "amd",
+				"agents.image.tag":                       "7.86.0",
+			},
+			expectRuntimeClass: "amd",
+		},
+		{
+			name: "amd.enabled false with the amd runtime class skips the AMD env vars",
+			overrides: map[string]string{
+				"datadog.gpuMonitoring.enabled":          "true",
+				"datadog.gpuMonitoring.amd.enabled":      "false",
+				"datadog.gpuMonitoring.runtimeClassName": "amd",
+				"agents.image.tag":                       "7.86.0",
+			},
+			expectRuntimeClass: "amd",
+		},
+		{
+			name: "default values on Agent 7.86.0 skip the AMD env vars",
 			overrides: map[string]string{
 				"datadog.gpuMonitoring.enabled": "true",
 				"agents.image.tag":              "7.86.0",
@@ -117,36 +158,19 @@ func Test_gpuMonitoringAMD(t *testing.T) {
 			expectRuntimeClass: "nvidia",
 		},
 		{
-			name: "empty runtime class skips the AMD env vars and uses the default runtime class",
-			overrides: map[string]string{
-				"datadog.gpuMonitoring.enabled":          "true",
-				"datadog.gpuMonitoring.runtimeClassName": "",
-				"agents.image.tag":                       "7.86.0",
-			},
-			expectRuntimeClass: "",
-		},
-		{
-			name: "runtime class other than amd skips the AMD env vars",
-			overrides: map[string]string{
-				"datadog.gpuMonitoring.enabled":          "true",
-				"datadog.gpuMonitoring.runtimeClassName": "my-amd",
-				"agents.image.tag":                       "7.86.0",
-			},
-			expectRuntimeClass: "my-amd",
-		},
-		{
 			name: "chart default Agent version skips the AMD env vars",
 			overrides: map[string]string{
-				"datadog.gpuMonitoring.enabled":          "true",
-				"datadog.gpuMonitoring.runtimeClassName": "amd",
+				"datadog.gpuMonitoring.enabled":     "true",
+				"datadog.gpuMonitoring.amd.enabled": "true",
 			},
-			expectRuntimeClass: "amd",
+			expectRuntimeClass: "nvidia",
 		},
 		{
 			name: "GPU monitoring disabled renders nothing",
 			overrides: map[string]string{
-				"datadog.gpuMonitoring.enabled": "false",
-				"agents.image.tag":              "7.86.0",
+				"datadog.gpuMonitoring.enabled":     "false",
+				"datadog.gpuMonitoring.amd.enabled": "true",
+				"agents.image.tag":                  "7.86.0",
 			},
 		},
 	}
@@ -187,13 +211,13 @@ func Test_gpuMonitoringAMDVersionGate(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			daemonset, err := renderGpuMonitoringDaemonset(t, map[string]string{
-				"datadog.gpuMonitoring.enabled":          "true",
-				"datadog.gpuMonitoring.runtimeClassName": "amd",
-				"agents.image.tag":                       tt.imageTag,
-				"agents.image.doNotCheckTag":             strconv.FormatBool(tt.doNotCheckTag),
+				"datadog.gpuMonitoring.enabled":     "true",
+				"datadog.gpuMonitoring.amd.enabled": "true",
+				"agents.image.tag":                  tt.imageTag,
+				"agents.image.doNotCheckTag":        strconv.FormatBool(tt.doNotCheckTag),
 			})
 			require.NoError(t, err, "below the version gate the AMD env vars are skipped, not an error")
-			assert.Equal(t, "amd", ptrStringValue(daemonset.Spec.Template.Spec.RuntimeClassName))
+			assert.Equal(t, "nvidia", ptrStringValue(daemonset.Spec.Template.Spec.RuntimeClassName))
 
 			agentContainer, hasAgent := getContainer(t, daemonset.Spec.Template.Spec.Containers, "agent")
 			require.True(t, hasAgent, "expected the core agent container to be rendered")
@@ -213,9 +237,9 @@ func Test_gpuMonitoringAMDUserEnvWins(t *testing.T) {
 				value = userEnvDict
 			}
 			daemonset, err := renderGpuMonitoringDaemonsetWithJSON(t, map[string]string{
-				"datadog.gpuMonitoring.enabled":          "true",
-				"datadog.gpuMonitoring.runtimeClassName": "amd",
-				"agents.image.tag":                       "7.86.0",
+				"datadog.gpuMonitoring.enabled":     "true",
+				"datadog.gpuMonitoring.amd.enabled": "true",
+				"agents.image.tag":                  "7.86.0",
 			}, map[string]string{key: value})
 			require.NoError(t, err, "couldn't render chart")
 
@@ -231,10 +255,10 @@ func Test_gpuMonitoringAMDUnsupportedProviders(t *testing.T) {
 	for _, provider := range []string{"providers.gke.autopilot", "providers.gke.gdc"} {
 		t.Run(provider, func(t *testing.T) {
 			daemonset, err := renderGpuMonitoringDaemonset(t, map[string]string{
-				"datadog.gpuMonitoring.enabled":          "true",
-				"datadog.gpuMonitoring.runtimeClassName": "amd",
-				"agents.image.tag":                       "7.86.0",
-				provider:                                 "true",
+				"datadog.gpuMonitoring.enabled":     "true",
+				"datadog.gpuMonitoring.amd.enabled": "true",
+				"agents.image.tag":                  "7.86.0",
+				provider:                            "true",
 			})
 			require.NoError(t, err, "GKE Autopilot and GDC skip the AMD env vars, not an error")
 

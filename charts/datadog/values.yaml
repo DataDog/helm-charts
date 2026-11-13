@@ -1360,7 +1360,7 @@ datadog:
       enabled: false
 
   gpuMonitoring:
-    # datadog.gpuMonitoring.enabled -- Enable GPU monitoring core check. With Agent 7.86.0+ and `runtimeClassName: amd`, it also enables the AMD GPU check.
+    # datadog.gpuMonitoring.enabled -- Enable GPU monitoring core check
     enabled: false
 
     # datadog.gpuMonitoring.privilegedMode -- Enable advanced GPU metrics and monitoring via system-probe
@@ -1376,8 +1376,12 @@ datadog:
     # opt back in; expect it to be removed in a future release.
     enableEbpfProbes: false
 
-    # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class. Set to `amd` for AMD GPUs (also enables the AMD GPU check, Agent 7.86+).
+    # datadog.gpuMonitoring.runtimeClassName -- Runtime class name for the agent pods to get access to NVIDIA resources. Can be left empty to use the default runtime class.
     runtimeClassName: "nvidia"
+
+    amd:
+      # datadog.gpuMonitoring.amd.enabled -- Enables the AMD GPU check (Agent 7.86.0+). Set the RuntimeClass only if your cluster defines one for AMD GPUs (`runtimeClassName`); otherwise leave it empty (`""`). Not supported on GKE Autopilot or GDC. Default: false.
+      enabled: false
 
   # Software Bill of Materials configuration
   sbom:
