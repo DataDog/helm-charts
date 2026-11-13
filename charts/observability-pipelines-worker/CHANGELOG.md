@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.25.3
+
+* Render `persistence.accessModes` as a YAML list in the StatefulSet `volumeClaimTemplates`, so more than one access mode is accepted.
+
 ## 2.25.2
 
 * Official image `2.25.2`
