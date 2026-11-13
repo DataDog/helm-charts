@@ -239,6 +239,29 @@ APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
 
+{{- /* Unset resolves to "" with amd.enabled (off Autopilot/GDC), so "nvidia" here was set explicitly. */}}
+{{- if and .Values.datadog.gpuMonitoring.enabled (dig "amd" "enabled" false .Values.datadog.gpuMonitoring) (not .Values.providers.gke.autopilot) (not .Values.providers.gke.gdc) (eq (include "gpu-monitoring-runtime-class-name" .) "nvidia") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+`datadog.gpuMonitoring.amd.enabled` is set with `datadog.gpuMonitoring.runtimeClassName: nvidia`, which usually doesn't exist on AMD nodes.
+Set `datadog.gpuMonitoring.runtimeClassName` to the cluster's AMD RuntimeClass, or to `""` for no RuntimeClass.
+
+{{- end }}
+
+{{- if and .Values.datadog.gpuMonitoring.enabled (dig "amd" "enabled" false .Values.datadog.gpuMonitoring) (not .Values.providers.gke.autopilot) (not .Values.providers.gke.gdc) (kindIs "invalid" .Values.datadog.gpuMonitoring.runtimeClassName) }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+`datadog.gpuMonitoring.amd.enabled` is set without `datadog.gpuMonitoring.runtimeClassName`, so the Agent pods use no RuntimeClass (the node's default runtime).
+Set `datadog.gpuMonitoring.runtimeClassName` to the cluster's AMD RuntimeClass if it defines one.
+
+{{- end }}
+
 {{- if and .Values.datadog.kaiScheduler.enabled (ne (include "should-enable-kai-scheduler" .) "true") }}
 
 #################################################################

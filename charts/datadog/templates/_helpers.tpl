@@ -181,6 +181,20 @@ that is not a version keeps it off. GKE Autopilot and GDC are excluded: they hav
 {{- end -}}
 
 {{/*
+Return the RuntimeClass of the agent pods for GPU monitoring. A set datadog.gpuMonitoring.runtimeClassName is
+used as given ("" = none). Not set: nvidia, or none with amd.enabled; GKE Autopilot and GDC ignore amd.enabled
+(no AMD GPUs) and keep nvidia.
+*/}}
+{{- define "gpu-monitoring-runtime-class-name" -}}
+{{- $gpu := .Values.datadog.gpuMonitoring -}}
+{{- if not (kindIs "invalid" $gpu.runtimeClassName) -}}
+{{- $gpu.runtimeClassName -}}
+{{- else if not (and (dig "amd" "enabled" false $gpu) (not .Values.providers.gke.autopilot) (not .Values.providers.gke.gdc)) -}}
+nvidia
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the user sets the env var .name on the core agent container through datadog.env,
 datadog.envDict, agents.containers.agent.env or agents.containers.agent.envDict.
 */}}

@@ -99,11 +99,22 @@ func Test_gpuMonitoringAMD(t *testing.T) {
 		expectRuntimeClass string
 	}{
 		{
-			name: "amd.enabled on Agent 7.86.0 sets the AMD env vars and keeps the nvidia default",
+			name: "amd.enabled with the runtime class unset sets the AMD env vars and no runtime class",
 			overrides: map[string]string{
 				"datadog.gpuMonitoring.enabled":     "true",
 				"datadog.gpuMonitoring.amd.enabled": "true",
 				"agents.image.tag":                  "7.86.0",
+			},
+			expectAMD:          true,
+			expectRuntimeClass: "",
+		},
+		{
+			name: "amd.enabled with the nvidia runtime class sets the AMD env vars and keeps it",
+			overrides: map[string]string{
+				"datadog.gpuMonitoring.enabled":          "true",
+				"datadog.gpuMonitoring.amd.enabled":      "true",
+				"datadog.gpuMonitoring.runtimeClassName": "nvidia",
+				"agents.image.tag":                       "7.86.0",
 			},
 			expectAMD:          true,
 			expectRuntimeClass: "nvidia",
@@ -158,12 +169,22 @@ func Test_gpuMonitoringAMD(t *testing.T) {
 			expectRuntimeClass: "nvidia",
 		},
 		{
-			name: "chart default Agent version skips the AMD env vars",
+			name: "empty runtime class without amd.enabled sets no runtime class",
+			overrides: map[string]string{
+				"datadog.gpuMonitoring.enabled":          "true",
+				"datadog.gpuMonitoring.runtimeClassName": "",
+				"agents.image.tag":                       "7.86.0",
+			},
+			expectRuntimeClass: "",
+		},
+		{
+			// The RuntimeClass default follows amd.enabled, not the version gate.
+			name: "chart default Agent version skips the AMD env vars and sets no runtime class",
 			overrides: map[string]string{
 				"datadog.gpuMonitoring.enabled":     "true",
 				"datadog.gpuMonitoring.amd.enabled": "true",
 			},
-			expectRuntimeClass: "nvidia",
+			expectRuntimeClass: "",
 		},
 		{
 			name: "GPU monitoring disabled renders nothing",
@@ -217,7 +238,7 @@ func Test_gpuMonitoringAMDVersionGate(t *testing.T) {
 				"agents.image.doNotCheckTag":        strconv.FormatBool(tt.doNotCheckTag),
 			})
 			require.NoError(t, err, "below the version gate the AMD env vars are skipped, not an error")
-			assert.Equal(t, "nvidia", ptrStringValue(daemonset.Spec.Template.Spec.RuntimeClassName))
+			assert.Nil(t, daemonset.Spec.Template.Spec.RuntimeClassName, "the RuntimeClass default follows amd.enabled, not the version gate")
 
 			agentContainer, hasAgent := getContainer(t, daemonset.Spec.Template.Spec.Containers, "agent")
 			require.True(t, hasAgent, "expected the core agent container to be rendered")
@@ -261,6 +282,7 @@ func Test_gpuMonitoringAMDUnsupportedProviders(t *testing.T) {
 				provider:                            "true",
 			})
 			require.NoError(t, err, "GKE Autopilot and GDC skip the AMD env vars, not an error")
+			assert.Equal(t, "nvidia", ptrStringValue(daemonset.Spec.Template.Spec.RuntimeClassName), "amd.enabled is ignored, so the nvidia default is kept")
 
 			agentContainer, hasAgent := getContainer(t, daemonset.Spec.Template.Spec.Containers, "agent")
 			require.True(t, hasAgent, "expected the core agent container to be rendered")

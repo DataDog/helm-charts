@@ -2,7 +2,7 @@
 
 ## 3.271.0
 
-* Add `datadog.gpuMonitoring.amd.enabled` (default false) to enable the AMD GPU check on Agent 7.86.0+ (`DD_GPU_AMD_ENABLED`, `AMD_VISIBLE_DEVICES`); the RuntimeClass is not changed. No change on upgrade: the setting is opt-in.
+* Add `datadog.gpuMonitoring.amd.enabled` (default false) to enable the AMD GPU check on Agent 7.86.0+ (`DD_GPU_AMD_ENABLED`, `AMD_VISIBLE_DEVICES`). With it, `datadog.gpuMonitoring.runtimeClassName` defaults to no RuntimeClass instead of `nvidia` (explicit values are kept; GKE Autopilot and GDC keep `nvidia`), and an explicit `nvidia` prints a warning. No change on upgrade: the setting is opt-in.
 
 ## 3.270.1
 
