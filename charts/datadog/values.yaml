@@ -1294,6 +1294,9 @@ datadog:
     # @default -- `[53]` (set by agent)
     dnsMonitoringPorts: []
 
+    # datadog.networkMonitoring.connectionRollupEnabled -- (bool) Aggregate connections by rolling up ephemeral ports into a single connection, reducing cardinality (Requires Agent 7.54.0+). Empty values use the default setting in the datadog agent.
+    connectionRollupEnabled:
+
   networkPath:
     connectionsMonitoring:
       # datadog.networkPath.connectionsMonitoring.enabled -- Enable Network Path's "Network traffic paths" feature. Requires the `traceroute` system-probe module to be enabled.
