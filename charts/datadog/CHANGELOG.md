@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.270.2
+
+* Fix rendering failing with `error calling semverCompare: invalid semantic version` when `operator.image.tag` includes a digest (for example `1.31.2@sha256:...`) and the cluster serves the `datadoghq.com/v2alpha1` `DatadogAgent` API. The Helm-to-Operator migration check now ignores the digest when comparing the operator version, as the `datadog-operator` chart already does.
+
 ## 3.270.1
 
 * Deprecate `datadog.systemProbe.bpfDebug`. This setting would not work correctly with released datadog-agent images.
