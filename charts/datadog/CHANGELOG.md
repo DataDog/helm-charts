@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.274.1
+
+* Stop setting `DD_SBOM_CONTAINER_IMAGE_USE_MOUNT` on Agent 7.87.0 and later, which scan container images in place by default, from the containerd snapshotter directories that `datadog.sbom.containerImage.uncompressedLayersSupport` mounts read-only. The Agent container keeps the `SYS_ADMIN` capability, which the in-place scan uses to find the directories that a later image layer replaced.
+
 ## 3.274.0
 
 * Add `datadog.kubernetesEvents.eventCollectionMode` to configure the `event_collection_mode` of the `kubernetes_apiserver` check (`poll` or `watch`). Requires Cluster Agent 7.81.1+.
