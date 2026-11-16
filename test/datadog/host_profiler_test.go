@@ -34,10 +34,20 @@ func renderHostProfilerDaemonSet(t *testing.T, overrides map[string]string) apps
 }
 
 func TestHostProfilerSecurityContext(t *testing.T) {
-	overrides := copyMap(hostProfilerBaseOverrides)
-	overrides["datadog.hostProfiler.runAsNonRoot"] = "true"
-	ds := renderHostProfilerDaemonSet(t, overrides)
+	// Default is root: no runAsUser/runAsGroup/runAsNonRoot in the security context.
+	ds := renderHostProfilerDaemonSet(t, hostProfilerBaseOverrides)
 	hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+	require.True(t, ok)
+	require.NotNil(t, hpContainer.SecurityContext)
+	assert.Nil(t, hpContainer.SecurityContext.RunAsUser)
+	assert.Nil(t, hpContainer.SecurityContext.RunAsGroup)
+	assert.Nil(t, hpContainer.SecurityContext.RunAsNonRoot)
+
+	// runAsRoot=false runs the container as the dd-agent user (UID/GID 100).
+	overrides := copyMap(hostProfilerBaseOverrides)
+	overrides["datadog.hostProfiler.runAsRoot"] = "false"
+	ds = renderHostProfilerDaemonSet(t, overrides)
+	hpContainer, ok = getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
 	require.True(t, ok)
 	require.NotNil(t, hpContainer.SecurityContext)
 	require.NotNil(t, hpContainer.SecurityContext.RunAsUser)
@@ -170,7 +180,7 @@ func TestHostProfilerSELinux(t *testing.T) {
 func TestHostProfilerNilSecurityContext(t *testing.T) {
 	overrides := copyMap(hostProfilerBaseOverrides)
 	overrides["agents.containers.hostProfiler.securityContext"] = "null"
-	overrides["datadog.hostProfiler.runAsNonRoot"] = "true"
+	overrides["datadog.hostProfiler.runAsRoot"] = "false"
 	ds := renderHostProfilerDaemonSet(t, overrides)
 
 	hpContainer, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
