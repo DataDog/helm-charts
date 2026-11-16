@@ -1896,6 +1896,23 @@ Create RBACs for custom resources
 {{- end -}}
 
 {{/*
+  Return true if the Agent needs DD_SBOM_CONTAINER_IMAGE_USE_MOUNT to scan the
+  images of the containerd snapshotter. Agent 7.87.0 and later scan container
+  images in place by default. Custom images (agents.image.doNotCheckTag) count
+  as older: they get the variable, which Agent 7.87.0 and later ignore with a
+  warning, where the other guess would stop the mount scan of an older Agent.
+*/}}
+{{- define "should-set-sbom-container-image-use-mount" -}}
+  {{- if .Values.agents.image.doNotCheckTag -}}
+    true
+  {{- else if semverCompare ">=7.87.0-0" (include "get-agent-version" .) -}}
+    false
+  {{- else -}}
+    true
+  {{- end -}}
+{{- end -}}
+
+{{/*
   Return true if SBOM collection for host filesystems is enabled
 */}}
 {{- define "should-enable-sbom-host-fs-collection" -}}

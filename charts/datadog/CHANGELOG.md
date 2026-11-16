@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.277.1
+
+* Stop setting `DD_SBOM_CONTAINER_IMAGE_USE_MOUNT` on Agent 7.87.0 and later, which scan container images in place by default, from the containerd snapshotter directories that `datadog.sbom.containerImage.uncompressedLayersSupport` mounts read-only. Images with `agents.image.doNotCheckTag` keep the variable, which a 7.87.0 or later Agent ignores with a warning. The Agent container keeps the `SYS_ADMIN` capability, which the in-place scan uses to find the directories that a later image layer replaced.
+
 ## 3.277.0
 
 * Add opt-in liveness and readiness probes to the DaemonSet `otel-agent` container (`enabled: false` by default). Set `agents.containers.otelAgent.livenessProbe.enabled: true` and/or `agents.containers.otelAgent.readinessProbe.enabled: true` to activate. When enabled, probes perform an HTTP GET on `healthPort` (default 13133, configurable via `agents.containers.otelAgent.healthPort`). The OTel config must define the `health_check` extension on `0.0.0.0:<healthPort>` and enable it in `service.extensions`; the extension auto-added by the DDOT converter binds to `localhost` and is not reachable by the kubelet.
