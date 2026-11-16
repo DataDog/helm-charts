@@ -88,6 +88,10 @@ test('computeBumpedVersion: stable + minor-version', () => {
   assert.equal(computeBumpedVersion(parseVersion('1.2.3'), 'minor-version'), '1.3.0');
 });
 
+test('computeBumpedVersion: stable + major-version', () => {
+  assert.equal(computeBumpedVersion(parseVersion('1.2.3'), 'major-version'), '2.0.0');
+});
+
 test('computeBumpedVersion: stable + no-version-bump', () => {
   assert.equal(computeBumpedVersion(parseVersion('1.2.3'), 'no-version-bump'), '1.2.3');
 });
@@ -104,6 +108,10 @@ test('computeBumpedVersion: pre-release + minor-version promotes to full release
   assert.equal(computeBumpedVersion(parseVersion('1.2.3-dev.4'), 'minor-version'), '1.2.3');
 });
 
+test('computeBumpedVersion: pre-release + major-version bumps major and drops pre-release', () => {
+  assert.equal(computeBumpedVersion(parseVersion('1.2.3-dev.4'), 'major-version'), '2.0.0');
+});
+
 test('computeBumpedVersion: pre-release + no-version-bump unchanged', () => {
   assert.equal(computeBumpedVersion(parseVersion('1.2.3-dev.4'), 'no-version-bump'), '1.2.3-dev.4');
 });
@@ -114,6 +122,10 @@ test('computeBumpedVersion: v-prefixed + patch-version preserves v prefix', () =
 
 test('computeBumpedVersion: v-prefixed + minor-version preserves v prefix', () => {
   assert.equal(computeBumpedVersion(parseVersion('v0.3.2'), 'minor-version'), 'v0.4.0');
+});
+
+test('computeBumpedVersion: v-prefixed + major-version preserves v prefix', () => {
+  assert.equal(computeBumpedVersion(parseVersion('v0.3.2'), 'major-version'), 'v1.0.0');
 });
 
 test('computeBumpedVersion: pre-release patch-version throws on unsupported format rc1', () => {

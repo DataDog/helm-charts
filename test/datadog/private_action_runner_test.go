@@ -423,41 +423,57 @@ func Test_NodeAgent_PrivateActionRunner_SplitModeMinimumGracePeriod(t *testing.T
 	assert.Equal(t, int64(190), *daemonset.Spec.Template.Spec.TerminationGracePeriodSeconds)
 }
 
-func Test_NodeAgent_PrivateActionRunner_SplitModeRequiresCompatibleAgent(t *testing.T) {
-	_, err := common.RenderChart(t, common.HelmCommand{
-		ReleaseName: "datadog",
-		ChartPath:   "../../charts/datadog",
-		ShowOnly:    []string{"templates/daemonset.yaml"},
-		Values:      []string{"../../charts/datadog/values.yaml"},
-		Overrides: map[string]string{
-			"agents.image.tag":                         "7.83.1",
-			"datadog.apiKeyExistingSecret":             "datadog-secret",
-			"datadog.privateActionRunner.enabled":      "true",
-			"datadog.privateActionRunner.splitEnabled": "true",
-			"datadog.privateActionRunner.selfEnroll":   "true",
-		},
-	})
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "split mode requires Datadog Agent 7.84.0 or newer")
-}
+func Test_NodeAgent_PrivateActionRunner_SplitModeDefault(t *testing.T) {
+	tests := []struct {
+		name      string
+		overrides map[string]string
+		wantSplit bool
+	}{
+		{name: "default Agent", wantSplit: true},
+		{name: "doNotCheckTag", overrides: map[string]string{"agents.image.doNotCheckTag": "true", "agents.image.tag": "nightly"}, wantSplit: true},
+		{name: "explicitly disabled", overrides: map[string]string{"datadog.privateActionRunner.splitEnabled": "false"}},
+		{name: "Agent older than 7.84.0", overrides: map[string]string{"agents.image.tag": "7.83.1"}},
+		{name: "FIPS Agent", overrides: map[string]string{"useFIPSAgent": "true"}},
+		{name: "FIPS proxy", overrides: map[string]string{"fips.enabled": "true"}},
+	}
 
-func Test_NodeAgent_PrivateActionRunner_SplitModeRejectsFIPS(t *testing.T) {
-	_, err := common.RenderChart(t, common.HelmCommand{
-		ReleaseName: "datadog",
-		ChartPath:   "../../charts/datadog",
-		ShowOnly:    []string{"templates/daemonset.yaml"},
-		Values:      []string{"../../charts/datadog/values.yaml"},
-		Overrides: map[string]string{
-			"agents.image.tag":                         "7.84.0",
-			"datadog.apiKeyExistingSecret":             "datadog-secret",
-			"datadog.privateActionRunner.enabled":      "true",
-			"datadog.privateActionRunner.splitEnabled": "true",
-			"datadog.privateActionRunner.selfEnroll":   "true",
-			"useFIPSAgent":                             "true",
-		},
-	})
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "split mode does not support FIPS")
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			overrides := map[string]string{
+				"datadog.apiKeyExistingSecret":        "datadog-secret",
+				"datadog.privateActionRunner.enabled": "true",
+			}
+			for k, v := range tt.overrides {
+				overrides[k] = v
+			}
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides:   overrides,
+			})
+			require.NoError(t, err)
+
+			var daemonset appsv1.DaemonSet
+			common.Unmarshal(t, manifest, &daemonset)
+			parContainer := findPARContainer(daemonset)
+			require.NotNil(t, parContainer)
+			agentContainer, ok := getContainer(t, daemonset.Spec.Template.Spec.Containers, "agent")
+			require.True(t, ok)
+
+			// Full split-mode rendering is covered by Test_NodeAgent_PrivateActionRunner_SplitMode;
+			// here we only check that the PAR and Agent containers agree on the resolved mode.
+			wantEnv := ""
+			wantCommand := []string{"/opt/datadog-agent/embedded/bin/privateactionrunner", "run", "-c=/etc/datadog-agent", "-E=/etc/privateactionrunner/privateactionrunner.yaml"}
+			if tt.wantSplit {
+				wantEnv = "true"
+				wantCommand = []string{"/opt/entrypoints/privateactionrunner"}
+			}
+			assert.Equal(t, wantCommand, parContainer.Command)
+			assert.Equal(t, wantEnv, selectPAREnvVars(agentContainer.Env)[DDPARSplitEnabled])
+		})
+	}
 }
 
 func Test_NodeAgent_PrivateActionRunner_Enabled_SelfEnroll(t *testing.T) {
@@ -480,11 +496,6 @@ func Test_NodeAgent_PrivateActionRunner_Enabled_SelfEnroll(t *testing.T) {
 
 	parContainer := findPARContainer(daemonset)
 	require.NotNil(t, parContainer, "PAR container should exist")
-
-	assert.Equal(t, []string{"/opt/datadog-agent/embedded/bin/privateactionrunner", "run", "-c=/etc/datadog-agent", "-E=/etc/privateactionrunner/privateactionrunner.yaml"}, parContainer.Command)
-	assert.Nil(t, parContainer.ReadinessProbe)
-	assert.Empty(t, selectPAREnvVars(parContainer.Env)[DDPARSplitEnabled])
-	assert.Nil(t, daemonset.Spec.Template.Spec.TerminationGracePeriodSeconds)
 
 	// Verify DD_APP_KEY is injected for self-enrollment
 	foundAppKey := false

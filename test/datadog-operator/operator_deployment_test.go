@@ -47,6 +47,121 @@ func Test_operator_chart(t *testing.T) {
 			skipTest:   SkipTest,
 		},
 		{
+			name: "defaultDataPlaneEnabled linux auto without site renders false",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("false"),
+			skipTest:   SkipTest,
+		},
+		{
+			name: "defaultDataPlaneEnabled linux auto on AP1 renders true",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"site": "ap1.datadoghq.com",
+				},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("true"),
+			skipTest:   SkipTest,
+		},
+		{
+			name: "defaultDataPlaneEnabled linux auto on AP2 renders true",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"site": "ap2.datadoghq.com",
+				},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("true"),
+			skipTest:   SkipTest,
+		},
+		{
+			name: "defaultDataPlaneEnabled linux false renders false on AP2",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"site":                          "ap2.datadoghq.com",
+					"defaultDataPlaneEnabled.linux": "false",
+				},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("false"),
+			skipTest:   SkipTest,
+		},
+		{
+			name: "defaultDataPlaneEnabled linux auto on non-AP1/AP2 site renders false",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"site": "datadoghq.eu",
+				},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("false"),
+			skipTest:   SkipTest,
+		},
+		{
+			name: "defaultDataPlaneEnabled linux true renders true on any site",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"site":                          "datadoghq.eu",
+					"defaultDataPlaneEnabled.linux": "true",
+				},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("true"),
+			skipTest:   SkipTest,
+		},
+		{
+			name: "defaultDataPlaneEnabled linux false renders false on AP1",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"site":                          "ap1.datadoghq.com",
+					"defaultDataPlaneEnabled.linux": "false",
+				},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("false"),
+			skipTest:   SkipTest,
+		},
+		{
+			name: "defaultDataPlaneEnabled linux env override is not duplicated",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{"templates/deployment.yaml"},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"site":         "ap1.datadoghq.com",
+					"env[0].name":  "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED",
+					"env[0].value": "false",
+				},
+			},
+			assertions: verifyDefaultDataPlaneLinuxEnabled("false"),
+			skipTest:   SkipTest,
+		},
+		{
 			name: "Rendering all does not fail",
 			command: common.HelmCommand{
 				ReleaseName: "datadog-operator",
@@ -270,6 +385,38 @@ func Test_operator_chart(t *testing.T) {
 				assert.Equal(t, "true", eventsEnabled.Value)
 			},
 		},
+		{
+			name: "datadogBYOCCluster disabled by default renders no BYOC RBAC",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides:   map[string]string{},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				assert.NotContains(t, manifest, "datadog-operator-byoc")
+				assert.NotContains(t, manifest, "-datadogBYOCClusterEnabled")
+			},
+		},
+		{
+			name: "datadogBYOCCluster enabled sets flag and renders BYOC RBAC",
+			command: common.HelmCommand{
+				ReleaseName: "datadog-operator",
+				ChartPath:   "../../charts/datadog-operator",
+				ShowOnly:    []string{},
+				Values:      []string{"../../charts/datadog-operator/values.yaml"},
+				Overrides: map[string]string{
+					"datadogBYOCCluster.enabled": "true",
+				},
+			},
+			skipTest: SkipTest,
+			assertions: func(t *testing.T, manifest string) {
+				assert.Contains(t, manifest, "-datadogBYOCClusterEnabled=true")
+				assert.Contains(t, manifest, "name: datadog-operator-byoc")
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -345,6 +492,21 @@ func verifyWatchNamespaces(t *testing.T, manifest string) {
 	assert.Equal(t, "monitor-ns", monitorNsEnv.Value)
 	assert.Equal(t, "", sloNsEnv.Value)
 	assert.Nil(t, dapNsEnv)
+}
+
+func verifyDefaultDataPlaneLinuxEnabled(expected string) func(t *testing.T, manifest string) {
+	return func(t *testing.T, manifest string) {
+		var deployment appsv1.Deployment
+		common.Unmarshal(t, manifest, &deployment)
+		operatorContainer := deployment.Spec.Template.Spec.Containers[0]
+		var values []string
+		for _, env := range operatorContainer.Env {
+			if env.Name == "DD_DEFAULT_DATA_PLANE_LINUX_ENABLED" {
+				values = append(values, env.Value)
+			}
+		}
+		assert.Equal(t, []string{expected}, values)
+	}
 }
 
 func Test_operator_untaint_controller_rbac(t *testing.T) {

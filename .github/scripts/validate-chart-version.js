@@ -128,8 +128,8 @@ module.exports = async ({github, context, core}) => {
       errors.push(
         `'${chartName}': version was not bumped (still at ${baseVersion}). ` +
         `When chart-relevant files are modified, Chart.yaml version, CHANGELOG.md, and README.md ` +
-        `must all be updated. Add a '${chartName}/patch-version' or '${chartName}/minor-version' ` +
-        `label to have the version bumped automatically, or update these files manually.`
+        `must all be updated. Add a '${chartName}/patch-version', '${chartName}/minor-version', or ` +
+        `'${chartName}/major-version' label to have the version bumped automatically, or update these files manually.`
       );
       continue; // No point checking changelog/readme if version isn't bumped.
     }
@@ -145,12 +145,18 @@ module.exports = async ({github, context, core}) => {
 
     const hasPatchLabel = labelNames.has(`${chartName}/patch-version`);
     const hasMinorLabel = labelNames.has(`${chartName}/minor-version`);
+    const hasMajorLabel = labelNames.has(`${chartName}/major-version`);
 
     // --- Check B: version correctness ---
-    if (hasPatchLabel || hasMinorLabel) {
+    if (hasPatchLabel || hasMinorLabel || hasMajorLabel) {
       // With a version label, the bump job calculates the expected version.
       // Validate against the same logic here as a safety net.
-      const bumpType = hasMinorLabel ? 'minor-version' : 'patch-version';
+      let bumpType = 'patch-version';
+      if (hasMajorLabel) {
+        bumpType = 'major-version';
+      } else if (hasMinorLabel) {
+        bumpType = 'minor-version';
+      }
       let expected;
       try {
         expected = computeBumpedVersion(baseParsed, bumpType);

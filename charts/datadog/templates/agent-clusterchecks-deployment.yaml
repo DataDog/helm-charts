@@ -205,6 +205,7 @@ spec:
           {{- end }}
           {{- include "provider-env" . | nindent 10 }}
           {{- include "fips-envvar" . | nindent 10 }}
+          {{- include "jemalloc-disable-env" . | nindent 10 }}
           {{- include "additional-env-entries" .Values.clusterChecksRunner.env | indent 10 }}
           {{- include "additional-env-dict-entries" .Values.clusterChecksRunner.envDict | indent 10 }}
         resources:

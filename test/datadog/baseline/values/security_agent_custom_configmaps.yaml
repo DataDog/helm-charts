@@ -1,0 +1,16 @@
+datadog:
+  apiKeyExistingSecret: datadog-secret
+  appKeyExistingSecret: datadog-secret
+  securityAgent:
+    compliance:
+      enabled: true
+      configMap: my-custom-benchmarks
+      checkInterval: 45m
+      containerInclude: "image:my-app"
+      containerExclude: "image:datadog/agent"
+      runInSystemProbe: true
+    runtime:
+      enabled: true
+      directSendFromSystemProbe: true
+      policies:
+        configMap: my-custom-policies

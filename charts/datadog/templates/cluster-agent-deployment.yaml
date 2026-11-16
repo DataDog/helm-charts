@@ -116,7 +116,7 @@ spec:
         imagePullPolicy: {{ .Values.clusterAgent.image.pullPolicy }}
         command:
           - cp
-          - -r
+          - -rf
         args:
           - /etc/datadog-agent
           - /opt
@@ -357,10 +357,10 @@ spec:
           - name: DD_ADMISSION_CONTROLLER_AUTO_INSTRUMENTATION_PROFILING_ENABLED
             value: {{ .Values.datadog.profiling.enabled | quote }}
           {{- end }}
-          {{- if .Values.clusterAgent.privateActionRunner.enabled }}
+          {{- if eq (include "clusterAgent-privateActionRunner-enabled" .) "true" }}
           {{- include "validate-private-action-runner-config" . }}
           - name: DD_PRIVATE_ACTION_RUNNER_ENABLED
-            value: {{ .Values.clusterAgent.privateActionRunner.enabled | quote }}
+            value: "true"
           {{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}
           - name: DD_PRIVATE_ACTION_RUNNER_SELF_ENROLL
             value: {{ .Values.clusterAgent.privateActionRunner.selfEnroll | quote }}
@@ -433,10 +433,22 @@ spec:
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
           {{- if .Values.datadog.kubernetesActions.enabled }}
-          {{- $dcaImageTag := .Values.clusterAgent.image.tag | toString }}
-          {{- if or .Values.clusterAgent.image.doNotCheckTag (hasPrefix "latest" $dcaImageTag) (semverCompare ">=7.79.0-0" $dcaImageTag) }}
+          {{- include "validate-kubernetes-actions-config" . }}
+          {{- if eq (include "kubernetesActions-supported" .) "true" }}
           - name: DD_KUBEACTIONS_ENABLED
             value: "true"
+          {{- /* Only emit a channel setting when turning that channel off, and only to a Cluster Agent
+          that understands it, so older agents never log it as an unknown environment variable. */}}
+          {{- if eq (include "kubernetesActions-channel-toggles-supported" .) "true" }}
+          {{- if ne (include "kubernetesActions-rc-enabled" .) "true" }}
+          - name: DD_KUBEACTIONS_REMOTE_CONFIG_ENABLED
+            value: "false"
+          {{- end }}
+          {{- if ne (include "kubernetesActions-par-enabled" .) "true" }}
+          - name: DD_KUBEACTIONS_PRIVATE_ACTION_RUNNER_ENABLED
+            value: "false"
+          {{- end }}
+          {{- end }}
           {{- end }}
           {{- end }}
           - name: DD_KUBERNETES_USE_ENDPOINT_SLICES
@@ -478,13 +490,11 @@ spec:
           {{- end }}
           - name: DD_CLUSTER_AGENT_LANGUAGE_DETECTION_PATCHER_ENABLED
             value: {{ include "language-detection-enabled" .  | quote }}
-          {{- if eq  (include "should-enable-security-agent" .) "true" }}
+          {{- if eq (include "should-enable-compliance-feature" .) "true" }}
           - name: DD_COMPLIANCE_CONFIG_ENABLED
-            value:  {{ .Values.datadog.securityAgent.compliance.enabled | quote }}
-          {{- if .Values.datadog.securityAgent.compliance.enabled }}
+            value: "true"
           - name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
             value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
-          {{- end }}
           {{- end }}
           {{- if .Values.datadog.prometheusScrape.enabled }}
           - name: DD_PROMETHEUS_SCRAPE_ENABLED
@@ -600,6 +610,14 @@ spec:
             value: {{ .Values.datadog.appsec.injector.processor.service.namespace | quote }}
           {{- end }}
           {{- end }}
+          {{- if eq (include "should-enable-kai-scheduler" .) "true" }}
+          - name: DD_CLUSTER_AGENT_KAI_SCHEDULER_ENABLED
+            value: "true"
+          {{- end }}
+          {{- if eq (include "should-enable-kueue" .) "true" }}
+          - name: DD_CLUSTER_AGENT_KUEUE_ENABLED
+            value: "true"
+          {{- end }}
           {{- if eq (include "should-shard-ksm-config" .) "true" }}
           - name: DD_CLUSTER_CHECKS_KSM_SHARDING_ENABLED
             value: {{ .Values.datadog.kubeStateMetricsCore.shardingEnabled | quote }}
@@ -652,12 +670,10 @@ spec:
             subPath: datadog-cluster.yaml
             readOnly: true
 {{- end}}
-{{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.configMap }}
+{{- if and (eq (include "should-enable-compliance-feature" .) "true") .Values.datadog.securityAgent.compliance.configMap }}
           - name: complianceconfigdir
             mountPath: /etc/datadog-agent/compliance.d
             readOnly: true
-{{- end}}
 {{- end}}
           - name: config
             mountPath: /etc/datadog-agent
@@ -696,6 +712,10 @@ spec:
             - key: helm.yaml
               path: helm.d/helm.yaml
             {{- end }}
+            {{- if eq (include "should-enable-kueue-check" .) "true" }}
+            - key: kueue.yaml
+              path: kueue.d/kueue.yaml
+            {{- end }}
             {{- if eq (include "need-kubernetes-apiserver-check-config" .) "true" }}
             - key: kubernetes_apiserver.yaml
               path: kubernetes_apiserver.d/kubernetes_apiserver.yaml
@@ -722,12 +742,10 @@ spec:
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-config
 {{- end}}
-{{- if eq  (include "should-enable-security-agent" .) "true" }}
-{{- if  and .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.compliance.configMap }}
+{{- if and (eq (include "should-enable-compliance-feature" .) "true") .Values.datadog.securityAgent.compliance.configMap }}
         - name: complianceconfigdir
           configMap:
             name: {{ .Values.datadog.securityAgent.compliance.configMap }}
-{{- end}}
 {{- end}}
         - name: config
           emptyDir: {}

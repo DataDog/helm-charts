@@ -1,0 +1,1 @@
+async () => require('node:child_process').spawnSync('node', ['--no-warnings', '/home/dog/packages/runtime/deno-executor/dist/cli/healthcheck.js', '/run/deno-executor/deno-executor.sock']).status === 0

@@ -51,12 +51,17 @@ function bumpPrereleaseNumber(prerelease) {
 // Compute the bumped version for a given bump type, mirroring the logic in
 // bump-chart-version.js. Throws if the pre-release format is unsupported.
 //
-// bumpType: 'patch-version' | 'minor-version' | 'no-version-bump'
+// bumpType: 'patch-version' | 'minor-version' | 'major-version' | 'no-version-bump'
 function computeBumpedVersion(baseParsed, bumpType) {
   const desired = { ...baseParsed };
 
   if (bumpType === 'no-version-bump') {
     // No change.
+  } else if (bumpType === 'major-version') {
+    desired.major += 1;
+    desired.minor = 0;
+    desired.patch = 0;
+    desired.prerelease = null;
   } else if (baseParsed.prerelease) {
     if (bumpType === 'minor-version') {
       // Promote pre-release to full release by dropping the suffix.

@@ -418,6 +418,7 @@ datadog.containerLifecycle.enabled: ""
 datadog.containerRuntimeSupport.enabled: ""
 datadog.criSocketPath: spec.global.criSocketPath
 datadog.csi.enabled: ""
+datadog.dataSecurity.enabled: ""
 datadog.dd_url: spec.global.endpoint.url
 datadog.disableDefaultOsReleasePaths: ""
 datadog.disablePasswdMount: ""

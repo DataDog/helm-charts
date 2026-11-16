@@ -239,6 +239,75 @@ APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
 
+{{- if and .Values.datadog.kaiScheduler.enabled (ne (include "should-enable-kai-scheduler" .) "true") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+`datadog.kaiScheduler.enabled` is set, but KAI Scheduler metadata collection is disabled because:
+{{- if ne (include "should-deploy-cluster-agent" .) "true" }}
+* The Cluster Agent is not deployed by this chart (`clusterAgent.enabled` is false or `existingClusterAgent.join` is set).
+{{- else }}
+* The Cluster Agent version ({{ include "get-cluster-agent-version" . }}) is older than 7.86.0.
+{{- end }}
+
+{{- end }}
+
+{{- if and (.Values.datadog.privateActionRunner.packetCapture | default dict).enabled (ne (include "should-enable-private-action-runner-packet-capture" .) "true") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+`datadog.privateActionRunner.packetCapture.enabled` is set, but packet capture is disabled because:
+{{- if not .Values.datadog.privateActionRunner.enabled }}
+* The node Private Action Runner is not enabled (`datadog.privateActionRunner.enabled` is false).
+{{- else }}
+* `agents.image.tag` is {{ .Values.agents.image.tag | toString | quote }}, which resolves to Agent {{ include "get-agent-version" . }}; packet capture needs 7.86.0 or later.
+  If you pin `agents.image.digest`, set `agents.image.doNotCheckTag: true`: the tag, not the digest, decides the version.
+{{- end }}
+
+{{- end }}
+
+{{- if and (eq (include "should-enable-private-action-runner-packet-capture" .) "true") (not .Values.agents.useHostNetwork) }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+Private Action Runner packet capture is enabled, but `agents.useHostNetwork` is false.
+Captures run in the Agent pod's own network namespace, so they see only the Agent pod's
+traffic, not the node's. Set `agents.useHostNetwork: true` to capture node traffic.
+
+{{- end }}
+
+{{- if and .Values.datadog.kueue.enabled (ne (include "should-enable-kueue-check" .) "true") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+{{- if eq (include "should-enable-kueue" .) "true" }}
+`datadog.kueue.enabled` is set, but only Kueue metadata collection is enabled in the
+Cluster Agent. The Kueue check is not configured because:
+{{- else }}
+`datadog.kueue.enabled` is set, but Kueue support is disabled because:
+{{- end }}
+{{- if ne (include "should-deploy-cluster-agent" .) "true" }}
+* The Cluster Agent is not deployed by this chart (`clusterAgent.enabled` is false or `existingClusterAgent.join` is set).
+{{- else if ne (include "kueue-cluster-agent-version-supported" .) "true" }}
+* The Cluster Agent version ({{ include "get-cluster-agent-version" . }}) is older than 7.82.0.
+{{- end }}
+{{- if not .Values.datadog.clusterChecks.enabled }}
+* `datadog.clusterChecks.enabled` is false.
+{{- end }}
+{{- if ne (include "kueue-agent-version-supported" .) "true" }}
+* The Agent version ({{ include "get-agent-version" . }}) is older than 7.82.0.
+{{- end }}
+
+{{- end }}
+
 {{- if or .Values.clusterAgent.createPodDisruptionBudget .Values.clusterChecksRunner.createPodDisruptionBudget }}
 
 #################################################################
@@ -367,6 +436,16 @@ More information about this change: https://github.com/DataDog/helm-charts/pull/
 
 You are using datadog.orchestratorExplorer.enabled but you disabled the cluster agent. This configuration is unsupported and Kubernetes resource monitoring has been turned off.
 To enable it please set clusterAgent.enabled to 'true'.
+{{- end }}
+
+{{- if and .Values.providers.gke.autopilot .Values.datadog.jemalloc.disable }}
+
+#######################################################################################
+####   WARNING: Disabling jemalloc is not supported on GKE Autopilot                 ####
+#######################################################################################
+
+{{- fail "Disabling jemalloc via LD_PRELOAD is not supported on GKE Autopilot. Set 'datadog.jemalloc.disable' to 'false'." }}
+
 {{- end }}
 
 {{- if and (.Values.providers.gke.autopilot) (not .Values.datadog.envDict.HELM_FORCE_RENDER)}}
@@ -965,12 +1044,12 @@ To complete the migration:
 
 {{- end }}
 
-{{- if or .Values.clusterAgent.privateActionRunner.enabled .Values.datadog.privateActionRunner.enabled }}
+{{- if or (eq (include "clusterAgent-privateActionRunner-enabled" .) "true") .Values.datadog.privateActionRunner.enabled }}
 
 ###################################################################################
 ####              INFO: Private Action Runner is enabled                       ####
 ###################################################################################
-{{- if .Values.clusterAgent.privateActionRunner.enabled }}
+{{- if eq (include "clusterAgent-privateActionRunner-enabled" .) "true" }}
 
 Cluster Agent Private Action Runner:
 {{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}

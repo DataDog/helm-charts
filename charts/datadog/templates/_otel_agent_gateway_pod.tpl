@@ -169,7 +169,10 @@
               fieldRef:
                 fieldPath: spec.nodeName
           - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
-            value: "zpages,pprof,datadog" # exclude infra attribute, prometheus and DD flare; health_check is configured explicitly in the OTel config
+            # exclude infraattributes (already applied by the DaemonSet), prometheus and ddflare (no core Agent in the gateway pod);
+            # health_check is configured explicitly in the OTel config; keep cumulativetodelta for cumulative metrics sent to the Gateway directly
+            # or by DaemonSets on Agent images without DD_OTELCOLLECTOR_GATEWAY_DAEMONSET (newer DaemonSets convert before forwarding).
+            value: "zpages,pprof,datadog,cumulativetodelta"
 
           # A subset of components-common-env that makes sense to otel agent in gateway
           {{- if .Values.datadog.site }}
@@ -203,6 +206,8 @@
             value: "0"
           - name: DD_AGENT_IPC_PORT
             value: "0"
+          - name: DD_AGENT_IPC_USE_SOCKET
+            value: "false"
           - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
             value: "0"
           - name: DD_LOG_LEVEL
@@ -221,7 +226,7 @@
             readOnly: false
           - name: config
             mountPath: {{ template "datadog.confPath" . }}
-            readOnly: true
+            readOnly: false # Need RW to mount to config path
           {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux")}}
           - name: datadog-yaml
             mountPath: {{ template "datadog.confPath" . }}/datadog.yaml
@@ -267,6 +272,11 @@
             - key: otel-gateway-config.yaml
               path: otel-gateway-config.yaml
           {{- end }}
+      {{- if and .Values.agents.useConfigMap (eq .Values.targetSystem "linux") }}
+      - name: datadog-yaml
+        configMap:
+          name: {{ include "agents-useConfigMap-configmap-name" . }}
+      {{- end }}
 {{- if .Values.otelAgentGateway.volumes }}
 {{ toYaml .Values.otelAgentGateway.volumes | indent 6 }}
 {{- end }}

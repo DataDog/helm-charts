@@ -161,6 +161,12 @@ spec:
                   description: LastForceSyncTime is the last time the API object was last force synced with the custom resource
                   format: date-time
                   type: string
+                remoteDefinitionHash:
+                  description: |-
+                    RemoteDefinitionHash is the hash of the resource definition returned by Datadog
+                    after the last successful create or update, for resource types that support it.
+                    A force sync skips the update while the remote resource still has this hash.
+                  type: string
                 state:
                   description: |-
                     State is the live Datadog-side state of the underlying resource as last

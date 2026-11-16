@@ -11,6 +11,16 @@
     "datadog": {
       "type": "object",
       "properties": {
+        "jemalloc": {
+          "type": "object",
+          "properties": {
+            "disable": {
+              "type": "boolean",
+              "default": false,
+              "description": "Disable jemalloc for the Linux node core Agent, trace-agent, process-agent, security-agent, system-probe, and enabled Cluster Check Runners by overriding LD_PRELOAD. Jemalloc is enabled by default in Agent 7.87.0+ images. Not supported on GKE Autopilot."
+            }
+          }
+        },
         "instrumentationCrd": {
           "type": "object",
           "properties": {
@@ -283,7 +293,7 @@
                       "const": ""
                     }
                   ],
-                  "description": "The injection mode to use for libraries injection. Set to \"\" (unset) to let the Cluster Agent apply its own default. 'csi' is experimental and requires Cluster Agent 7.76.0+ and Datadog CSI Driver."
+                  "description": "The injection mode to use for libraries injection. Set to \"\" (unset) to let the Cluster Agent apply its own default. 'csi' requires Cluster Agent 7.76.0+ and Datadog CSI Driver."
                 }
               },
               "additionalProperties": false,

@@ -377,6 +377,11 @@ spec:
                           type: object
                         registry:
                           type: string
+                        registryAllowList:
+                          items:
+                            type: string
+                          type: array
+                          x-kubernetes-list-type: set
                         serviceName:
                           type: string
                         validation:
@@ -439,6 +444,8 @@ spec:
                               additionalProperties:
                                 type: string
                               type: object
+                            onDemand:
+                              type: boolean
                             targets:
                               items:
                                 properties:
@@ -960,6 +967,11 @@ spec:
                             type: object
                           type: array
                           x-kubernetes-list-type: atomic
+                        collectionMode:
+                          enum:
+                            - poll
+                            - watch
+                          type: string
                         unbundleEvents:
                           type: boolean
                       type: object
@@ -1027,6 +1039,22 @@ spec:
                         valuesAsTags:
                           additionalProperties:
                             type: string
+                          type: object
+                      type: object
+                    hostProfiler:
+                      properties:
+                        enabled:
+                          type: boolean
+                        runAsRoot:
+                          type: boolean
+                        seLinuxType:
+                          type: string
+                        seccomp:
+                          properties:
+                            enabled:
+                              type: boolean
+                            loggingEnabled:
+                              type: boolean
                           type: object
                       type: object
                     kubeStateMetricsCore:
@@ -1187,9 +1215,24 @@ spec:
                             - default
                             - node_kubelet
                           type: string
+                        shardingEnabled:
+                          type: boolean
                       type: object
                     kubernetesActions:
                       properties:
+                        communication:
+                          properties:
+                            privateActionRunner:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
+                            remoteConfiguration:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
+                          type: object
                         enabled:
                           type: boolean
                       type: object
@@ -1601,6 +1644,25 @@ spec:
                           type: boolean
                         enabled:
                           type: boolean
+                        image:
+                          properties:
+                            name:
+                              type: string
+                            pullPolicy:
+                              type: string
+                            pullSecrets:
+                              items:
+                                properties:
+                                  name:
+                                    default: ""
+                                    type: string
+                                type: object
+                                x-kubernetes-map-type: atomic
+                              type: array
+                              x-kubernetes-list-type: atomic
+                            tag:
+                              type: string
+                          type: object
                         nodeAffinity:
                           properties:
                             preferredDuringSchedulingIgnoredDuringExecution:
@@ -5024,6 +5086,11 @@ spec:
                               type: object
                             registry:
                               type: string
+                            registryAllowList:
+                              items:
+                                type: string
+                              type: array
+                              x-kubernetes-list-type: set
                             serviceName:
                               type: string
                             validation:
@@ -5086,6 +5153,8 @@ spec:
                                   additionalProperties:
                                     type: string
                                   type: object
+                                onDemand:
+                                  type: boolean
                                 targets:
                                   items:
                                     properties:
@@ -5607,6 +5676,11 @@ spec:
                                 type: object
                               type: array
                               x-kubernetes-list-type: atomic
+                            collectionMode:
+                              enum:
+                                - poll
+                                - watch
+                              type: string
                             unbundleEvents:
                               type: boolean
                           type: object
@@ -5674,6 +5748,22 @@ spec:
                             valuesAsTags:
                               additionalProperties:
                                 type: string
+                              type: object
+                          type: object
+                        hostProfiler:
+                          properties:
+                            enabled:
+                              type: boolean
+                            runAsRoot:
+                              type: boolean
+                            seLinuxType:
+                              type: string
+                            seccomp:
+                              properties:
+                                enabled:
+                                  type: boolean
+                                loggingEnabled:
+                                  type: boolean
                               type: object
                           type: object
                         kubeStateMetricsCore:
@@ -5834,9 +5924,24 @@ spec:
                                 - default
                                 - node_kubelet
                               type: string
+                            shardingEnabled:
+                              type: boolean
                           type: object
                         kubernetesActions:
                           properties:
+                            communication:
+                              properties:
+                                privateActionRunner:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
+                                remoteConfiguration:
+                                  properties:
+                                    enabled:
+                                      type: boolean
+                                  type: object
+                              type: object
                             enabled:
                               type: boolean
                           type: object
