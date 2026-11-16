@@ -67,8 +67,13 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    {{- if eq (include "should-use-agent-ipc-socket" .) "true" }}
+    - name: DD_AGENT_IPC_USE_SOCKET
+      value: "true"
+    {{- else }}
     - name: DD_AGENT_IPC_PORT
       value: "5009"
+    {{- end }}
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
     {{- if .Values.datadog.otelCollector.enabled }}
@@ -83,7 +88,10 @@
     - name: DD_OTELCOLLECTOR_CONVERTER_FEATURES
       # Exclude infra attribute or prometheus in Daemonset in Gateway setup.
       # Users must explicitly add infra attribute and prometheus if they need in Gateway, to avoid potential duplications
-      value: "health_check,zpages,pprof,ddflare,datadog"
+      value: "health_check,zpages,pprof,ddflare,datadog,cumulativetodelta"
+    # Daemonset in Gateway setup: the converter adds cumulativetodelta to metrics pipelines exporting to the Gateway.
+    - name: DD_OTELCOLLECTOR_GATEWAY_DAEMONSET
+      value: "true"
     {{- end }}
     {{- include "fips-envvar" . | nindent 4 }}
     - name: DD_LOG_LEVEL
