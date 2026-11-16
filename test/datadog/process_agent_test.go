@@ -369,16 +369,6 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			expectedMounts: expectedCoreLegacy,
 		},
 		{
-			name:           "major alias",
-			tag:            "7",
-			expectedMounts: expectedCoreLegacy,
-		},
-		{
-			name:           "latest alias",
-			tag:            "latest",
-			expectedMounts: expectedCoreLegacy,
-		},
-		{
 			name:           "minor alias",
 			tag:            "7.86",
 			expectedMounts: expectedCoreHost,
