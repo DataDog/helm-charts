@@ -1,5 +1,13 @@
 # Datadog changelog
 
+## 1.1.0
+
+* `multiContainer.networkPolicy.create` now defaults to `true`. Multi-container installs must set `multiContainer.networkPolicy.dns.to`, or set `create: false` to manage egress without the chart policy. Installs that already set `create` render the same as before. Single-container installs are unchanged.
+
+## 1.0.1
+
+* Mount the worker config with mode `0440` in the single-container Deployment. The worker reads it through group 0, or `podSecurityContext.fsGroup` when set. With `supplementalGroupsPolicy: Strict`, set `podSecurityContext.fsGroup`.
+
 ## 1.0.0
 
 * Add opt-in `multiContainer.enabled` to run the worker, `deno-executor`, `browser-pool` and `traceroute-server` as separate containers in one pod. No container uses `sudo`, `NET_ADMIN` or `allowPrivilegeEscalation`. Every container sets `readOnlyRootFilesystem`, `runAsNonRoot`, drops all capabilities (`traceroute-server` keeps `NET_RAW`) and uses the `RuntimeDefault` seccomp profile. Requires a private location image version >= 1.75.0. Nothing changes when `multiContainer.enabled` is `false`.
