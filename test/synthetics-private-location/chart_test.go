@@ -129,7 +129,7 @@ func TestInvalidMultiContainerConfiguration(t *testing.T) {
 	}{
 		{"missing secret", map[string]string{"multiContainer.browserPool.adminTokenSecret.name": `""`}, "adminTokenSecret.name"},
 		{"missing key", map[string]string{"multiContainer.browserPool.adminTokenSecret.key": `""`}, "adminTokenSecret.key"},
-		{"missing create", map[string]string{"multiContainer.networkPolicy.create": "null"}, "must be set to true or false"},
+		{"null create", map[string]string{"multiContainer.networkPolicy.create": "null"}, "must be set to true or false"},
 		{"non-bool create", map[string]string{"multiContainer.networkPolicy.create": `"yes"`}, "must be set to true or false"},
 		{"token override", map[string]string{"env": `[{"name":"BROWSER_POOL_ADMIN_TOKEN","value":"unsafe"}]`}, "not env"},
 		{"missing DNS", map[string]string{"multiContainer.networkPolicy.create": "true"}, "must specify DNS"},
@@ -154,6 +154,27 @@ func TestInvalidMultiContainerConfiguration(t *testing.T) {
 			assert.Contains(t, output.Output.Stderr(), test.message)
 		})
 	}
+}
+
+func TestNetworkPolicyCreatedByDefault(t *testing.T) {
+	command := multiContainerCommand(nil)
+	delete(command.OverridesJson, "multiContainer.networkPolicy.create")
+	_, err := common.RenderChart(t, command)
+	var output *shell.ErrWithCmdOutput
+	require.ErrorAs(t, err, &output)
+	assert.Contains(t, output.Output.Stderr(), "must specify DNS")
+
+	command.OverridesJson["multiContainer.networkPolicy.dns.to"] = `[{"ipBlock":{"cidr":"169.254.20.10/32"}}]`
+	command.ShowOnly = []string{"templates/network-policy.yaml"}
+	manifest, err := common.RenderChart(t, command)
+	require.NoError(t, err)
+	assert.Contains(t, manifest, "kind: NetworkPolicy")
+}
+
+func TestNetworkPolicyNotCreatedWhenDisabled(t *testing.T) {
+	manifest, err := common.RenderChart(t, multiContainerCommand(nil))
+	require.NoError(t, err)
+	assert.NotContains(t, manifest, "kind: NetworkPolicy")
 }
 
 func renderPolicy(t *testing.T, overrides map[string]string) networkingv1.NetworkPolicy {
