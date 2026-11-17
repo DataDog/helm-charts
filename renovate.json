@@ -30,8 +30,8 @@
       "matchStrings": [
         "    # registrar\\.image\\.tag --[^\\n]*\\n    tag: (?<currentValue>v\\d+\\.\\d+\\.\\d+)\\n"
       ],
-      "depNameTemplate": "registry.k8s.io/sig-storage/csi-node-driver-registrar",
-      "datasourceTemplate": "docker",
+      "depNameTemplate": "kubernetes-csi/node-driver-registrar",
+      "datasourceTemplate": "github-releases",
       "versioningTemplate": "semver"
     }
   ],
@@ -60,8 +60,8 @@
     },
     {
       "matchManagers": ["custom.regex"],
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["registry.k8s.io/sig-storage/csi-node-driver-registrar"],
+      "matchDatasources": ["github-releases"],
+      "matchPackageNames": ["kubernetes-csi/node-driver-registrar"],
       "allowedVersions": "/^v\\d+\\.\\d+\\.\\d+$/",
       "ignoreUnstable": true,
       "groupName": "CSI node-driver-registrar",
