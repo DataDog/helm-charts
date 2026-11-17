@@ -10,7 +10,7 @@
     - "host-profiler"
     - "--core-config={{ template "datadog.confPath" .  }}/datadog.yaml"
 {{- $securityContext := deepCopy (.Values.agents.containers.hostProfiler.securityContext | default dict) -}}
-{{- if .Values.datadog.hostProfiler.runAsNonRoot }}
+{{- if not .Values.datadog.hostProfiler.runAsRoot }}
 {{- $_ := set $securityContext "runAsUser" 100 }}
 {{- $_ := set $securityContext "runAsGroup" 100 }}
 {{- $_ := set $securityContext "runAsNonRoot" true }}
@@ -30,8 +30,13 @@
   env:
     {{- include "containers-common-env" . | nindent 4 }}
     {{- include "containers-cluster-agent-env" . | nindent 4 }}
+    {{- if eq (include "should-use-agent-ipc-socket" .) "true" }}
+    - name: DD_AGENT_IPC_USE_SOCKET
+      value: "true"
+    {{- else }}
     - name: DD_AGENT_IPC_PORT
       value: "5009"
+    {{- end }}
     - name: DD_AGENT_IPC_CONFIG_REFRESH_INTERVAL
       value: "60"
     - name: DD_LOG_LEVEL
