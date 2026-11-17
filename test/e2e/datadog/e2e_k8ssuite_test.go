@@ -111,8 +111,8 @@ func (s *k8sSuite) testGenericK8sAutopilot() {
 	s.testGenericK8sAutodiscovery()
 	s.testGenericK8sLogs()
 	s.testGenericK8sKSMCore()
-	// TODO: allow /host/etc/passwd (from a host-passwd volume) once Google publishes allowlist v1.0.8.
-	s.testGenericK8sProcessPasswdMounts(false)
+	// GKE Warden matches allowlisted volumeMounts by name, so Autopilot mounts host-passwd there.
+	s.testGenericK8sProcessPasswdMounts("host-passwd")
 }
 
 func (s *k8sSuite) testGenericK8s() {
@@ -121,7 +121,7 @@ func (s *k8sSuite) testGenericK8s() {
 	s.testGenericK8sLogs()
 	s.testGenericK8sKSMCore()
 	s.testGenericK8sKSMCoreCCR()
-	s.testGenericK8sProcessPasswdMounts(true)
+	s.testGenericK8sProcessPasswdMounts("passwd")
 }
 
 // processHostPasswdAgentTag is an Agent image that mounts host passwd at /host/etc/passwd (7.86.0+).
@@ -130,7 +130,8 @@ const processHostPasswdAgentTag = "7.86.0-rc.6"
 
 // testGenericK8sProcessPasswdMounts is a regression check on the default install's passwd
 // mounts. It checks the spec only, so it holds for any Agent version and needs no exec.
-func (s *k8sSuite) testGenericK8sProcessPasswdMounts(allowHostEtcPasswd bool) {
+// hostEtcPasswdVolume is the volume expected at /host/etc/passwd.
+func (s *k8sSuite) testGenericK8sProcessPasswdMounts(hostEtcPasswdVolume string) {
 	s.Run("Process passwd mounts are consistent", func() {
 		s.Assert().EventuallyWithT(func(c *assert.CollectT) {
 			res, err := s.Env().KubernetesCluster.Client().CoreV1().Pods("datadog").List(context.TODO(), metav1.ListOptions{})
@@ -141,15 +142,15 @@ func (s *k8sSuite) testGenericK8sProcessPasswdMounts(allowHostEtcPasswd bool) {
 			if !ok {
 				return
 			}
-			assertProcessPasswdMounts(c, agent, allowHostEtcPasswd)
+			assertProcessPasswdMounts(c, agent, hostEtcPasswdVolume)
 		}, 5*time.Minute, 15*time.Second, "could not validate process passwd mounts in time")
 	})
 }
 
-// assertProcessPasswdMounts checks that process containers mount the passwd volume at
-// /etc/passwd or /host/etc/passwd but never both, and that the relocated mount brings
-// host os-release with it.
-func assertProcessPasswdMounts(c *assert.CollectT, pod corev1.Pod, allowHostEtcPasswd bool) {
+// assertProcessPasswdMounts checks that process containers mount host passwd at
+// /etc/passwd (passwd volume) or /host/etc/passwd (hostEtcPasswdVolume) but never both,
+// and that the relocated mount brings host os-release with it.
+func assertProcessPasswdMounts(c *assert.CollectT, pod corev1.Pod, hostEtcPasswdVolume string) {
 	for _, container := range pod.Spec.Containers {
 		if container.Name != "agent" && container.Name != "process-agent" {
 			continue
@@ -165,8 +166,7 @@ func assertProcessPasswdMounts(c *assert.CollectT, pod corev1.Pod, allowHostEtcP
 			assert.Equal(c, "passwd", legacy, "%s volume at /etc/passwd", container.Name)
 		}
 		if hasRelocated {
-			assert.True(c, allowHostEtcPasswd, "%s must keep /etc/passwd", container.Name)
-			assert.Equal(c, "passwd", relocated, "%s volume at /host/etc/passwd", container.Name)
+			assert.Equal(c, hostEtcPasswdVolume, relocated, "%s volume at /host/etc/passwd", container.Name)
 			assert.Equal(c, "os-release-file", mounts["/host/etc/os-release"], "%s host os-release mount", container.Name)
 		}
 	}

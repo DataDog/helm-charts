@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.273.2
+
+* GKE Autopilot: mount the host's `/etc/passwd` at `/host/etc/passwd` for Agent >= 7.86.0 in WorkloadAllowlist mode, from a `host-passwd` volume allowed by WorkloadAllowlist v1.0.8 (added to the AllowlistSynchronizer). Host `/etc/os-release` is also mounted at `/host/etc/os-release` when system-probe is off. Legacy AllowlistedV2Workload clusters keep `/etc/passwd`.
+
 ## 3.273.1
 
 * Mount the host's `/etc/passwd` read-only at `/host/etc/passwd` in eligible process containers for Agent >= 7.86.0, including 7.86.0+ prereleases. Older or unknown images, `agents.image.doNotCheckTag`, and GKE Autopilot keep `/etc/passwd` (with `agents.image.digest`, the tag still decides the version), and security mounts are unchanged. Autopilot support follows once a WorkloadAllowlist permitting `/host/etc/passwd` is published. Gohai username lookup remains a known limitation; see the README's process passwd mounts section.
