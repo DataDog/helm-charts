@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.19.0
+
+* Updated csi registrar version from 2.0.1 to v2.18.0
+
 ## 0.18.0
 
 * Render APM registry authentication (`DD_APM_REGISTRY_AUTH_<n>`) on GKE Autopilot with WorkloadAllowlist.
