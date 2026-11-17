@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.273.1
+
+* Set `DD_DISCOVERY_ENABLED=false` on the Agent container when Service Discovery resolves to disabled on Linux (for example `datadog.discovery.enabled: false`). The Agent defaults `discovery.enabled` to true on Linux since 7.79.0, and `system-probe.yaml` is only mounted when system-probe is deployed, so the Agent kept polling a missing system-probe socket and logged `failed to get services` errors every minute. A user-provided `DD_DISCOVERY_ENABLED` in `datadog.env`, `datadog.envDict`, `agents.containers.agent.env` or `agents.containers.agent.envDict` takes precedence.
+
 ## 3.273.0
 
 * [PROF-16651][Host-Profiler] align runasroot setting with operator ([#3074](https://github.com/DataDog/helm-charts/pull/3074)).
