@@ -4,6 +4,10 @@
 
 * Add `datadog.kubernetesEvents.eventCollectionMode` to configure the `event_collection_mode` of the `kubernetes_apiserver` check (`poll` or `watch`). Requires Cluster Agent 7.81.1+.
 
+## 3.273.1
+
+* Mount the host's `/etc/passwd` read-only at `/host/etc/passwd` in eligible process containers for Agent >= 7.86.0, including 7.86.0+ prereleases. Older or unknown images, `agents.image.doNotCheckTag`, and GKE Autopilot keep `/etc/passwd` (with `agents.image.digest`, the tag still decides the version), and security mounts are unchanged. Autopilot support follows once a WorkloadAllowlist permitting `/host/etc/passwd` is published. Gohai username lookup remains a known limitation; see the README's process passwd mounts section.
+
 ## 3.273.0
 
 * [PROF-16651][Host-Profiler] align runasroot setting with operator ([#3074](https://github.com/DataDog/helm-charts/pull/3074)).

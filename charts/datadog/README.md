@@ -326,6 +326,12 @@ then upgrade your Datadog Helm chart:
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
 
+#### Process passwd mounts
+
+For Agent 7.86.0 and later (including prereleases), process containers mount the host's `/etc/passwd` read-only at `/host/etc/passwd` (still from the `passwd` volume), so the image's own accounts such as `dd-agent` stay visible in `/etc/passwd`. Older or unknown versions, `agents.image.doNotCheckTag=true`, and GKE Autopilot keep `/etc/passwd`; with `agents.image.digest`, the tag still decides the version, like other version-gated features; Autopilot needs a published WorkloadAllowlist that permits the new mount. Security-agent and system-probe mounts are unchanged.
+
+**Known limitation:** Gohai metadata is not covered by the [process resolver change](https://github.com/DataDog/datadog-agent/pull/55789) and can report image-local usernames or numeric UIDs instead of host usernames.
+
 ### Enabling NPM Collection
 
 The system-probe agent only runs in dedicated container environment. Update your `datadog-values.yaml` file with the NPM collection configuration:
@@ -827,7 +833,7 @@ helm install <RELEASE_NAME> \
 | datadog.dataSecurity.enabled | bool | `false` | Enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer. |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
-| datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
+| datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting the host's /etc/passwd file in all containers |
 | datadog.discovery.enabled | bool | `nil` | Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`. |
 | datadog.discovery.networkStats.enabled | bool | `true` | Enable Service Discovery Network Stats |
 | datadog.discovery.serviceMap.enabled | bool | `false` | Enable Discovery Service Map (restricted USM) |
@@ -983,7 +989,7 @@ helm install <RELEASE_NAME> \
 | datadog.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a local file. Requires leader election to be enabled. |
 | datadog.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |
 | datadog.processAgent.containerCollection | bool | `true` | Set this to true to enable container collection # ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm |
-| datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
+| datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: the host's /etc/passwd file is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # Agent 7.86.0+ mounts it at /host/etc/passwd instead (except for `agents.image.doNotCheckTag` and GKE Autopilot for now while the allowlist change is pending; with a digest, the tag still decides the version); see "Process passwd mounts" in the README. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
 | datadog.processAgent.processCollection | bool | `false` | Set this to true to enable process collection |
 | datadog.processAgent.processDiscovery | bool | `true` | Enables or disables autodiscovery of integrations |
 | datadog.processAgent.runInCoreAgent | bool | `true` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This requires Agent 7.60.0+ and Linux. # DEPRECATED: This behavior will be enabled by default for installations that meet the requirements. # For Agent 7.78.0+, this setting is ignored — process checks always run in the core agent on Linux. |
