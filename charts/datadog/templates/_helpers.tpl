@@ -2042,9 +2042,6 @@ false
 {{- if .Values.agents.image.doNotCheckTag -}}
 {{- /* The tag is not a version, so keep the mount every Agent supports. */ -}}
 /etc/passwd
-{{- else if .Values.agents.image.digest -}}
-{{- /* A digest does not identify the Agent version. */ -}}
-/etc/passwd
 {{- else if .Values.providers.gke.autopilot -}}
 {{- /* GKE Autopilot keeps /etc/passwd until a published WorkloadAllowlist permits /host/etc/passwd. */ -}}
 /etc/passwd

@@ -388,9 +388,16 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			},
 			expectedMounts: expectedCoreLegacy,
 		},
+		// With a digest, the tag still decides the version, like other version-gated features.
 		{
-			name:           "digest wins over tag",
+			name:           "digest with supported tag",
 			tag:            "7.86.0",
+			overrides:      map[string]string{"agents.image.digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+			expectedMounts: expectedCoreHost,
+		},
+		{
+			name:           "digest with old tag",
+			tag:            "7.85.0",
 			overrides:      map[string]string{"agents.image.digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
 			expectedMounts: expectedCoreLegacy,
 		},
