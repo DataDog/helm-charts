@@ -21,7 +21,7 @@ func multiContainerCommand(overrides map[string]string) common.HelmCommand {
 		"multiContainer.enabled": "true",
 		"multiContainer.browserPool.adminTokenSecret.name": `"pool-token"`,
 		"multiContainer.browserPool.adminTokenSecret.key":  `"admin"`,
-		"multiContainer.networkPolicy.create":              "false",
+		"networkPolicy.create":                             "false",
 	}
 	for key, value := range overrides {
 		values[key] = value
@@ -42,17 +42,25 @@ func renderDeployment(t *testing.T, command common.HelmCommand) appsv1.Deploymen
 	return deployment
 }
 
-func TestLegacyDeployment(t *testing.T) {
-	manifest, err := common.RenderChart(t, common.HelmCommand{
+func singleContainerCommand(overrides map[string]string) common.HelmCommand {
+	values := map[string]string{}
+	for key, value := range overrides {
+		values[key] = value
+	}
+	return common.HelmCommand{
 		ReleaseName: "test", ChartPath: "../../charts/synthetics-private-location",
-	})
+		OverridesJson: values,
+	}
+}
+
+func TestLegacyDeployment(t *testing.T) {
+	manifest, err := common.RenderChart(t, singleContainerCommand(map[string]string{"networkPolicy.create": "false"}))
 	require.NoError(t, err)
 	assert.NotContains(t, manifest, "kind: NetworkPolicy")
 	assert.NotContains(t, manifest, "kind: SecurityContextConstraints")
-	manifest, err = common.RenderChart(t, common.HelmCommand{
-		ReleaseName: "test", ChartPath: "../../charts/synthetics-private-location",
-		ShowOnly: []string{"templates/deployment.yaml"},
-	})
+	command := singleContainerCommand(map[string]string{"networkPolicy.create": "false"})
+	command.ShowOnly = []string{"templates/deployment.yaml"}
+	manifest, err = common.RenderChart(t, command)
 	require.NoError(t, err)
 	var deployment appsv1.Deployment
 	common.Unmarshal(t, manifest, &deployment)
@@ -129,20 +137,20 @@ func TestInvalidMultiContainerConfiguration(t *testing.T) {
 	}{
 		{"missing secret", map[string]string{"multiContainer.browserPool.adminTokenSecret.name": `""`}, "adminTokenSecret.name"},
 		{"missing key", map[string]string{"multiContainer.browserPool.adminTokenSecret.key": `""`}, "adminTokenSecret.key"},
-		{"null create", map[string]string{"multiContainer.networkPolicy.create": "null"}, "must be set to true or false"},
-		{"non-bool create", map[string]string{"multiContainer.networkPolicy.create": `"yes"`}, "must be set to true or false"},
+		{"null create", map[string]string{"networkPolicy.create": "null"}, "must be set to true or false"},
+		{"non-bool create", map[string]string{"networkPolicy.create": `"yes"`}, "must be set to true or false"},
 		{"token override", map[string]string{"env": `[{"name":"BROWSER_POOL_ADMIN_TOKEN","value":"unsafe"}]`}, "not env"},
-		{"missing DNS", map[string]string{"multiContainer.networkPolicy.create": "true"}, "must specify DNS"},
-		{"unrestricted DNS peer", map[string]string{"multiContainer.networkPolicy.create": "true", "multiContainer.networkPolicy.dns.to": `[{}]`}, "each multiContainer.networkPolicy.dns.to entry"},
-		{"empty DNS ports", map[string]string{"multiContainer.networkPolicy.create": "true", "multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "multiContainer.networkPolicy.dns.ports": `[]`}, "dns.ports must specify at least one port"},
-		{"IPv4 octet over 255", map[string]string{"multiContainer.networkPolicy.create": "true", "multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "multiContainer.networkPolicy.blockedIPRanges": `{"IPv4":["256.1.1.1"]}`}, `IP range "256.1.1.1"`},
-		{"IPv4 three octets", map[string]string{"multiContainer.networkPolicy.create": "true", "multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "multiContainer.networkPolicy.blockedIPRanges": `{"IPv4":["1.2.3"]}`}, `IP range "1.2.3"`},
-		{"IPv6 double compression", map[string]string{"multiContainer.networkPolicy.create": "true", "multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "multiContainer.networkPolicy.blockedIPRanges": `{"IPv6":["1::2::3"]}`}, `IP range "1::2::3"`},
-		{"IPv6 nine groups", map[string]string{"multiContainer.networkPolicy.create": "true", "multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "multiContainer.networkPolicy.blockedIPRanges": `{"IPv6":["1:2:3:4:5:6:7:8:9"]}`}, `IP range "1:2:3:4:5:6:7:8:9"`},
-		{"invalid allowed range", map[string]string{"multiContainer.networkPolicy.create": "true", "multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "multiContainer.networkPolicy.allowedIPRanges": `{"IPv4":["example.com"]}`}, `IP range "example.com" must be an IPv4 or IPv6 address or CIDR`},
-		{"invalid IPv4 prefix", map[string]string{"multiContainer.networkPolicy.create": "true", "multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "multiContainer.networkPolicy.blockedIPRanges": `{"IPv4":["10.0.0.0/33"]}`}, `IP range "10.0.0.0/33"`},
-		{"truncated IPv4", map[string]string{"multiContainer.networkPolicy.create": "true", "multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "multiContainer.networkPolicy.blockedIPRanges": `{"IPv4":["10.0.0"]}`}, `IP range "10.0.0"`},
-		{"invalid IPv6 prefix", map[string]string{"multiContainer.networkPolicy.create": "true", "multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "multiContainer.networkPolicy.blockedIPRanges": `{"IPv6":["fd00::/129"]}`}, `IP range "fd00::/129"`},
+		{"missing DNS", map[string]string{"networkPolicy.create": "true"}, "must specify DNS"},
+		{"unrestricted DNS peer", map[string]string{"networkPolicy.create": "true", "networkPolicy.dns.to": `[{}]`}, "each networkPolicy.dns.to entry"},
+		{"empty DNS ports", map[string]string{"networkPolicy.create": "true", "networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "networkPolicy.dns.ports": `[]`}, "dns.ports must specify at least one port"},
+		{"IPv4 octet over 255", map[string]string{"networkPolicy.create": "true", "networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "networkPolicy.blockedIPRanges": `{"IPv4":["256.1.1.1"]}`}, `IP range "256.1.1.1"`},
+		{"IPv4 three octets", map[string]string{"networkPolicy.create": "true", "networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "networkPolicy.blockedIPRanges": `{"IPv4":["1.2.3"]}`}, `IP range "1.2.3"`},
+		{"IPv6 double compression", map[string]string{"networkPolicy.create": "true", "networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "networkPolicy.blockedIPRanges": `{"IPv6":["1::2::3"]}`}, `IP range "1::2::3"`},
+		{"IPv6 nine groups", map[string]string{"networkPolicy.create": "true", "networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "networkPolicy.blockedIPRanges": `{"IPv6":["1:2:3:4:5:6:7:8:9"]}`}, `IP range "1:2:3:4:5:6:7:8:9"`},
+		{"invalid allowed range", map[string]string{"networkPolicy.create": "true", "networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "networkPolicy.allowedIPRanges": `{"IPv4":["example.com"]}`}, `IP range "example.com" must be an IPv4 or IPv6 address or CIDR`},
+		{"invalid IPv4 prefix", map[string]string{"networkPolicy.create": "true", "networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "networkPolicy.blockedIPRanges": `{"IPv4":["10.0.0.0/33"]}`}, `IP range "10.0.0.0/33"`},
+		{"truncated IPv4", map[string]string{"networkPolicy.create": "true", "networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "networkPolicy.blockedIPRanges": `{"IPv4":["10.0.0"]}`}, `IP range "10.0.0"`},
+		{"invalid IPv6 prefix", map[string]string{"networkPolicy.create": "true", "networkPolicy.dns.to": `[{"ipBlock":{"cidr":"10.0.0.10/32"}}]`, "networkPolicy.blockedIPRanges": `{"IPv6":["fd00::/129"]}`}, `IP range "fd00::/129"`},
 		{"duplicate sysctl", map[string]string{"podSecurityContext.sysctls": `[{"name":"net.ipv4.ping_group_range","value":"501 501"},{"name":"net.ipv4.ping_group_range","value":"0 65535"}]`}, "duplicate name net.ipv4.ping_group_range"},
 	}
 	for _, test := range tests {
@@ -158,17 +166,55 @@ func TestInvalidMultiContainerConfiguration(t *testing.T) {
 
 func TestNetworkPolicyCreatedByDefault(t *testing.T) {
 	command := multiContainerCommand(nil)
-	delete(command.OverridesJson, "multiContainer.networkPolicy.create")
+	delete(command.OverridesJson, "networkPolicy.create")
 	_, err := common.RenderChart(t, command)
 	var output *shell.ErrWithCmdOutput
 	require.ErrorAs(t, err, &output)
 	assert.Contains(t, output.Output.Stderr(), "must specify DNS")
 
-	command.OverridesJson["multiContainer.networkPolicy.dns.to"] = `[{"ipBlock":{"cidr":"169.254.20.10/32"}}]`
+	command.OverridesJson["networkPolicy.dns.to"] = `[{"ipBlock":{"cidr":"169.254.20.10/32"}}]`
 	command.ShowOnly = []string{"templates/network-policy.yaml"}
 	manifest, err := common.RenderChart(t, command)
 	require.NoError(t, err)
 	assert.Contains(t, manifest, "kind: NetworkPolicy")
+}
+
+func TestSingleContainerNetworkPolicyCreatedByDefault(t *testing.T) {
+	_, err := common.RenderChart(t, singleContainerCommand(nil))
+	var output *shell.ErrWithCmdOutput
+	require.ErrorAs(t, err, &output)
+	assert.Contains(t, output.Output.Stderr(), "must specify DNS")
+
+	command := singleContainerCommand(map[string]string{"networkPolicy.dns.to": `[{"ipBlock":{"cidr":"169.254.20.10/32"}}]`})
+	command.ShowOnly = []string{"templates/network-policy.yaml"}
+	manifest, err := common.RenderChart(t, command)
+	require.NoError(t, err)
+	var policy networkingv1.NetworkPolicy
+	common.Unmarshal(t, manifest, &policy)
+
+	command.ShowOnly = []string{"templates/deployment.yaml"}
+	manifest, err = common.RenderChart(t, command)
+	require.NoError(t, err)
+	var deployment appsv1.Deployment
+	common.Unmarshal(t, manifest, &deployment)
+	assert.Equal(t, policy.Spec.PodSelector.MatchLabels, deployment.Spec.Selector.MatchLabels)
+	for key, value := range policy.Spec.PodSelector.MatchLabels {
+		assert.Equal(t, value, deployment.Spec.Template.Labels[key])
+	}
+}
+
+func TestPreviousNetworkPolicyKeyRejected(t *testing.T) {
+	for name, command := range map[string]common.HelmCommand{
+		"single-container": singleContainerCommand(map[string]string{"multiContainer.networkPolicy.create": "false"}),
+		"multi-container":  multiContainerCommand(map[string]string{"multiContainer.networkPolicy.create": "false"}),
+	} {
+		t.Run(name, func(t *testing.T) {
+			_, err := common.RenderChart(t, command)
+			var output *shell.ErrWithCmdOutput
+			require.ErrorAs(t, err, &output)
+			assert.Contains(t, output.Output.Stderr(), "multiContainer.networkPolicy moved to networkPolicy")
+		})
+	}
 }
 
 func TestNetworkPolicyNotCreatedWhenDisabled(t *testing.T) {
@@ -185,8 +231,8 @@ func renderPolicy(t *testing.T, overrides map[string]string) networkingv1.Networ
 func renderPolicyFor(t *testing.T, kubeVersion string, overrides map[string]string) networkingv1.NetworkPolicy {
 	t.Helper()
 	command := multiContainerCommand(map[string]string{
-		"multiContainer.networkPolicy.create": "true",
-		"multiContainer.networkPolicy.dns.to": `[{"ipBlock":{"cidr":"169.254.20.10/32"}}]`,
+		"networkPolicy.create": "true",
+		"networkPolicy.dns.to": `[{"ipBlock":{"cidr":"169.254.20.10/32"}}]`,
 	})
 	for key, value := range overrides {
 		command.OverridesJson[key] = value
@@ -202,7 +248,7 @@ func renderPolicyFor(t *testing.T, kubeVersion string, overrides map[string]stri
 
 func TestScopedDNSAndDefaultBlocks(t *testing.T) {
 	policy := renderPolicy(t, map[string]string{
-		"multiContainer.networkPolicy.dns.to": `[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"kube-system"}},"podSelector":{"matchLabels":{"k8s-app":"kube-dns"}}}]`,
+		"networkPolicy.dns.to": `[{"namespaceSelector":{"matchLabels":{"kubernetes.io/metadata.name":"kube-system"}},"podSelector":{"matchLabels":{"k8s-app":"kube-dns"}}}]`,
 	})
 	require.Len(t, policy.Spec.Egress, 2)
 	dns := policy.Spec.Egress[0]
@@ -223,7 +269,7 @@ func TestScopedDNSAndDefaultBlocks(t *testing.T) {
 
 func TestOpenShiftDNSPorts(t *testing.T) {
 	policy := renderPolicy(t, map[string]string{
-		"multiContainer.networkPolicy.dns.ports": `[{"port":5353,"protocol":"UDP"},{"port":5353,"protocol":"TCP"}]`,
+		"networkPolicy.dns.ports": `[{"port":5353,"protocol":"UDP"},{"port":5353,"protocol":"TCP"}]`,
 	})
 	dns := policy.Spec.Egress[0]
 	require.Len(t, dns.Ports, 2)
@@ -237,21 +283,19 @@ func TestDefaultBlockedRangesAreValid(t *testing.T) {
 	raw, err := os.ReadFile("../../charts/synthetics-private-location/values.yaml")
 	require.NoError(t, err)
 	var values struct {
-		MultiContainer struct {
-			NetworkPolicy struct {
-				DefaultBlockedIPRanges map[string][]string `yaml:"defaultBlockedIPRanges"`
-			} `yaml:"networkPolicy"`
-		} `yaml:"multiContainer"`
+		NetworkPolicy struct {
+			DefaultBlockedIPRanges map[string][]string `yaml:"defaultBlockedIPRanges"`
+		} `yaml:"networkPolicy"`
 	}
 	require.NoError(t, yaml.Unmarshal(raw, &values))
-	defaults := values.MultiContainer.NetworkPolicy.DefaultBlockedIPRanges
+	defaults := values.NetworkPolicy.DefaultBlockedIPRanges
 	require.NotEmpty(t, defaults["IPv4"])
 	require.NotEmpty(t, defaults["IPv6"])
 	allowed, err := json.Marshal(defaults)
 	require.NoError(t, err)
 	policy := renderPolicy(t, map[string]string{
-		"multiContainer.networkPolicy.enableDefaultBlockedIpRanges": "false",
-		"multiContainer.networkPolicy.allowedIPRanges":              string(allowed),
+		"networkPolicy.enableDefaultBlockedIpRanges": "false",
+		"networkPolicy.allowedIPRanges":              string(allowed),
 	})
 	var cidrs []string
 	for _, peer := range policy.Spec.Egress[1].To {
@@ -310,7 +354,7 @@ func TestAllowAllSkipsDNSPorts(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			overrides := map[string]string{}
 			if test.dnsPorts != "" {
-				overrides["multiContainer.networkPolicy.dns.ports"] = test.dnsPorts
+				overrides["networkPolicy.dns.ports"] = test.dnsPorts
 			}
 			assert.Equal(t, test.want, allowAllPorts(t, renderPolicy(t, overrides)))
 		})
@@ -324,7 +368,7 @@ func TestAllowAllBeforeKubernetes125(t *testing.T) {
 
 func TestFullyBlockedFamilyWithDNSPorts(t *testing.T) {
 	policy := renderPolicy(t, map[string]string{
-		"multiContainer.networkPolicy.blockedIPRanges": `{"IPv4":["0.0.0.0/0"]}`,
+		"networkPolicy.blockedIPRanges": `{"IPv4":["0.0.0.0/0"]}`,
 	})
 	rule := policy.Spec.Egress[len(policy.Spec.Egress)-1]
 	require.Len(t, rule.To, 1)
@@ -334,9 +378,9 @@ func TestFullyBlockedFamilyWithDNSPorts(t *testing.T) {
 
 func TestFullFamilyBlocksAndExceptions(t *testing.T) {
 	overrides := map[string]string{
-		"multiContainer.networkPolicy.blockedIPRanges":  `{"IPv4":["0.0.0.0/0"],"IPv6":["::/0"]}`,
-		"multiContainer.networkPolicy.allowedIPRanges":  `{"IPv4":["10.0.0.1"],"IPv6":["fd00::1"]}`,
-		"multiContainer.networkPolicy.additionalEgress": `[{"to":[{"ipBlock":{"cidr":"10.2.3.4/32"}}],"ports":[{"protocol":"TCP","port":3128}]}]`,
+		"networkPolicy.blockedIPRanges":  `{"IPv4":["0.0.0.0/0"],"IPv6":["::/0"]}`,
+		"networkPolicy.allowedIPRanges":  `{"IPv4":["10.0.0.1"],"IPv6":["fd00::1"]}`,
+		"networkPolicy.additionalEgress": `[{"to":[{"ipBlock":{"cidr":"10.2.3.4/32"}}],"ports":[{"protocol":"TCP","port":3128}]}]`,
 	}
 	policy := renderPolicy(t, overrides)
 	require.Len(t, policy.Spec.Egress, 3)
@@ -350,8 +394,8 @@ func TestFullFamilyBlocksAndExceptions(t *testing.T) {
 	require.Len(t, policy.Spec.Egress[2].To, 2)
 	assert.Equal(t, "10.0.0.1/32", policy.Spec.Egress[2].To[0].IPBlock.CIDR)
 	assert.Equal(t, "fd00::1/128", policy.Spec.Egress[2].To[1].IPBlock.CIDR)
-	overrides["multiContainer.networkPolicy.enableDefaultBlockedIpRanges"] = "false"
-	overrides["multiContainer.networkPolicy.blockedIPRanges"] = `{"IPv4":["192.0.2.1"],"IPv6":[]}`
+	overrides["networkPolicy.enableDefaultBlockedIpRanges"] = "false"
+	overrides["networkPolicy.blockedIPRanges"] = `{"IPv4":["192.0.2.1"],"IPv6":[]}`
 	policy = renderPolicy(t, overrides)
 	require.Len(t, policy.Spec.Egress, 4)
 	assert.Equal(t, &networkingv1.IPBlock{CIDR: "0.0.0.0/0", Except: []string{"192.0.2.1/32"}}, policy.Spec.Egress[3].To[0].IPBlock)
@@ -362,7 +406,7 @@ func TestExpandedIPv6FullBlock(t *testing.T) {
 	for _, cidr := range []string{"0:0:0:0:0:0:0:0/0", "0::/0"} {
 		t.Run(cidr, func(t *testing.T) {
 			policy := renderPolicy(t, map[string]string{
-				"multiContainer.networkPolicy.blockedIPRanges": `{"IPv6":["` + cidr + `"]}`,
+				"networkPolicy.blockedIPRanges": `{"IPv6":["` + cidr + `"]}`,
 			})
 			allowAll := policy.Spec.Egress[len(policy.Spec.Egress)-1]
 			require.Len(t, allowAll.To, 1)

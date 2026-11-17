@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 2.0.0
+
+* Breaking: `multiContainer.networkPolicy` moves to `networkPolicy`. The chart fails to render when `multiContainer.networkPolicy` is still set.
+* Breaking: the egress NetworkPolicy is now created in single-container mode too, and `networkPolicy.create` defaults to `true` in both modes. Set `networkPolicy.dns.to`, or set `networkPolicy.create: false` to manage egress without the chart policy. The chart fails to render when `create` is `true` and `dns.to` is empty. The worker configuration `allowedIPRanges` does not open the NetworkPolicy: copy those ranges, and any private-range proxy, into `networkPolicy.allowedIPRanges` or `networkPolicy.additionalEgress`.
+
 ## 1.1.0
 
 * `multiContainer.networkPolicy.create` now defaults to `true`. Multi-container installs must set `multiContainer.networkPolicy.dns.to`, or set `create: false` to manage egress without the chart policy. Installs that already set `create` render the same as before. Single-container installs are unchanged.

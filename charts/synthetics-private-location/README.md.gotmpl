@@ -18,8 +18,13 @@ helm repo update
 To install the chart with the release name `<RELEASE_NAME>`, retrieve your Private Location configuration file from your [Synthetics Private Location settings page](https://app.datadoghq.com/synthetics/settings/private-locations/) and save it under `config.json` then run:
 
 ```bash
-helm install <RELEASE_NAME> datadog/synthetics-private-location --set-file configFile=config.json
+helm install <RELEASE_NAME> datadog/synthetics-private-location \
+  --set-file configFile=config.json \
+  --set 'networkPolicy.dns.to[0].namespaceSelector.matchLabels.kubernetes\.io/metadata\.name=kube-system' \
+  --set 'networkPolicy.dns.to[0].podSelector.matchLabels.k8s-app=kube-dns'
 ```
+
+The chart creates an egress NetworkPolicy by default, in single-container and multi-container mode. You must set `networkPolicy.dns.to`. Check that these DNS labels match your cluster. See [Firewall Changes](#firewall-changes).
 
 ## Multi-container deployment
 
@@ -43,18 +48,20 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set image.tag=1.75.0 \
   --set multiContainer.enabled=true \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
-  --set 'multiContainer.networkPolicy.dns.to[0].namespaceSelector.matchLabels.kubernetes\.io/metadata\.name=kube-system' \
-  --set 'multiContainer.networkPolicy.dns.to[0].podSelector.matchLabels.k8s-app=kube-dns'
+  --set 'networkPolicy.dns.to[0].namespaceSelector.matchLabels.kubernetes\.io/metadata\.name=kube-system' \
+  --set 'networkPolicy.dns.to[0].podSelector.matchLabels.k8s-app=kube-dns'
 ```
 
 On clusters that enforce the `restricted` Pod Security Standard, set `multiContainer.tracerouteServer.enabled=false`. Traceroute features are then not available.
 
 ### Firewall Changes
 
-The worker cannot apply its `iptables` firewall in this mode, so `multiContainer.networkPolicy.create` defaults to `true`:
+The worker cannot apply its `iptables` firewall in this mode. `networkPolicy.create` defaults to `true`, in this mode and in single-container mode:
 
-- `true` (default): the chart creates an egress NetworkPolicy that blocks reserved ranges. You must set `multiContainer.networkPolicy.dns.to`. This requires a CNI that enforces NetworkPolicies.
+- `true` (default): the chart creates an egress NetworkPolicy that blocks reserved ranges. You must set `networkPolicy.dns.to`. This requires a CNI that enforces NetworkPolicies.
 - `false`: the chart creates no policy. You are responsible for egress enforcement.
+
+The worker configuration `allowedIPRanges` does not open the NetworkPolicy. Add those ranges, and any proxy in a private range, to `networkPolicy.allowedIPRanges` or `networkPolicy.additionalEgress`.
 
 How the policy decides:
 
@@ -67,55 +74,51 @@ How the policy decides:
 Example 1: block private ranges, with exceptions.
 
 ```yaml
-multiContainer:
-  # ...
-  networkPolicy:
-    create: true
-    dns:
-      to:
-        # Cluster DNS. Check that these labels match your cluster.
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: kube-system
-          podSelector:
-            matchLabels:
-              k8s-app: kube-dns
-    enableDefaultBlockedIpRanges: true # Blocks private and reserved ranges (default)
-    blockedIPRanges:
-      IPv4:
-        - 1.2.3.4 # Example public IP to also block. A bare IP means /32.
-    allowedIPRanges:
-      IPv4:
-        - 10.1.2.0/24 # Internal subnet inside the blocked 10.0.0.0/8, all ports
-    additionalEgress:
-      # Upstream proxy. Only this port is opened.
-      - to:
-          - ipBlock:
-              cidr: 10.20.30.40/32
-        ports:
-          - protocol: TCP
-            port: 3128
+networkPolicy:
+  create: true
+  dns:
+    to:
+      # Cluster DNS. Check that these labels match your cluster.
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: kube-system
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+  enableDefaultBlockedIpRanges: true # Blocks private and reserved ranges (default)
+  blockedIPRanges:
+    IPv4:
+      - 1.2.3.4 # Example public IP to also block. A bare IP means /32.
+  allowedIPRanges:
+    IPv4:
+      - 10.1.2.0/24 # Internal subnet inside the blocked 10.0.0.0/8, all ports
+  additionalEgress:
+    # Upstream proxy. Only this port is opened.
+    - to:
+        - ipBlock:
+            cidr: 10.20.30.40/32
+      ports:
+        - protocol: TCP
+          port: 3128
 ```
 
 Example 2: allow only specific destinations.
 
 ```yaml
-multiContainer:
-  # ...
-  networkPolicy:
-    create: true
-    dns:
-      to:
-        - ipBlock:
-            cidr: 169.254.20.10/32 # NodeLocal DNS. Use your resolver address.
-    blockedIPRanges:
-      IPv4:
-        - 0.0.0.0/0 # Block everything. The chart then drops the allow-all rule.
-      IPv6:
-        - ::/0
-    allowedIPRanges:
-      IPv4:
-        - 203.0.113.0/24 # Then allow only these. Add the Datadog ranges for your site.
+networkPolicy:
+  create: true
+  dns:
+    to:
+      - ipBlock:
+          cidr: 169.254.20.10/32 # NodeLocal DNS. Use your resolver address.
+  blockedIPRanges:
+    IPv4:
+      - 0.0.0.0/0 # Block everything. The chart then drops the allow-all rule.
+    IPv6:
+      - ::/0
+  allowedIPRanges:
+    IPv4:
+      - 203.0.113.0/24 # Then allow only these. Add the Datadog ranges for your site.
 ```
 
 The worker must still reach Datadog. Also allow the [Datadog IP ranges](https://ip-ranges.datadoghq.com) for your site, or send traffic through a proxy with `additionalEgress`.
@@ -129,9 +132,9 @@ helm install <RELEASE_NAME> datadog/synthetics-private-location \
   --set-file configFile=config.json \
   --set image.tag=1.75.0 \
   --set multiContainer.browserPool.adminTokenSecret.name=pl-browser-pool \
-  --set 'multiContainer.networkPolicy.dns.to[0].namespaceSelector.matchLabels.kubernetes\.io/metadata\.name=openshift-dns' \
-  --set 'multiContainer.networkPolicy.dns.to[0].podSelector.matchLabels.dns\.operator\.openshift\.io/daemonset-dns=default' \
-  --set-json 'multiContainer.networkPolicy.dns.ports=[{"port":5353,"protocol":"UDP"},{"port":5353,"protocol":"TCP"}]' \
+  --set 'networkPolicy.dns.to[0].namespaceSelector.matchLabels.kubernetes\.io/metadata\.name=openshift-dns' \
+  --set 'networkPolicy.dns.to[0].podSelector.matchLabels.dns\.operator\.openshift\.io/daemonset-dns=default' \
+  --set-json 'networkPolicy.dns.ports=[{"port":5353,"protocol":"UDP"},{"port":5353,"protocol":"TCP"}]' \
   --set multiContainer.enabled=true \
   --set multiContainer.podSecurity.securityContextConstraints.create=true
 ```
@@ -157,22 +160,21 @@ The default `restricted-v2` SCC does not work with this layout. It only allows U
 OpenShift DNS pods listen on port 5353, so set `dns.ports` to 5353 when the NetworkPolicy is created.
 
 ```yaml
-multiContainer:
-  networkPolicy:
-    create: true
-    dns:
-      to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: openshift-dns
-          podSelector:
-            matchLabels:
-              dns.operator.openshift.io/daemonset-dns: default
-      ports:
-        - port: 5353
-          protocol: UDP
-        - port: 5353
-          protocol: TCP
+networkPolicy:
+  create: true
+  dns:
+    to:
+      - namespaceSelector:
+          matchLabels:
+            kubernetes.io/metadata.name: openshift-dns
+        podSelector:
+          matchLabels:
+            dns.operator.openshift.io/daemonset-dns: default
+    ports:
+      - port: 5353
+        protocol: UDP
+      - port: 5353
+        protocol: TCP
 ```
 
 {{ template "chart.valuesSection" . }}

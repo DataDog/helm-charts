@@ -7,31 +7,15 @@ Takes an IPv4 or IPv6 address or CIDR. Fails on any other format, including IPv4
 {{- $ipv6 := `^(([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}|([0-9A-Fa-f]{1,4}:){1,7}:|([0-9A-Fa-f]{1,4}:){1,6}:[0-9A-Fa-f]{1,4}|([0-9A-Fa-f]{1,4}:){1,5}(:[0-9A-Fa-f]{1,4}){1,2}|([0-9A-Fa-f]{1,4}:){1,4}(:[0-9A-Fa-f]{1,4}){1,3}|([0-9A-Fa-f]{1,4}:){1,3}(:[0-9A-Fa-f]{1,4}){1,4}|([0-9A-Fa-f]{1,4}:){1,2}(:[0-9A-Fa-f]{1,4}){1,5}|[0-9A-Fa-f]{1,4}:(:[0-9A-Fa-f]{1,4}){1,6}|:((:[0-9A-Fa-f]{1,4}){1,7}|:))(/([0-9]|[1-9][0-9]|1[01][0-9]|12[0-8]))?$` }}
 {{- if regexMatch $ipv4 . }}{{ if contains "/" . }}{{ . }}{{ else }}{{ . }}/32{{ end }}
 {{- else if regexMatch $ipv6 . }}{{ if contains "/" . }}{{ . }}{{ else }}{{ . }}/128{{ end }}
-{{- else }}{{ fail (printf "multiContainer.networkPolicy IP range %q must be an IPv4 or IPv6 address or CIDR" .) }}
+{{- else }}{{ fail (printf "networkPolicy IP range %q must be an IPv4 or IPv6 address or CIDR" .) }}
 {{- end -}}
 {{- end -}}
 
 {{/*
-Validate multi-container values. Fails on missing settings, missing or unrestricted DNS peers when the NetworkPolicy is created, or a token passed through env.
+Validate multi-container values. Fails on missing settings or a token passed through env.
 */}}
 {{- define "synthetics-private-location.multiContainer.validate" -}}
 {{- $mc := .Values.multiContainer }}
-{{- if not (kindIs "bool" $mc.networkPolicy.create) }}
-{{- fail "multiContainer.networkPolicy.create must be set to true or false" }}
-{{- end }}
-{{- if $mc.networkPolicy.create }}
-{{- if not $mc.networkPolicy.dns.to }}
-{{- fail "multiContainer.networkPolicy.dns.to must specify DNS resolver peers when multiContainer.networkPolicy.create is true" }}
-{{- end }}
-{{- if not $mc.networkPolicy.dns.ports }}
-{{- fail "multiContainer.networkPolicy.dns.ports must specify at least one port when multiContainer.networkPolicy.create is true" }}
-{{- end }}
-{{- range $mc.networkPolicy.dns.to }}
-{{- if not (or (hasKey . "ipBlock") (hasKey . "namespaceSelector") (hasKey . "podSelector")) }}
-{{- fail "each multiContainer.networkPolicy.dns.to entry must specify an ipBlock, namespaceSelector or podSelector" }}
-{{- end }}
-{{- end }}
-{{- end }}
 {{- $_ := required "multiContainer.browserPool.adminTokenSecret.name is required" $mc.browserPool.adminTokenSecret.name }}
 {{- $_ := required "multiContainer.browserPool.adminTokenSecret.key is required" $mc.browserPool.adminTokenSecret.key }}
 {{- range .Values.env }}
@@ -114,11 +98,11 @@ seccompProfile:
 {{- end -}}
 
 {{/*
-Blocked CIDRs for the multi-container NetworkPolicy: the default ranges when enableDefaultBlockedIpRanges is true, then blockedIPRanges, each normalized with synthetics-private-location.cidr.
+Blocked CIDRs for the NetworkPolicy: the default ranges when enableDefaultBlockedIpRanges is true, then blockedIPRanges, each normalized with synthetics-private-location.cidr.
 Returns a JSON object with "IPv4" and "IPv6" lists.
 */}}
-{{- define "synthetics-private-location.multiContainer.networkPolicy.blockedCIDRs" -}}
-{{- $np := .Values.multiContainer.networkPolicy }}
+{{- define "synthetics-private-location.networkPolicy.blockedCIDRs" -}}
+{{- $np := .Values.networkPolicy }}
 {{- $rawIPv4 := $np.blockedIPRanges.IPv4 | default (list) }}
 {{- $rawIPv6 := $np.blockedIPRanges.IPv6 | default (list) }}
 {{- if $np.enableDefaultBlockedIpRanges }}
@@ -133,11 +117,11 @@ Returns a JSON object with "IPv4" and "IPv6" lists.
 {{- end -}}
 
 {{/*
-Allowed CIDRs for the multi-container NetworkPolicy: allowedIPRanges IPv4 then IPv6, each normalized with synthetics-private-location.cidr.
+Allowed CIDRs for the NetworkPolicy: allowedIPRanges IPv4 then IPv6, each normalized with synthetics-private-location.cidr.
 Returns a JSON list.
 */}}
-{{- define "synthetics-private-location.multiContainer.networkPolicy.allowedCIDRs" -}}
-{{- $np := .Values.multiContainer.networkPolicy }}
+{{- define "synthetics-private-location.networkPolicy.allowedCIDRs" -}}
+{{- $np := .Values.networkPolicy }}
 {{- $cidrs := list }}
 {{- range (concat ($np.allowedIPRanges.IPv4 | default (list)) ($np.allowedIPRanges.IPv6 | default (list))) }}{{ $cidrs = append $cidrs (include "synthetics-private-location.cidr" .) }}{{ end }}
 {{- toJson $cidrs }}
@@ -180,13 +164,13 @@ UID and GID of the dog user in the image, used by the worker container.
 
 {{/*
 Port ranges of one protocol that the allow-all egress rule may use: every port from 1 to 65535 except the dns.ports of that protocol (protocol defaults to TCP).
-Takes a dict with "ports" (multiContainer.networkPolicy.dns.ports) and "protocol" ("TCP" or "UDP"). Returns a JSON list of {"port": N} or {"port": N, "endPort": M}, sorted.
+Takes a dict with "ports" (networkPolicy.dns.ports) and "protocol" ("TCP" or "UDP"). Returns a JSON list of {"port": N} or {"port": N, "endPort": M}, sorted.
 */}}
-{{- define "synthetics-private-location.multiContainer.networkPolicy.nonDNSPortRanges" -}}
+{{- define "synthetics-private-location.networkPolicy.nonDNSPortRanges" -}}
 {{- $protocol := .protocol }}
 {{- $padded := list }}
 {{- range .ports }}
-{{- if not (kindIs "float64" .port) }}{{ fail (printf "multiContainer.networkPolicy.dns.ports port %v must be a number" .port) }}{{ end }}
+{{- if not (kindIs "float64" .port) }}{{ fail (printf "networkPolicy.dns.ports port %v must be a number" .port) }}{{ end }}
 {{- if eq (.protocol | default "TCP") $protocol }}{{ $padded = append $padded (printf "%05d" (.port | int)) }}{{ end }}
 {{- end }}
 {{- $ranges := list }}
@@ -207,4 +191,30 @@ Name of the cluster-scoped OpenShift SCC: the fullname plus the release namespac
 */}}
 {{- define "synthetics-private-location.multiContainer.sccName" -}}
 {{- printf "%s-%s" (include "synthetics-private-location.fullname" .) .Release.Namespace | trunc 253 | trimSuffix "-" }}
+{{- end -}}
+
+{{/*
+Validate networkPolicy values. Fails on the pre-2.0.0 multiContainer.networkPolicy key, or on missing or unrestricted DNS peers when the NetworkPolicy is created.
+*/}}
+{{- define "synthetics-private-location.networkPolicy.validate" -}}
+{{- if hasKey .Values.multiContainer "networkPolicy" }}
+{{- fail "multiContainer.networkPolicy moved to networkPolicy in chart 2.0.0" }}
+{{- end }}
+{{- $np := .Values.networkPolicy }}
+{{- if not (kindIs "bool" $np.create) }}
+{{- fail "networkPolicy.create must be set to true or false" }}
+{{- end }}
+{{- if $np.create }}
+{{- if not $np.dns.to }}
+{{- fail "networkPolicy.dns.to must specify DNS resolver peers when networkPolicy.create is true" }}
+{{- end }}
+{{- if not $np.dns.ports }}
+{{- fail "networkPolicy.dns.ports must specify at least one port when networkPolicy.create is true" }}
+{{- end }}
+{{- range $np.dns.to }}
+{{- if not (or (hasKey . "ipBlock") (hasKey . "namespaceSelector") (hasKey . "podSelector")) }}
+{{- fail "each networkPolicy.dns.to entry must specify an ipBlock, namespaceSelector or podSelector" }}
+{{- end }}
+{{- end }}
+{{- end }}
 {{- end -}}
