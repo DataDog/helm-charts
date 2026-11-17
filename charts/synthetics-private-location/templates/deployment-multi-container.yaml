@@ -88,6 +88,8 @@ spec:
       {{- toYaml .Values.envFrom | nindent 12 }}
       {{- end }}
           env:
+            - name: DATADOG_ALLOW_CRITICAL_INFRA_REQUESTS
+              value: {{ .Values.allowCriticalInfraRequests | quote }}
             # The daemons' preStop hooks wait for the worker to stop answering on :8080.
             - name: DATADOG_WORKER_ENABLE_STATUS_PROBES
               value: "true"

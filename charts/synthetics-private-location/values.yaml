@@ -113,6 +113,9 @@ env: []
 #   - name: <ENV_VAR_NAME>
 #     value: <ENV_VAR_VALUE>
 
+# allowCriticalInfraRequests -- Let tests reach critical infrastructure: Vault, Consul, Nomad, the Kubernetes API, kubelet, etcd and Docker Engine. The worker blocks these requests by default (minimal private location image version required: 1.77.0). Sets `DATADOG_ALLOW_CRITICAL_INFRA_REQUESTS` on the worker, which overrides `allowCriticalInfraRequests` in the configuration file. In multi-container mode, `false` also blocks `multiContainer.networkPolicy.criticalInfraIPRanges` in the NetworkPolicy.
+allowCriticalInfraRequests: false
+
 # hostAliases -- Add entries to Datadog Synthetics Private Location PODs' /etc/hosts
 hostAliases: []
 #  - ip: "10.0.0.1"
@@ -280,5 +283,9 @@ multiContainer:
       IPv6: []
     # multiContainer.networkPolicy.blockedIPRanges -- Additional CIDRs to block, added to `defaultBlockedIPRanges`
     blockedIPRanges:
+      IPv4: []
+      IPv6: []
+    # multiContainer.networkPolicy.criticalInfraIPRanges -- CIDRs blocked when `allowCriticalInfraRequests` is false, added to the blocked ranges. Add the addresses of your Vault servers, Kubernetes API server or cloud metadata (for example `169.254.169.254/32`). A NetworkPolicy cannot deny, so `allowedIPRanges`, `dns.to` and `additionalEgress` can still grant access to them. The worker's own block, by request path, headers and the in-cluster API server address, takes precedence over every allowed range.
+    criticalInfraIPRanges:
       IPv4: []
       IPv6: []
