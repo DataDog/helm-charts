@@ -239,6 +239,29 @@ APM Single Step Instrumentation will be disabled in the whole cluster.
 
 {{- end }}
 
+{{- $eventCollectionMode := .Values.datadog.kubernetesEvents.eventCollectionMode | default "" | toString | trim }}
+{{- if and $eventCollectionMode (ne $eventCollectionMode "poll") (ne $eventCollectionMode "watch") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You have set `datadog.kubernetesEvents.eventCollectionMode` to {{ printf "%q" $eventCollectionMode }},
+which is not a recognized value. It must be "poll" or "watch". The option has been
+ignored and the Cluster Agent's default collection mode is being used.
+
+{{- else if and $eventCollectionMode (eq (include "kubernetes-event-collection-mode-supported" .) "false") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You have set `datadog.kubernetesEvents.eventCollectionMode`, but this requires
+Cluster Agent version 7.81.1 or later. The option has been ignored and the
+Cluster Agent's default collection mode is being used.
+
+{{- end }}
+
 {{- if and .Values.datadog.kaiScheduler.enabled (ne (include "should-enable-kai-scheduler" .) "true") }}
 
 #################################################################

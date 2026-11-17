@@ -1433,6 +1433,17 @@ false
 {{- end -}}
 
 {{/*
+Return true if the Cluster Agent supports the event_collection_mode option of the kubernetes_apiserver check
+*/}}
+{{- define "kubernetes-event-collection-mode-supported" -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.81.1-0" (include "get-cluster-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if we can enable Service Internal Traffic Policy
 */}}
 {{- define "enable-service-internal-traffic-policy" -}}
