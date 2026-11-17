@@ -2043,9 +2043,6 @@ false
 {{- if .Values.agents.image.doNotCheckTag -}}
 {{- /* The tag is not a version, so keep the mount every Agent supports. */ -}}
 /etc/passwd
-{{- else if .Values.agents.image.digest -}}
-{{- /* A digest does not identify the Agent version. */ -}}
-/etc/passwd
 {{- else if and .Values.providers.gke.autopilot (ne (include "gke-autopilot-workloadallowlists-enabled" .) "true") -}}
 {{- /* Legacy Autopilot admission (AllowlistedV2Workload) only allows /etc/passwd. */ -}}
 /etc/passwd
