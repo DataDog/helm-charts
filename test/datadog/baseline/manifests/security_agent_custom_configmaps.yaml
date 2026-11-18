@@ -2503,6 +2503,8 @@ spec:
                 - CHOWN
                 - DAC_READ_SEARCH
                 - KILL
+                - AUDIT_CONTROL
+                - AUDIT_READ
             privileged: false
             readOnlyRootFilesystem: true
             seccompProfile:
@@ -2575,6 +2577,10 @@ spec:
               readOnly: true
             - mountPath: /etc/datadog-agent/compliance.d
               name: complianceconfigdir
+              readOnly: true
+            - mountPath: /host/var/run
+              mountPropagation: None
+              name: runtimesocketdir
               readOnly: true
             - mountPath: /var/tmp/datadog-agent/system-probe/build
               mountPropagation: None
