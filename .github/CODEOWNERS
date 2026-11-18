@@ -9,6 +9,7 @@
 charts/cloudprem                                       @DataDog/logs-cloudprem
 charts/datadog-crds                                    @DataDog/container-platform @DataDog/agent-delivery
 charts/datadog-csi-driver                              @Datadog/container-platform @DataDog/container-helm-chart-maintainers
+charts/datadog-gpu-benchmark                           @DataDog/new-workloads
 charts/datadog-operator                                @DataDog/container-platform @DataDog/agent-delivery
 charts/extended-daemon-set                             @DataDog/container-platform
 charts/datadog                                         @DataDog/telemetry-onboarding @DataDog/container-helm-chart-maintainers 

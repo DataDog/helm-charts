@@ -1,0 +1,17 @@
+clusterAgent:
+  namespace: datadog
+  serviceAccount: datadog-cluster-agent
+podOverrides:
+  labels:
+    team: inference
+  nodeSelector:
+    node-pool: cpu
+  tolerations:
+    - key: dedicated
+      operator: Equal
+      value: benchmarks
+      effect: NoSchedule
+  priorityClassName: low
+  imageRepository: 123456789012.dkr.ecr.us-east-1.amazonaws.com/datadog/gpu-benchmark
+  imagePullSecrets:
+    - name: ecr-pull

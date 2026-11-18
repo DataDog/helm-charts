@@ -111,10 +111,12 @@ spec:
       {{- end }}
       volumes:
       {{- if or (ne .Values.configFile "{}") (.Values.configConfigMap) (.Values.configSecret) }}
+      # The worker reads the config through group 0, or fsGroup when set.
       - name: worker-config
         {{- if .Values.configConfigMap }}
         configMap:
           name: {{ tpl .Values.configConfigMap . | quote }}
+          defaultMode: 0440
         {{- else }}
         secret:
         {{- if .Values.configSecret }}
@@ -122,6 +124,7 @@ spec:
         {{- else }}
           secretName: {{ include "synthetics-private-location.fullname" . }}-config
         {{- end }}
+          defaultMode: 0440
         {{- end }}
       {{- end }}
       - name: run

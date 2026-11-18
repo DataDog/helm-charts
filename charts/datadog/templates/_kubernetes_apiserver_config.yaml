@@ -11,6 +11,10 @@ kubernetes_apiserver.yaml: |-
       collected_event_types:
 {{ .Values.datadog.kubernetesEvents.collectedEventTypes | toYaml | nindent 8 }}
       {{- end -}}
+{{- $eventCollectionMode := .Values.datadog.kubernetesEvents.eventCollectionMode | toString | trim }}
+{{- if and (has $eventCollectionMode (list "poll" "watch")) (eq (include "kubernetes-event-collection-mode-supported" .) "true") }}
+      event_collection_mode: {{ $eventCollectionMode }}
+{{- end }}
 {{- end }}
 {{- if .Values.clusterAgent.kubernetesApiserverCheck.disableUseComponentStatus }}
       use_component_status: false

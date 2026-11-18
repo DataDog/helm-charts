@@ -1,5 +1,33 @@
 # Datadog changelog
 
+## 3.275.0
+
+* Bump datadog-csi-driver dependency version to `0.9.0`
+
+## 3.274.0
+
+* Add `datadog.kubernetesEvents.eventCollectionMode` to configure the `event_collection_mode` of the `kubernetes_apiserver` check (`poll` or `watch`). Requires Cluster Agent 7.81.1+.
+
+## 3.273.1
+
+* Mount the host's `/etc/passwd` read-only at `/host/etc/passwd` in eligible process containers for Agent >= 7.86.0, including 7.86.0+ prereleases. Older or unknown images, `agents.image.doNotCheckTag`, and GKE Autopilot keep `/etc/passwd` (with `agents.image.digest`, the tag still decides the version), and security mounts are unchanged. Autopilot support follows once a WorkloadAllowlist permitting `/host/etc/passwd` is published. Gohai username lookup remains a known limitation; see the README's process passwd mounts section.
+
+## 3.273.0
+
+* [PROF-16651][Host-Profiler] align runasroot setting with operator ([#3074](https://github.com/DataDog/helm-charts/pull/3074)).
+
+## 3.272.0
+
+* Add `cumulativetodelta` to the converter features of the OTel Agent Gateway and of the OTel Agent DaemonSet in the Gateway setup, and set `DD_OTELCOLLECTOR_GATEWAY_DAEMONSET=true` on that DaemonSet. The DaemonSet then converts cumulative metrics to delta before they reach the Gateway, so deltas stay correct with any number of Gateway replicas; the Gateway converts metrics sent to it directly, which is correct with one replica (the default). Requires Agent 7.83.0 or newer for the Gateway and an Agent release with DataDog/datadog-agent#59235 for the DaemonSet; older images ignore these settings.
+
+## 3.271.0
+
+* Config sync now uses the Agent IPC unix socket instead of the `agent_ipc` TCP port on linux, when the agent image supports it (7.85.0+): `DD_AGENT_IPC_USE_SOCKET` is set instead of `DD_AGENT_IPC_PORT` on the Agent, OTel Agent, host profiler and system-probe containers. The socket is created in the shared run_path volume mounted across the agent containers, which is also mounted in system-probe when config sync is enabled for direct send. Windows, GKE Autopilot, GKE GDC and older agent images keep the TCP port.
+
+## 3.270.1
+
+* Deprecate `datadog.systemProbe.bpfDebug`. This setting would not work correctly with released datadog-agent images.
+
 ## 3.270.0
 
 * `datadog.privateActionRunner.splitEnabled` now defaults to `true` on Agent 7.84.0+. Set `splitEnabled: false` to opt back into the monolithic runner.

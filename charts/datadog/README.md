@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.270.0](https://img.shields.io/badge/Version-3.270.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.275.0](https://img.shields.io/badge/Version-3.275.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -33,7 +33,7 @@ Kubernetes 1.10+ or OpenShift 3.10+, note that:
 |------------|------|---------|
 | https://helm.datadoghq.com | datadog-crds | 2.25.0 |
 | https://helm.datadoghq.com | datadog-instrumentation-crd(datadog-crds) | 2.25.0 |
-| https://helm.datadoghq.com | datadog-csi-driver | 0.18.0 |
+| https://helm.datadoghq.com | datadog-csi-driver | 0.19.0 |
 | https://helm.datadoghq.com | operator(datadog-operator) | 2.31.0 |
 | https://prometheus-community.github.io/helm-charts | kube-state-metrics | 2.13.2 |
 
@@ -325,6 +325,12 @@ then upgrade your Datadog Helm chart:
 ```bash
 helm upgrade -f datadog-values.yaml <RELEASE_NAME> datadog/datadog
 ```
+
+#### Process passwd mounts
+
+For Agent 7.86.0 and later (including prereleases), process containers mount the host's `/etc/passwd` read-only at `/host/etc/passwd` (still from the `passwd` volume), so the image's own accounts such as `dd-agent` stay visible in `/etc/passwd`. Older or unknown versions, `agents.image.doNotCheckTag=true`, and GKE Autopilot keep `/etc/passwd`; with `agents.image.digest`, the tag still decides the version, like other version-gated features; Autopilot needs a published WorkloadAllowlist that permits the new mount. Security-agent and system-probe mounts are unchanged.
+
+**Known limitation:** Gohai metadata is not covered by the [process resolver change](https://github.com/DataDog/datadog-agent/pull/55789) and can report image-local usernames or numeric UIDs instead of host usernames.
 
 ### Enabling NPM Collection
 
@@ -827,7 +833,7 @@ helm install <RELEASE_NAME> \
 | datadog.dataSecurity.enabled | bool | `false` | Enable Data Security scans scheduled from Datadog. Available with Agent 7.84.3 or newer. |
 | datadog.dd_url | string | `nil` | The host of the Datadog intake server to send Agent data to, only set this option if you need the Agent to send data to a custom URL |
 | datadog.disableDefaultOsReleasePaths | bool | `false` | Set this to true to disable mounting datadog.osReleasePath in all containers |
-| datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting /etc/passwd in all containers |
+| datadog.disablePasswdMount | bool | `false` | Set this to true to disable mounting the host's /etc/passwd file in all containers |
 | datadog.discovery.enabled | bool | `nil` | Enable Service Discovery. If omitted, the chart auto-enables it when the effective node Agent version resolved by the chart is >= 7.78.0, except on GKE Autopilot clusters where system-probe is not supported. If that resolution still yields a non-semver-ish tag, discovery treats it as latest. Explicit true/false always takes precedence. On supported Agent versions, the chart also enables `discovery.use_system_probe_lite` so discovery-only deployments can exec into `system-probe-lite`. |
 | datadog.discovery.networkStats.enabled | bool | `true` | Enable Service Discovery Network Stats |
 | datadog.discovery.serviceMap.enabled | bool | `false` | Enable Discovery Service Map (restricted USM) |
@@ -861,7 +867,7 @@ helm install <RELEASE_NAME> \
 | datadog.hostProfiler.image | string | `""` | Image the Host Profiler. This parameter is experimental and will be removed once official image is available. |
 | datadog.hostProfiler.imagePullPolicy | string | `""` | Pull policy for the Host Profiler image. Defaults to agents.image.pullPolicy when unset. |
 | datadog.hostProfiler.loggingSeccomp | bool | `false` | Use the seccomp profile that also permits logging syscalls |
-| datadog.hostProfiler.runAsNonRoot | bool | `false` | Run the Host Profiler as the dd-agent user (UID/GID 100). |
+| datadog.hostProfiler.runAsRoot | bool | `true` | Run the Host Profiler container as root. When false, it runs as the dd-agent user (UID/GID 100). |
 | datadog.hostProfiler.seccomp | object | `{"enabled":true}` | Seccomp profile configuration for the Host Profiler |
 | datadog.hostProfiler.seccomp.enabled | bool | `true` | Apply the localhost seccomp profile to the host-profiler container and run the init container that installs it on the node. Disable to run the host-profiler container Unconfined (no init container, no profile installed on the node). |
 | datadog.hostProfiler.seccompRoot | string | `"/var/lib/kubelet/seccomp"` | Specify the seccomp profile root directory |
@@ -903,6 +909,7 @@ helm install <RELEASE_NAME> \
 | datadog.kubernetesActions.enabled | bool | `false` | Set this to true to enable the Kubernetes Actions feature on the Cluster Agent. This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.84.0 or greater. |
 | datadog.kubernetesActions.helmActions.enabled | bool | `false` | Set this to true to enable Helm actions as part of the Kubernetes Actions feature. This grants the Cluster Agent RBAC to create a Job (and the Job the RBAC it needs) to perform Helm actions (e.g. rollback) so that the Datadog Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.85.0 or greater. Requires datadog.kubernetesActions.enabled to also be set to true. |
 | datadog.kubernetesEvents.collectedEventTypes | list | `[{"kind":"Pod","reasons":["Failed","BackOff","Unhealthy","FailedScheduling","FailedMount","FailedAttachVolume"]},{"kind":"Node","reasons":["TerminatingEvictedPod","NodeNotReady","Rebooted","HostPortConflict"]},{"kind":"CronJob","reasons":["SawCompletedJob"]}]` | Event types to be collected. This requires datadog.kubernetesEvents.unbundleEvents to be set to true. |
+| datadog.kubernetesEvents.eventCollectionMode | string | `nil` | Specify how the Cluster Agent collects Kubernetes events. Can be "poll" (re-opens a watch on every check run) or "watch" (streams events through a persistent watch). Leave empty to use the Cluster Agent default ("poll"). (Requires Cluster Agent 7.81.1+). |
 | datadog.kubernetesEvents.filteringEnabled | bool | `false` | Enable this to only include events that match the pre-defined allowed events. (Requires Cluster Agent 7.57.0+). |
 | datadog.kubernetesEvents.kubernetesEventResyncPeriodS | string | `nil` | Specify the frequency in seconds at which the Agent should list all events to re-sync following the informer pattern |
 | datadog.kubernetesEvents.maxEventsPerRun | string | `nil` | Maximum number of events you wish to collect per check run. |
@@ -982,7 +989,7 @@ helm install <RELEASE_NAME> \
 | datadog.privateActionRunner.selfEnroll | bool | `true` | Enable self-enrollment for the Private Action Runner # When enabled, the runner will automatically register itself with Datadog using the provided API/APP keys # and store its identity in a local file. Requires leader election to be enabled. |
 | datadog.privateActionRunner.urn | string | `nil` | URN of the Private Action Runner (required if selfEnroll is false) # Format: urn:datadog:private-action-runner:organization:<org_id>:runner:<runner_id> |
 | datadog.processAgent.containerCollection | bool | `true` | Set this to true to enable container collection # ref: https://docs.datadoghq.com/infrastructure/containers/?tab=helm |
-| datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
+| datadog.processAgent.enabled | bool | `true` | Set this to true to enable live process monitoring agent DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead. # Note: the host's /etc/passwd file is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled. # Agent 7.86.0+ mounts it at /host/etc/passwd instead (except for `agents.image.doNotCheckTag` and GKE Autopilot for now while the allowlist change is pending; with a digest, the tag still decides the version); see "Process passwd mounts" in the README. # ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset |
 | datadog.processAgent.processCollection | bool | `false` | Set this to true to enable process collection |
 | datadog.processAgent.processDiscovery | bool | `true` | Enables or disables autodiscovery of integrations |
 | datadog.processAgent.runInCoreAgent | bool | `true` | Set this to true to run the following features in the core agent: Live Processes, Live Containers, Process Discovery. # This requires Agent 7.60.0+ and Linux. # DEPRECATED: This behavior will be enabled by default for installations that meet the requirements. # For Agent 7.78.0+, this setting is ignored — process checks always run in the core agent on Linux. |
@@ -1046,7 +1053,7 @@ helm install <RELEASE_NAME> \
 | datadog.serviceMonitoring.tls.nodejs.enabled | bool | `nil` | Enable TLS monitoring for Node.js services (Requires Agent 7.54.0+). Empty values use the default setting in the datadog agent. |
 | datadog.site | string | `nil` | The site of the Datadog intake to send Agent data to. (documentation: https://docs.datadoghq.com/getting_started/site/) |
 | datadog.systemProbe.apparmor | string | `"unconfined"` | Specify a apparmor profile for system-probe |
-| datadog.systemProbe.bpfDebug | bool | `false` | Enable logging for kernel debug |
+| datadog.systemProbe.bpfDebug | bool | `false` | DEPRECATED. Enable logging for kernel debug |
 | datadog.systemProbe.btfPath | string | `""` | Specify the path to a BTF file for your kernel |
 | datadog.systemProbe.collectDNSStats | bool | `true` | Enable DNS stat collection |
 | datadog.systemProbe.conntrackInitTimeout | string | `"10s"` | the time to wait for conntrack to initialize before failing |
@@ -1204,7 +1211,6 @@ Some options above are not working/not available on Windows, here is the list of
 | `datadog.systemProbe.seccompRoot`        | System probe is not available for Windows        |
 | `datadog.systemProbe.debugPort`          | System probe is not available for Windows        |
 | `datadog.systemProbe.enableConntrack`    | System probe is not available for Windows        |
-| `datadog.systemProbe.bpfDebug`           | System probe is not available for Windows        |
 | `datadog.systemProbe.apparmor`           | System probe is not available for Windows        |
 | `agents.useHostNetwork`                  | Host network not supported by Windows Containers |
 

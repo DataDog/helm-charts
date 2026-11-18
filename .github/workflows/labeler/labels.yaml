@@ -35,6 +35,10 @@ chart/private-action-runner:
     - changed-files:
           - any-glob-to-any-file: "charts/private-action-runner/**"
 
+chart/datadog-gpu-benchmark:
+    - changed-files:
+          - any-glob-to-any-file: "charts/datadog-gpu-benchmark/**"
+
 tools/tests:
     - changed-files:
         - any-glob-to-any-file: "tests/**"

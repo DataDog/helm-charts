@@ -20,6 +20,19 @@
       "depNameTemplate": "DataDog/datadog-agent",
       "datasourceTemplate": "github-releases",
       "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "description": "CSI node-driver-registrar image tag",
+      "managerFilePatterns": [
+        "/^charts/datadog-csi-driver/values\\.yaml$/"
+      ],
+      "matchStrings": [
+        "    # registrar\\.image\\.tag --[^\\n]*\\n    tag: (?<currentValue>v\\d+\\.\\d+\\.\\d+)\\n"
+      ],
+      "depNameTemplate": "kubernetes-csi/node-driver-registrar",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver"
     }
   ],
   "packageRules": [
@@ -43,6 +56,21 @@
       "addLabels": ["datadog/patch-version"],
       "prBodyNotes": [
         "Updates the default Agent, Cluster Agent, and Cluster Checks Runner together. Chart CI generates the chart release metadata, README, and test baselines. Review the release notes and generated manifests before merging; this PR is not auto-merged."
+      ]
+    },
+    {
+      "matchManagers": ["custom.regex"],
+      "matchDatasources": ["github-releases"],
+      "matchPackageNames": ["kubernetes-csi/node-driver-registrar"],
+      "allowedVersions": "/^v\\d+\\.\\d+\\.\\d+$/",
+      "ignoreUnstable": true,
+      "groupName": "CSI node-driver-registrar",
+      "groupSlug": "csi-node-driver-registrar",
+      "branchTopic": "csi-node-driver-registrar",
+      "rebaseWhen": "behind-base-branch",
+      "automerge": false,
+      "prBodyNotes": [
+        "Bumps the CSI node-driver-registrar sidecar image for `charts/datadog-csi-driver`. Remember to bump the chart `version`, regenerate the README (`helm-docs`), and add a CHANGELOG entry. Review the upstream release notes before merging; this PR is not auto-merged."
       ]
     }
   ]
