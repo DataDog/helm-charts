@@ -46,7 +46,35 @@ func Test_autopilotAllowlistedV2WorkloadConfigs(t *testing.T) {
 					"providers.gke.autopilot":           "true",
 				},
 			},
-			assertions: verifyDaemonsetAutopilotAllowlistedV2WorkloadMinimal,
+			assertions: func(t *testing.T, manifest string) {
+				verifyDaemonsetAutopilotAllowlistedV2WorkloadMinimal(t, manifest)
+				var ds appsv1.DaemonSet
+				common.Unmarshal(t, manifest, &ds)
+				// Discovery resolves to disabled without WorkloadAllowlists.
+				assert.Equal(t, []string{"false"}, agentDiscoveryEnvValues(t, ds))
+			},
+		},
+		{
+			name: "service discovery disabled",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.envDict.HELM_FORCE_RENDER": "false",
+					"datadog.apiKeyExistingSecret":      "datadog-secret",
+					"datadog.appKeyExistingSecret":      "datadog-secret",
+					"providers.gke.autopilot":           "true",
+					"datadog.discovery.enabled":         "false",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				verifyDaemonsetAutopilotAllowlistedV2WorkloadMinimal(t, manifest)
+				var ds appsv1.DaemonSet
+				common.Unmarshal(t, manifest, &ds)
+				assert.Equal(t, []string{"false"}, agentDiscoveryEnvValues(t, ds))
+			},
 		},
 		{
 			name: "split private action runner rejected",

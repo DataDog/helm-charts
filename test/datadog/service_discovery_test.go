@@ -267,15 +267,7 @@ func Test_serviceDiscoveryCoreAgentEnv(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			manifest := renderDiscoveryManifest(t, tt.overrides)
 			daemonset := extractAgentDaemonset(t, manifest)
-			agentContainer, ok := getContainer(t, daemonset.Spec.Template.Spec.Containers, "agent")
-			require.True(t, ok, "expected agent container to be rendered")
-
-			var values []string
-			for _, env := range agentContainer.Env {
-				if env.Name == "DD_DISCOVERY_ENABLED" {
-					values = append(values, env.Value)
-				}
-			}
+			values := agentDiscoveryEnvValues(t, daemonset)
 
 			if !tt.expectEnv {
 				assert.Empty(t, values, "expected DD_DISCOVERY_ENABLED to be unset on the agent container")
@@ -284,6 +276,21 @@ func Test_serviceDiscoveryCoreAgentEnv(t *testing.T) {
 			assert.Equal(t, []string{tt.expectedValue}, values, "expected exactly one DD_DISCOVERY_ENABLED on the agent container")
 		})
 	}
+}
+
+// agentDiscoveryEnvValues returns every DD_DISCOVERY_ENABLED value set on the agent container.
+func agentDiscoveryEnvValues(t *testing.T, daemonset appsv1.DaemonSet) []string {
+	t.Helper()
+	agentContainer, ok := getContainer(t, daemonset.Spec.Template.Spec.Containers, "agent")
+	require.True(t, ok, "expected agent container to be rendered")
+
+	var values []string
+	for _, env := range agentContainer.Env {
+		if env.Name == "DD_DISCOVERY_ENABLED" {
+			values = append(values, env.Value)
+		}
+	}
+	return values
 }
 
 func renderDiscoveryManifest(t *testing.T, overrides map[string]string) string {
