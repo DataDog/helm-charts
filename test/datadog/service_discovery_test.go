@@ -191,6 +191,108 @@ func Test_serviceDiscoveryExplicitFalseRendersWhenAnotherSystemProbeFeatureIsEna
 	assert.Equal(t, true, networkConfig["enabled"])
 }
 
+func Test_serviceDiscoveryCoreAgentEnv(t *testing.T) {
+	tests := []struct {
+		name          string
+		overrides     map[string]string
+		expectEnv     bool
+		expectedValue string
+	}{
+		{
+			name: "explicit false without system-probe disables discovery in the core agent",
+			overrides: map[string]string{
+				"agents.image.tag":          "7.85.0",
+				"datadog.discovery.enabled": "false",
+			},
+			expectEnv:     true,
+			expectedValue: "false",
+		},
+		{
+			name: "explicit false with another system-probe feature disables discovery in the core agent",
+			overrides: map[string]string{
+				"agents.image.tag":                  "7.85.0",
+				"datadog.discovery.enabled":         "false",
+				"datadog.networkMonitoring.enabled": "true",
+			},
+			expectEnv:     true,
+			expectedValue: "false",
+		},
+		{
+			name: "omitted discovery on unsupported agent version disables discovery in the core agent",
+			overrides: map[string]string{
+				"agents.image.tag": "7.77.9",
+			},
+			expectEnv:     true,
+			expectedValue: "false",
+		},
+		{
+			name: "user env override is kept",
+			overrides: map[string]string{
+				"agents.image.tag":                     "7.85.0",
+				"datadog.discovery.enabled":            "false",
+				"agents.containers.agent.env[0].name":  "DD_DISCOVERY_ENABLED",
+				"agents.containers.agent.env[0].value": "true",
+			},
+			expectEnv:     true,
+			expectedValue: "true",
+		},
+		{
+			name: "user envDict override is kept",
+			overrides: map[string]string{
+				"agents.image.tag":                     "7.85.0",
+				"datadog.discovery.enabled":            "false",
+				"datadog.envDict.DD_DISCOVERY_ENABLED": "true",
+			},
+			expectEnv:     true,
+			expectedValue: "true",
+		},
+		{
+			name: "resolved true does not set the env var",
+			overrides: map[string]string{
+				"agents.image.tag": "7.85.0",
+			},
+			expectEnv: false,
+		},
+		{
+			name: "explicit true does not set the env var",
+			overrides: map[string]string{
+				"agents.image.tag":          "7.85.0",
+				"datadog.discovery.enabled": "true",
+			},
+			expectEnv: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest := renderDiscoveryManifest(t, tt.overrides)
+			daemonset := extractAgentDaemonset(t, manifest)
+			values := agentDiscoveryEnvValues(t, daemonset)
+
+			if !tt.expectEnv {
+				assert.Empty(t, values, "expected DD_DISCOVERY_ENABLED to be unset on the agent container")
+				return
+			}
+			assert.Equal(t, []string{tt.expectedValue}, values, "expected exactly one DD_DISCOVERY_ENABLED on the agent container")
+		})
+	}
+}
+
+// agentDiscoveryEnvValues returns every DD_DISCOVERY_ENABLED value set on the agent container.
+func agentDiscoveryEnvValues(t *testing.T, daemonset appsv1.DaemonSet) []string {
+	t.Helper()
+	agentContainer, ok := getContainer(t, daemonset.Spec.Template.Spec.Containers, "agent")
+	require.True(t, ok, "expected agent container to be rendered")
+
+	var values []string
+	for _, env := range agentContainer.Env {
+		if env.Name == "DD_DISCOVERY_ENABLED" {
+			values = append(values, env.Value)
+		}
+	}
+	return values
+}
+
 func renderDiscoveryManifest(t *testing.T, overrides map[string]string) string {
 	t.Helper()
 	manifest, err := common.RenderChart(t, common.HelmCommand{

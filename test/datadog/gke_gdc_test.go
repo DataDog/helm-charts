@@ -45,6 +45,28 @@ func Test_gdcConfigs(t *testing.T) {
 			assertions: verifyDaemonsetGDCConstraints,
 		},
 		{
+			name: "service discovery disabled",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.apiKeyExistingSecret": "datadog-secret",
+					"datadog.appKeyExistingSecret": "datadog-secret",
+					"agents.image.doNotCheckTag":   "true",
+					"providers.gke.gdc":            "true",
+					"datadog.discovery.enabled":    "false",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				verifyDaemonsetGDCConstraints(t, manifest)
+				var ds appsv1.DaemonSet
+				common.Unmarshal(t, manifest, &ds)
+				assert.Equal(t, []string{"false"}, agentDiscoveryEnvValues(t, ds))
+			},
+		},
+		{
 			name: "split private action runner rejected",
 			command: common.HelmCommand{
 				ReleaseName: "datadog",

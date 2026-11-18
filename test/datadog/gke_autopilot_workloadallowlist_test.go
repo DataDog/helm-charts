@@ -87,6 +87,30 @@ func Test_autopilotWorkloadAllowlistConfigs(t *testing.T) {
 				common.Unmarshal(t, manifest, &ds)
 				requireContainerNames(t, ds, "agent", "system-probe")
 				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
+				assert.Empty(t, agentDiscoveryEnvValues(t, ds), "expected DD_DISCOVERY_ENABLED to be unset when discovery is enabled")
+			},
+		},
+		{
+			name: "service discovery disabled",
+			command: common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides: map[string]string{
+					"datadog.envDict.HELM_FORCE_RENDER": "true",
+					"datadog.apiKeyExistingSecret":      "datadog-secret",
+					"datadog.appKeyExistingSecret":      "datadog-secret",
+					"providers.gke.autopilot":           "true",
+					"datadog.discovery.enabled":         "false",
+				},
+			},
+			assertions: func(t *testing.T, manifest string) {
+				var ds appsv1.DaemonSet
+				common.Unmarshal(t, manifest, &ds)
+				requireContainerNames(t, ds, "agent")
+				verifyAutopilotWorkloadAllowlistConstraints(t, manifest)
+				assert.Equal(t, []string{"false"}, agentDiscoveryEnvValues(t, ds))
 			},
 		},
 		{
