@@ -1433,6 +1433,17 @@ false
 {{- end -}}
 
 {{/*
+Return true if the Cluster Agent supports the event_collection_mode option of the kubernetes_apiserver check
+*/}}
+{{- define "kubernetes-event-collection-mode-supported" -}}
+{{- if or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.81.1-0" (include "get-cluster-agent-version" .)) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if we can enable Service Internal Traffic Policy
 */}}
 {{- define "enable-service-internal-traffic-policy" -}}
@@ -2031,6 +2042,26 @@ false
   {{- else -}}
     false
   {{- end -}}
+{{- end -}}
+
+{{/*
+  Returns the process passwd mount path: /host/etc/passwd for Agent 7.86.0+, otherwise /etc/passwd.
+  Both paths use the passwd volume. GKE Autopilot will need a separate host-passwd volume for
+  /host/etc/passwd because Warden matches allowlisted volumeMounts by name.
+*/}}
+{{- define "process-passwd-mount-path" -}}
+{{- if .Values.agents.image.doNotCheckTag -}}
+{{- /* The tag is not a version, so keep the mount every Agent supports. */ -}}
+/etc/passwd
+{{- else if .Values.providers.gke.autopilot -}}
+{{- /* GKE Autopilot keeps /etc/passwd until a published WorkloadAllowlist permits /host/etc/passwd. */ -}}
+/etc/passwd
+{{- else if semverCompare ">=7.86.0-0" (include "get-agent-version" .) -}}
+{{- /* -0 includes 7.86.0+ prereleases (RC/devel), matching the chart's other Agent feature guards. */ -}}
+/host/etc/passwd
+{{- else -}}
+/etc/passwd
+{{- end -}}
 {{- end -}}
 
 {{/*

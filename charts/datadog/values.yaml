@@ -581,6 +581,8 @@ datadog:
     maxEventsPerRun:
     # datadog.kubernetesEvents.kubernetesEventResyncPeriodS -- Specify the frequency in seconds at which the Agent should list all events to re-sync following the informer pattern
     kubernetesEventResyncPeriodS:
+    # datadog.kubernetesEvents.eventCollectionMode -- Specify how the Cluster Agent collects Kubernetes events. Can be "poll" (re-opens a watch on every check run) or "watch" (streams events through a persistent watch). Leave empty to use the Cluster Agent default ("poll"). (Requires Cluster Agent 7.81.1+).
+    eventCollectionMode:
 
   clusterTagger:
     # datadog.clusterTagger.collectKubernetesTags -- Enables Kubernetes resources tags collection.
@@ -1066,7 +1068,8 @@ datadog:
   processAgent:
     # datadog.processAgent.enabled -- Set this to true to enable live process monitoring agent
     # DEPRECATED. Set `datadog.processAgent.processCollection` or `datadog.processAgent.containerCollection` instead.
-    ## Note: /etc/passwd is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled.
+    ## Note: the host's /etc/passwd file is automatically mounted when `processCollection`, `processDiscovery`, or `containerCollection` is enabled.
+    ## Agent 7.86.0+ mounts it at /host/etc/passwd instead (except for `agents.image.doNotCheckTag` and GKE Autopilot for now while the allowlist change is pending; with a digest, the tag still decides the version); see "Process passwd mounts" in the README.
     ## ref: https://docs.datadoghq.com/graphing/infrastructure/process/#kubernetes-daemonset
     enabled: true
 
@@ -1094,7 +1097,7 @@ datadog:
   # datadog.disableDefaultOsReleasePaths -- Set this to true to disable mounting datadog.osReleasePath in all containers
   disableDefaultOsReleasePaths: false
 
-  # datadog.disablePasswdMount -- Set this to true to disable mounting /etc/passwd in all containers
+  # datadog.disablePasswdMount -- Set this to true to disable mounting the host's /etc/passwd file in all containers
   disablePasswdMount: false
 
   # datadog.osReleasePath -- Specify the path to your os-release file
