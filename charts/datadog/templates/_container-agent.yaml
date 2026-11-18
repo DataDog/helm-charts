@@ -265,7 +265,7 @@
     {{- if .Values.datadog.sbom.containerImage.overlayFSDirectScan }}
     - name: DD_SBOM_CONTAINER_IMAGE_OVERLAYFS_DIRECT_SCAN
       value: "true"
-    {{- else }}
+    {{- else if eq (include "should-set-sbom-container-image-use-mount" .) "true" }}
     - name: DD_SBOM_CONTAINER_IMAGE_USE_MOUNT
       value: "true"
     {{- end }}
