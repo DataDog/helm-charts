@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.275.0
+
+* Bump datadog-csi-driver dependency version to `0.9.0`
+
 ## 3.274.0
 
 * Add `datadog.kubernetesEvents.eventCollectionMode` to configure the `event_collection_mode` of the `kubernetes_apiserver` check (`poll` or `watch`). Requires Cluster Agent 7.81.1+.
