@@ -1003,6 +1003,39 @@ false
 {{- end -}}
 
 {{/*
+Return true if host compliance checks run in a node container, on either execution path.
+*/}}
+{{- define "should-run-host-compliance" -}}
+{{- if or (eq (include "should-enable-compliance" .) "true") (eq (include "should-enable-compliance-in-system-probe" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Compliance settings for the container that runs the host checks. Shared by the Security Agent,
+the System Probe and, under config streaming, the Agent container, so the execution paths cannot
+drift apart: the caller gates it on the path it implements.
+*/}}
+{{- define "compliance-config-env" -}}
+- name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
+  value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
+- name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
+  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+- name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
+  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
+{{- if .Values.datadog.securityAgent.compliance.containerInclude }}
+- name: DD_COMPLIANCE_CONFIG_CONTAINER_INCLUDE
+  value: {{ .Values.datadog.securityAgent.compliance.containerInclude | quote }}
+{{- end }}
+{{- if .Values.datadog.securityAgent.compliance.containerExclude }}
+- name: DD_COMPLIANCE_CONFIG_CONTAINER_EXCLUDE
+  value: {{ .Values.datadog.securityAgent.compliance.containerExclude | quote }}
+{{- end }}
+{{- end -}}
+
+{{/*
 Return true if the compliance feature is enabled, whichever container runs the host checks.
 Settings that belong to the feature itself rather than to an execution path - the Cluster Agent
 Kubernetes checks and the custom benchmarks ConfigMap - must be gated on this instead of on
@@ -1556,7 +1589,7 @@ securityContext:
     {{ toYaml .securityContext.windowsOptions }}
   {{- end -}}
 {{- else }}
-{{- if or .securityContext .sysAdmin .mknod .packetCapture (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
+{{- if or .securityContext .sysAdmin .mknod .packetCapture .audit (and .seccomp .kubeversion (semverCompare ">=1.19.0" .kubeversion)) (and .apparmor .kubeversion (semverCompare ">=1.30.0" .kubeversion)) -}}
   {{- /* Define default values for the added capabilities and securityContext */ -}}
   {{- $addedCapabilities := list -}}
   {{- $securityContext := dict -}}
@@ -1576,6 +1609,15 @@ securityContext:
   {{- end -}}
   {{- if .packetCapture -}}
     {{- range list "SYS_ADMIN" "SYS_RESOURCE" "NET_ADMIN" "NET_RAW" "IPC_LOCK" -}}
+      {{- if not (has . $addedCapabilities) -}}
+        {{- $addedCapabilities = append $addedCapabilities . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- /* Compliance audit rules: joining the audit multicast group needs AUDIT_READ and listing
+         the kernel audit rules needs AUDIT_CONTROL. */ -}}
+  {{- if .audit -}}
+    {{- range list "AUDIT_CONTROL" "AUDIT_READ" -}}
       {{- if not (has . $addedCapabilities) -}}
         {{- $addedCapabilities = append $addedCapabilities . -}}
       {{- end -}}
@@ -2363,21 +2405,8 @@ remote containers' verbatim, so nothing here changes what a remote agent compute
 */}}
 {{- define "remote-agent-hoisted-env" -}}
 {{- if eq (include "configstream-enabled" .) "true" }}
-{{- if eq (include "should-enable-compliance" .) "true" }}
-- name: DD_COMPLIANCE_CONFIG_CHECK_INTERVAL
-  value: {{ .Values.datadog.securityAgent.compliance.checkInterval | quote }}
-- name: DD_COMPLIANCE_CONFIG_XCCDF_ENABLED
-  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
-- name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
-  value: {{ (or .Values.datadog.securityAgent.compliance.xccdf.enabled .Values.datadog.securityAgent.compliance.host_benchmarks.enabled) | quote }}
-{{- if .Values.datadog.securityAgent.compliance.containerInclude }}
-- name: DD_COMPLIANCE_CONFIG_CONTAINER_INCLUDE
-  value: {{ .Values.datadog.securityAgent.compliance.containerInclude | quote }}
-{{- end }}
-{{- if .Values.datadog.securityAgent.compliance.containerExclude }}
-- name: DD_COMPLIANCE_CONFIG_CONTAINER_EXCLUDE
-  value: {{ .Values.datadog.securityAgent.compliance.containerExclude | quote }}
-{{- end }}
+{{- if eq (include "should-run-host-compliance" .) "true" }}
+{{ include "compliance-config-env" . }}
 {{- end }}
 {{- if eq (include "should-enable-security-agent-cws-integration" .) "true" }}
 - name: DD_RUNTIME_SECURITY_CONFIG_POLICIES_DIR

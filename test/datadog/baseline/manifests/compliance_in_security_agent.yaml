@@ -2606,12 +2606,12 @@ spec:
               value: "true"
             - name: DD_COMPLIANCE_CONFIG_HOST_BENCHMARKS_ENABLED
               value: "true"
-            - name: HOST_ROOT
-              value: /host/root
             - name: DD_COMPLIANCE_CONFIG_CONTAINER_INCLUDE
               value: kube_namespace:default
             - name: DD_COMPLIANCE_CONFIG_CONTAINER_EXCLUDE
               value: kube_namespace:kube-system
+            - name: HOST_ROOT
+              value: /host/root
             - name: DD_RUNTIME_SECURITY_CONFIG_ENABLED
               value: "false"
             - name: DD_DOGSTATSD_SOCKET
