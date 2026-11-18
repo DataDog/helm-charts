@@ -513,9 +513,12 @@ func TestProcessPasswdMountPaths(t *testing.T) {
 			expectedMounts: expectedNone,
 		},
 		{
-			name:           "security agent unchanged",
-			tag:            "7.86.0",
-			overrides:      map[string]string{"datadog.securityAgent.compliance.enabled": "true"},
+			name: "security agent unchanged",
+			tag:  "7.86.0",
+			overrides: map[string]string{
+				"datadog.securityAgent.compliance.enabled":          "true",
+				"datadog.securityAgent.compliance.runInSystemProbe": "false",
+			},
 			expectedMounts: map[string][]string{"agent": {host}, "security-agent": {legacy}},
 		},
 		{

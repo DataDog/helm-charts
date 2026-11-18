@@ -85,7 +85,7 @@ func TestJemallocContainerScope(t *testing.T) {
 		values         map[string]string
 		want           []string
 	}{
-		{"node sidecars", "daemonset", map[string]string{"datadog.processAgent.processCollection": "true", "datadog.networkMonitoring.enabled": "true", "datadog.securityAgent.compliance.enabled": "true", "datadog.otelCollector.enabled": "true"}, []string{"agent", "trace-agent", "process-agent", "security-agent", "system-probe"}},
+		{"node sidecars", "daemonset", map[string]string{"datadog.processAgent.processCollection": "true", "datadog.networkMonitoring.enabled": "true", "datadog.securityAgent.compliance.enabled": "true", "datadog.securityAgent.compliance.runInSystemProbe": "false", "datadog.otelCollector.enabled": "true"}, []string{"agent", "trace-agent", "process-agent", "security-agent", "system-probe"}},
 		{"core only", "daemonset", map[string]string{"datadog.apm.socketEnabled": "false", "datadog.discovery.enabled": "false"}, []string{"agent"}},
 		{"runner", "agent-clusterchecks-deployment", nil, []string{"agent"}},
 		{"cluster agent", "cluster-agent-deployment", nil, nil},
