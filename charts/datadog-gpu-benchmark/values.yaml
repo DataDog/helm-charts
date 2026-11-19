@@ -38,3 +38,20 @@ podOverrides:
   imageRepository: ""
   # podOverrides.imagePullSecrets -- Secrets of the benchmark namespace the kubelet pulls the image with, e.g. `[{name: my-registry}]`.
   imagePullSecrets: []
+
+# A volume for your own datasets, which benchmark runs in this cluster can replay instead of
+# synthetic prompts. The claim is named datadog-gpu-benchmark-datasets; copy traces onto it
+# (see the README), then register each dataset in Datadog with its path on the volume. You
+# can also leave this disabled and use a PersistentVolumeClaim of your own in this namespace.
+datasetVolume:
+  # datasetVolume.enabled -- Create the `datadog-gpu-benchmark-datasets` PersistentVolumeClaim. It is kept when the release is uninstalled.
+  enabled: false
+  # datasetVolume.storageClassName -- (string) StorageClass of the claim. Unset uses the cluster's default StorageClass; `""` requests no StorageClass, which binding to a PersistentVolume without one (`volumeName`) needs.
+  storageClassName: null
+  # datasetVolume.size -- Size of the claim. Leave room for every dataset you keep on it.
+  size: 50Gi
+  # datasetVolume.accessModes -- Access modes of the claim. `ReadWriteMany` (EFS, Filestore, Azure Files) lets you copy datasets while runs read them. With `ReadWriteOnce`, delete the pod you copied them with before starting a run.
+  accessModes:
+    - ReadWriteMany
+  # datasetVolume.volumeName -- (string) Bind the claim to an existing PersistentVolume, for example one a bucket CSI driver (Mountpoint for Amazon S3, Cloud Storage FUSE) serves. Empty provisions a volume from the StorageClass.
+  volumeName: ""

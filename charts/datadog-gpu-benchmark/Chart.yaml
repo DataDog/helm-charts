@@ -2,7 +2,7 @@ apiVersion: v2
 name: datadog-gpu-benchmark
 description: Prepares a namespace where Datadog GPU Monitoring runs inference benchmarks, through the Cluster Agent's Private Action Runner
 type: application
-version: 0.1.0
+version: 0.2.0
 # The version of the benchmark Job contract this chart prepares the namespace for. The image
 # itself is chosen by Datadog at run time and pinned by digest.
 appVersion: "0.1.0"
