@@ -19,7 +19,8 @@ metadata:
 spec:
   accessModes:
     {{- toYaml $volume.accessModes | nindent 4 }}
-  {{- if $volume.storageClassName }}
+  {{- /* Unset uses the cluster's default StorageClass; "" asks for none, as a classless PersistentVolume needs. */}}
+  {{- if not (kindIs "invalid" $volume.storageClassName) }}
   storageClassName: {{ $volume.storageClassName | quote }}
   {{- end }}
   {{- if $volume.volumeName }}

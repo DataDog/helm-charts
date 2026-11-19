@@ -46,8 +46,8 @@ podOverrides:
 datasetVolume:
   # datasetVolume.enabled -- Create the `datadog-gpu-benchmark-datasets` PersistentVolumeClaim. It is kept when the release is uninstalled.
   enabled: false
-  # datasetVolume.storageClassName -- StorageClass of the claim. Empty uses the cluster's default StorageClass.
-  storageClassName: ""
+  # datasetVolume.storageClassName -- (string) StorageClass of the claim. Unset uses the cluster's default StorageClass; `""` requests no StorageClass, which binding to a PersistentVolume without one (`volumeName`) needs.
+  storageClassName: null
   # datasetVolume.size -- Size of the claim. Leave room for every dataset you keep on it.
   size: 50Gi
   # datasetVolume.accessModes -- Access modes of the claim. `ReadWriteMany` (EFS, Filestore, Azure Files) lets you copy datasets while runs read them. With `ReadWriteOnce`, delete the pod you copied them with before starting a run.

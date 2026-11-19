@@ -101,7 +101,10 @@
           "type": "boolean"
         },
         "storageClassName": {
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "size": {
           "type": [

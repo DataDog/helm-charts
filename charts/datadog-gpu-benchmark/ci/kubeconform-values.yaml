@@ -15,7 +15,3 @@ podOverrides:
   imageRepository: 123456789012.dkr.ecr.us-east-1.amazonaws.com/datadog/gpu-benchmark
   imagePullSecrets:
     - name: ecr-pull
-datasetVolume:
-  enabled: true
-  storageClassName: efs
-  size: 100Gi

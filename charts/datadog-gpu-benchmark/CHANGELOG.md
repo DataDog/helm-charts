@@ -2,7 +2,7 @@
 
 ## 0.2.0
 
-* Add `datasetVolume`: an optional `datadog-gpu-benchmark-datasets` PersistentVolumeClaim for your own datasets (Mooncake or Weka traces), which benchmark pods mount read-only. It is kept when the release is uninstalled.
+* Add `datasetVolume`: an optional `datadog-gpu-benchmark-datasets` PersistentVolumeClaim for your own datasets (Mooncake or Weka traces), which benchmark pods mount read-only. It is kept when the release is uninstalled. `datasetVolume.storageClassName` unset uses the cluster's default StorageClass, and `""` requests none, to bind a classless PersistentVolume with `datasetVolume.volumeName`.
 
 ## 0.1.0
 
