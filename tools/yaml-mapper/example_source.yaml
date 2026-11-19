@@ -1,0 +1,44 @@
+registry: "docker.io/datadog"
+datadog:
+  apiKey: "testapikey"
+  appKey: "testappkey"
+
+  logLevel: "debug"
+
+  kubeStateMetricsCore:
+    enabled: true
+  useHostPID: true
+
+  clusterChecks:
+    enabled: true
+    shareProcessNamespace: true
+
+  nodeLabelsAsTags:
+    beta.kubernetes.io/instance-type: aws-instance-type
+  podLabelsAsTags:
+    app: kube_app
+  podAnnotationsAsTags:
+    iam.amazonaws.com/role: kube_iamrole
+  namespaceLabelsAsTags:
+    env: environment
+  tags:
+    - "test:tag"
+  checksCardinality: low
+
+  kubelet:
+    tlsVerify: false
+
+  dogstatsd:
+    port: 1234
+    originDetection: true
+    useSocketVolume: true
+    useHostPort: false
+agents:
+  volumeMounts:
+    - name: example
+      mountPath: "this/is/a/volume/mount"
+      readOnly: true
+  volumes:
+      - hostPath:
+          path: "this/is/a/host/path"
+        name: example
