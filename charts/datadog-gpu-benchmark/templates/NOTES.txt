@@ -11,3 +11,10 @@ Its Private Action Runner must be enabled (Cluster Agent 7.85+), with the benchm
 allowed (clusterAgent.privateActionRunner in the datadog chart):
   com.datadoghq.kubernetes.batch.createJob, getJob, deleteJob
   com.datadoghq.kubernetes.core.listPod, getPodLogs, getConfigMap
+{{- if .Values.datasetVolume.enabled }}
+
+Datasets: copy your traces onto the datadog-gpu-benchmark-datasets claim, for example with a
+short-lived pod that mounts it (see the chart's README), then register each one in Datadog
+with that claim and its path on the volume.
+{{- end }}
+
