@@ -350,6 +350,23 @@
     - name: DD_NETWORK_PATH_COLLECTOR_FILTERS
       value: {{ .Values.datadog.networkPath.collector.filters | toJson | quote }}
     {{- end }}
+    {{- if and (eq .Values.targetSystem "linux") (ne (include "resolved-discovery-enabled" .) "true") }}
+    {{- /* The Agent defaults discovery.enabled to true on Linux, and system-probe.yaml is only mounted when system-probe is deployed */}}
+    {{- $discoveryEnvName := "DD_DISCOVERY_ENABLED" }}
+    {{- $discoveryOverridden := false }}
+    {{- range (concat .Values.datadog.env .Values.agents.containers.agent.env) }}
+    {{- if eq .name $discoveryEnvName }}
+    {{- $discoveryOverridden = true }}
+    {{- end }}
+    {{- end }}
+    {{- if or (hasKey .Values.datadog.envDict $discoveryEnvName) (hasKey .Values.agents.containers.agent.envDict $discoveryEnvName) }}
+    {{- $discoveryOverridden = true }}
+    {{- end }}
+    {{- if not $discoveryOverridden }}
+    - name: DD_DISCOVERY_ENABLED
+      value: "false"
+    {{- end }}
+    {{- end }}
     {{- include "additional-env-entries" .Values.agents.containers.agent.env | indent 4 }}
     {{- include "additional-env-dict-entries" .Values.agents.containers.agent.envDict | indent 4 }}
     {{- if .Values.datadog.orchestratorExplorer.kubelet_configuration_check.enabled }}
