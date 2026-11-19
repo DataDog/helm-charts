@@ -110,7 +110,11 @@ spec:
       name: {{ .name }}
 {{- end }}
 {{- end }}
+{{- if eq (include "enable-local-service-traffic-distribution" .) "true" }}
+  trafficDistribution: {{ .Values.agents.localService.trafficDistribution }}
+{{- else }}
   internalTrafficPolicy: Local
+{{- end }}
 {{ end }}
 
 {{- if .Values.otelAgentGateway.enabled }}
