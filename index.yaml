@@ -37969,6 +37969,29 @@ entries:
   datadog-gpu-benchmark:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2026-11-19T16:44:24.299179849Z"
+    description: Prepares a namespace where Datadog GPU Monitoring runs inference
+      benchmarks, through the Cluster Agent's Private Action Runner
+    digest: f7b71d0e2addf3e42f1dfec2ac63ccd50858ffcf854b4f3c42e0a56f7fc4a0f9
+    home: https://www.datadoghq.com
+    icon: https://static.datadoghq.com/static/images/logos/_datadog_avatar.svg
+    keywords:
+    - gpu
+    - inference
+    - benchmark
+    - aiperf
+    maintainers:
+    - email: support@datadoghq.com
+      name: Datadog
+    name: datadog-gpu-benchmark
+    sources:
+    - https://github.com/DataDog/helm-charts/tree/main/charts/datadog-gpu-benchmark
+    type: application
+    urls:
+    - https://github.com/DataDog/helm-charts/releases/download/datadog-gpu-benchmark-0.2.0/datadog-gpu-benchmark-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2026-11-10T18:24:22.755476296Z"
     description: Prepares a namespace where Datadog GPU Monitoring runs inference
       benchmarks, through the Cluster Agent's Private Action Runner
@@ -50368,4 +50391,4 @@ entries:
     urls:
     - https://github.com/DataDog/helm-charts/releases/download/synthetics-private-location-0.1.0/synthetics-private-location-0.1.0.tgz
     version: 0.1.0
-generated: "2026-11-19T16:32:52.454197271Z"
+generated: "2026-11-19T16:44:24.301725444Z"
