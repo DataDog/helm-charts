@@ -1,11 +1,16 @@
 {{- $ports := (include "opw.ports" .) -}}
-{{- if and .Values.serviceHeadless.enabled (or .Values.service.ports $ports .Values.datadog.workerAPI.enabled) -}}
+{{- if and .Values.serviceHeadless.enabled (or .Values.service.ports $ports .Values.datadog.workerAPI.enabled (.Values.eventRouting | default dict).enabled) -}}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "opw.fullname" . }}-headless
   namespace: {{ .Release.Namespace }}
   labels: {{ include "opw.labels" . | nindent 4 }}
+    {{- if (.Values.eventRouting | default dict).enabled }}
+    {{- /* Kubernetes propagates these labels to the Service's EndpointSlices. */}}
+    observability-pipelines.datadoghq.com/pipeline-id: {{ .Values.datadog.pipelineId | quote }}
+    observability-pipelines.datadoghq.com/event-routing: "true"
+    {{- end }}
   {{- if .Values.service.annotations }}
   annotations: {{ toYaml .Values.service.annotations | nindent 4 }}
   {{- end }}
@@ -25,6 +30,9 @@ spec:
 {{- end }}
 {{- if .Values.datadog.workerAPI.enabled }}
 {{ include "opw.api.servicePort" . | indent 4 }}
+{{- end }}
+{{- if (.Values.eventRouting | default dict).enabled }}
+{{ include "opw.eventRouting.servicePort" . | indent 4 }}
 {{- end }}
   selector: {{ include "opw.template-labels" . | nindent 4 }}
   type: ClusterIP

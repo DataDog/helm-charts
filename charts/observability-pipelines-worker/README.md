@@ -107,6 +107,8 @@ The command removes all the Kubernetes components associated with the chart and 
 | dnsPolicy | string | `"ClusterFirst"` | Specify the [dnsPolicy](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy). |
 | env | list | `[]` | Define environment variables. |
 | envFrom | list | `[]` | Define environment variables from ConfigMap or Secret data. |
+| eventRouting.enabled | bool | `false` | **Beta.** If **true**, let Worker replicas route events to each other: expose the `event-routing` port (see `eventRouting.port`) on the container and the headless Service, label the headless Service with the pipeline ID and the event routing opt-in label, grant the ServiceAccount `list`/`watch` access to EndpointSlices in the release namespace, and configure the Worker to receive routed events on `eventRouting.port` and to discover the other Workers through the `event-routing` port. Requires `serviceHeadless.enabled` and `datadog.pipelineId`. In the pipeline, the discovery `namespace` must be the release namespace. This feature is in beta: its values and behavior may change in a future release. |
+| eventRouting.port | int | `8687` | **Beta.** Port the Worker listens on for events routed from its peers. |
 | extraContainers | list | `[]` | Specify extra Containers to be added. |
 | extraVolumeMounts | list | `[]` | Specify Additional VolumeMounts to use. |
 | extraVolumes | list | `[]` | Specify additional Volumes to use. |
