@@ -118,8 +118,25 @@ func TestSecretReferenceAndHardening(t *testing.T) {
 			}
 			if container.Name == "synthetics-private-location" {
 				assert.Contains(t, container.Env, corev1.EnvVar{Name: "DATADOG_TRACEROUTE_HTTP_URL", Value: "http://127.0.0.1:3765"})
+				assert.Contains(t, container.Env, corev1.EnvVar{Name: "DATADOG_BROWSER_POOL_URL", Value: "http://127.0.0.1:9444"})
+				// The worker still advertises its own forward proxy and DNS resolver to pooled browsers on POD_IP.
+				var hasPodIP bool
+				for _, env := range container.Env {
+					hasPodIP = hasPodIP || env.Name == "POD_IP"
+				}
+				assert.True(t, hasPodIP)
 			}
 			if container.Name == "browser-pool" {
+				// Without POD_IP the daemon and its per-browser proxies listen on loopback only.
+				for _, env := range container.Env {
+					assert.NotEqual(t, "POD_IP", env.Name)
+				}
+				for _, probe := range []*corev1.Probe{container.LivenessProbe, container.ReadinessProbe} {
+					require.NotNil(t, probe)
+					assert.Nil(t, probe.HTTPGet)
+					require.NotNil(t, probe.Exec)
+					assert.Equal(t, []string{"wget", "-q", "-T", "2", "-O", "/dev/null", "http://127.0.0.1:9444/health"}, probe.Exec.Command)
+				}
 				assert.Equal(t, "/usr/local/bin/dumb-init", container.Command[0])
 				assert.Contains(t, container.Command[len(container.Command)-1], "-name 'browser-*' -user nobody")
 				assert.Contains(t, container.Command[len(container.Command)-1], "exec node")

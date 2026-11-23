@@ -3,6 +3,7 @@
 ## 1.2.2
 
 * Multi-container: `traceroute-server` listens on `127.0.0.1:3765` instead of every interface, so only containers in the pod can reach it. Its liveness and readiness probes run `wget` in the container, because an HTTP probe to the pod IP cannot reach loopback. The worker calls it on `http://127.0.0.1:3765`.
+* Multi-container: `browser-pool` no longer gets `POD_IP`, so images that bind the daemon and its per-browser proxies to the advertised address listen on `127.0.0.1` only. Older images keep listening on every interface and now advertise `127.0.0.1`, which the worker reaches in the shared pod network. Its probes run `wget` in the container. The worker calls it on `http://127.0.0.1:9444`.
 * No values change.
 
 ## 1.2.1
