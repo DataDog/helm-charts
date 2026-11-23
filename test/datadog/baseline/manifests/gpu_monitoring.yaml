@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.2
+    app.kubernetes.io/version: 1.32.0
   name: datadog-operator
   namespace: datadog-agent
 ---
@@ -407,7 +407,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.2
+    app.kubernetes.io/version: 1.32.0
   name: datadog-operator
 rules:
   - nonResourceURLs:
@@ -848,6 +848,17 @@ rules:
       - list
       - watch
   - apiGroups:
+      - kueue.x-k8s.io
+    resources:
+      - clusterqueues
+      - localqueues
+      - resourceflavors
+      - workloads
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
       - kustomize.toolkit.fluxcd.io
     resources:
       - kustomizations
@@ -1045,17 +1056,6 @@ rules:
     resources:
       - ingressroutes
     verbs:
-      - list
-      - watch
-  - apiGroups:
-      - kueue.x-k8s.io
-    resources:
-      - clusterqueues
-      - localqueues
-      - resourceflavors
-      - workloads
-    verbs:
-      - get
       - list
       - watch
   - apiGroups:
@@ -2783,7 +2783,7 @@ metadata:
     app.kubernetes.io/instance: datadog
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: 1.31.2
+    app.kubernetes.io/version: 1.32.0
   name: datadog-operator
   namespace: datadog-agent
 spec:
@@ -2842,7 +2842,9 @@ spec:
                   fieldPath: metadata.namespace
             - name: DD_TOOL_VERSION
               value: helm
-          image: registry.datadoghq.com/operator:1.31.2
+            - name: DD_DEFAULT_DATA_PLANE_LINUX_ENABLED
+              value: "true"
+          image: registry.datadoghq.com/operator:1.32.0
           imagePullPolicy: IfNotPresent
           livenessProbe:
             httpGet:

@@ -1,0 +1,32 @@
+{{- if .Values.datasetVolume.enabled }}
+{{- $volume := .Values.datasetVolume }}
+{{- if not $volume.accessModes }}
+{{- fail "datasetVolume.accessModes must list at least one access mode, e.g. [ReadWriteMany]" }}
+{{- end }}
+# Where your benchmark datasets live, for runs to replay your own traffic. Copy
+# Mooncake or Weka traces onto it, then register each one in Datadog with this
+# claim and its path. Benchmark pods mount it read-only; Datadog never reads it.
+# Kept when the release is uninstalled, so your datasets are not deleted with it.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: datadog-gpu-benchmark-datasets
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "gpu-benchmark.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/resource-policy: keep
+spec:
+  accessModes:
+    {{- toYaml $volume.accessModes | nindent 4 }}
+  {{- /* Unset uses the cluster's default StorageClass; "" asks for none, as a classless PersistentVolume needs. */}}
+  {{- if not (kindIs "invalid" $volume.storageClassName) }}
+  storageClassName: {{ $volume.storageClassName | quote }}
+  {{- end }}
+  {{- if $volume.volumeName }}
+  volumeName: {{ $volume.volumeName | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ $volume.size | quote }}
+{{- end }}

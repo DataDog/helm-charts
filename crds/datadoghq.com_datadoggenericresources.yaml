@@ -173,7 +173,7 @@ spec:
                     fetched from the Datadog API. Values are resource-type dependent — for
                     Monitors: OK, Alert, Warn, No Data, Skipped, Ignored, Unknown. For SLOs:
                     breached, warning, ok, no_data. Only populated for resource types that
-                    expose live state.
+                    expose live state. PollingDisabled when state polling is disabled.
                   type: string
                 stateLastTransitionTime:
                   description: StateLastTransitionTime is the last time State changed value.

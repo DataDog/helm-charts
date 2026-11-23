@@ -802,6 +802,11 @@ spec:
                                   type: string
                               type: object
                           type: object
+                        databaseBenchmarks:
+                          properties:
+                            enabled:
+                              type: boolean
+                          type: object
                         enabled:
                           type: boolean
                         hostBenchmarks:
@@ -1028,6 +1033,11 @@ spec:
                         privilegedMode:
                           type: boolean
                         requiredRuntimeClassName:
+                          type: string
+                        vendor:
+                          enum:
+                            - nvidia
+                            - amd
                           type: string
                       type: object
                     helmCheck:
@@ -5511,6 +5521,11 @@ spec:
                                       type: string
                                   type: object
                               type: object
+                            databaseBenchmarks:
+                              properties:
+                                enabled:
+                                  type: boolean
+                              type: object
                             enabled:
                               type: boolean
                             hostBenchmarks:
@@ -5737,6 +5752,11 @@ spec:
                             privilegedMode:
                               type: boolean
                             requiredRuntimeClassName:
+                              type: string
+                            vendor:
+                              enum:
+                                - nvidia
+                                - amd
                               type: string
                           type: object
                         helmCheck:
