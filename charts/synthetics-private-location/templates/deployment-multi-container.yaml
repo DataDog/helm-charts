@@ -112,7 +112,7 @@ spec:
             - name: DATADOG_TRACEROUTE_USE_HTTP
               value: "true"
             - name: DATADOG_TRACEROUTE_HTTP_URL
-              value: http://localhost:{{ include "synthetics-private-location.multiContainer.tracerouteServerPort" $ }}
+              value: http://127.0.0.1:{{ include "synthetics-private-location.multiContainer.tracerouteServerPort" $ }}
             {{- end }}
       {{- if .Values.env }}
       {{- toYaml .Values.env | nindent 12 }}
@@ -225,7 +225,7 @@ spec:
         - name: traceroute-server
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["/usr/bin/datadog-traceroute-server", "--addr", {{ printf ":%s" (include "synthetics-private-location.multiContainer.tracerouteServerPort" $) | quote }}, "--log-level", {{ $mc.tracerouteServer.logLevel | quote }}]
+          command: ["/usr/bin/datadog-traceroute-server", "--addr", {{ printf "127.0.0.1:%s" (include "synthetics-private-location.multiContainer.tracerouteServerPort" $) | quote }}, "--log-level", {{ $mc.tracerouteServer.logLevel | quote }}]
           securityContext:
             runAsUser: {{ include "synthetics-private-location.multiContainer.nobodyUser" $ }}
             runAsNonRoot: true
@@ -242,18 +242,17 @@ spec:
             preStop:
               exec:
                 command: ["node", "-e", {{ include "synthetics-private-location.multiContainer.waitForWorkerExit" (dict "root" $ "healthCheck" (include "synthetics-private-location.multiContainer.httpHealthy" (dict "root" $ "port" (include "synthetics-private-location.multiContainer.tracerouteServerPort" $)))) | quote }}]
+          # The server listens on loopback only, which an HTTP probe to the pod IP cannot reach.
           livenessProbe:
-            httpGet:
-              path: /health
-              port: {{ include "synthetics-private-location.multiContainer.tracerouteServerPort" $ }}
+            exec:
+              command: ["wget", "-q", "-T", "2", "-O", "/dev/null", {{ printf "http://127.0.0.1:%s/health" (include "synthetics-private-location.multiContainer.tracerouteServerPort" $) | quote }}]
             initialDelaySeconds: 10
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
-            httpGet:
-              path: /health
-              port: {{ include "synthetics-private-location.multiContainer.tracerouteServerPort" $ }}
+            exec:
+              command: ["wget", "-q", "-T", "2", "-O", "/dev/null", {{ printf "http://127.0.0.1:%s/health" (include "synthetics-private-location.multiContainer.tracerouteServerPort" $) | quote }}]
             initialDelaySeconds: 5
             periodSeconds: 10
             timeoutSeconds: 5

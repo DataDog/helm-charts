@@ -107,10 +107,17 @@ func TestSecretReferenceAndHardening(t *testing.T) {
 				assert.Equal(t, "1Gi", container.Resources.Limits.Memory().String())
 			}
 			if container.Name == "traceroute-server" {
-				require.NotNil(t, container.ReadinessProbe)
-				require.NotNil(t, container.ReadinessProbe.HTTPGet)
-				assert.Equal(t, container.LivenessProbe.HTTPGet.Path, container.ReadinessProbe.HTTPGet.Path)
-				assert.Equal(t, container.LivenessProbe.HTTPGet.Port, container.ReadinessProbe.HTTPGet.Port)
+				assert.Equal(t, []string{"--addr", "127.0.0.1:3765"}, container.Command[1:3])
+				// An HTTP probe targets the pod IP, which a server on loopback does not answer.
+				for _, probe := range []*corev1.Probe{container.LivenessProbe, container.ReadinessProbe} {
+					require.NotNil(t, probe)
+					assert.Nil(t, probe.HTTPGet)
+					require.NotNil(t, probe.Exec)
+					assert.Equal(t, []string{"wget", "-q", "-T", "2", "-O", "/dev/null", "http://127.0.0.1:3765/health"}, probe.Exec.Command)
+				}
+			}
+			if container.Name == "synthetics-private-location" {
+				assert.Contains(t, container.Env, corev1.EnvVar{Name: "DATADOG_TRACEROUTE_HTTP_URL", Value: "http://127.0.0.1:3765"})
 			}
 			if container.Name == "browser-pool" {
 				assert.Equal(t, "/usr/local/bin/dumb-init", container.Command[0])

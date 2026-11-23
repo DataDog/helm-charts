@@ -1,5 +1,10 @@
 # Datadog changelog
 
+## 1.2.2
+
+* Multi-container: `traceroute-server` listens on `127.0.0.1:3765` instead of every interface, so only containers in the pod can reach it. Its liveness and readiness probes run `wget` in the container, because an HTTP probe to the pod IP cannot reach loopback. The worker calls it on `http://127.0.0.1:3765`.
+* No values change.
+
 ## 1.2.1
 
 * Update private location image version to `1.76.0`.
