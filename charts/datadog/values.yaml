@@ -2623,6 +2623,33 @@ agents:
       #     mountPath: <CONTAINER_PATH>
       #     readOnly: true
 
+      # agents.containers.otelAgent.healthPort -- Port number to use for the otel-agent health check endpoint (OTel health_check extension)
+      healthPort: 13133
+
+      # agents.containers.otelAgent.livenessProbe -- otel-agent liveness probe settings.
+      # Set enabled to true to activate. The OTel config must define the health_check extension
+      # listening on 0.0.0.0:<healthPort> (default 13133) and enable it in service.extensions.
+      # The extension auto-added by the converter binds to localhost and is not reachable by the kubelet.
+      livenessProbe:
+        enabled: false
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
+      # agents.containers.otelAgent.readinessProbe -- otel-agent readiness probe settings.
+      # Set enabled to true to activate. The OTel config must define the health_check extension
+      # listening on 0.0.0.0:<healthPort> (default 13133) and enable it in service.extensions.
+      # The extension auto-added by the converter binds to localhost and is not reachable by the kubelet.
+      readinessProbe:
+        enabled: false
+        initialDelaySeconds: 15
+        periodSeconds: 15
+        timeoutSeconds: 5
+        successThreshold: 1
+        failureThreshold: 6
+
     hostProfiler:
       # agents.containers.hostProfiler.env -- Additional environment variables for the host-profiler container
       env: []
