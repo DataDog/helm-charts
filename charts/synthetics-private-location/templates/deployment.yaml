@@ -87,15 +87,15 @@ spec:
           envFrom:
       {{- toYaml .Values.envFrom | nindent 12 }}
       {{- end }}
-      {{- if or (.Values.env) (.Values.enableStatusProbes) }}
           env:
+            - name: DATADOG_ALLOW_CRITICAL_INFRA_REQUESTS
+              value: {{ .Values.allowCriticalInfraRequests | quote }}
       {{- if .Values.enableStatusProbes }}
             - name: DATADOG_WORKER_ENABLE_STATUS_PROBES
               value: {{ .Values.enableStatusProbes | quote }}
       {{- end }}
       {{- if .Values.env }}
       {{- toYaml .Values.env | nindent 12 }}
-      {{- end }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
