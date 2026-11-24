@@ -3,8 +3,11 @@
 # CPU reservation by size: 70m, 80m, 90m, 110m, 130m, 150m.
 # Memory reservation is GKE's tiered memory reservation plus 100Mi eviction.
 # Memory reservation by size: 1944Mi, 2763Mi, 3746Mi, 5712Mi, 7678Mi, 9644Mi.
-# Resource requests/limits are rounded down to the nearest 100m/Mi to preserve headroom.
+# CPU requests and memory requests/limits are rounded down to the nearest 100m/100Mi to preserve headroom.
 # Quickwit memory tuning below uses the allocatable memory rounded down to Gi.
+# Indexer WAL (ingest_api.max_queue_memory_usage) for large to 4xlarge comes from overload tests
+# on v0.1.36 (sustained saturation with pod kills, fleet x2 and fleet shrink); the WAL disk
+# budget is 2x the WAL memory. Indexer CPU limits round the CPU request up to the next whole core.
 large:
   # Environment variables
   env:
@@ -24,8 +27,8 @@ large:
       split_store_max_num_splits: 10000
     # Ingest API settings
     ingest_api:
-      max_queue_memory_usage: 1.5GiB
-      max_queue_disk_usage: 3GiB
+      max_queue_memory_usage: 0.8GiB
+      max_queue_disk_usage: 1.6GiB
     # Searcher settings
     searcher:
       fast_field_cache_capacity: 2.03125G
@@ -53,8 +56,8 @@ xlarge:
       split_store_max_num_splits: 10000
     # Ingest API settings
     ingest_api:
-      max_queue_memory_usage: 3.6GiB
-      max_queue_disk_usage: 7.2GiB
+      max_queue_memory_usage: 2.4GiB
+      max_queue_disk_usage: 4.8GiB
     # Searcher settings
     searcher:
       fast_field_cache_capacity: 4.875G
@@ -82,8 +85,8 @@ xlarge:
       split_store_max_num_splits: 10000
     # Ingest API settings
     ingest_api:
-      max_queue_memory_usage: 8.1GiB
-      max_queue_disk_usage: 16.2GiB
+      max_queue_memory_usage: 7.2GiB
+      max_queue_disk_usage: 14.4GiB
     # Searcher settings
     searcher:
       fast_field_cache_capacity: 10.96875G
@@ -111,8 +114,8 @@ xlarge:
       split_store_max_num_splits: 10000
     # Ingest API settings
     ingest_api:
-      max_queue_memory_usage: 17.1GiB
-      max_queue_disk_usage: 34.2GiB
+      max_queue_memory_usage: 21.6GiB
+      max_queue_disk_usage: 43.2GiB
     # Searcher settings
     searcher:
       fast_field_cache_capacity: 23.15625G
@@ -121,12 +124,8 @@ xlarge:
       max_num_concurrent_split_searches: 180
       aggregation_memory_limit: 500M
 
+# 6xlarge is searcher-only.
 6xlarge:
-  # Environment variables
-  env:
-    # Indexer environment variables
-    indexer:
-      QW_INDEXING_MAX_WRITE_THROUGHPUT: 300MiB
   resources:
     limits:
       memory: 90100Mi
@@ -134,14 +133,6 @@ xlarge:
       cpu: 23600m
       memory: 90100Mi
   config:
-    # Indexer settings
-    indexer:
-      split_store_max_num_bytes: 200G
-      split_store_max_num_splits: 10000
-    # Ingest API settings
-    ingest_api:
-      max_queue_memory_usage: 26.4GiB
-      max_queue_disk_usage: 52.8GiB
     # Searcher settings
     searcher:
       fast_field_cache_capacity: 35.75G
@@ -150,12 +141,8 @@ xlarge:
       max_num_concurrent_split_searches: 275
       aggregation_memory_limit: 500M
 
+# 8xlarge is searcher-only.
 8xlarge:
-  # Environment variables
-  env:
-    # Indexer environment variables
-    indexer:
-      QW_INDEXING_MAX_WRITE_THROUGHPUT: 400MiB
   resources:
     limits:
       memory: 120900Mi
@@ -163,14 +150,6 @@ xlarge:
       cpu: 31600m
       memory: 120900Mi
   config:
-    # Indexer settings
-    indexer:
-      split_store_max_num_bytes: 200G
-      split_store_max_num_splits: 10000
-    # Ingest API settings
-    ingest_api:
-      max_queue_memory_usage: 35.4GiB
-      max_queue_disk_usage: 70.8GiB
     # Searcher settings
     searcher:
       fast_field_cache_capacity: 47.9375G
