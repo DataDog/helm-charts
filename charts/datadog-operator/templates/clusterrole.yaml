@@ -343,13 +343,6 @@ rules:
   verbs:
   - '*'
 - apiGroups:
-  - datadoghq.com
-  resources:
-  - extendeddaemonsets
-  verbs:
-  - get
-  - list
-- apiGroups:
   - discovery.k8s.io
   resources:
   - endpointslices
@@ -681,6 +674,15 @@ rules:
   - list
   - watch
 {{- /* END AUTO-GENERATED RULES: hand-maintained rules go below */}}
+# Remote flares read ExtendedDaemonSets whether or not supportExtendedDaemonset is set.
+# Remove once the Operator release in appVersion ships this rule (DataDog/datadog-operator#3752).
+- apiGroups:
+  - datadoghq.com
+  resources:
+  - extendeddaemonsets
+  verbs:
+  - get
+  - list
 {{- if .Values.datadogAgentInternal.enabled }}
 - apiGroups:
   - datadoghq.com
