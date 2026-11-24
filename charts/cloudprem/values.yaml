@@ -342,7 +342,7 @@ searcher:
 
 indexer:
   enabled: true
-  # -- Pod size for the indexer. Determines resource limits/requests and config tuning parameters. Valid values: large, xlarge, 2xlarge, 4xlarge, 6xlarge, 8xlarge.
+  # -- Pod size for the indexer. Determines resource limits/requests and config tuning parameters. Valid values: large, xlarge, 2xlarge, 4xlarge.
   podSize: xlarge
   # When autoscaling is enabled, replicaCount is ignored.
   replicaCount: 2
@@ -1173,10 +1173,10 @@ config:
   # Docs clustering settings
   docs_clustering:
   - fingerprint:
-      - kind: structure
-  - fingerprint:
       - kind: raw
         path: source
+      - kind: raw
+        path: service
   - fingerprint:
       - kind: raw
         path: status

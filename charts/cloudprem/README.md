@@ -1,6 +1,6 @@
 # CloudPrem
 
-![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.36](https://img.shields.io/badge/AppVersion-v0.1.36-informational?style=flat-square)
+![Version: 0.7.0](https://img.shields.io/badge/Version-0.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.37](https://img.shields.io/badge/AppVersion-v0.1.37-informational?style=flat-square)
 
 ## Using the Datadog Helm repository
 
@@ -58,9 +58,9 @@ Actual memory request/limit = (nominal pod memory - Kubernetes system memory res
 | `6xlarge` | 24 | 23600m | 96Gi | 90100Mi |
 | `8xlarge` | 32 | 31600m | 128Gi | 120900Mi |
 
-The presets do not set a CPU limit, allowing a pod to use idle CPU on its node without being throttled. Memory requests and limits are equal to keep memory usage within the allocatable node capacity.
+For searchers, the presets do not set a CPU limit, allowing a pod to use idle CPU on its node without being throttled. For indexers, the presets set a CPU limit equal to the CPU request rounded up to the next whole core: `2000m` for `large`, `4000m` for `xlarge`, `8000m` for `2xlarge`, and `16000m` for `4xlarge`. No CPU limit is added when `indexer.resources` is set. Memory requests and limits are equal to keep memory usage within the allocatable node capacity.
 
-For indexers, `podSize` also sets `QW_INDEXING_MAX_WRITE_THROUGHPUT`, which caps each indexer's write throughput and scales with the CPU request: `25MiB` for `large`, `50MiB` for `xlarge`, `100MiB` for `2xlarge`, `200MiB` for `4xlarge`, `300MiB` for `6xlarge`, and `400MiB` for `8xlarge`. The variable is not set when `indexer.resources` is set. To override it, set `QW_INDEXING_MAX_WRITE_THROUGHPUT` in `indexer.extraEnv` or `environment`.
+For indexers, `podSize` also sets `QW_INDEXING_MAX_WRITE_THROUGHPUT`, which caps each indexer's write throughput and scales with the CPU request: `25MiB` for `large`, `50MiB` for `xlarge`, `100MiB` for `2xlarge`, and `200MiB` for `4xlarge`. Indexers do not support `6xlarge` or `8xlarge`. The variable is not set when `indexer.resources` is set. To override it, set `QW_INDEXING_MAX_WRITE_THROUGHPUT` in `indexer.extraEnv` or `environment`.
 
 ```yaml
 datadog:
