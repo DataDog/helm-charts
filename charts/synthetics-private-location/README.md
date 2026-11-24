@@ -1,6 +1,6 @@
 # Datadog Synthetics Private Location
 
-![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![AppVersion: 1.75.0](https://img.shields.io/badge/AppVersion-1.75.0-informational?style=flat-square)
+![Version: 1.2.1](https://img.shields.io/badge/Version-1.2.1-informational?style=flat-square) ![AppVersion: 1.76.0](https://img.shields.io/badge/AppVersion-1.76.0-informational?style=flat-square)
 
 [Datadog](https://www.datadoghq.com/) is a hosted infrastructure monitoring platform. This chart adds a Datadog Synthetics Private Location Deployment. For more information about synthetics monitoring with Datadog, please refer to the [Datadog documentation website](https://docs.datadoghq.com/synthetics/private_locations/?tab=helmchart).
 
@@ -180,6 +180,7 @@ multiContainer:
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Allows to specify affinity for Datadog Synthetics Private Location PODs |
+| allowCriticalInfraRequests | bool | `false` | Let tests reach critical infrastructure: Vault, Consul, Nomad, the Kubernetes API, kubelet, etcd and Docker Engine. The worker blocks these requests by default (minimal private location image version required: 1.77.0). Sets `DATADOG_ALLOW_CRITICAL_INFRA_REQUESTS` on the worker, which overrides `allowCriticalInfraRequests` in the configuration file. In multi-container mode, `false` also blocks `multiContainer.networkPolicy.criticalInfraIPRanges` in the NetworkPolicy. |
 | commonLabels | object | `{}` | Labels to apply to all resources |
 | configConfigMap | string | `""` | Config Map that stores the configuration of the private location worker for the deployment |
 | configFile | string | `"{}"` | JSON string containing the configuration of the private location worker |
@@ -195,7 +196,7 @@ multiContainer:
 | hostAliases | list | `[]` | Add entries to Datadog Synthetics Private Location PODs' /etc/hosts |
 | image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Datadog Synthetics Private Location image |
 | image.repository | string | `"gcr.io/datadoghq/synthetics-private-location-worker"` | Repository to use for Datadog Synthetics Private Location image |
-| image.tag | string | `"1.75.0"` | Define the Datadog Synthetics Private Location version to use |
+| image.tag | string | `"1.76.0"` | Define the Datadog Synthetics Private Location version to use |
 | imagePullSecrets | list | `[]` | Datadog Synthetics Private Location repository pullSecret (ex: specify docker registry credentials) |
 | multiContainer.browserPool.adminTokenSecret.key | string | `"token"` | Key containing the admin token in the existing Secret. Restart the Deployment after rotating the token. |
 | multiContainer.browserPool.adminTokenSecret.name | string | `""` | Required in multi-container mode. Existing Secret containing a cryptographically random browser-pool admin token (at least 32 random bytes), shared by the worker and browser-pool. Created and rotated outside this chart. |
@@ -210,6 +211,7 @@ multiContainer:
 | multiContainer.networkPolicy.allowedIPRanges | object | `{"IPv4":[],"IPv6":[]}` | CIDRs that stay reachable even when inside a blocked range |
 | multiContainer.networkPolicy.blockedIPRanges | object | `{"IPv4":[],"IPv6":[]}` | Additional CIDRs to block, added to `defaultBlockedIPRanges` |
 | multiContainer.networkPolicy.create | bool | `true` | Create a pod-wide egress NetworkPolicy in multi-container mode. Set `false` to create none and leave egress enforcement to the operator. Requires a CNI that enforces NetworkPolicies. Other policies can broaden access; ICMP filtering is CNI-dependent. |
+| multiContainer.networkPolicy.criticalInfraIPRanges | object | `{"IPv4":[],"IPv6":[]}` | CIDRs blocked when `allowCriticalInfraRequests` is false, added to the blocked ranges. Add the addresses of your Vault servers, Kubernetes API server or cloud metadata (for example `169.254.169.254/32`). A NetworkPolicy cannot deny, so `allowedIPRanges`, `dns.to` and `additionalEgress` can still grant access to them. The worker's own block, by request path, headers and the in-cluster API server address, takes precedence over every allowed range. |
 | multiContainer.networkPolicy.defaultBlockedIPRanges | object | `{"IPv4":["0.0.0.0/8","10.0.0.0/8","100.64.0.0/10","127.0.0.0/8","169.254.0.0/16","172.16.0.0/12","192.0.0.0/24","192.0.0.0/29","192.0.0.8/32","192.0.0.9/32","192.0.0.10/32","192.0.0.170/32","192.0.0.171/32","192.0.2.0/24","192.31.196.0/24","192.52.193.0/24","192.88.99.0/24","192.168.0.0/16","192.175.48.0/24","198.18.0.0/15","198.51.100.0/24","203.0.113.0/24","240.0.0.0/4","224.0.0.0/4","255.255.255.255/32"],"IPv6":["::1/128","::/128","64:ff9b::/96","64:ff9b:1::/48","100::/64","2001::/23","2001::/32","2001:1::1/128","2001:1::2/128","2001:2::/48","2001:3::/32","2001:4:112::/48","2001:5::/32","2001:10::/28","2001:20::/28","2001:db8::/32","2002::/16","2620:4f:8000::/48","fc00::/7","fe80::/10"]}` | IANA reserved ranges blocked when `enableDefaultBlockedIpRanges` is true. Same list as the worker, without `::ffff:0:0/96` (rejected in a NetworkPolicy, and covered by the IPv4 list). |
 | multiContainer.networkPolicy.dns.ports | list | `[{"port":53,"protocol":"UDP"},{"port":53,"protocol":"TCP"}]` | Ports allowed to the DNS peers. These match the DNS pod port, not the Service port. On OpenShift use 5353 (UDP and TCP). |
 | multiContainer.networkPolicy.dns.to | list | `[]` | Required when `create` is `true`. NetworkPolicy peers for DNS (TCP/UDP 53). Use namespace/pod selectors for cluster DNS or ipBlock CIDRs for NodeLocal/custom resolvers. There is no allow-all DNS exception. |

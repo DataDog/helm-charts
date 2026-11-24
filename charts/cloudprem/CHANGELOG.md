@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0
+
+* Update Docker image to `v0.1.37`.
+* **Indexer sizing:** lower the indexer WAL budget (`ingest_api.max_queue_memory_usage`) for `large` (1.5 → 0.8 GiB), `xlarge` (3.6 → 2.4 GiB) and `2xlarge` (8.1 → 7.2 GiB), and raise it for `4xlarge` (17.1 → 21.6 GiB). The WAL disk budget (`max_queue_disk_usage`) stays at 2× the WAL memory.
+* Sizing-map indexers now get a CPU limit rounded up from their CPU request to the next whole core: `2000m`, `4000m`, `8000m`, and `16000m` for `large` through `4xlarge`. CPU requests, searchers, and explicit `indexer.resources` overrides are unchanged.
+* **Breaking**: remove the `6xlarge` and `8xlarge` indexer pod sizes. Searcher sizes are unchanged.
+* Change the default document clustering (`config.docs_clustering`) to group logs by `source` and `service` together, then by `status`, then by tokenized `message`. The structure fingerprint is no longer used, and `service` now distinguishes logs when `source` is not set.
+
 ## 0.6.0
 
 * Update Docker image to `v0.1.36`.

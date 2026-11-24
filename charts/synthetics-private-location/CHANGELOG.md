@@ -1,5 +1,14 @@
 # Datadog changelog
 
+## 1.2.1
+
+* Update private location image version to `1.76.0`.
+
+## 1.2.0
+
+* Add `allowCriticalInfraRequests` (default `false`). It sets `DATADOG_ALLOW_CRITICAL_INFRA_REQUESTS` on the worker, which blocks requests to Vault, Consul, Nomad, the Kubernetes API, kubelet, etcd and Docker Engine unless it is `true`. The variable overrides `allowCriticalInfraRequests` in the configuration file. Requires a private location image version >= 1.77.0 to take effect; older images ignore it.
+* Add `multiContainer.networkPolicy.criticalInfraIPRanges`, blocked in the multi-container NetworkPolicy when `allowCriticalInfraRequests` is `false`. It is empty by default. Add your Vault, Kubernetes API server or cloud metadata addresses to block them at the network level.
+
 ## 1.1.0
 
 * `multiContainer.networkPolicy.create` now defaults to `true`. Multi-container installs must set `multiContainer.networkPolicy.dns.to`, or set `create: false` to manage egress without the chart policy. Installs that already set `create` render the same as before. Single-container installs are unchanged.

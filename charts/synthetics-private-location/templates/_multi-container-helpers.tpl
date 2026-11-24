@@ -114,7 +114,7 @@ seccompProfile:
 {{- end -}}
 
 {{/*
-Blocked CIDRs for the multi-container NetworkPolicy: the default ranges when enableDefaultBlockedIpRanges is true, then blockedIPRanges, each normalized with synthetics-private-location.cidr.
+Blocked CIDRs for the multi-container NetworkPolicy: the default ranges when enableDefaultBlockedIpRanges is true, then blockedIPRanges, then criticalInfraIPRanges when allowCriticalInfraRequests is false, each normalized with synthetics-private-location.cidr.
 Returns a JSON object with "IPv4" and "IPv6" lists.
 */}}
 {{- define "synthetics-private-location.multiContainer.networkPolicy.blockedCIDRs" -}}
@@ -124,6 +124,10 @@ Returns a JSON object with "IPv4" and "IPv6" lists.
 {{- if $np.enableDefaultBlockedIpRanges }}
 {{- $rawIPv4 = concat ($np.defaultBlockedIPRanges.IPv4 | default (list)) $rawIPv4 }}
 {{- $rawIPv6 = concat ($np.defaultBlockedIPRanges.IPv6 | default (list)) $rawIPv6 }}
+{{- end }}
+{{- if not .Values.allowCriticalInfraRequests }}
+{{- $rawIPv4 = concat $rawIPv4 ($np.criticalInfraIPRanges.IPv4 | default (list)) }}
+{{- $rawIPv6 = concat $rawIPv6 ($np.criticalInfraIPRanges.IPv6 | default (list)) }}
 {{- end }}
 {{- $blockedIPv4 := list }}
 {{- range $rawIPv4 }}{{ $blockedIPv4 = append $blockedIPv4 (include "synthetics-private-location.cidr" .) }}{{ end }}

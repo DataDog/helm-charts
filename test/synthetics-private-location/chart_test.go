@@ -351,6 +351,7 @@ func TestFullFamilyBlocksAndExceptions(t *testing.T) {
 	assert.Equal(t, "10.0.0.1/32", policy.Spec.Egress[2].To[0].IPBlock.CIDR)
 	assert.Equal(t, "fd00::1/128", policy.Spec.Egress[2].To[1].IPBlock.CIDR)
 	overrides["multiContainer.networkPolicy.enableDefaultBlockedIpRanges"] = "false"
+	overrides["allowCriticalInfraRequests"] = "true"
 	overrides["multiContainer.networkPolicy.blockedIPRanges"] = `{"IPv4":["192.0.2.1"],"IPv6":[]}`
 	policy = renderPolicy(t, overrides)
 	require.Len(t, policy.Spec.Egress, 4)
@@ -453,6 +454,82 @@ func TestConfigSources(t *testing.T) {
 				require.NotNil(t, config.ConfigMap)
 				assert.Equal(t, "existing-config", config.ConfigMap.Name)
 			}
+		})
+	}
+}
+
+func TestCriticalInfraRangesInPolicy(t *testing.T) {
+	tests := []struct {
+		name      string
+		overrides map[string]string
+		blocked   []string
+		reachable []string
+	}{
+		{
+			name:      "blocks no extra address by default",
+			overrides: map[string]string{"multiContainer.networkPolicy.enableDefaultBlockedIpRanges": "false"},
+			reachable: []string{"169.254.169.254/32", "fd00:ec2::254/128"},
+		},
+		{
+			name: "blocks the configured critical infrastructure ranges",
+			overrides: map[string]string{
+				"multiContainer.networkPolicy.enableDefaultBlockedIpRanges": "false",
+				"multiContainer.networkPolicy.criticalInfraIPRanges":        `{"IPv4":["10.20.0.5"],"IPv6":[]}`,
+			},
+			blocked:   []string{"10.20.0.5/32"},
+			reachable: []string{"169.254.169.254/32"},
+		},
+		{
+			name: "does not block them when critical infrastructure requests are allowed",
+			overrides: map[string]string{
+				"multiContainer.networkPolicy.enableDefaultBlockedIpRanges": "false",
+				"multiContainer.networkPolicy.criticalInfraIPRanges":        `{"IPv4":["10.20.0.5"],"IPv6":[]}`,
+				"allowCriticalInfraRequests":                                "true",
+			},
+			reachable: []string{"10.20.0.5/32"},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			policy := renderPolicy(t, test.overrides)
+			allowAll := policy.Spec.Egress[len(policy.Spec.Egress)-1]
+			var except []string
+			for _, peer := range allowAll.To {
+				except = append(except, peer.IPBlock.Except...)
+			}
+			for _, cidr := range test.blocked {
+				assert.Contains(t, except, cidr)
+			}
+			for _, cidr := range test.reachable {
+				assert.NotContains(t, except, cidr)
+			}
+		})
+	}
+}
+
+func TestCriticalInfraEnvOnWorker(t *testing.T) {
+	workerEnv := func(deployment appsv1.Deployment) map[string]string {
+		env := map[string]string{}
+		for _, variable := range deployment.Spec.Template.Spec.Containers[0].Env {
+			env[variable.Name] = variable.Value
+		}
+		return env
+	}
+	for _, allow := range []string{"false", "true"} {
+		t.Run("multi-container "+allow, func(t *testing.T) {
+			deployment := renderDeployment(t, multiContainerCommand(map[string]string{"allowCriticalInfraRequests": allow}))
+			assert.Equal(t, allow, workerEnv(deployment)["DATADOG_ALLOW_CRITICAL_INFRA_REQUESTS"])
+		})
+		t.Run("single-container "+allow, func(t *testing.T) {
+			manifest, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "test", ChartPath: "../../charts/synthetics-private-location",
+				ShowOnly:      []string{"templates/deployment.yaml"},
+				OverridesJson: map[string]string{"allowCriticalInfraRequests": allow},
+			})
+			require.NoError(t, err)
+			var deployment appsv1.Deployment
+			common.Unmarshal(t, manifest, &deployment)
+			assert.Equal(t, allow, workerEnv(deployment)["DATADOG_ALLOW_CRITICAL_INFRA_REQUESTS"])
 		})
 	}
 }

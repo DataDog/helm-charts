@@ -137,12 +137,18 @@ spec:
             {{- if .Values.indexer.resources }}
               {{- toYaml .Values.indexer.resources | nindent 12 }}
             {{- else }}
-              {{- $sizingMap := .Files.Get "sizing-map.yaml" | fromYaml }}
+              {{- $sizingMap := omit (.Files.Get "sizing-map.yaml" | fromYaml) "6xlarge" "8xlarge" }}
               {{- $podSize := .Values.indexer.podSize }}
               {{- if not (hasKey $sizingMap $podSize) }}
                 {{- fail (printf "Invalid indexer.podSize '%s'. Valid sizes: %s" $podSize (keys $sizingMap | sortAlpha | join ", ")) }}
               {{- end }}
-              {{- $resources := (index $sizingMap $podSize).resources }}
+              {{- $resources := deepCopy (index $sizingMap $podSize).resources }}
+              {{- /* Round the sizing-map CPU request (millicores) up to a whole-core limit; searchers keep no CPU limit. */}}
+              {{- $cpuMillis := trimSuffix "m" $resources.requests.cpu | int }}
+              {{- $cpuLimitMillis := mul (div (add $cpuMillis 999) 1000) 1000 }}
+              {{- $limits := $resources.limits | default dict }}
+              {{- $_ := set $limits "cpu" (printf "%dm" $cpuLimitMillis) }}
+              {{- $_ := set $resources "limits" $limits }}
               {{- toYaml $resources | nindent 12 }}
             {{- end }}
           {{- if .Values.indexer.lifecycleHooks }}
