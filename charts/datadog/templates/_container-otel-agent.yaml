@@ -163,4 +163,12 @@
 {{- if .Values.agents.containers.otelAgent.volumeMounts }}
 {{ toYaml .Values.agents.containers.otelAgent.volumeMounts | indent 4 }}
 {{- end }}
+{{- if .Values.agents.containers.otelAgent.livenessProbe.enabled }}
+  livenessProbe:
+{{ include "probe.http" (dict "path" "/" "port" .Values.agents.containers.otelAgent.healthPort "settings" (omit .Values.agents.containers.otelAgent.livenessProbe "enabled")) | indent 4 }}
+{{- end }}
+{{- if .Values.agents.containers.otelAgent.readinessProbe.enabled }}
+  readinessProbe:
+{{ include "probe.http" (dict "path" "/" "port" .Values.agents.containers.otelAgent.healthPort "settings" (omit .Values.agents.containers.otelAgent.readinessProbe "enabled")) | indent 4 }}
+{{- end }}
 {{- end -}}
