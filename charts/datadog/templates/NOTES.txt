@@ -331,6 +331,20 @@ Cluster Agent. The Kueue check is not configured because:
 
 {{- end }}
 
+{{- range $scheduler := list "kueue" "kaiScheduler" }}
+{{- $enabledName := ternary "should-enable-kueue-events" "should-enable-kai-scheduler-events" (eq $scheduler "kueue") }}
+{{- if and (index $.Values.datadog $scheduler "events" "enabled") (ne (include $enabledName $) "true") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+`datadog.{{ $scheduler }}.events.enabled` is ignored, and the node Agent check keeps sending the events.
+It requires `datadog.{{ $scheduler }}.enabled`, `datadog.leaderElection` and Cluster Agent 7.87.0 or newer.
+
+{{- end }}
+{{- end }}
+
 {{- if or .Values.clusterAgent.createPodDisruptionBudget .Values.clusterChecksRunner.createPodDisruptionBudget }}
 
 #################################################################

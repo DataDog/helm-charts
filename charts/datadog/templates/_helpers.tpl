@@ -373,6 +373,42 @@ false
 {{- end -}}
 
 {{/*
+Return true if the Cluster Agent job_scheduler_events check can run: leader election is on
+(the check only emits from the leader) and the Cluster Agent is 7.87.0 or newer.
+*/}}
+{{- define "job-scheduler-events-supported" -}}
+{{- if and .Values.datadog.leaderElection (or .Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.87.0-0" (include "get-cluster-agent-version" .))) -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Cluster Agent should send the Kueue Workload events, in place of the Kueue check.
+Requires datadog.kueue.events.enabled, Kueue support in the Cluster Agent, and job-scheduler-events-supported.
+*/}}
+{{- define "should-enable-kueue-events" -}}
+{{- if and .Values.datadog.kueue.events.enabled (eq (include "should-enable-kueue" .) "true") (eq (include "job-scheduler-events-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return true if the Cluster Agent should send the KAI PodGroup events, in place of the kai_scheduler check.
+Requires datadog.kaiScheduler.events.enabled, KAI Scheduler support in the Cluster Agent, and job-scheduler-events-supported.
+*/}}
+{{- define "should-enable-kai-scheduler-events" -}}
+{{- if and .Values.datadog.kaiScheduler.events.enabled (eq (include "should-enable-kai-scheduler" .) "true") (eq (include "job-scheduler-events-supported" .) "true") -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if the Kueue check should be configured. It is scheduled by the Cluster Agent as an
 endpoints check on the node Agents, so it requires cluster checks and Agent 7.82.0 or newer.
 */}}
