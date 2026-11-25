@@ -1273,6 +1273,12 @@ datadog:
     # With datadog.gpuMonitoring.enabled, it also maps KAI fractional GPUs to the containers using them.
     enabled: false
 
+    events:
+      # datadog.kaiScheduler.events.enabled -- Send the KAI PodGroup events from the Cluster Agent leader instead of the node Agent kai_scheduler check (Requires Cluster Agent 7.87.0+, datadog.kaiScheduler.enabled and datadog.leaderElection)
+      # The chart does not configure the kai_scheduler check, so set `collect_podgroup_events: false` on your own
+      # kai_scheduler instances, or each event is sent twice. Ignored, with a notice, if a requirement is not met.
+      enabled: false
+
   kueue:
     # datadog.kueue.enabled -- Enable Kueue metadata collection in the Cluster Agent and the Kueue check (Requires Agent and Cluster Agent 7.82.0+. Kueue with more than one replica requires Agent 7.86.0+)
     # The Kueue check runs as an endpoints check against each Kueue controller pod, so it requires
@@ -1281,6 +1287,12 @@ datadog:
 
     # datadog.kueue.collectWorkloadEvents -- Collect Kueue Workload lifecycle events. Grants the node Agent read access to Kueue Workloads
     collectWorkloadEvents: true
+
+    events:
+      # datadog.kueue.events.enabled -- Send the Kueue Workload events from the Cluster Agent leader instead of the Kueue check (Requires Cluster Agent 7.87.0+, datadog.kueue.enabled and datadog.leaderElection)
+      # It sets `collect_workload_events: false` on the Kueue check so events are not sent twice.
+      # Ignored, with a notice, if a requirement is not met: the Kueue check then keeps sending the events.
+      enabled: false
 
     metricsService:
       # datadog.kueue.metricsService.name -- Name of the Service exposing the Kueue controller metrics

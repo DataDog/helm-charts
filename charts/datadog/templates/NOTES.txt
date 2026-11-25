@@ -331,6 +331,36 @@ Cluster Agent. The Kueue check is not configured because:
 
 {{- end }}
 
+{{- range $scheduler := list "kueue" "kaiScheduler" }}
+{{- $events := index $.Values.datadog $scheduler "events" }}
+{{- $enabledName := ternary "should-enable-kueue-events" "should-enable-kai-scheduler-events" (eq $scheduler "kueue") }}
+{{- if and $events.enabled (ne (include $enabledName $) "true") }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+`datadog.{{ $scheduler }}.events.enabled` is set, but the Cluster Agent does not send the events because:
+{{- if not (index $.Values.datadog $scheduler "enabled") }}
+* `datadog.{{ $scheduler }}.enabled` is false.
+{{- else if ne (include "should-deploy-cluster-agent" $) "true" }}
+* The Cluster Agent is not deployed by this chart (`clusterAgent.enabled` is false or `existingClusterAgent.join` is set).
+{{- else if and (eq $scheduler "kaiScheduler") (ne (include "should-enable-kai-scheduler" $) "true") }}
+* The Cluster Agent version ({{ include "get-cluster-agent-version" $ }}) is older than 7.86.0.
+{{- else if and (eq $scheduler "kueue") (ne (include "should-enable-kueue" $) "true") }}
+* The Cluster Agent version ({{ include "get-cluster-agent-version" $ }}) is older than 7.82.0.
+{{- end }}
+{{- if not $.Values.datadog.leaderElection }}
+* `datadog.leaderElection` is false.
+{{- end }}
+{{- if not (or $.Values.clusterAgent.image.doNotCheckTag (semverCompare ">=7.87.0-0" (include "get-cluster-agent-version" $))) }}
+* The Cluster Agent version ({{ include "get-cluster-agent-version" $ }}) is older than 7.87.0. If you pin `clusterAgent.image.digest`, set `clusterAgent.image.doNotCheckTag: true`: the tag, not the digest, decides the version.
+{{- end }}
+The {{ ternary "Kueue check keeps" "kai_scheduler check keeps" (eq $scheduler "kueue") }} sending the events.
+
+{{- end }}
+{{- end }}
+
 {{- if or .Values.clusterAgent.createPodDisruptionBudget .Values.clusterChecksRunner.createPodDisruptionBudget }}
 
 #################################################################

@@ -614,8 +614,16 @@ spec:
           - name: DD_CLUSTER_AGENT_KAI_SCHEDULER_ENABLED
             value: "true"
           {{- end }}
+          {{- if eq (include "should-enable-kai-scheduler-events" .) "true" }}
+          - name: DD_CLUSTER_AGENT_KAI_SCHEDULER_EVENTS_ENABLED
+            value: "true"
+          {{- end }}
           {{- if eq (include "should-enable-kueue" .) "true" }}
           - name: DD_CLUSTER_AGENT_KUEUE_ENABLED
+            value: "true"
+          {{- end }}
+          {{- if eq (include "should-enable-kueue-events" .) "true" }}
+          - name: DD_CLUSTER_AGENT_KUEUE_EVENTS_ENABLED
             value: "true"
           {{- end }}
           {{- if eq (include "should-shard-ksm-config" .) "true" }}
