@@ -35,9 +35,9 @@ spec:
         ad.datadoghq.com/{{ .Chart.Name }}.init_configs: '[{}]'
         ad.datadoghq.com/{{ .Chart.Name }}.instances: |
           [{
-            "prometheus_url": "http://%%host%%:{{ .Values.metricsPort }}/metrics",
+            "openmetrics_endpoint": "http://%%host%%:{{ .Values.metricsPort }}/metrics",
             "namespace": "datadog.operator",
-            "metrics": ["*"]
+            "metrics": [".*"]
           }]
         {{- end }}
         {{- if .Values.podAnnotations }}

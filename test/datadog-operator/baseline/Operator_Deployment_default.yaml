@@ -7,7 +7,7 @@ metadata:
   namespace: datadog-agent
   labels:
     app.kubernetes.io/name: datadog-operator
-    helm.sh/chart: datadog-operator-2.34.0-dev.1
+    helm.sh/chart: datadog-operator-2.34.0-dev.2
     app.kubernetes.io/instance: datadog-operator
     app.kubernetes.io/version: "1.33.0-rc.1"
     app.kubernetes.io/managed-by: Helm
@@ -27,9 +27,9 @@ spec:
         ad.datadoghq.com/datadog-operator.init_configs: '[{}]'
         ad.datadoghq.com/datadog-operator.instances: |
           [{
-            "prometheus_url": "http://%%host%%:8383/metrics",
+            "openmetrics_endpoint": "http://%%host%%:8383/metrics",
             "namespace": "datadog.operator",
-            "metrics": ["*"]
+            "metrics": [".*"]
           }]
     spec:
       serviceAccountName: datadog-operator 

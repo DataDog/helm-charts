@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.34.0-dev.2
+
+* Use the OpenMetrics V2 check configuration for operator metrics collection: the `openmetrics_endpoint` instance option replaces the legacy `prometheus_url`, so histogram `.count` and `.sum` metrics are submitted as counts instead of gauges. Note that the V2 check changes the names of the collected metrics; dashboards and monitors querying the operator metrics may need to be updated.
+
 ## 2.34.0-dev.1
 
 * Update Datadog Operator chart for 1.33.0-rc.1.
