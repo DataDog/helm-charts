@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.276.0](https://img.shields.io/badge/Version-3.276.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.277.0](https://img.shields.io/badge/Version-3.277.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -513,7 +513,10 @@ helm install <RELEASE_NAME> \
 | agents.containers.otelAgent.env | list | `[]` | Additional environment variables for the otel-agent container |
 | agents.containers.otelAgent.envDict | object | `{}` | Set environment variables specific to otel-agent defined in a dict |
 | agents.containers.otelAgent.envFrom | list | `[]` | Set environment variables specific to otel-agent from configMaps and/or secrets |
+| agents.containers.otelAgent.healthPort | int | `13133` | Port number to use for the otel-agent health check endpoint (OTel health_check extension) |
+| agents.containers.otelAgent.livenessProbe | object | `{"enabled":false,"failureThreshold":6,"initialDelaySeconds":15,"periodSeconds":15,"successThreshold":1,"timeoutSeconds":5}` | otel-agent liveness probe settings. Set enabled to true to activate. The OTel config must define the health_check extension listening on 0.0.0.0:<healthPort> (default 13133) and enable it in service.extensions. The extension auto-added by the converter binds to localhost and is not reachable by the kubelet. |
 | agents.containers.otelAgent.ports | list | `[]` | Allows to specify extra ports (hostPorts for instance) for this container |
+| agents.containers.otelAgent.readinessProbe | object | `{"enabled":false,"failureThreshold":6,"initialDelaySeconds":15,"periodSeconds":15,"successThreshold":1,"timeoutSeconds":5}` | otel-agent readiness probe settings. Set enabled to true to activate. The OTel config must define the health_check extension listening on 0.0.0.0:<healthPort> (default 13133) and enable it in service.extensions. The extension auto-added by the converter binds to localhost and is not reachable by the kubelet. |
 | agents.containers.otelAgent.resources | object | `{}` | Resource requests and limits for the otel-agent container |
 | agents.containers.otelAgent.securityContext | object | `{"readOnlyRootFilesystem":true}` | Allows you to overwrite the default container SecurityContext for the otel-agent container. |
 | agents.containers.otelAgent.volumeMounts | list | `[]` | Specify additional volumes to mount in the otel-agent container |
