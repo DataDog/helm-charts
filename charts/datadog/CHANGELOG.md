@@ -2,7 +2,7 @@
 
 ## 3.278.0
 
-* Add `datadog.kueue.events.enabled` and `datadog.kaiScheduler.events.enabled` to send the Kueue Workload events and the KAI PodGroup events from the Cluster Agent leader, with the `job_scheduler_events` check (requires Cluster Agent 7.87.0+, `datadog.leaderElection`, and `datadog.kueue.enabled` or `datadog.kaiScheduler.enabled`). They set `DD_CLUSTER_AGENT_KUEUE_EVENTS_ENABLED` and `DD_CLUSTER_AGENT_KAI_SCHEDULER_EVENTS_ENABLED` on the Cluster Agent. With `datadog.kueue.events.enabled`, the Kueue check is configured with `collect_workload_events: false` so events are not sent twice. The chart does not configure the `kai_scheduler` check: with `datadog.kaiScheduler.events.enabled`, set `collect_podgroup_events: false` on your own `kai_scheduler` instances. Both options are `false` by default, and ignored with a notice if a requirement is not met.
+* Add `datadog.kueue.events.enabled` and `datadog.kaiScheduler.events.enabled` to send the Kueue Workload and KAI PodGroup events from the Cluster Agent leader (`job_scheduler_events` check, requires Cluster Agent 7.87.0+). The Kueue check is then configured with `collect_workload_events: false`. The chart does not configure the `kai_scheduler` check: set `collect_podgroup_events: false` on your own instances.
 
 ## 3.277.0
 
