@@ -13,4 +13,6 @@ datadog:
       enabled: true
 clusterAgent:
   image:
-    tag: 7.87.0
+    # The first Cluster Agent with the job_scheduler_events check (7.87.0) is
+    # not published yet, so skip the version gate and install the default image.
+    doNotCheckTag: true
