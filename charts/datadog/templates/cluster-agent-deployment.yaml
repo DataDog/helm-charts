@@ -361,6 +361,10 @@ spec:
           {{- include "validate-private-action-runner-config" . }}
           - name: DD_PRIVATE_ACTION_RUNNER_ENABLED
             value: "true"
+          {{- if ne .Values.clusterAgent.privateActionRunner.kubernetesRemediationsEnabled nil }}
+          - name: DD_PRIVATE_ACTION_RUNNER_KUBERNETES_REMEDIATIONS_ENABLED
+            value: {{ .Values.clusterAgent.privateActionRunner.kubernetesRemediationsEnabled | quote }}
+          {{- end }}
           {{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}
           - name: DD_PRIVATE_ACTION_RUNNER_SELF_ENROLL
             value: {{ .Values.clusterAgent.privateActionRunner.selfEnroll | quote }}
@@ -432,7 +436,7 @@ spec:
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
-          {{- if .Values.datadog.kubernetesActions.enabled }}
+          {{- if eq (include "kubernetesActions-enabled" .) "true" }}
           {{- include "validate-kubernetes-actions-config" . }}
           {{- if eq (include "kubernetesActions-supported" .) "true" }}
           - name: DD_KUBEACTIONS_ENABLED

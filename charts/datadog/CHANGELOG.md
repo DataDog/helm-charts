@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.278.0
+
+* Add `clusterAgent.privateActionRunner.kubernetesRemediationsEnabled` to enable the built-in Kubernetes remediation actions and their RBAC. Requires an enabled Cluster Agent Private Action Runner and an Agent supporting `private_action_runner.kubernetes_remediations_enabled`. Kubernetes Actions defaults on for this configuration; explicit feature and communication channel settings take precedence. The existing `k8sRemediationEnabled` setting continues to grant RBAC only. Complete remediation permissions for deployment rollback, StatefulSets, pod deletion, autoscalers, Jobs, and CronJobs.
+
 ## 3.277.0
 
 * Add opt-in liveness and readiness probes to the DaemonSet `otel-agent` container (`enabled: false` by default). Set `agents.containers.otelAgent.livenessProbe.enabled: true` and/or `agents.containers.otelAgent.readinessProbe.enabled: true` to activate. When enabled, probes perform an HTTP GET on `healthPort` (default 13133, configurable via `agents.containers.otelAgent.healthPort`). The OTel config must define the `health_check` extension on `0.0.0.0:<healthPort>` and enable it in `service.extensions`; the extension auto-added by the DDOT converter binds to `localhost` and is not reachable by the kubelet.

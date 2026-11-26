@@ -1,4 +1,4 @@
-{{- if and .Values.datadog.kubernetesActions.enabled (eq (include "cluster-agent-enabled" .) "true") (eq (include "kubernetesActions-supported" .) "true") }}
+{{- if and (eq (include "kubernetesActions-enabled" .) "true") (eq (include "cluster-agent-enabled" .) "true") (eq (include "kubernetesActions-supported" .) "true") }}
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole
 metadata:

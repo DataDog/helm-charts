@@ -1225,10 +1225,13 @@ datadog:
     useClusterCheckRunners: false
 
   kubernetesActions:
-    # datadog.kubernetesActions.enabled -- Set this to true to enable the Kubernetes Actions feature on the Cluster Agent.
+    # datadog.kubernetesActions.enabled -- (bool) Set this to true to enable the Kubernetes Actions feature on the Cluster Agent.
     # This grants the Cluster Agent RBAC to delete pods and restart deployments so that the Datadog
     # Kubernetes Actions product can drive remediation. Requires Cluster Agent version 7.84.0 or greater.
-    enabled: false
+    # When unset, defaults to true if the Cluster Agent Private Action Runner and its Kubernetes remediations are enabled; otherwise false.
+    # Set false explicitly to disable Kubernetes Actions even when remediations are enabled.
+    # @default -- false (true when Cluster Agent Private Action Runner Kubernetes remediations are enabled)
+    enabled:
 
     ## Channels the Cluster Agent uses to receive Kubernetes actions from Datadog. At least one must be true;
     ## both can be enabled at the same time.
@@ -2091,10 +2094,16 @@ clusterAgent:
     # clusterAgent.privateActionRunner.apiKeyOnlyEnrollment -- Enroll using only the API key, without requiring an app key
     apiKeyOnlyEnrollment: false
 
+    # clusterAgent.privateActionRunner.kubernetesRemediationsEnabled -- (bool) Enable the built-in Kubernetes remediation actions and their cluster-wide RBAC on the Cluster Agent Private Action Runner.
+    # Requires the Cluster Agent Private Action Runner to be enabled and an Agent supporting private_action_runner.kubernetes_remediations_enabled.
+    # Also enables Kubernetes Actions unless datadog.kubernetesActions.enabled is explicitly false. Explicit communication channel settings are respected.
+    # When unset, the Agent setting is omitted. Set false explicitly to disable the remediation bundle.
+    # @default -- false
+    kubernetesRemediationsEnabled:
+
     # clusterAgent.privateActionRunner.k8sRemediationEnabled -- Enable k8s remediation RBAC for the Private Action Runner
-    ## When enabled, a ClusterRole and ClusterRoleBinding are created granting the Cluster Agent
-    ## permissions to read/patch workloads (Deployments, DaemonSets, StatefulSets, ReplicaSets, Pods)
-    ## and manage ConfigMaps and Events cluster-wide.
+    # When enabled, a ClusterRole and ClusterRoleBinding are created granting the Cluster Agent
+    # permissions for Kubernetes remediations cluster-wide. This grants RBAC only; use kubernetesRemediationsEnabled to also enable the built-in actions.
     k8sRemediationEnabled: false
 
   # clusterAgent.livenessProbe -- Override default Cluster Agent liveness probe settings
