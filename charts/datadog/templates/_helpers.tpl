@@ -827,14 +827,20 @@ Return a remote otel-agent based on `.Values` (passed as .)
 {{- end -}}
 
 {{/*
-Return the ddot-ebpf image path (only available in Docker Hub)
+Return the host profiler (ddot-ebpf) image path. Like the standalone ddot-collector image, only the
+tag is taken from `agents.image`: the image is resolved as `<registry>/ddot-ebpf:<agents.image.tag>`.
+The `-jmx` and `-full` suffixes are dropped since ddot-ebpf has no such variants.
 */}}
 {{- define "ddot-ebpf-image" -}}
-{{- if .Values.datadog.hostProfiler.image -}}
-{{ .Values.datadog.hostProfiler.image }}
-{{- else -}}
-datadog/ddot-ebpf-dev:nightly-latest
+{{- if eq (include "use-fips-images" .Values) "true" -}}
+{{- fail "The host profiler (ddot-ebpf) image has no FIPS variant. Set datadog.hostProfiler.enabled to false or useFIPSAgent to false." -}}
 {{- end -}}
+{{- $tag := .Values.agents.image.tag | toString | trimSuffix "-jmx" | trimSuffix "-full" -}}
+{{/* Floating tags (e.g. `latest`, `7`) resolve to the chart fallback version in `get-agent-version`, so skip the version guard for them. */}}
+{{- if and (not .Values.agents.image.doNotCheckTag) (contains "." $tag) (semverCompare "<7.86.0-0" (include "get-agent-version" .)) -}}
+{{- fail "The host profiler (ddot-ebpf) image is only available from 7.86.0. Upgrade agents.image.tag to 7.86.0+ or set agents.image.doNotCheckTag to true." -}}
+{{- end -}}
+{{ include "image-path" (dict "root" .Values "image" (dict "name" "ddot-ebpf" "tag" $tag)) }}
 {{- end -}}
 
 {{/*

@@ -1,6 +1,6 @@
 # Datadog
 
-![Version: 3.277.0](https://img.shields.io/badge/Version-3.277.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
+![Version: 3.278.0](https://img.shields.io/badge/Version-3.278.0-informational?style=flat-square) ![AppVersion: 7](https://img.shields.io/badge/AppVersion-7-informational?style=flat-square)
 
 > [!WARNING]
 > The Datadog Operator is now enabled by default since version [3.157.0](https://github.com/DataDog/helm-charts/blob/main/charts/datadog/CHANGELOG.md#31570) to collect chart metadata for display in [Fleet Automation](https://docs.datadoghq.com/agent/fleet_automation/). We are aware of issues affecting some environments and are actively working on fixes. We apologize for the inconvenience and appreciate your patience while we address these issues.
@@ -866,8 +866,7 @@ helm install <RELEASE_NAME> \
 | datadog.helmCheck.enabled | bool | `false` | Set this to true to enable the Helm check (Requires Agent 7.35.0+ and Cluster Agent 1.19.0+) This requires clusterAgent.enabled to be set to true |
 | datadog.helmCheck.valuesAsTags | object | `{}` | Collects Helm values from a release and uses them as tags (Requires Agent and Cluster Agent 7.40.0+). This requires datadog.HelmCheck.enabled to be set to true |
 | datadog.hostProfiler.apparmor | string | `"unconfined"` | Specify an AppArmor profile for the host-profiler container (e.g. "localhost/datadog-host-profiler"). # Only used when agents.podSecurity.apparmor.enabled is true. |
-| datadog.hostProfiler.enabled | bool | `false` | Enable the Host Profiler. This feature is experimental and subject to change. |
-| datadog.hostProfiler.image | string | `""` | Image the Host Profiler. This parameter is experimental and will be removed once official image is available. |
+| datadog.hostProfiler.enabled | bool | `false` | Enable the Host Profiler. Requires Agent 7.86.0+ and is not supported with `useFIPSAgent`. |
 | datadog.hostProfiler.imagePullPolicy | string | `""` | Pull policy for the Host Profiler image. Defaults to agents.image.pullPolicy when unset. |
 | datadog.hostProfiler.loggingSeccomp | bool | `false` | Use the seccomp profile that also permits logging syscalls |
 | datadog.hostProfiler.runAsRoot | bool | `true` | Run the Host Profiler container as root. When false, it runs as the dd-agent user (UID/GID 100). |
