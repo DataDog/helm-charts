@@ -398,6 +398,16 @@ The option `datadog.apm.useSocketVolume` is deprecated, please use `datadog.apm.
 
 {{- end }}
 
+{{- if .Values.datadog.hostProfiler.image }}
+
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+The option `datadog.hostProfiler.image` has been removed and has no effect. The host-profiler container now uses `<registry>/ddot-ebpf:<agents.image.tag>`. Use `registry` to pull from a mirror.
+
+{{- end }}
+
 {{- if .Values.datadog.autoconf }}
 
 #################################################################

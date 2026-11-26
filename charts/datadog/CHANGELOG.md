@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.278.0
+
+* [Host Profiler] Mark the host profiler as GA. The `host-profiler` container and its seccomp setup init container now use the official `<registry>/ddot-ebpf` image, with the tag taken from `agents.image.tag` (like the standalone `ddot-collector` image), instead of `datadog/ddot-ebpf-dev:nightly-latest`. Requires Agent 7.86.0+ unless `agents.image.doNotCheckTag` is set, and fails to render with `useFIPSAgent` since ddot-ebpf has no FIPS variant. The experimental `datadog.hostProfiler.image` option is removed and has no effect; use `registry` to pull from a mirror.
+
 ## 3.277.0
 
 * Add opt-in liveness and readiness probes to the DaemonSet `otel-agent` container (`enabled: false` by default). Set `agents.containers.otelAgent.livenessProbe.enabled: true` and/or `agents.containers.otelAgent.readinessProbe.enabled: true` to activate. When enabled, probes perform an HTTP GET on `healthPort` (default 13133, configurable via `agents.containers.otelAgent.healthPort`). The OTel config must define the `health_check` extension on `0.0.0.0:<healthPort>` and enable it in `service.extensions`; the extension auto-added by the DDOT converter binds to `localhost` and is not reachable by the kubelet.

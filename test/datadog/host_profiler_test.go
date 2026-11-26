@@ -15,7 +15,7 @@ import (
 var hostProfilerBaseOverrides = map[string]string{
 	"datadog.apiKeyExistingSecret": "datadog-secret",
 	"datadog.hostProfiler.enabled": "true",
-	"datadog.hostProfiler.image":   "myreg/host-profiler:v1.2.3",
+	"agents.image.tag":             "7.86.0",
 }
 
 func renderHostProfilerDaemonSet(t *testing.T, overrides map[string]string) appsv1.DaemonSet {
@@ -85,7 +85,7 @@ func TestHostProfilerSeccomp(t *testing.T) {
 	// Init container copies to the matching hashed filename.
 	initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
 	require.True(t, ok, "host-profiler-seccomp-setup init container should be present when seccomp is enabled")
-	assert.Equal(t, "myreg/host-profiler:v1.2.3", initContainer.Image)
+	assert.Equal(t, hpContainer.Image, initContainer.Image)
 	assert.True(t, containsString(initContainer.Command, "/host/var/lib/kubelet/seccomp/"+profileRef),
 		"init container cp destination should match the seccomp profile name; command: %v", initContainer.Command)
 	require.NotNil(t, initContainer.SecurityContext)
@@ -125,7 +125,7 @@ func TestHostProfilerSeccompDisabled(t *testing.T) {
 func TestHostProfilerSeccompDifferentImages(t *testing.T) {
 	overridesV1 := copyMap(hostProfilerBaseOverrides)
 	overridesV2 := copyMap(hostProfilerBaseOverrides)
-	overridesV2["datadog.hostProfiler.image"] = "myreg/host-profiler:v1.2.4"
+	overridesV2["agents.image.tag"] = "7.86.1"
 
 	dsV1 := renderHostProfilerDaemonSet(t, overridesV1)
 	dsV2 := renderHostProfilerDaemonSet(t, overridesV2)
@@ -258,4 +258,62 @@ func copyMap(m map[string]string) map[string]string {
 		out[k] = v
 	}
 	return out
+}
+
+func TestHostProfilerImage(t *testing.T) {
+	tests := []struct {
+		name      string
+		overrides map[string]string
+		want      string
+	}{
+		{"default registry", map[string]string{}, "registry.datadoghq.com/ddot-ebpf:7.86.0"},
+		{"custom registry", map[string]string{"registry": "myreg.example.com/datadog"}, "myreg.example.com/datadog/ddot-ebpf:7.86.0"},
+		{"jmx suffix stripped", map[string]string{"agents.image.tag": "7.86.0-jmx"}, "registry.datadoghq.com/ddot-ebpf:7.86.0"},
+		{"prerelease allowed", map[string]string{"agents.image.tag": "7.87.0-rc.1"}, "registry.datadoghq.com/ddot-ebpf:7.87.0-rc.1"},
+		{"floating tag", map[string]string{"agents.image.tag": "latest"}, "registry.datadoghq.com/ddot-ebpf:latest"},
+		{"doNotCheckTag bypasses version guard", map[string]string{"agents.image.tag": "7.84.0", "agents.image.doNotCheckTag": "true"}, "registry.datadoghq.com/ddot-ebpf:7.84.0"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			overrides := copyMap(hostProfilerBaseOverrides)
+			for k, v := range tt.overrides {
+				overrides[k] = v
+			}
+			ds := renderHostProfilerDaemonSet(t, overrides)
+			c, ok := getContainer(t, ds.Spec.Template.Spec.Containers, "host-profiler")
+			require.True(t, ok)
+			assert.Equal(t, tt.want, c.Image)
+			initContainer, ok := getContainer(t, ds.Spec.Template.Spec.InitContainers, "host-profiler-seccomp-setup")
+			require.True(t, ok)
+			assert.Equal(t, tt.want, initContainer.Image)
+		})
+	}
+}
+
+func TestHostProfilerImageErrors(t *testing.T) {
+	tests := []struct {
+		name      string
+		overrides map[string]string
+		wantErr   string
+	}{
+		{"agent below 7.86.0", map[string]string{"agents.image.tag": "7.85.5"}, "only available from 7.86.0"},
+		{"fips", map[string]string{"useFIPSAgent": "true"}, "has no FIPS variant"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			overrides := copyMap(hostProfilerBaseOverrides)
+			for k, v := range tt.overrides {
+				overrides[k] = v
+			}
+			_, err := common.RenderChart(t, common.HelmCommand{
+				ReleaseName: "datadog",
+				ChartPath:   "../../charts/datadog",
+				ShowOnly:    []string{"templates/daemonset.yaml"},
+				Values:      []string{"../../charts/datadog/values.yaml"},
+				Overrides:   overrides,
+			})
+			require.Error(t, err)
+			assert.Contains(t, err.Error(), tt.wantErr)
+		})
+	}
 }
