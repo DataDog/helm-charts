@@ -1701,7 +1701,7 @@ Resolve Kubernetes Actions without treating an explicit false as an unset value.
 Use the explicit PAR enablement here to avoid a cycle with Kubernetes Actions enabling PAR.
 */}}
 {{- define "kubernetesActions-enabled" -}}
-{{- if or .Values.datadog.kubernetesActions.enabled (and (eq .Values.datadog.kubernetesActions.enabled nil) .Values.clusterAgent.privateActionRunner.enabled .Values.clusterAgent.privateActionRunner.kubernetesRemediationsEnabled) -}}
+{{- if or .Values.datadog.kubernetesActions.enabled (and (eq .Values.datadog.kubernetesActions.enabled nil) .Values.clusterAgent.privateActionRunner.enabled .Values.clusterAgent.privateActionRunner.k8sRemediationEnabled) -}}
 true
 {{- else -}}
 false

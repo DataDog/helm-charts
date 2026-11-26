@@ -26,19 +26,17 @@ func Test_PrivateActionRunner_KubernetesRemediations(t *testing.T) {
 		wantChannels map[string]string
 	}{
 		{name: "disabled by default"},
-		{name: "PAR alone", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true"}, wantPAR: true},
-		{name: "remediation requires PAR", overrides: map[string]string{"clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "true"}},
-		{name: "node PAR alone is insufficient", overrides: map[string]string{"datadog.privateActionRunner.enabled": "true", "datadog.privateActionRunner.selfEnroll": "true", "clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "true"}},
-		{name: "enabled", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "true"}, wantPAR: true, wantEnv: "true", wantActions: true, wantRBAC: true},
-		{name: "explicit false", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "false"}, wantPAR: true, wantEnv: "false"},
-		{name: "explicit Kubernetes Actions opt out", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "true", "datadog.kubernetesActions.enabled": "false"}, wantPAR: true, wantEnv: "true", wantRBAC: true},
-		{name: "Kubernetes Actions enables PAR", overrides: map[string]string{"datadog.kubernetesActions.enabled": "true", "clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "true"}, wantPAR: true, wantEnv: "true", wantActions: true, wantRBAC: true},
-		{name: "RC only respects PAR channel opt out", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "true", "datadog.kubernetesActions.communication.privateActionRunner.enabled": "false"}, wantPAR: true, wantEnv: "true", wantActions: true, wantRBAC: true, wantChannels: map[string]string{DDKubeActionsPAREnabled: "false"}},
-		{name: "PAR only respects RC channel opt out", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "true", "datadog.kubernetesActions.communication.remoteConfiguration.enabled": "false"}, wantPAR: true, wantEnv: "true", wantActions: true, wantRBAC: true, wantChannels: map[string]string{DDKubeActionsRemoteConfigEnabled: "false"}},
-		{name: "legacy option remains RBAC only", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "true"}, wantPAR: true, wantRBAC: true},
-		{name: "legacy RBAC independent of bundle opt out", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "true", "clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "false"}, wantPAR: true, wantEnv: "false", wantRBAC: true},
-		{name: "Helm Actions uses resolved enablement", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "true", "datadog.kubernetesActions.helmActions.enabled": "true"}, wantPAR: true, wantEnv: "true", wantActions: true, wantRBAC: true, wantHelm: true},
-		{name: "Kubernetes Actions version gate retained", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "true", "clusterAgent.image.tag": "7.83.0"}, wantPAR: true, wantEnv: "true", wantRBAC: true},
+		{name: "PAR alone", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true"}, wantPAR: true, wantEnv: "false"},
+		{name: "remediation requires PAR", overrides: map[string]string{"clusterAgent.privateActionRunner.k8sRemediationEnabled": "true"}},
+		{name: "node PAR alone is insufficient", overrides: map[string]string{"datadog.privateActionRunner.enabled": "true", "datadog.privateActionRunner.selfEnroll": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "true"}},
+		{name: "enabled", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "true"}, wantPAR: true, wantEnv: "true", wantActions: true, wantRBAC: true},
+		{name: "explicit false", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "false"}, wantPAR: true, wantEnv: "false"},
+		{name: "explicit Kubernetes Actions opt out", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "true", "datadog.kubernetesActions.enabled": "false"}, wantPAR: true, wantEnv: "true", wantRBAC: true},
+		{name: "Kubernetes Actions enables PAR", overrides: map[string]string{"datadog.kubernetesActions.enabled": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "true"}, wantPAR: true, wantEnv: "true", wantActions: true, wantRBAC: true},
+		{name: "RC only respects PAR channel opt out", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "true", "datadog.kubernetesActions.communication.privateActionRunner.enabled": "false"}, wantPAR: true, wantEnv: "true", wantActions: true, wantRBAC: true, wantChannels: map[string]string{DDKubeActionsPAREnabled: "false"}},
+		{name: "PAR only respects RC channel opt out", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "true", "datadog.kubernetesActions.communication.remoteConfiguration.enabled": "false"}, wantPAR: true, wantEnv: "true", wantActions: true, wantRBAC: true, wantChannels: map[string]string{DDKubeActionsRemoteConfigEnabled: "false"}},
+		{name: "Helm Actions uses resolved enablement", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "true", "datadog.kubernetesActions.helmActions.enabled": "true"}, wantPAR: true, wantEnv: "true", wantActions: true, wantRBAC: true, wantHelm: true},
+		{name: "Kubernetes Actions version gate retained", overrides: map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "true", "clusterAgent.image.tag": "7.83.0"}, wantPAR: true, wantEnv: "true", wantRBAC: true},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			overrides := map[string]string{"clusterAgent.image.tag": channelTogglesDCATag}
@@ -134,7 +132,7 @@ func Test_PrivateActionRunner_KubernetesRemediations_Validation(t *testing.T) {
 		{name: "self enrollment needs leader election", overrides: map[string]string{"datadog.leaderElection": "false"}, wantError: "selfEnroll requires leader election"},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
-			overrides := map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.kubernetesRemediationsEnabled": "true", "clusterAgent.image.tag": channelTogglesDCATag}
+			overrides := map[string]string{"clusterAgent.privateActionRunner.enabled": "true", "clusterAgent.privateActionRunner.k8sRemediationEnabled": "true", "clusterAgent.image.tag": channelTogglesDCATag}
 			for key, value := range tt.overrides {
 				overrides[key] = value
 			}

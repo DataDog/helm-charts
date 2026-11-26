@@ -463,7 +463,7 @@ subjects:
     name: {{ template "datadog.fullname" . }}-cluster-agent
     namespace: {{ .Release.Namespace }}
 {{- end }}
-{{- if and (eq (include "clusterAgent-privateActionRunner-enabled" .) "true") (or .Values.clusterAgent.privateActionRunner.k8sRemediationEnabled .Values.clusterAgent.privateActionRunner.kubernetesRemediationsEnabled) }}
+{{- if and (eq (include "clusterAgent-privateActionRunner-enabled" .) "true") .Values.clusterAgent.privateActionRunner.k8sRemediationEnabled }}
 ---
 apiVersion: {{ template "rbac.apiVersion" . }}
 kind: ClusterRole

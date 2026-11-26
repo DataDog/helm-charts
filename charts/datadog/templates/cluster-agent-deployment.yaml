@@ -361,10 +361,8 @@ spec:
           {{- include "validate-private-action-runner-config" . }}
           - name: DD_PRIVATE_ACTION_RUNNER_ENABLED
             value: "true"
-          {{- if ne .Values.clusterAgent.privateActionRunner.kubernetesRemediationsEnabled nil }}
           - name: DD_PRIVATE_ACTION_RUNNER_KUBERNETES_REMEDIATIONS_ENABLED
-            value: {{ .Values.clusterAgent.privateActionRunner.kubernetesRemediationsEnabled | quote }}
-          {{- end }}
+            value: {{ .Values.clusterAgent.privateActionRunner.k8sRemediationEnabled | quote }}
           {{- if .Values.clusterAgent.privateActionRunner.selfEnroll }}
           - name: DD_PRIVATE_ACTION_RUNNER_SELF_ENROLL
             value: {{ .Values.clusterAgent.privateActionRunner.selfEnroll | quote }}
