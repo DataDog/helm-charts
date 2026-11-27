@@ -22,19 +22,19 @@ otelAgentGateway:
       k8sattributes:
     exporters:
       debug:
-      otlphttp:
+      otlp_http:
         endpoint: otlp.datadoghq.com
     service:
       pipelines:
         traces:
           receivers: [otlp]
           processors: [k8sattributes]
-          exporters: [otlphttp, debug]
+          exporters: [otlp_http, debug]
         metrics:
           receivers: [otlp]
           processors: [k8sattributes]
-          exporters: [otlphttp, debug]
+          exporters: [otlp_http, debug]
         logs:
           receivers: [otlp]
           processors: [k8sattributes]
-          exporters: [otlphttp, debug]
+          exporters: [otlp_http, debug]

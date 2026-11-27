@@ -12,7 +12,7 @@ datadog:
       value: ci-test-host
   otelCollector:
     enabled: true
-    # RBAC is required for loadbalancing exporter k8s resolver to list endpoints
+    # RBAC is required for load_balancing exporter k8s resolver to list endpoints
     rbac:
       create: true
       rules:
@@ -26,7 +26,7 @@ datadog:
             grpc:
               endpoint: "localhost:4317"
       exporters:
-        loadbalancing:
+        load_balancing:
           routing_key: "traceID"
           protocol:
             otlp:
@@ -41,7 +41,7 @@ datadog:
         pipelines:
           traces:
             receivers: [otlp]
-            exporters: [loadbalancing]
+            exporters: [load_balancing]
 otelAgentGateway:
   enabled: true
   ports:

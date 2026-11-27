@@ -125,7 +125,7 @@ data:
           http:
              endpoint: 0.0.0.0:4318
     exporters:
-      otlphttp:
+      otlp_http:
         endpoint: http://datadog-otel-agent-gateway:4318
         tls:
           insecure: true
@@ -146,15 +146,15 @@ data:
         traces:
           receivers: [otlp]
           processors: [infraattributes]
-          exporters: [otlphttp, datadog/connector]
+          exporters: [otlp_http, datadog/connector]
         metrics:
           receivers: [otlp, datadog/connector]
           processors: [infraattributes]
-          exporters: [otlphttp]
+          exporters: [otlp_http]
         logs:
           receivers: [otlp]
           processors: [infraattributes]
-          exporters: [otlphttp]
+          exporters: [otlp_http]
 kind: ConfigMap
 metadata:
   annotations: {}

@@ -17,19 +17,19 @@ otelAgentGateway:
             endpoint: "0.0.0.0:4317"
     exporters:
       debug:
-      otlphttp:
+      otlp_http:
         endpoint: otlp.datadoghq.com
     service:
       pipelines:
         traces:
           receivers: [otlp]
-          exporters: [otlphttp, debug]
+          exporters: [otlp_http, debug]
         metrics:
           receivers: [otlp]
-          exporters: [otlphttp, debug]
+          exporters: [otlp_http, debug]
         logs:
           receivers: [otlp]
-          exporters: [otlphttp, debug]
+          exporters: [otlp_http, debug]
   replicas: 4
   autoscaling:
     enabled: true
