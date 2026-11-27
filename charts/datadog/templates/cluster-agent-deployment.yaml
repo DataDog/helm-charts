@@ -434,7 +434,7 @@ spec:
           - name: DD_COLLECT_KUBERNETES_EVENTS
             value: {{ .Values.datadog.collectEvents | quote }}
           {{- end }}
-          {{- if eq (include "kubernetesActions-enabled" .) "true" }}
+          {{- if .Values.datadog.kubernetesActions.enabled }}
           {{- include "validate-kubernetes-actions-config" . }}
           {{- if eq (include "kubernetesActions-supported" .) "true" }}
           - name: DD_KUBEACTIONS_ENABLED
