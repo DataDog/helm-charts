@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.277.1
+
+* Mount the container and pod log volumes in the DaemonSet `otel-agent` container when `datadog.otelCollector.logs.enabled` is true and the OTel Collector config uses the File Log Receiver under its new name, `file_log` (or `file_log/<name>`). Previously only the deprecated `filelog` name was detected, so the receiver couldn't read `/var/log/pods` and `/var/log/containers`. The deprecated name is still supported.
+
 ## 3.277.0
 
 * Add opt-in liveness and readiness probes to the DaemonSet `otel-agent` container (`enabled: false` by default). Set `agents.containers.otelAgent.livenessProbe.enabled: true` and/or `agents.containers.otelAgent.readinessProbe.enabled: true` to activate. When enabled, probes perform an HTTP GET on `healthPort` (default 13133, configurable via `agents.containers.otelAgent.healthPort`). The OTel config must define the `health_check` extension on `0.0.0.0:<healthPort>` and enable it in `service.extensions`; the extension auto-added by the DDOT converter binds to `localhost` and is not reachable by the kubelet.

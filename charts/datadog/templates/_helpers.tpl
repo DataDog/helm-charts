@@ -530,13 +530,13 @@ Return true if k8sattributes RBAC rules should be added to the OTel Agent Cluste
 {{- end -}}
 
 {{/*
-Return true if conatiner and pod logs volumes should be mounted in the OTel Agent container
+Return true if container and pod logs volumes should be mounted in the OTel Agent container (config uses the file_log receiver, or its deprecated name filelog)
 */}}
 {{- define "should-mount-logs-for-otel-agent" -}}
 {{- $return := false }}
 {{- $config := .Values.datadog.otelCollector.config | default "" | fromYaml }}
 {{- range $key, $val := $config.receivers }}
-  {{- if hasPrefix "filelog" $key }}
+  {{- if or (hasPrefix "file_log" $key) (hasPrefix "filelog" $key) }}
     {{- $return = true }}
   {{- end }}
 {{- end }}
@@ -544,13 +544,13 @@ Return true if conatiner and pod logs volumes should be mounted in the OTel Agen
 {{- end -}}
 
 {{/*
-Return true if container and pod logs volumes should be mounted in the OTel Agent container in Gateway
+Return true if container and pod logs volumes should be mounted in the OTel Agent container in Gateway (config uses the file_log receiver, or its deprecated name filelog)
 */}}
 {{- define "should-mount-logs-for-otel-agent-gateway" -}}
 {{- $return := false }}
 {{- $config := .Values.otelAgentGateway.config | default "" | fromYaml }}
 {{- range $key, $val := $config.receivers }}
-  {{- if hasPrefix "filelog" $key }}
+  {{- if or (hasPrefix "file_log" $key) (hasPrefix "filelog" $key) }}
     {{- $return = true }}
   {{- end }}
 {{- end }}

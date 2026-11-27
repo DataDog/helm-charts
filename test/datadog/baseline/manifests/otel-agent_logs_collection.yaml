@@ -146,13 +146,13 @@ apiVersion: v1
 data:
   otel-config.yaml: |
     receivers:
-      filelog:
+      file_log:
     exporters:
       debug:
     service:
       pipelines:
         logs:
-          receivers: [filelog]
+          receivers: [file_log]
           exporters: [debug]
 kind: ConfigMap
 metadata:

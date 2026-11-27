@@ -8,11 +8,11 @@ datadog:
       enabled: true
     config: |
       receivers:
-        filelog:
+        file_log:
       exporters:
         debug:
       service:
         pipelines:
           logs:
-            receivers: [filelog]
+            receivers: [file_log]
             exporters: [debug]
