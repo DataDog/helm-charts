@@ -24,7 +24,7 @@ otelAgentGateway:
             endpoint: "0.0.0.0:4317"
     exporters:
       debug:
-      loadbalancing:
+      load_balancing:
         routing_key: "service"
         protocol:
           otlp:
@@ -39,7 +39,7 @@ otelAgentGateway:
       pipelines:
         traces:
           receivers: [otlp]
-          exporters: [loadbalancing, debug]
+          exporters: [load_balancing, debug]
         metrics:
           receivers: [otlp]
-          exporters: [loadbalancing, debug]
+          exporters: [load_balancing, debug]
