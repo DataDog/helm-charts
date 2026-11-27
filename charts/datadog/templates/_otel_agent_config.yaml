@@ -1,6 +1,11 @@
 {{- define "otel-agent-config-configmap-content" -}}
 otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Values.datadog.otelCollector.config | indent 4 }}
-  {{- else if .Values.otelAgentGateway.enabled }} |
+  {{- else if .Values.otelAgentGateway.enabled }}
+    {{- /* The OTLP/HTTP exporter was renamed from `otlphttp` (now a deprecated alias) to `otlp_http` in OTel Collector v0.144.0, first bundled in Agent 7.76.0. */}}
+    {{- $otlpHttpExporter := "otlphttp" }}
+    {{- if or .Values.agents.image.doNotCheckTag (semverCompare ">=7.76.0-0" (include "get-agent-version" .)) }}
+      {{- $otlpHttpExporter = "otlp_http" }}
+    {{- end }} |
     receivers:
       otlp:
         protocols:
@@ -9,7 +14,7 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
           http:
              endpoint: 0.0.0.0:{{ include "get-port-number-from-name" (dict "ports" .Values.datadog.otelCollector.ports "portName" "otel-http") }}
     exporters:
-      otlphttp:
+      {{ $otlpHttpExporter }}:
         endpoint: http://{{ template "datadog.fullname" . }}-otel-agent-gateway:4318
         tls:
           insecure: true
@@ -30,15 +35,15 @@ otel-config.yaml: {{- if .Values.datadog.otelCollector.config }} {{ toYaml .Valu
         traces:
           receivers: [otlp]
           processors: [infraattributes]
-          exporters: [otlphttp, datadog/connector]
+          exporters: [{{ $otlpHttpExporter }}, datadog/connector]
         metrics:
           receivers: [otlp, datadog/connector]
           processors: [infraattributes]
-          exporters: [otlphttp]
+          exporters: [{{ $otlpHttpExporter }}]
         logs:
           receivers: [otlp]
           processors: [infraattributes]
-          exporters: [otlphttp]
+          exporters: [{{ $otlpHttpExporter }}]
   {{- else }} |
     receivers:
       prometheus:
