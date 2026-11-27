@@ -983,7 +983,7 @@ datadog:
     ## Provide OTel Collector logs configuration
     logs:
       # datadog.otelCollector.logs.enabled -- Enable logs support in the OTel Collector.
-      # If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers
+      # If true, checks OTel Collector config for file_log receiver (or its deprecated name filelog) and mounts additional volumes to collect containers
       # and pods logs.
       enabled: false
 
@@ -3727,7 +3727,7 @@ otelAgentGateway:
   ## Provide OTel Collector logs configuration
   logs:
     # otelAgentGateway.logs.enabled -- Enable logs support in the OTel Collector.
-    # If true, checks OTel Collector config for filelog receiver and mounts additional volumes to collect containers
+    # If true, checks OTel Collector config for file_log receiver (or its deprecated name filelog) and mounts additional volumes to collect containers
     # and pods logs. (applies to both `Deployment` and `StatefulSet`)
     enabled: false
 
