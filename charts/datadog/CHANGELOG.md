@@ -2,7 +2,7 @@
 
 ## 3.278.0
 
-* Extend `clusterAgent.privateActionRunner.k8sRemediationEnabled` to enable the built-in Kubernetes remediation actions and their RBAC. Requires an enabled Cluster Agent Private Action Runner and an Agent supporting `private_action_runner.kubernetes_remediations_enabled`. Kubernetes Actions remains separately controlled by `datadog.kubernetesActions.enabled`. This setting previously granted RBAC only; enabling it now also activates the remediation bundle. Complete remediation permissions for deployment rollback, StatefulSets, pod deletion, autoscalers, Jobs, and CronJobs.
+* Enable the Cluster Agent Private Action Runner's built-in Kubernetes remediation actions when `clusterAgent.privateActionRunner.k8sRemediationEnabled` is true, in addition to granting their RBAC. Extend remediation permissions for deployment rollback, StatefulSets, pod deletion, autoscalers, Jobs, and CronJobs. Requires a Cluster Agent image supporting `private_action_runner.kubernetes_remediations_enabled`.
 
 ## 3.277.0
 
