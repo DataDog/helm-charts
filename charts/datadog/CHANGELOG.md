@@ -1,5 +1,9 @@
 # Datadog changelog
 
+## 3.277.1
+
+* Create the OTel Collector ClusterRole rules for the Kubernetes Attributes Processor when it uses its new name, `k8s_attributes` (or `k8s_attributes/<name>`), in `datadog.otelCollector.config` or `otelAgentGateway.config`. Previously only the deprecated `k8sattributes` name was detected, so the processor was left without permission to read pods, namespaces and replicasets. The deprecated name is still supported.
+
 ## 3.277.0
 
 * Add opt-in liveness and readiness probes to the DaemonSet `otel-agent` container (`enabled: false` by default). Set `agents.containers.otelAgent.livenessProbe.enabled: true` and/or `agents.containers.otelAgent.readinessProbe.enabled: true` to activate. When enabled, probes perform an HTTP GET on `healthPort` (default 13133, configurable via `agents.containers.otelAgent.healthPort`). The OTel config must define the `health_check` extension on `0.0.0.0:<healthPort>` and enable it in `service.extensions`; the extension auto-added by the DDOT converter binds to `localhost` and is not reachable by the kubelet.

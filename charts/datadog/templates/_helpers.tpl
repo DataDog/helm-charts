@@ -497,13 +497,13 @@ Return env var settings for Core Agent when Data Plane feature is enabled
 {{- end -}}
 
 {{/*
-Return true if k8sattributes RBAC rules should be added to the OTel Agent ClusterRole
+Return true if k8s_attributes (or deprecated k8sattributes) processor RBAC rules should be added to the OTel Agent ClusterRole
 */}}
 {{- define "should-add-otel-agent-k8sattributes-rules" -}}
 {{- $return := false }}
 {{- $config := .Values.datadog.otelCollector.config | default "" | fromYaml }}
 {{- range $key, $val := $config.processors }}
-  {{- if hasPrefix "k8sattributes" $key }}
+  {{- if or (hasPrefix "k8s_attributes" $key) (hasPrefix "k8sattributes" $key) }}
     {{- if or (empty $val) (empty $val.passthrough) }}
       {{- $return = true }}
     {{- end }}
@@ -514,13 +514,13 @@ Return true if k8sattributes RBAC rules should be added to the OTel Agent Cluste
 
 
 {{/*
-Return true if k8sattributes RBAC rules should be added to the OTel Agent ClusterRole in Gateway
+Return true if k8s_attributes (or deprecated k8sattributes) processor RBAC rules should be added to the OTel Agent ClusterRole in Gateway
 */}}
 {{- define "should-add-otel-agent-gateway-k8sattributes-rules" -}}
 {{- $return := false }}
 {{- $config := .Values.otelAgentGateway.config | default "" | fromYaml }}
 {{- range $key, $val := $config.processors }}
-  {{- if hasPrefix "k8sattributes" $key }}
+  {{- if or (hasPrefix "k8s_attributes" $key) (hasPrefix "k8sattributes" $key) }}
     {{- if or (empty $val) (empty $val.passthrough) }}
       {{- $return = true }}
     {{- end }}

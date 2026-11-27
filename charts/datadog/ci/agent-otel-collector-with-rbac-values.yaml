@@ -11,8 +11,8 @@ datadog:
     enabled: true
     config: |
       processors:
-        k8sattributes:
-        k8sattributes/passthrough:
+        k8s_attributes:
+        k8s_attributes/passthrough:
           passthrough: true
       receivers:
         otlp:
@@ -27,13 +27,13 @@ datadog:
         pipelines:
           traces:
             receivers: [otlp]
-            processors: [k8sattributes]
+            processors: [k8s_attributes]
             exporters: [datadog]
           metrics:
             receivers: [otlp]
-            processors: [k8sattributes]
+            processors: [k8s_attributes]
             exporters: [datadog]
           logs:
             receivers: [otlp]
-            processors: [k8sattributes]
+            processors: [k8s_attributes]
             exporters: [datadog]
