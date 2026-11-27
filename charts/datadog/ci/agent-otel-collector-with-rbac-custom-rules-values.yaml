@@ -17,9 +17,9 @@ datadog:
           verbs: ["get", "watch", "list"]
     config: |
       processors:
-        k8sattributes/passthrough:
+        k8s_attributes/passthrough:
           passthrough: true
-        k8sattributes:
+        k8s_attributes:
       receivers:
         otlp:
           protocols:
@@ -33,13 +33,13 @@ datadog:
         pipelines:
           traces:
             receivers: [otlp]
-            processors: [k8sattributes]
+            processors: [k8s_attributes]
             exporters: [datadog]
           metrics:
             receivers: [otlp]
-            processors: [k8sattributes]
+            processors: [k8s_attributes]
             exporters: [datadog]
           logs:
             receivers: [otlp]
-            processors: [k8sattributes]
+            processors: [k8s_attributes]
             exporters: [datadog]

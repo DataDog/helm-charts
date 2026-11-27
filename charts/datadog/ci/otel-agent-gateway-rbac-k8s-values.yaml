@@ -19,7 +19,7 @@ otelAgentGateway:
           grpc:
             endpoint: "0.0.0.0:4317"
     processors:
-      k8sattributes:
+      k8s_attributes:
     exporters:
       debug:
       otlphttp:
@@ -28,13 +28,13 @@ otelAgentGateway:
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [k8sattributes]
+          processors: [k8s_attributes]
           exporters: [otlphttp, debug]
         metrics:
           receivers: [otlp]
-          processors: [k8sattributes]
+          processors: [k8s_attributes]
           exporters: [otlphttp, debug]
         logs:
           receivers: [otlp]
-          processors: [k8sattributes]
+          processors: [k8s_attributes]
           exporters: [otlphttp, debug]
