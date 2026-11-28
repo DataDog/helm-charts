@@ -51,6 +51,43 @@ func Test_endpoint_config_standard(t *testing.T) {
 			},
 		},
 		{
+			name: "fullname override",
+			command: endpointConfigCmd("my-release", map[string]string{
+				"fullnameOverride": "custom-agent",
+			}),
+			verify: func(t *testing.T, cm v1.ConfigMap) {
+				assert.Equal(t, "custom-agent-endpoint-config", cm.Name)
+			},
+		},
+		{
+			name: "name override",
+			command: endpointConfigCmd("my-release", map[string]string{
+				"nameOverride": "custom-agent",
+			}),
+			verify: func(t *testing.T, cm v1.ConfigMap) {
+				assert.Equal(t, "my-release-custom-agent-endpoint-config", cm.Name)
+			},
+		},
+		{
+			name: "release already contains name override",
+			command: endpointConfigCmd("custom-agent-release", map[string]string{
+				"nameOverride": "custom-agent",
+			}),
+			verify: func(t *testing.T, cm v1.ConfigMap) {
+				assert.Equal(t, "custom-agent-release-endpoint-config", cm.Name)
+			},
+		},
+		{
+			name: "fullname override takes precedence",
+			command: endpointConfigCmd("my-release", map[string]string{
+				"fullnameOverride": "custom-agent",
+				"nameOverride":     "ignored",
+			}),
+			verify: func(t *testing.T, cm v1.ConfigMap) {
+				assert.Equal(t, "custom-agent-endpoint-config", cm.Name)
+			},
+		},
+		{
 			name:    "discovery label present",
 			command: endpointConfigCmd("datadog", map[string]string{"datadog.apiKeyExistingSecret": "datadog-secret"}),
 			verify: func(t *testing.T, cm v1.ConfigMap) {
@@ -109,7 +146,7 @@ func Test_endpoint_config_aliased(t *testing.T) {
 	require.NoError(t, err)
 	version := extractChartVersion(t, string(chartYamlBytes))
 
-	// Create a temporary wrapper chart with two aliased dependencies
+	// Create a temporary wrapper chart with three aliased dependencies
 	tmpDir := t.TempDir()
 	wrapperChart := `apiVersion: v2
 name: test-wrapper
@@ -123,6 +160,10 @@ dependencies:
     version: "` + version + `"
     repository: "file://` + datadogChartPath + `"
     alias: datadog-windows
+  - name: datadog
+    version: "` + version + `"
+    repository: "file://` + datadogChartPath + `"
+    alias: camelCaseChartAlias
 `
 	err = os.WriteFile(filepath.Join(tmpDir, "Chart.yaml"), []byte(wrapperChart), 0644)
 	require.NoError(t, err)
@@ -140,7 +181,22 @@ dependencies:
 		"datadog-windows.datadog.apiKeyExistingSecret": "windows-api-secret",
 		"datadog-windows.datadog.kubelet.tlsVerify":    "false",
 		"datadog-windows.datadog.operator.enabled":     "false",
+		"camelCaseChartAlias.datadog.operator.enabled": "false",
+		"camelCaseChartAlias.nameOverride":             "custom-agent",
+		"camelCaseChartAlias.fullnameOverride":         "custom-agent",
 	}
+	t.Run("camel case alias with fullname override", func(t *testing.T) {
+		manifest, err := common.RenderChart(t, common.HelmCommand{
+			ReleaseName: releaseName,
+			ChartPath:   tmpDir,
+			ShowOnly:    []string{"charts/camelCaseChartAlias/templates/datadog-endpoint-configmap.yaml"},
+			Overrides:   baseOverrides,
+		})
+		require.NoError(t, err)
+		var cm v1.ConfigMap
+		common.Unmarshal(t, manifest, &cm)
+		assert.Equal(t, "custom-agent-endpoint-config", cm.Name)
+	})
 
 	// Render the linux alias ConfigMap
 	linuxManifest, err := common.RenderChart(t, common.HelmCommand{
@@ -193,6 +249,35 @@ dependencies:
 		assert.Equal(t, "windows-api-secret", windowsCM.Data["api-key-secret-name"])
 		assert.NotEqual(t, linuxCM.Data["api-key-secret-name"], windowsCM.Data["api-key-secret-name"])
 	})
+
+	for _, override := range []string{"fullnameOverride", "nameOverride"} {
+		t.Run(override, func(t *testing.T) {
+			overrides := make(map[string]string)
+			for key, value := range baseOverrides {
+				overrides[key] = value
+			}
+			overrides["datadog-linux."+override] = "linux-agent"
+			overrides["datadog-windows."+override] = "windows-agent"
+			for _, alias := range []string{"datadog-linux", "datadog-windows"} {
+				manifest, err := common.RenderChart(t, common.HelmCommand{
+					ReleaseName: releaseName,
+					ChartPath:   tmpDir,
+					ShowOnly:    []string{"charts/" + alias + "/templates/datadog-endpoint-configmap.yaml"},
+					Overrides:   overrides,
+				})
+				require.NoError(t, err)
+				var cm v1.ConfigMap
+				common.Unmarshal(t, manifest, &cm)
+				expectedName := overrides[alias+"."+override] + "-endpoint-config"
+				if override == "nameOverride" {
+					expectedName = releaseName + "-" + expectedName
+				}
+				assert.Equal(t, expectedName, cm.Name)
+				assert.Equal(t, "endpoint-config", cm.Labels["datadoghq.com/component"])
+				assert.Equal(t, releaseName, cm.Labels["app.kubernetes.io/instance"])
+			}
+		})
+	}
 }
 
 // extractChartVersion parses the top-level version field from Chart.yaml content.
